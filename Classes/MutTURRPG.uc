@@ -1,6 +1,9 @@
 class MutTURRPG extends Mutator
 	config(TURRPG2);
 
+const TURRPG2_VERSION="1.0"
+const TITANRPG_VERSION="1.71b"
+
 //Import resources
 #exec OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
 
@@ -12,7 +15,6 @@ var float NextSaveTime;
 //General
 var RPGRules Rules;
 
-var config string CustomVersion;
 var config bool bAllowCheats;
 var config int StartingLevel, StartingStatPoints;
 var config int PointsPerLevel;
@@ -1459,19 +1461,15 @@ static function string GetSecondsText(int Amount)
 
 function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 {
-	local GameInfo.KeyValuePair KVP;
+	local GameInfo.KeyValuePair KVPa, KVPb;
 
 	Super.GetServerDetails(ServerState);
 
-	KVP.Key = "TURRPG Version";
-	
-    if(Len(CustomVersion) > 0) {
-        KVP.Value = CustomVersion;
-    } else {
-        KVP.Value = FriendlyName;
-    }
+	KVPa.Key = "TURRPG2 Version" @ TURRPG2_VERSION;
+	KVPb.Key = "TitanRPG Version" @ TITANRPG_VERSION;
     
-	ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVP;
+	ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVPa;
+	ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVPb;
 }
 
 defaultproperties
@@ -1499,7 +1497,6 @@ defaultproperties
 	bAddToServerPackages=True
 	GroupName="TURRPG"
 	FriendlyName="TURRPG 2"
-    CustomVersion=""
 	Description="A unified and heavily improved version of UT2004RPG and DruidsRPG, featuring a lot of new content, multi-game support and fixes of many bugs and other problems."
 	SecondTextSingular="second"
 	SecondTextPlural="seconds"
