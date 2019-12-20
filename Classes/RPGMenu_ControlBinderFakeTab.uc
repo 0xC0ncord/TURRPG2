@@ -3,7 +3,7 @@ class RPGMenu_ControlBinderFakeTab extends RPGMenu_TabPage;
 function ShowPanel(bool bShow)
 {
 	if(bShow)
-		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGMenu_ControlBinder");
+		Controller.OpenMenu("TURRPG2.RPGMenu_ControlBinder");
 
 	Super.ShowPanel(bShow);
 }

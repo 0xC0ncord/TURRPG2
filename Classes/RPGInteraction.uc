@@ -110,7 +110,7 @@ exec function RPGStatsMenu()
 
 		if(RPRI != None)
 		{
-			ViewportOwner.GUIController.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGMenu");
+			ViewportOwner.GUIController.OpenMenu("TURRPG2.RPGMenu");
 			RPGMenu(GUIController(ViewportOwner.GUIController).TopPage()).InitFor(RPRI);
 		}
 	}

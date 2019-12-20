@@ -253,17 +253,6 @@ function ModifyStats()
 	}
 }
 
-simulated event PreBeginPlay() {
-    local int x;
-
-    Super.PreBeginPlay();
-    
-    if(Role < ROLE_Authority) {
-        x = InStr(string(default.class), ".");
-        class'MutTURRPG'.default.PackageName = Left(string(default.class), x);
-    }
-}
-
 simulated event BeginPlay()
 {
 	local int i;
@@ -322,8 +311,7 @@ simulated event BeginPlay()
 					bImposter = true;
 					
 					if(PlayerController(Controller) != None)
-						PlayerController(Controller).ClientOpenMenu(
-							class'MutTURRPG'.default.PackageName $ ".RPGImposterMessageWindow");
+						PlayerController(Controller).ClientOpenMenu("TURRPG2.RPGImposterMessageWindow");
 						
 					//Level.Game.ChangeName(Controller, string(Rand(65535)), true); //That's gotta suck, having a number for a name
 					Level.Game.ChangeName(Controller, Controller.GetHumanReadableName() $ "_Imposter", true);

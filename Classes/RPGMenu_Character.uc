@@ -166,7 +166,7 @@ function bool SwitchClicked(GUIComponent Sender)
 {
 	if(!(cmbMyBuilds.GetText() ~= RPGMenu.RPRI.RPGName))
 	{
-		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGSwitchConfirmationWindow");
+		Controller.OpenMenu("TURRPG2.RPGSwitchConfirmationWindow");
 		RPGSwitchConfirmationWindow(Controller.TopPage()).RPGMenu = RPGMenu;
 		RPGSwitchConfirmationWindow(Controller.TopPage()).NewBuild = cmbMyBuilds.GetText();
 		RPGSwitchConfirmationWindow(Controller.TopPage()).Init();
@@ -178,13 +178,13 @@ function bool ResetClicked(GUIComponent Sender)
 {
 	if(RPGMenu.RPRI.bAllowRebuild)
 	{
-		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGRebuildConfirmationWindow");
+		Controller.OpenMenu("TURRPG2.RPGRebuildConfirmationWindow");
 		RPGRebuildConfirmationWindow(Controller.TopPage()).RPGMenu = RPGMenu;
 		RPGRebuildConfirmationWindow(Controller.TopPage()).Init();
 	}
 	else
 	{
-		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGResetConfirmationWindow");
+		Controller.OpenMenu("TURRPG2.RPGResetConfirmationWindow");
 		RPGResetConfirmationWindow(Controller.TopPage()).RPGMenu = RPGMenu;
 		RPGResetConfirmationWindow(Controller.TopPage()).Init();
 	}

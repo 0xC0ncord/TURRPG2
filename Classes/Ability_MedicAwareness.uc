@@ -21,8 +21,7 @@ simulated function ClientCreateInteraction()
             }
 
             Interaction = Interaction_MedicAwareness(
-                PC.Player.InteractionMaster.AddInteraction(
-                    class'MutTURRPG'.default.PackageName $ ".Interaction_MedicAwareness", PC.Player));
+                PC.Player.InteractionMaster.AddInteraction("TURRPG2.Interaction_MedicAwareness", PC.Player));
 
             Interaction.Ability = Self;
             

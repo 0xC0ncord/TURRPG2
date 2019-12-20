@@ -71,7 +71,7 @@ function class<RPGAbility> InitAbility() {
     local string ClassName;
     local int i;
 
-    ClassName = class'MutTURRPG'.default.PackageName $ ".GeneratedAbility_";
+    ClassName = "TURRPG2.GeneratedAbility_";
     if(default.ConfigAbilities.Length < 10) {
         ClassName $= "0";
     }

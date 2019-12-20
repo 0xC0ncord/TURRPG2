@@ -24,7 +24,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	for(i = 0; i < Panels.Length; i++)
 	{
 		//Prepend package name to class name
-		Panels[i].ClassName = class'MutTURRPG'.default.PackageName $ "." $ Panels[i].ClassName;
+		Panels[i].ClassName = "TURRPG2." $ Panels[i].ClassName;
 		
 		Log("Adding tab:" @ Panels[i].ClassName, 'DEBUG');
 		Tabs.AddTabItem(Panels[i]);
