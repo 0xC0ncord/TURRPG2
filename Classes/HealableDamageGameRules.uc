@@ -28,12 +28,12 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 
 function DoHealableDamage(int Damage, Pawn Injured)
 {
-    local HealableDamageInv Inv;
+    local Inv_HealableDamage Inv;
     
-    Inv = HealableDamageInv(injured.FindInventoryType(class'HealableDamageInv'));
+    Inv = Inv_HealableDamage(injured.FindInventoryType(class'Inv_HealableDamage'));
     if(Inv == None)
     {
-        Inv = injured.spawn(class'HealableDamageInv');
+        Inv = injured.spawn(class'Inv_HealableDamage');
         Inv.giveTo(injured);
     }
 

@@ -54,7 +54,7 @@ function bool CanActivate()
         return false;
     }
     
-    if(Instigator.FindInventoryType(class'SelfDestructInv') != None)
+    if(Instigator.FindInventoryType(class'Inv_SelfDestruct') != None)
     {
         Msg(MSG_AlreadyActive);
         return false;
@@ -71,9 +71,9 @@ function bool CanActivate()
 
 function bool DoEffect()
 {
-    local SelfDestructInv SDI;
+    local Inv_SelfDestruct SDI;
 
-    SDI = Spawn(class'SelfDestructInv');
+    SDI = Spawn(class'Inv_SelfDestruct');
     if(SDI != None)
     {
         SDI.V = Vehicle(Instigator);

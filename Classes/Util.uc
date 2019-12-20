@@ -514,7 +514,7 @@ static function SetWeaponAmmo(Weapon W, int Mode, int Ammo) {
 //Grants experience for healing
 static function DoHealableDamage(Pawn Healer, Pawn Healed, int Amount, optional float Factor) {
     local RPGPlayerReplicationInfo RPRI;
-    local HealableDamageInv Healable;
+    local Inv_HealableDamage Healable;
     local int Adjusted;
 
     if(Healer != None && Healed != None && Amount > 0) {
@@ -524,7 +524,7 @@ static function DoHealableDamage(Pawn Healer, Pawn Healed, int Amount, optional 
                 Factor = RPRI.HealingExpMultiplier;
             }
         
-            Healable = HealableDamageInv(Healed.FindInventoryType(class'HealableDamageInv'));
+            Healable = Inv_HealableDamage(Healed.FindInventoryType(class'Inv_HealableDamage'));
             if(Healable != None && Healable.Damage > 0) {
                 Adjusted = Min(Amount, Healable.Damage);
 

@@ -32,7 +32,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
         return false;
     }
     
-    if(Killed.FindInventoryType(class'GhostInv') != None)
+    if(Killed.FindInventoryType(class'Inv_Ghost') != None)
         return false;
         
     //ability won't work if pawn is still attached to the vehicle
@@ -43,13 +43,13 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     }
     
     class'RPGEffect'.static.RemoveAll(Killed);
-    class'Util'.static.GiveInventory(Killed, class'GhostInv');
+    class'Util'.static.GiveInventory(Killed, class'Inv_Ghost');
     return true;
 }
 
 function bool PreventSever(Pawn Killed, name boneName, int Damage, class<DamageType> DamageType)
 {
-    if(Killed.FindInventoryType(class'GhostInv') != None)
+    if(Killed.FindInventoryType(class'Inv_Ghost') != None)
         return false;
 
     return true;
