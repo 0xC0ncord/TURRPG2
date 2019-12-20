@@ -118,7 +118,7 @@ final function class<RPGAbility> ResolveAbility(string Alias)
     }
     
     //Fallback, for seamless transitions from 1.5 or earlier
-    Loaded = class<RPGAbility>(DynamicLoadObject("TURRPG" $ ".Ability" $ Alias, class'Class'));
+    Loaded = class<RPGAbility>(DynamicLoadObject("TURRPG2" $ ".Ability" $ Alias, class'Class'));
 
     if(Loaded == None)
         Log("WARNING: Could not resolve ability alias:" @ Alias, 'TURRPG2');
@@ -197,7 +197,7 @@ event PreBeginPlay() {
     class'XGame.xPawn'.default.ControllerClass = class'RPGBot';
     
     if(Level.Game.PlayerControllerClassName ~= "XGame.xPlayer") //don't replace another mod's xPlayer replacement
-        Level.Game.PlayerControllerClassName = "TURRPG.TitanPlayerController";
+        Level.Game.PlayerControllerClassName = "TURRPG2.TitanPlayerController";
 
     //Find specific settings for this gametype
     GameSettings = new(None, GetGameSettingsName(Level.Game)) class'RPGGameSettings';
@@ -302,17 +302,17 @@ function string GetInventoryClassOverride(string InventoryClassName)
     }
 
     if(InventoryClassName ~= "XWeapons.RocketLauncher")
-        return "TURRPG.RPGRocketLauncher";
+        return "TURRPG2.RPGRocketLauncher";
     else if(InventoryClassName ~= "XWeapons.ShieldGun" || InventoryClassName ~= "OLTeamGames.OLTeamsShieldGun")
-        return "TURRPG.RPGShieldGun";
+        return "TURRPG2.RPGShieldGun";
     else if(InventoryClassName ~= "XWeapons.LinkGun" || InventoryClassName ~= "OLTeamGames.OLTeamsLinkGun")
-        return "TURRPG.RPGLinkGun";
+        return "TURRPG2.RPGLinkGun";
     else if(InventoryClassName ~= "Onslaught.ONSMineLayer" || InventoryClassName ~= "OLTeamGames.OLTeamsONSMineLayer")
-        return "TURRPG.RPGMineLayer";
+        return "TURRPG2.RPGMineLayer";
     else if(InventoryClassName ~= "XWeapons.BallLauncher")
-        return "TURRPG.RPGBallLauncher";
+        return "TURRPG2.RPGBallLauncher";
     else if(InventoryClassName ~= "UTClassic.ClassicSniperRifle")
-        return "TURRPG.RPGClassicSniperRifle";
+        return "TURRPG2.RPGClassicSniperRifle";
 
     return InventoryClassName;
 }
@@ -361,7 +361,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     //Ball Launcher
     if(Other.IsA('xBombFlag'))
     {
-        xBombFlag(Other).BombLauncherClassName = "TURRPG.RPGBallLauncher";
+        xBombFlag(Other).BombLauncherClassName = "TURRPG2.RPGBallLauncher";
         return true;
     }
     
@@ -1241,7 +1241,7 @@ function Mutate(string MutateString, PlayerController Sender)
                 if(Args[1] ~= "None") {
                     class'RPGWeaponModifier'.static.RemoveModifier(Cheat.Weapon);
                 } else {
-                    WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG.WeaponModifier_" $ Args[1], class'Class'));
+                    WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG2.WeaponModifier_" $ Args[1], class'Class'));
                     if(WMClass != None) {
                         x = WMClass.static.GetRandomModifierLevel();
                     
@@ -1269,7 +1269,7 @@ function Mutate(string MutateString, PlayerController Sender)
             }
             else if(Cheat != None && Args[0] ~= "effect" && Args.Length > 1)
             {
-                EffectClass = class<RPGEffect>(DynamicLoadObject("TURRPG.Effect_" $ Args[1], class'Class'));
+                EffectClass = class<RPGEffect>(DynamicLoadObject("TURRPG2.Effect_" $ Args[1], class'Class'));
                 if(EffectClass != None)
                 {
                     Effect = EffectClass.static.Create(Cheat, Sender);
@@ -1302,7 +1302,7 @@ function Mutate(string MutateString, PlayerController Sender)
             }
             else if(Cheat != None && Args[0] ~= "artifact" && Args.Length > 1)
             {
-                ArtifactClass = class<RPGArtifact>(DynamicLoadObject("TURRPG.Artifact_" $ Args[1], class'Class'));
+                ArtifactClass = class<RPGArtifact>(DynamicLoadObject("TURRPG2.Artifact_" $ Args[1], class'Class'));
                 if(ArtifactClass != None)
                     class'Util'.static.GiveInventory(Cheat, ArtifactClass);
                 else
