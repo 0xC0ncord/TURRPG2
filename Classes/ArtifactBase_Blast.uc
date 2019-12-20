@@ -1,5 +1,5 @@
 class ArtifactBase_Blast extends RPGArtifact
-	abstract
+    abstract
     HideDropDown;
 
 var config class<Blast> BlastClass;
@@ -9,41 +9,41 @@ var config bool bFriendly;
 
 function BotWhatNext(Bot Bot)
 {
-	if(
-		!HasActiveArtifact(Instigator) &&
-		Bot.Adrenaline >= CostPerSec &&
-		Instigator.Health >= AIHealthMin && //should survive until then
-		CountNearbyEnemies(BlastClass.default.Radius, bFriendly) >= AIMinTargets
-	)
-	{
-		Activate();
-	}
+    if(
+        !HasActiveArtifact(Instigator) &&
+        Bot.Adrenaline >= CostPerSec &&
+        Instigator.Health >= AIHealthMin && //should survive until then
+        CountNearbyEnemies(BlastClass.default.Radius, bFriendly) >= AIMinTargets
+    )
+    {
+        Activate();
+    }
 }
 
 function Blast SpawnBlast()
 {
-	return Spawn(BlastClass, Instigator.Controller,,Instigator.Location);
+    return Spawn(BlastClass, Instigator.Controller,,Instigator.Location);
 }
 
 function bool DoEffect()
 {
-	local Blast Blast;
+    local Blast Blast;
 
-	Blast = SpawnBlast();
-	
-	return (Blast != None);
+    Blast = SpawnBlast();
+    
+    return (Blast != None);
 }
 
 defaultproperties
 {
-	bChargeUp=True
+    bChargeUp=True
 
-	AIHealthMin=50
-	AIMinTargets=2
-	bFriendly=False
-	
-	bAllowInVehicle=False
-	bCanBeTossed=False
-	
-	MaxUses=1
+    AIHealthMin=50
+    AIMinTargets=2
+    bFriendly=False
+    
+    bAllowInVehicle=False
+    bCanBeTossed=False
+    
+    MaxUses=1
 }

@@ -17,10 +17,10 @@ function ModifyPawn(Pawn Other) {
 
 defaultproperties
 {
-	AbilityName="Artifact Denial"
-	Description="When you die, you do not drop any artifacts for your enemies."
-	MaxLevel=1
-	bUseLevelCost=True
-	LevelCost(0)=10
-	Category=class'AbilityCategory_Artifacts'
+    AbilityName="Artifact Denial"
+    Description="When you die, you do not drop any artifacts for your enemies."
+    MaxLevel=1
+    bUseLevelCost=True
+    LevelCost(0)=10
+    Category=class'AbilityCategory_Artifacts'
 }

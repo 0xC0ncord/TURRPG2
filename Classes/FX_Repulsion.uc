@@ -1,5 +1,5 @@
 class FX_Repulsion extends Emitter
-	placeable;
+    placeable;
 
 defaultproperties
 {

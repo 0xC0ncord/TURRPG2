@@ -1,5 +1,5 @@
 class FX_BlastExplosion_Heal extends FX_BlastExplosion
-	placeable;
+    placeable;
 
 defaultproperties
 {

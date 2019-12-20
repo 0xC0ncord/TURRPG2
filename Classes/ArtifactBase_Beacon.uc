@@ -10,25 +10,25 @@ function BeaconDestroyed(RPGArtifactBeacon Beacon); //abstract, called when beac
 
 function RPGArtifactBeacon SpawnBeacon()
 {
-	local RPGArtifactBeacon Beacon;
+    local RPGArtifactBeacon Beacon;
 
-	Beacon = Instigator.Spawn(BeaconClass, Instigator.Controller,, Instigator.Location + Instigator.EyePosition(), Instigator.Controller.Rotation);
-	if(Beacon != None)
-		Beacon.Artifact = Self;
-	
-	return Beacon;
+    Beacon = Instigator.Spawn(BeaconClass, Instigator.Controller,, Instigator.Location + Instigator.EyePosition(), Instigator.Controller.Rotation);
+    if(Beacon != None)
+        Beacon.Artifact = Self;
+    
+    return Beacon;
 }
 
 function bool DoEffect()
 {
-	return (SpawnBeacon() != None);
+    return (SpawnBeacon() != None);
 }
 
 defaultproperties
 {
-	BeaconClass=class'RPGArtifactBeacon'
+    BeaconClass=class'RPGArtifactBeacon'
 
-	CostPerSec=10
-	MinActivationTime=0
-	bAllowInVehicle=False
+    CostPerSec=10
+    MinActivationTime=0
+    bAllowInVehicle=False
 }

@@ -1,9 +1,9 @@
 //Dummy weapon to track kills in the "F3 stats"
 class DummyWeapon_Poison extends Weapon
-	HideDropDown
-	CacheExempt;
-	
+    HideDropDown
+    CacheExempt;
+    
 defaultproperties
 {
-	ItemName="Poison"
+    ItemName="Poison"
 }

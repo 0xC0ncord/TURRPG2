@@ -22,16 +22,16 @@ var localized string StealthText;
 var localized string StealthBonusText;
 
 replication {
-	reliable if(Role == ROLE_Authority)
+    reliable if(Role == ROLE_Authority)
         bStill, bStealthed, WalkedDistance;
         
     reliable if(Role == ROLE_Authority)
-		ClientNotifyStill, ClientReceiveStealthConfig;
+        ClientNotifyStill, ClientReceiveStealthConfig;
 }
 
 static function bool AllowedFor(class<Weapon> Weapon, Pawn Other) {
-	if(!Super.AllowedFor(Weapon, Other))
-		return false;
+    if(!Super.AllowedFor(Weapon, Other))
+        return false;
 
     return ClassIsChildOf(Weapon, class'RPGClassicSniperRifle');
 }
@@ -50,31 +50,31 @@ simulated function ClientReceiveStealthConfig(float a, float b, float c) {
 }
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Victim, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType) {
-	Super.AdjustTargetDamage(Damage, OriginalDamage, Victim, InstigatedBy, HitLocation, Momentum, DamageType);
-	
-	if(bStealthed) {
-		Damage = int(float(Damage) * StealthDamageMultiplier);
+    Super.AdjustTargetDamage(Damage, OriginalDamage, Victim, InstigatedBy, HitLocation, Momentum, DamageType);
+    
+    if(bStealthed) {
+        Damage = int(float(Damage) * StealthDamageMultiplier);
         
         if(PlayerController(InstigatedBy.Controller) != None) {
             PlayerController(InstigatedBy.Controller).ClientMessage(Repl(StealthBonusText, "$1", StealthDamageMultiplier));
         }
-	}
+    }
 }
 
 simulated function ClientNotifyStill() {
-	StillTime = Level.TimeSeconds;
-	bStill = true;
+    StillTime = Level.TimeSeconds;
+    bStill = true;
 }
 
 function RPGTick(float dt)
 {
-	local int PrimaryAmmo;
+    local int PrimaryAmmo;
 
-	Super.RPGTick(dt);
-	
-	if(xPawn(Instigator) == None)
-		return;
-	
+    Super.RPGTick(dt);
+    
+    if(xPawn(Instigator) == None)
+        return;
+    
     PrimaryAmmo = Weapon.AmmoAmount(0);
     if(PrimaryAmmo < LastPrimaryAmmo) {
         //This is the only way I can come up with to find out whether this weapon just fired. ~pd

@@ -9,8 +9,8 @@ var StaticMesh NewStatic;
 var float NewDrawScale;
 
 replication {
-	reliable if(Role == ROLE_Authority && bNetInitial)
-		Target, NewStatic, NewDrawScale;
+    reliable if(Role == ROLE_Authority && bNetInitial)
+        Target, NewStatic, NewDrawScale;
 }
 
 static function Sync_SpawnedPickup Sync(Pickup Pickup, StaticMesh NewStatic, float NewDrawScale) {
@@ -26,16 +26,16 @@ static function Sync_SpawnedPickup Sync(Pickup Pickup, StaticMesh NewStatic, flo
 }
 
 simulated function bool ClientFunction() {
-	if(Target == None) {
-		return false;
-	} else {
+    if(Target == None) {
+        return false;
+    } else {
         Target.SetDrawType(DT_StaticMesh);
         Target.SetStaticMesh(NewStatic);
         Target.SetDrawScale(NewDrawScale);
         Target.SetDrawScale3D(vect(1, 1, 1));
         Target.Skins[0] = None;
-		return true;
-	}
+        return true;
+    }
 }
 
 function bool ShouldDestroy() {

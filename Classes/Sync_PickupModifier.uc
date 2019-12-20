@@ -10,8 +10,8 @@ var class<RPGWeaponModifier> ModifierClass;
 
 replication
 {
-	reliable if(Role == ROLE_Authority)
-		Target, AttachmentClass, ModifierClass;
+    reliable if(Role == ROLE_Authority)
+        Target, AttachmentClass, ModifierClass;
 }
 
 static function Sync_PickupModifier Sync(WeaponPickup Pickup, class<RPGWeaponModifier> ModifierClass, Class<WeaponAttachment> AttachmentClass)
@@ -42,14 +42,14 @@ static function Sync_PickupModifier Sync(WeaponPickup Pickup, class<RPGWeaponMod
 }
 
 simulated function bool ClientFunction() {
-	if(Target == None) {
-		return false;
-	} else {
+    if(Target == None) {
+        return false;
+    } else {
         Target.bOrientOnSlope = false;
         Target.Skins = AttachmentClass.default.Skins;
-		Target.SetOverlayMaterial(ModifierClass.default.ModifierOverlay, 1000000, true);
-		return true;
-	}
+        Target.SetOverlayMaterial(ModifierClass.default.ModifierOverlay, 1000000, true);
+        return true;
+    }
 }
 
 function bool ShouldDestroy() {

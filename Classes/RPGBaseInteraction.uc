@@ -29,8 +29,8 @@ function Color GetTeamBeaconColor(PlayerReplicationInfo PRI) {
 //Pos  -> The pawn's position on the canvas.
 //Dist -> The pawn's distance from the camera location considering the camera's current FOV (zoom).
 function bool IsPawnVisible(Canvas C, Pawn P, out vector Pos, out float Dist) {
-	local vector CamLoc, D;
-	local rotator CamRot;
+    local vector CamLoc, D;
+    local rotator CamRot;
     
     if(P == None || P.Health <= 0 || ViewportOwner.Actor == None) {
         return false;
@@ -125,15 +125,15 @@ event Initialized() {
 //Remove interaction when map changes
 event NotifyLevelChange() {
     Super.NotifyLevelChange();
-	Master.RemoveInteraction(Self);
+    Master.RemoveInteraction(Self);
 }
 
 defaultproperties {
-	TeamBeaconColor(0)=(R=255,G=64,B=64,A=255) //Red
-	TeamBeaconColor(1)=(R=64,G=90,B=255,A=255) //Blue
-	TeamBeaconColor(2)=(R=64,G=255,B=64,A=255) //Green
-	TeamBeaconColor(3)=(R=255,G=224,B=64,A=255) //Gold
-	TeamBeaconColor(4)=(B=255,G=255,R=255,A=255) //Neutral
+    TeamBeaconColor(0)=(R=255,G=64,B=64,A=255) //Red
+    TeamBeaconColor(1)=(R=64,G=90,B=255,A=255) //Blue
+    TeamBeaconColor(2)=(R=64,G=255,B=64,A=255) //Green
+    TeamBeaconColor(3)=(R=255,G=224,B=64,A=255) //Gold
+    TeamBeaconColor(4)=(B=255,G=255,R=255,A=255) //Neutral
     WhiteColor=(B=255,G=255,R=255,A=255)
     
     HealthBar=Texture'ONSInterface-TX.HealthBar'

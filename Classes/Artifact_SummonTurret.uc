@@ -2,9 +2,9 @@ class Artifact_SummonTurret extends ArtifactBase_Construct;
 
 struct TurretTypeStruct
 {
-	var class<Vehicle> TurretClass;
-	var int Cost;
-	var int Cooldown;
+    var class<Vehicle> TurretClass;
+    var int Cost;
+    var int Cooldown;
 };
 var config array<TurretTypeStruct> TurretTypes;
 
@@ -20,8 +20,8 @@ var localized string MsgMaxTurrets, SelectionTitle;
 
 replication
 {
-	reliable if(Role == ROLE_Authority)
-		ClientReceiveTurretType;
+    reliable if(Role == ROLE_Authority)
+        ClientReceiveTurretType;
 }
 
 static function vector GetSpawnOffset(class<Vehicle> TurretClass) {
@@ -37,24 +37,24 @@ static function vector GetSpawnOffset(class<Vehicle> TurretClass) {
 
 static function string GetMessageString(int Msg, optional int Value, optional Object Obj)
 {
-	switch(Msg)
-	{
-		case MSG_MaxTurrets:
-			return default.MsgMaxTurrets;
-	
-		default:
-			return Super.GetMessageString(Msg, Value, Obj);
-	}
+    switch(Msg)
+    {
+        case MSG_MaxTurrets:
+            return default.MsgMaxTurrets;
+    
+        default:
+            return Super.GetMessageString(Msg, Value, Obj);
+    }
 }
 
 function GiveTo(Pawn Other, optional Pickup Pickup)
 {
-	local int i;
+    local int i;
 
-	Super.GiveTo(Other, Pickup);
-	
-	for(i = 0; i < TurretTypes.Length; i++)
-		ClientReceiveTurretType(i, TurretTypes[i]);
+    Super.GiveTo(Other, Pickup);
+    
+    for(i = 0; i < TurretTypes.Length; i++)
+        ClientReceiveTurretType(i, TurretTypes[i]);
 }
 
 simulated function ClientReceiveTurretType(int i, TurretTypeStruct T)
@@ -69,32 +69,32 @@ simulated function ClientReceiveTurretType(int i, TurretTypeStruct T)
 
 function bool CanActivate()
 {
-	if(SelectedOption < 0)
-		CostPerSec = 0; //no cost until selection
+    if(SelectedOption < 0)
+        CostPerSec = 0; //no cost until selection
 
-	if(!Super.CanActivate())
-		return false;
-	
-	if(InstigatorRPRI.Turrets.Length >= InstigatorRPRI.MaxTurrets)
-	{
-		Msg(MSG_MaxTurrets);
-		return false;
-	}
-	
-	return true;
+    if(!Super.CanActivate())
+        return false;
+    
+    if(InstigatorRPRI.Turrets.Length >= InstigatorRPRI.MaxTurrets)
+    {
+        Msg(MSG_MaxTurrets);
+        return false;
+    }
+    
+    return true;
 }
 
 function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator SpawnRot)
 {
     local class<Vehicle> TurretClass;
-	local FriendlyTurretController C;
-	local Vehicle T;
+    local FriendlyTurretController C;
+    local Vehicle T;
     
     TurretClass = class<Vehicle>(SpawnClass);
     SpawnLoc += GetSpawnOffset(TurretClass);
     
-	T = Vehicle(Super.SpawnActor(SpawnClass, SpawnLoc, SpawnRot));
-	if(T != None) {
+    T = Vehicle(Super.SpawnActor(SpawnClass, SpawnLoc, SpawnRot));
+    if(T != None) {
         T.bTeamLocked = true;
         T.SetTeamNum(Instigator.Controller.GetTeamNum());
 
@@ -105,37 +105,37 @@ function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator Spaw
             C.SetMaster(Instigator.Controller);
             C.Possess(T);
         }
-		
-		if(InstigatorRPRI != None)
-			InstigatorRPRI.AddTurret(T);
-	}
-	return T;
+        
+        if(InstigatorRPRI != None)
+            InstigatorRPRI.AddTurret(T);
+    }
+    return T;
 }
 
 function OnSelection(int i)
 {
-	CostPerSec = TurretTypes[i].Cost;
-	Cooldown = TurretTypes[i].Cooldown;
-	SpawnActorClass = TurretTypes[i].TurretClass;
+    CostPerSec = TurretTypes[i].Cost;
+    Cooldown = TurretTypes[i].Cooldown;
+    SpawnActorClass = TurretTypes[i].TurretClass;
 }
 
 simulated function string GetSelectionTitle()
 {
-	return SelectionTitle;
+    return SelectionTitle;
 }
 
 simulated function int GetNumOptions()
 {
-	return TurretTypes.Length;
+    return TurretTypes.Length;
 }
 
 simulated function string GetOption(int i)
 {
-	return TurretTypes[i].TurretClass.default.VehicleNameString;
+    return TurretTypes[i].TurretClass.default.VehicleNameString;
 }
 
 simulated function int GetOptionCost(int i) {
-	return TurretTypes[i].Cost;
+    return TurretTypes[i].Cost;
 }
 
 function int SelectBestOption() {
@@ -160,26 +160,26 @@ function int SelectBestOption() {
 
 function BotWhatNext(Bot Bot) {
     //Only if defending
-	if(Bot.Squad != None && Bot.Squad.IsDefending(Bot)) {
+    if(Bot.Squad != None && Bot.Squad.IsDefending(Bot)) {
         Super.BotWhatNext(Bot);
     }
 }
 
 defaultproperties {
-	SelectionTitle="Pick a turret to summon:"
-	MsgMaxTurrets="You cannot spawn any more turrets at this time."
+    SelectionTitle="Pick a turret to summon:"
+    MsgMaxTurrets="You cannot spawn any more turrets at this time."
 
-	bSelection=true
+    bSelection=true
     
-	ArtifactID="TurretSummon"
-	Description="Constructs a floor sentinel."
-	ItemName="Turret Constructor"
-	PickupClass=Class'ArtifactPickup_TurretSummon'
-	IconMaterial=Texture'TURRPG2.ArtifactIcons.TurretSummon'
-	HudColor=(B=192,G=128,R=128)
-	CostPerSec=0
-	Cooldown=0
+    ArtifactID="TurretSummon"
+    Description="Constructs a floor sentinel."
+    ItemName="Turret Constructor"
+    PickupClass=Class'ArtifactPickup_TurretSummon'
+    IconMaterial=Texture'TURRPG2.ArtifactIcons.TurretSummon'
+    HudColor=(B=192,G=128,R=128)
+    CostPerSec=0
+    Cooldown=0
 
-	TurretTypes(0)=(TurretClass=class'RPGSentinelTurret',Cost=0,Cooldown=5)
+    TurretTypes(0)=(TurretClass=class'RPGSentinelTurret',Cost=0,Cooldown=5)
     TurretSpawnOffsets(0)=(TurretClass=class'UT2k4Assault.ASVehicle_Sentinel_Floor',SpawnOffset=(Z=65))
 }

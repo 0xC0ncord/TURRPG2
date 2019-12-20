@@ -1,5 +1,5 @@
 class FX_BlastExplosion_Mega extends FX_BlastExplosion
-	placeable;
+    placeable;
 
 defaultproperties
 {

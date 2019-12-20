@@ -50,8 +50,8 @@ defaultproperties {
     Interval=3.0
 
     KnockbackTime=2.00
-	MaxKnockbackMomentum=1500
-	MinKnockbackMomentum=250
+    MaxKnockbackMomentum=1500
+    MinKnockbackMomentum=250
     
     IconClass=class'TotemIcon_Repulsion'
     VehicleNameString="Repulsive Totem"

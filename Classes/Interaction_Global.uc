@@ -15,7 +15,7 @@ function PostRender(Canvas C) {
     
     FarAwayInv = 1.0f / TeamBeaconMaxDist;
 
-	for(i = 0; i < FriendlyPawns.Length; i++) {
+    for(i = 0; i < FriendlyPawns.Length; i++) {
         FPRI = FriendlyPawns[i];
         
         if(FPRI.Pawn != None && IsPawnVisible(C, FPRI.Pawn, ScreenPos, Dist)) {
@@ -25,12 +25,12 @@ function PostRender(Canvas C) {
                 continue;
             }
 
-			if(Dist > ScaledDist) {
+            if(Dist > ScaledDist) {
                 ScreenPos.Z = 0;
                 if(VSize(ScreenPos) * VSize(ScreenPos) > 0.02f * Dist * Dist) {
                     continue;
                 }
-			}
+            }
 
             //Beacon scale
             Scale = FClamp(0.28f * (ScaledDist - Dist) / ScaledDist, 0.1f, 0.25f);
@@ -113,5 +113,5 @@ function RemoveFriendlyPawn(FriendlyPawnReplicationInfo FPRI) {
 }
 
 defaultproperties {
-	bVisible=True
+    bVisible=True
 }

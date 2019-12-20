@@ -1,6 +1,6 @@
 class RPGData extends Object
-	config(TURRPG2PlayerData)
-	PerObjectConfig;
+    config(TURRPG2PlayerData)
+    PerObjectConfig;
 
 //Player name is the object name
 var config string ID; //owner GUID ("Bot" for bots)

@@ -32,9 +32,9 @@ simulated function ClientModifyMaxLoad(Weapon Weapon, int Mode, int MaxLoad, flo
 
 defaultproperties
 {
-	AbilityName="Rocket Science"
-	Description="Increases the amount of rockets that your rocket launchers can load up and fire simultaneously by one per level."
-	MaxLevel=5
-	StartingCost=10
-	Category=class'AbilityCategory_Weapons'
+    AbilityName="Rocket Science"
+    Description="Increases the amount of rockets that your rocket launchers can load up and fire simultaneously by one per level."
+    MaxLevel=5
+    StartingCost=10
+    Category=class'AbilityCategory_Weapons'
 }

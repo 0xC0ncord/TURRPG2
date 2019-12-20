@@ -7,8 +7,8 @@ function CloseMenu();
 
 event Closed(GUIComponent Sender, bool bCancelled)
 {
-	Super.Closed(Sender, bCancelled);
-	RPGMenu = None;
+    Super.Closed(Sender, bCancelled);
+    RPGMenu = None;
 }
 
 defaultproperties

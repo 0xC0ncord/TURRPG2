@@ -1,9 +1,9 @@
 //Dummy weapon to track kills in the "F3 stats"
 class DummyWeapon_Repulsion extends Weapon
-	HideDropDown
-	CacheExempt;
-	
+    HideDropDown
+    CacheExempt;
+    
 defaultproperties
 {
-	ItemName="Repulsion"
+    ItemName="Repulsion"
 }

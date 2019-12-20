@@ -1,5 +1,5 @@
 class FX_BlastExplosion_TitanUltima extends FX_BlastExplosion
-	placeable;
+    placeable;
 
 defaultproperties
 {

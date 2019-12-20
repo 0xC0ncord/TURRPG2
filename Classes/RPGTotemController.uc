@@ -21,15 +21,15 @@ function SetMaster(Controller NewMaster) {
 }
 
 function Possess(Pawn aPawn) {
-	super.Possess(aPawn);
+    super.Possess(aPawn);
     FPRI.Pawn = aPawn;
 }
 
 function int GetTeamNum() {
-	if(Vehicle(Pawn) != None)
-		return Vehicle(Pawn).Team;
+    if(Vehicle(Pawn) != None)
+        return Vehicle(Pawn).Team;
 
-	return super.GetTeamNum();
+    return super.GetTeamNum();
 }
 
 event Tick(float dt) {
@@ -40,7 +40,7 @@ event Tick(float dt) {
         return;
     }
 
-	//if I don't have a master or he switched teams, I should die
+    //if I don't have a master or he switched teams, I should die
     if(
         Master == None ||
         Master.PlayerReplicationInfo == None ||

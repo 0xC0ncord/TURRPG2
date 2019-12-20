@@ -5,16 +5,16 @@ var localized string MaleSuicides[3], FemaleSuicides[3];
 
 static function string DeathMessage(PlayerReplicationInfo Killer, PlayerReplicationInfo Victim)
 {
-	//Emos can't kill, only suicide. :D
-	return static.SuicideMessage(Victim);
+    //Emos can't kill, only suicide. :D
+    return static.SuicideMessage(Victim);
 }
 
 static function string SuicideMessage(PlayerReplicationInfo Victim)
 {
-	if ( Victim.bIsFemale )
-		return default.FemaleSuicides[Rand(3)];
-	else
-		return default.MaleSuicides[Rand(3)];
+    if ( Victim.bIsFemale )
+        return default.FemaleSuicides[Rand(3)];
+    else
+        return default.MaleSuicides[Rand(3)];
 }
 
 defaultproperties {

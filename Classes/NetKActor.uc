@@ -9,7 +9,7 @@
 //Edited by pd
 
 class NetKActor extends KActor
-	placeable;
+    placeable;
 
 #exec OBJ LOAD FILE="..\Sounds\WeaponSounds.uax"
 
@@ -255,7 +255,7 @@ simulated event RanInto(Actor Other)
 }
 
 function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation,
-		    Vector momentum, class<DamageType> damageType)
+            Vector momentum, class<DamageType> damageType)
 {
     local vector ApplyImpulse;
 
@@ -274,15 +274,15 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation,
 
     if(damageType.default.KDamageImpulse > 0)
     {
-	if(VSize(momentum) < 0.001)
-	{
-	    return;
-	}
-	ApplyImpulse = Normal(momentum) * damageType.default.KDamageImpulse;
-	//DEBUG
-	//log("********************") ;
-	//log(ApplyImpulse) ;
-	KAddImpulse(ApplyImpulse, hitlocation) ;
+    if(VSize(momentum) < 0.001)
+    {
+        return;
+    }
+    ApplyImpulse = Normal(momentum) * damageType.default.KDamageImpulse;
+    //DEBUG
+    //log("********************") ;
+    //log(ApplyImpulse) ;
+    KAddImpulse(ApplyImpulse, hitlocation) ;
     }
     hitDirection = rotator(momentum) ;
     //DEBUG
@@ -350,7 +350,7 @@ function PackState()
     local bool bChanged;
 
     if(!KIsAwake())
-    	return;
+        return;
 
     KGetRigidBodyState(KState);
 
@@ -505,8 +505,8 @@ defaultproperties
     explodeDamage=0
     explodeRadius=15.0
     explodeForce=1000
-	//explodeDamageType=class'DamTypeKick'
-	explodeDamageType=class'DamageType'
+    //explodeDamageType=class'DamTypeKick'
+    explodeDamageType=class'DamageType'
     initialHealth=18
     bDestroyable=false
     DestructionSound=sound'WeaponSounds.BaseFiringSounds.BImpactHammerFire'
@@ -516,7 +516,7 @@ defaultproperties
     DamageConstraintClass=none
     EffectOffset=vector(0,0,0)
     //DestroyedEffect=class'GoodKarma.BasicExplosion'
-	DestroyedEffect=None
+    DestroyedEffect=None
     AutoRespawnTime=-1.0
     bPendingRespawn=false
     respawnClock=0.0

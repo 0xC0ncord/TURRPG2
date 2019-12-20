@@ -8,7 +8,7 @@ var float RegenTime;
 
 replication {
     reliable if(Role == ROLE_Authority)
-		ClientReceiveShieldConfig;
+        ClientReceiveShieldConfig;
 }
 
 function SendConfig() {
@@ -32,11 +32,11 @@ function StartEffect() {
 
 function RPGTick(float dt) {
     local xPawn x;
-	x = xPawn(Instigator);
+    x = xPawn(Instigator);
 
     if(x != None && Level.TimeSeconds >= RegenTime) {
-		if(x.ShieldStrength < x.ShieldStrengthMax)
-			x.ShieldStrength = FMin(x.ShieldStrength + float(Modifier) * BonusPerLevel, x.ShieldStrengthMax);
+        if(x.ShieldStrength < x.ShieldStrengthMax)
+            x.ShieldStrength = FMin(x.ShieldStrength + float(Modifier) * BonusPerLevel, x.ShieldStrengthMax);
         
         RestartRegenTimer();
     }
@@ -52,24 +52,24 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
 
 simulated function BuildDescription()
 {
-	Super.BuildDescription();
-	AddToDescription(Repl(
+    Super.BuildDescription();
+    AddToDescription(Repl(
         Repl(ShieldText, "$1", int(BonusPerLevel) * Modifier),
         "$2", class'Util'.static.FormatFloat(RegenInterval)));
 }
 
 defaultproperties
 {
-	ShieldText="$1 shield every $2s out of combat"
-	PatternPos="$W of Shield"
-	DamageBonus=0.04
-	BonusPerLevel=1.00
-	RegenInterval=2.00
-	MinModifier=1
-	MaxModifier=5
-	//ModifierOverlay=TexEnvMap'TURRPG2.Overlays.goldenv' - for another weapon
-	ModifierOverlay=TexEnvMap'PickupSkins.Shaders.TexEnvMap2'
-	//AI
-	AIRatingBonus=0.05
+    ShieldText="$1 shield every $2s out of combat"
+    PatternPos="$W of Shield"
+    DamageBonus=0.04
+    BonusPerLevel=1.00
+    RegenInterval=2.00
+    MinModifier=1
+    MaxModifier=5
+    //ModifierOverlay=TexEnvMap'TURRPG2.Overlays.goldenv' - for another weapon
+    ModifierOverlay=TexEnvMap'PickupSkins.Shaders.TexEnvMap2'
+    //AI
+    AIRatingBonus=0.05
 }
 

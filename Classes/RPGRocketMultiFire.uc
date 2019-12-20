@@ -10,22 +10,22 @@ function DoFireEffect()
     local Vector HitLocation, HitNormal,FireLocation;
     local Actor Other;
     local int p,q, SpawnCount, i;
-	local RocketProj FiredRockets[16];
-	local bool bCurl;
-	
-	if ( (SpreadStyle == SS_Line) || (Load < 2) )
-	{
-		Super(ProjectileFire).DoFireEffect();
-		return;
-	}
-	
+    local RocketProj FiredRockets[16];
+    local bool bCurl;
+    
+    if ( (SpreadStyle == SS_Line) || (Load < 2) )
+    {
+        Super(ProjectileFire).DoFireEffect();
+        return;
+    }
+    
     Instigator.MakeNoise(1.0);
     Weapon.GetViewAxes(X,Y,Z);
 
     StartTrace = Instigator.Location + Instigator.EyePosition();
     StartProj = StartTrace + X*ProjSpawnOffset.X + Z*ProjSpawnOffset.Z;
     if ( !Weapon.WeaponCentered() )
-	    StartProj = StartProj + Weapon.Hand * Y*ProjSpawnOffset.Y;
+        StartProj = StartProj + Weapon.Hand * Y*ProjSpawnOffset.Y;
 
     // check if projectile would spawn through a wall and adjust start location accordingly
     Other = Weapon.Trace(HitLocation, HitNormal, StartProj, StartTrace, false);
@@ -40,36 +40,36 @@ function DoFireEffect()
 
     for ( p=0; p<SpawnCount; p++ )
     {
- 		Firelocation = StartProj - 2*((Sin(p*2*PI/MaxLoad)*8 - 7)*Y - (Cos(p*2*PI/MaxLoad)*8 - 7)*Z) - X * 8 * FRand();
+         Firelocation = StartProj - 2*((Sin(p*2*PI/MaxLoad)*8 - 7)*Y - (Cos(p*2*PI/MaxLoad)*8 - 7)*Z) - X * 8 * FRand();
         FiredRockets[p] = RocketProj(SpawnProjectile(FireLocation, Aim));
     }
     
     if ( SpawnCount < 2 )
-		return;
-	
-	FlockIndex++;
-	if ( FlockIndex == 0 )
-		FlockIndex = 1;
-		
+        return;
+    
+    FlockIndex++;
+    if ( FlockIndex == 0 )
+        FlockIndex = 1;
+        
     // To get crazy flying, we tell each projectile in the flock about the others.
     for ( p = 0; p < SpawnCount; p++ )
     {
-		if ( FiredRockets[p] != None )
-		{
-			FiredRockets[p].bCurl = bCurl;
-			FiredRockets[p].FlockIndex = FlockIndex;
-			i = 0;
-			for ( q=0; q<SpawnCount; q++ )
-				if ( (p != q) && (FiredRockets[q] != None) )
-				{
+        if ( FiredRockets[p] != None )
+        {
+            FiredRockets[p].bCurl = bCurl;
+            FiredRockets[p].FlockIndex = FlockIndex;
+            i = 0;
+            for ( q=0; q<SpawnCount; q++ )
+                if ( (p != q) && (FiredRockets[q] != None) )
+                {
                     FiredRockets[p].Flock[i % 2] = FiredRockets[q];
-					i++;
-				}	
-			bCurl = !bCurl;
-			if ( Level.NetMode != NM_DedicatedServer )
-				FiredRockets[p].SetTimer(0.1, true);
-		}
-	}
+                    i++;
+                }    
+            bCurl = !bCurl;
+            if ( Level.NetMode != NM_DedicatedServer )
+                FiredRockets[p].SetTimer(0.1, true);
+        }
+    }
 }
 
 /**

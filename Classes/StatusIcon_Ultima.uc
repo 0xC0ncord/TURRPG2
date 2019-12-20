@@ -4,26 +4,26 @@ var Ability_Ultima Ultima;
 
 function Tick(float dt)
 {
-	Ultima = Ability_Ultima(RPRI.GetAbility(class'Ability_Ultima'));
-	bShouldTick = (Ultima == None);
+    Ultima = Ability_Ultima(RPRI.GetAbility(class'Ability_Ultima'));
+    bShouldTick = (Ultima == None);
 }
 
 function bool IsVisible()
 {
-	return (
-		Ultima != None &&
-		Ultima.AbilityLevel >= 0 &&
-		Ultima.KillCount > 0
-	);
+    return (
+        Ultima != None &&
+        Ultima.AbilityLevel >= 0 &&
+        Ultima.KillCount > 0
+    );
 }
 
 function string GetText()
 {
-	return "";
+    return "";
 }
 
 defaultproperties
 {
-	IconMaterial=Texture'TURRPG2.StatusIcons.Ultima'
-	bShouldTick=True
+    IconMaterial=Texture'TURRPG2.StatusIcons.Ultima'
+    bShouldTick=True
 }

@@ -21,14 +21,14 @@ var array<RPGConfigAbility> ConfigAbilities;
 //Re-define structs because UnrealScript is extremely limited...
 struct AbilityStruct
 {
-	var class<RPGAbility> AbilityClass;
-	var int Level;
+    var class<RPGAbility> AbilityClass;
+    var int Level;
 };
 
 struct GrantItemStruct
 {
-	var int Level;
-	var class<Inventory> InventoryClass;
+    var int Level;
+    var class<Inventory> InventoryClass;
 };
 
 //Properties

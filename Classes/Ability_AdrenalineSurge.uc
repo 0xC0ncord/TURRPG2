@@ -38,16 +38,16 @@ function ScoreKill(Controller Killed, class<DamageType> DamageType)
 
 simulated function string DescriptionText()
 {
-	return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
+    return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
 }
 
 defaultproperties
 {
-	AbilityName="Adrenal Surge"
-	Description="For each level of this ability, you gain $1 more adrenaline from all kill related adrenaline bonuses."
-	StartingCost=10
-	CostAddPerLevel=0
-	MaxLevel=2
-	BonusPerLevel=0.500000
-	Category=class'AbilityCategory_Adrenaline'
+    AbilityName="Adrenal Surge"
+    Description="For each level of this ability, you gain $1 more adrenaline from all kill related adrenaline bonuses."
+    StartingCost=10
+    CostAddPerLevel=0
+    MaxLevel=2
+    BonusPerLevel=0.500000
+    Category=class'AbilityCategory_Adrenaline'
 }

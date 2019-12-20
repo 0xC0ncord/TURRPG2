@@ -18,8 +18,8 @@ simulated event PostBeginPlay() {
 
 simulated function SetBeamLocation()
 {
-	StartEffect = Source.Location;
-	SetLocation(StartEffect);
+    StartEffect = Source.Location;
+    SetLocation(StartEffect);
 }
 
 simulated function Vector SetBeamRotation() {
@@ -29,7 +29,7 @@ simulated function Vector SetBeamRotation() {
 
 simulated function bool CheckMaxEffectDistance(PlayerController P, vector SpawnLocation)
 {
-	return true;
+    return true;
 }
 
 //Rewrite
@@ -37,14 +37,14 @@ simulated function Tick(float dt)
 {
     local float LocDiff, RotDiff, WiggleMe;
     local Vector BeamDir;
-	
+    
     if(Role == ROLE_Authority && (Source == None))
     {
         Destroy();
         return;
     }
-	
-	// determine target location
+    
+    // determine target location
     if(LinkedPawn != None) {
         LinkedLocation = LinkedPawn.Location;
     }
@@ -65,11 +65,11 @@ simulated function Tick(float dt)
     mSpawnVecA = LinkedLocation;
     mWaveLockEnd = bLockedOn || (LinkColor > 0);
 
-    LocDiff			= VSize((Location - PrevLoc) * Vect(1,1,5));
-    RotDiff			= VSize(Vector(Rotation) - Vector(PrevRot));
-    WiggleMe		= FMax(LocDiff*0.02, RotDiff*4.0);
-    mWaveAmplitude	= FMax(1.0, mWaveAmplitude - mWaveAmplitude*1.0*dt);
-    mWaveAmplitude	= FMin(16.0, mWaveAmplitude + WiggleMe);
+    LocDiff            = VSize((Location - PrevLoc) * Vect(1,1,5));
+    RotDiff            = VSize(Vector(Rotation) - Vector(PrevRot));
+    WiggleMe        = FMax(LocDiff*0.02, RotDiff*4.0);
+    mWaveAmplitude    = FMax(1.0, mWaveAmplitude - mWaveAmplitude*1.0*dt);
+    mWaveAmplitude    = FMin(16.0, mWaveAmplitude + WiggleMe);
 
     PrevLoc = Location;
     PrevRot = Rotation;
@@ -79,8 +79,8 @@ defaultproperties
 {
     bReplicateInstigator=False
 
-	Skins(0)=FinalBlend'XEffectMat.LinkBeamGreenFB'
-	LifeSpan=0.5
+    Skins(0)=FinalBlend'XEffectMat.LinkBeamGreenFB'
+    LifeSpan=0.5
     LightHue=160
     mBendStrength=3.0
 }

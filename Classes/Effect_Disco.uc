@@ -8,9 +8,9 @@ var int OldSkill;
 
 state Activated
 {
-	function BeginState()
-	{
-		Super.BeginState();
+    function BeginState()
+    {
+        Super.BeginState();
         
         if(Bot(Instigator.Controller) != None) {
             Bot = Bot(Instigator.Controller);
@@ -28,10 +28,10 @@ state Activated
                 RPRI.NetUpdateTime = Level.TimeSeconds - 1;
             }
         }
-	}
+    }
 
-	function EndState()
-	{
+    function EndState()
+    {
         if(Bot != None) {
             Bot.Accuracy = OldAccuracy;
             Bot.CombatStyle = OldCombatStyle;
@@ -43,13 +43,13 @@ state Activated
             RPRI.NetUpdateTime = Level.TimeSeconds - 1;
         }
     
-		Super.EndState();
-	}
+        Super.EndState();
+    }
 }
 
 defaultproperties {
-	EffectOverlay=Combiner'TURRPG2.Overlays.DiscoCombiner'
-	//TODO: EffectSound=Sound'Slaughtersounds.Machinery.Heavy_End'
+    EffectOverlay=Combiner'TURRPG2.Overlays.DiscoCombiner'
+    //TODO: EffectSound=Sound'Slaughtersounds.Machinery.Heavy_End'
     
-	EffectMessageClass=class'EffectMessage_Disco'
+    EffectMessageClass=class'EffectMessage_Disco'
 }

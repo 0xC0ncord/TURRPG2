@@ -32,8 +32,8 @@ function ModifyPawn(Pawn Other) {
 }
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType) {
-	local Pawn HealMe;
-	local int HealthBonus, HealthGain;
+    local Pawn HealMe;
+    local int HealthBonus, HealthGain;
     local float Bonus, Vampire;
 
     if(!class'DevoidEffect_Vampire'.static.CanBeApplied(Injured, InstigatedBy.Controller)) {
@@ -100,16 +100,16 @@ simulated function string DescriptionText(){
 
 defaultproperties
 {
-	AbilityName="Vampirism"
-	Description="Whenever you damage an opponent, you are healed for $1 of the damage per level (up to your maximum health amount + $2$3). $5You cannot gain health from self-damage."
-	AbsoluteCapText=" or maximally +$4"
+    AbilityName="Vampirism"
+    Description="Whenever you damage an opponent, you are healed for $1 of the damage per level (up to your maximum health amount + $2$3). $5You cannot gain health from self-damage."
+    AbsoluteCapText=" or maximally +$4"
     VehicleText="When driving a vehicle, it will be repaired for $6 of the damage per level. "
-	StartingCost=10
-	CostAddPerLevel=5
-	MaxLevel=10
-	BonusPerLevel=0.05
+    StartingCost=10
+    CostAddPerLevel=5
+    MaxLevel=10
+    BonusPerLevel=0.05
     VehicleBonusPerLevel=0.05
-	HealthBonusMax=0.333333
-	HealthBonusAbsoluteCap=0
-	Category=class'AbilityCategory_Health'
+    HealthBonusMax=0.333333
+    HealthBonusAbsoluteCap=0
+    Category=class'AbilityCategory_Health'
 }

@@ -8,8 +8,8 @@ var ONSWeapon NewWeapon;
 var Artifact_ScorpionTurret Artifact;
 
 replication {
-	reliable if(Role == ROLE_Authority && bNetInitial)
-		Scorp, NewWeapon;
+    reliable if(Role == ROLE_Authority && bNetInitial)
+        Scorp, NewWeapon;
 }
 
 static function Sync_ScorpionTurret Sync(ONSRV Scorp, ONSWeapon NewWeapon) {
@@ -23,14 +23,14 @@ static function Sync_ScorpionTurret Sync(ONSRV Scorp, ONSWeapon NewWeapon) {
 }
 
 simulated function bool ClientFunction() {
-	if(Scorp == None || NewWeapon == None) {
-		return false;
-	} else {
+    if(Scorp == None || NewWeapon == None) {
+        return false;
+    } else {
         Scorp.Weapons[0] = NewWeapon;
         Scorp.AttachToBone(NewWeapon, 'ChainGunAttachment');
         Scorp.TeamChanged(); //force a skin re-load
-		return true;
-	}
+        return true;
+    }
 }
 
 function bool ShouldDestroy() {

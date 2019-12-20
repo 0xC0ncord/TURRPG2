@@ -5,13 +5,13 @@ var Interaction_Awareness Interaction;
 var array<Pawn> Enemies;
 
 replication {
-	reliable if(Role == ROLE_Authority)
-		ClientCreateInteraction;
+    reliable if(Role == ROLE_Authority)
+        ClientCreateInteraction;
 }
 
 simulated function ClientCreateInteraction()
 {
-	local PlayerController PC;
+    local PlayerController PC;
 
     if(Level.NetMode != NM_DedicatedServer) {
         if(Interaction == None) {
@@ -79,12 +79,12 @@ simulated event Destroyed() {
 }
 
 defaultproperties {
-	AbilityName="Awareness"
-	Description="Informs you of your enemies' health and shield."
-	LevelDescription(0)="At level 1, a health bar will be displayed above the heads of enemies."
-	LevelDescription(1)="At level 2, an additional shield bar will be displayed above the heads of enemies."
-	StartingCost=20
-	CostAddPerLevel=5
-	MaxLevel=2
-	Category=class'AbilityCategory_Misc'
+    AbilityName="Awareness"
+    Description="Informs you of your enemies' health and shield."
+    LevelDescription(0)="At level 1, a health bar will be displayed above the heads of enemies."
+    LevelDescription(1)="At level 2, an additional shield bar will be displayed above the heads of enemies."
+    StartingCost=20
+    CostAddPerLevel=5
+    MaxLevel=2
+    Category=class'AbilityCategory_Misc'
 }

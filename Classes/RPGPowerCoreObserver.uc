@@ -17,9 +17,9 @@ var int Stage;
 
 struct RPGScorerRecord
 {
-	var Controller C;
+    var Controller C;
     var RPGPlayerReplicationInfo RPRI;
-	var float Pct;
+    var float Pct;
 };
 
 var array<RPGScorerRecord> Scorers;

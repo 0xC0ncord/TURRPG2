@@ -2,10 +2,10 @@ class Artifact_ScorpionTurret extends RPGArtifact;
 
 struct ScorpionTurretStruct
 {
-	var class<ONSWeapon> TurretClass;
-	var string DisplayName;
-	var int Cost;
-	var int Cooldown;
+    var class<ONSWeapon> TurretClass;
+    var string DisplayName;
+    var int Cost;
+    var int Cooldown;
 };
 var config array<ScorpionTurretStruct> Turrets;
 
@@ -19,11 +19,11 @@ const MSG_Restriction = 0x1000;
 var localized string MsgRestriction, SelectionTitle;
 
 replication {
-	reliable if(Role == ROLE_Authority && bNetDirty)
+    reliable if(Role == ROLE_Authority && bNetDirty)
         PendingWeapon;
     
-	reliable if(Role == ROLE_Authority)
-		ClientPrepareWeaponSwitch, ClientReceiveTurret;
+    reliable if(Role == ROLE_Authority)
+        ClientPrepareWeaponSwitch, ClientReceiveTurret;
     
     unreliable if(Role < ROLE_Authority)
         ServerNotify;
@@ -31,24 +31,24 @@ replication {
 
 static function string GetMessageString(int Msg, optional int Value, optional Object Obj)
 {
-	switch(Msg)
-	{
-		case MSG_Restriction:
-			return default.MsgRestriction;
-	
-		default:
-			return Super.GetMessageString(Msg, Value, Obj);
-	}
+    switch(Msg)
+    {
+        case MSG_Restriction:
+            return default.MsgRestriction;
+    
+        default:
+            return Super.GetMessageString(Msg, Value, Obj);
+    }
 }
 
 function GiveTo(Pawn Other, optional Pickup Pickup)
 {
-	local int i;
+    local int i;
 
-	Super.GiveTo(Other, Pickup);
-	
-	for(i = 0; i < Turrets.Length; i++) {
-		ClientReceiveTurret(i, Turrets[i]);
+    Super.GiveTo(Other, Pickup);
+    
+    for(i = 0; i < Turrets.Length; i++) {
+        ClientReceiveTurret(i, Turrets[i]);
     }
 }
 
@@ -73,10 +73,10 @@ function bool CanActivate()
         CostPerSec = 0; //no cost until selection
     }
 
-	if(!Super.CanActivate())
-		return false;
-	
-	return true;
+    if(!Super.CanActivate())
+        return false;
+    
+    return true;
 }
 
 function bool DoEffect() {
@@ -159,28 +159,28 @@ function ServerNotify() {
 
 function OnSelection(int i)
 {
-	CostPerSec = Turrets[i].Cost;
-	Cooldown = Turrets[i].Cooldown;
-	SelectedType = Turrets[i].TurretClass;
+    CostPerSec = Turrets[i].Cost;
+    Cooldown = Turrets[i].Cooldown;
+    SelectedType = Turrets[i].TurretClass;
 }
 
 simulated function string GetSelectionTitle()
 {
-	return SelectionTitle;
+    return SelectionTitle;
 }
 
 simulated function int GetNumOptions()
 {
-	return Turrets.Length;
+    return Turrets.Length;
 }
 
 simulated function string GetOption(int i)
 {
-	return Turrets[i].DisplayName;
+    return Turrets[i].DisplayName;
 }
 
 simulated function int GetOptionCost(int i) {
-	return Turrets[i].Cost;
+    return Turrets[i].Cost;
 }
 
 function int SelectBestOption() {
@@ -205,21 +205,21 @@ function int SelectBestOption() {
 
 defaultproperties
 {
-	SelectionTitle="Pick a turret:"
-	MsgRestriction="You can only use this artifact inside a Scorpion."
+    SelectionTitle="Pick a turret:"
+    MsgRestriction="You can only use this artifact inside a Scorpion."
 
     bNetNotify=true
     
-	bSelection=true
+    bSelection=true
 
-	ArtifactID="ScorpionTurret"
-	Description="Switches the turret of your Scorpion."
-	ItemName="Scorpion Turret"
-	PickupClass=Class'ArtifactPickup_ScorpionTurret'
-	IconMaterial=Texture'TURRPG2.ArtifactIcons.ScorpTurret'
-	HudColor=(B=181,G=152,R=156)
-	CostPerSec=0
-	Cooldown=0
+    ArtifactID="ScorpionTurret"
+    Description="Switches the turret of your Scorpion."
+    ItemName="Scorpion Turret"
+    PickupClass=Class'ArtifactPickup_ScorpionTurret'
+    IconMaterial=Texture'TURRPG2.ArtifactIcons.ScorpTurret'
+    HudColor=(B=181,G=152,R=156)
+    CostPerSec=0
+    Cooldown=0
 
-	Turrets(0)=(TurretClass=class'Onslaught.ONSRVWebLauncher',DisplayName="Web Launcher",Cost=0,Cooldown=10)
+    Turrets(0)=(TurretClass=class'Onslaught.ONSRVWebLauncher',DisplayName="Web Launcher",Cost=0,Cooldown=10)
 }

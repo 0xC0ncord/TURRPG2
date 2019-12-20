@@ -7,39 +7,39 @@ value of this path to take a quick detour (usually 0, used when on route to dist
 */
 function float DetourWeight(Pawn Other,float PathWeight)
 {
-	if ( (Other.Controller.Enemy != None) && (Level.TimeSeconds - Other.Controller.LastSeenTime < 1) )
-		return 0;
-	
-	return 0.15/PathWeight;
+    if ( (Other.Controller.Enemy != None) && (Level.TimeSeconds - Other.Controller.LastSeenTime < 1) )
+        return 0;
+    
+    return 0.15/PathWeight;
 }
 
 event float BotDesireability(Pawn Bot)
 {
-	if(Bot.Controller.bHuntPlayer)
-		return 0;
+    if(Bot.Controller.bHuntPlayer)
+        return 0;
 
-	return MaxDesireability;
+    return MaxDesireability;
 }
 
 auto state Pickup
 {
-	function Touch( actor Other )
-	{
+    function Touch( actor Other )
+    {
         local Pawn P;
-		local RPGPlayerReplicationInfo RPRI;
+        local RPGPlayerReplicationInfo RPRI;
 
-		if ( ValidTouch(Other) ) 
-		{
-			P = Pawn(Other);
+        if ( ValidTouch(Other) ) 
+        {
+            P = Pawn(Other);
             RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
-			if(RPRI != None)
-			{
-				RPRI.AwardExperience(ExperienceAmount);
-				AnnouncePickup(P);
-				SetRespawn();
-			}
-		}
-	}
+            if(RPRI != None)
+            {
+                RPRI.AwardExperience(ExperienceAmount);
+                AnnouncePickup(P);
+                SetRespawn();
+            }
+        }
+    }
 }
 
 defaultproperties
@@ -54,7 +54,7 @@ defaultproperties
     CollisionHeight=23.000000
     Mass=10.000000
     Physics=PHYS_Rotating
-	RotationRate=(Yaw=24000)
+    RotationRate=(Yaw=24000)
     DrawScale=0.07
     PickupSound=sound'PickupSounds.AdrenelinPickup'
     PickupForce="AdrenelinPickup"  // jdf

@@ -92,10 +92,10 @@ function Died(Controller Killer, class<DamageType> damageType, vector HitLocatio
         C.Destroy();
     }
 
-	if(Killer != None) {
-		TriggerEvent(Event, Self, Killer.Pawn);
-	} else {
-		TriggerEvent(Event, Self, None);
+    if(Killer != None) {
+        TriggerEvent(Event, Self, Killer.Pawn);
+    } else {
+        TriggerEvent(Event, Self, None);
     }
     
     if(Icon != None) {
@@ -174,7 +174,7 @@ simulated event Destroyed() {
 
 defaultproperties {
     //Config
-	Radius=1024
+    Radius=1024
     Strength=500
     
     bEnableWalls=True
@@ -197,46 +197,46 @@ defaultproperties {
     TeamSkins[3]=Shader'TURRPG2.Totem.GoldShader'
     DeadSkin=Shader'cp_Evilmetal.plainmetal.cp_plainmet4_Shiny'
     
-	bAutoTurret=true
-	AutoTurretControllerClass=class'RPGTotemController'
+    bAutoTurret=true
+    AutoTurretControllerClass=class'RPGTotemController'
     
     //From ASVehicle_Sentinel
-	TransientSoundVolume=0.75
-	TransientSoundRadius=512
-	bNetNotify=true
+    TransientSoundVolume=0.75
+    TransientSoundRadius=512
+    bNetNotify=true
 
-	bSimulateGravity=false
-	AirSpeed=0.0
-	WaterSpeed=0.0
-	AccelRate=0.0
-	JumpZ=0.0
-	MaxFallSpeed=0.0
+    bSimulateGravity=false
+    AirSpeed=0.0
+    WaterSpeed=0.0
+    AccelRate=0.0
+    JumpZ=0.0
+    MaxFallSpeed=0.0
 
-	bIgnoreEncroachers=true
+    bIgnoreEncroachers=true
     bCollideWorld=false
     
-	bIgnoreForces=true
-	bShouldBaseAtStartup=false
-	bNonHumanControl=true
-	bDefensive=true
-	bStationary=true
-	VehicleNameString="Totem"
+    bIgnoreForces=true
+    bShouldBaseAtStartup=false
+    bNonHumanControl=true
+    bDefensive=true
+    bStationary=true
+    VehicleNameString="Totem"
     
     bNoTeamBeacon=true
 
     //From ASTurret
-	bPathColliding=true
+    bPathColliding=true
     
     RemoteRole=ROLE_SimulatedProxy
     
-	bSpecialCalcView=true
-	bSpecialHUD=true
+    bSpecialCalcView=true
+    bSpecialHUD=true
 
-	FPCamPos=(X=0,Y=0,Z=40)
+    FPCamPos=(X=0,Y=0,Z=40)
     
     AmbientGlow=64
 
-	bUseCylinderCollision=false
+    bUseCylinderCollision=false
     
     bRemoteControlled=true
     bDesiredBehindView=false

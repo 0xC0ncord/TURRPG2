@@ -10,7 +10,7 @@ static function string GetString(
     optional Object OptionalObject
     )
 {
-	return RelatedPRI_1.PlayerName $ ":" @ default.RoleText[Switch];
+    return RelatedPRI_1.PlayerName $ ":" @ default.RoleText[Switch];
 }
 
 defaultproperties {

@@ -1,5 +1,5 @@
 class DamTypeUltima extends RPGDamageType
-	abstract;
+    abstract;
 
 defaultproperties {
     StatWeapon=class'DummyWeapon_Ultima'

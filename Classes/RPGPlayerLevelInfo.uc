@@ -7,23 +7,23 @@ var float Experience;
 
 replication
 {
-	reliable if(Role == ROLE_Authority && bNetInitial)
-		PRI;
+    reliable if(Role == ROLE_Authority && bNetInitial)
+        PRI;
 
-	unreliable if(Role == ROLE_Authority && bNetDirty)
-		RPGLevel, Experience, ExpNeeded;
+    unreliable if(Role == ROLE_Authority && bNetDirty)
+        RPGLevel, Experience, ExpNeeded;
 }
 
 static function RPGPlayerLevelInfo GetFor(PlayerReplicationInfo OwnerPRI)
 {
-	local RPGPlayerLevelInfo PLI;
+    local RPGPlayerLevelInfo PLI;
 
-	foreach OwnerPRI.DynamicActors(class'RPGPlayerLevelInfo', PLI)
-	{
-		if(PLI.PRI == OwnerPRI)
-			return PLI;
-	}
-	return None;
+    foreach OwnerPRI.DynamicActors(class'RPGPlayerLevelInfo', PLI)
+    {
+        if(PLI.PRI == OwnerPRI)
+            return PLI;
+    }
+    return None;
 }
 
 defaultproperties

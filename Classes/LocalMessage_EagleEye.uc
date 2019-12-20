@@ -11,12 +11,12 @@ static function string GetString(optional int Switch,optional PlayerReplicationI
 
 defaultproperties
 {
-	DeathMessage="Eagle Eye!"
-	bIsUnique=True
-	bFadeMessage=True
-	Lifetime=5
-	DrawColor=(B=0,G=0)
-	StackMode=SM_Down
-	PosY=0.100000
-	FontSize=2
+    DeathMessage="Eagle Eye!"
+    bIsUnique=True
+    bFadeMessage=True
+    Lifetime=5
+    DrawColor=(B=0,G=0)
+    StackMode=SM_Down
+    PosY=0.100000
+    FontSize=2
 }

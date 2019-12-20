@@ -17,7 +17,7 @@ var config int MinHealth; //cannot drain below this
 
 replication {
     reliable if(Role == ROLE_Authority)
-		ClientReceivePoisonConfig;
+        ClientReceivePoisonConfig;
 }
 
 function SendConfig() {
@@ -34,29 +34,29 @@ simulated function ClientReceivePoisonConfig(int a, int b) {
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-	local Effect_Poison Poison;
+    local Effect_Poison Poison;
 
-	Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
+    Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
-	Identify();
+    Identify();
 
-	Poison = Effect_Poison(class'Effect_Poison'.static.Create(Injured, InstigatedBy.Controller, PoisonLifespan, Modifier));
-	if(Poison != None)
-	{
-		Poison.PoisonMode = EPoisonMode(PoisonMode);
-		Poison.BasePercentage = BasePercentage;
-		Poison.Curve = Curve;
-		Poison.AbsDrainPerLevel = AbsDrainPerLevel;
-		Poison.PercDrainPerLevel = PercDrainPerLevel;
-		Poison.MinHealth = MinHealth;
-		Poison.Start();
-	}
+    Poison = Effect_Poison(class'Effect_Poison'.static.Create(Injured, InstigatedBy.Controller, PoisonLifespan, Modifier));
+    if(Poison != None)
+    {
+        Poison.PoisonMode = EPoisonMode(PoisonMode);
+        Poison.BasePercentage = BasePercentage;
+        Poison.Curve = Curve;
+        Poison.AbsDrainPerLevel = AbsDrainPerLevel;
+        Poison.PercDrainPerLevel = PercDrainPerLevel;
+        Poison.MinHealth = MinHealth;
+        Poison.Start();
+    }
 }
 
 simulated function BuildDescription()
 {
-	Super.BuildDescription();
-	AddToDescription(PoisonText);
+    Super.BuildDescription();
+    AddToDescription(PoisonText);
     
     if(EPoisonMode(PoisonMode) == PM_Absolute) {
         AddToDescription(Repl(PoisonAbsText, "$1", Modifier * AbsDrainPerLevel));
@@ -65,20 +65,20 @@ simulated function BuildDescription()
 
 defaultproperties
 {
-	PoisonText="poisons targets"
-	PoisonAbsText="$1 health/s"
-	PoisonLifespan=5
-	MinModifier=1
-	MaxModifier=5
-	ModifierOverlay=Shader'XGameShaders.PlayerShaders.LinkHit'
-	PatternPos="Poisonous $W"
-	PoisonMode=PM_Curve
-	
+    PoisonText="poisons targets"
+    PoisonAbsText="$1 health/s"
+    PoisonLifespan=5
+    MinModifier=1
+    MaxModifier=5
+    ModifierOverlay=Shader'XGameShaders.PlayerShaders.LinkHit'
+    PatternPos="Poisonous $W"
+    PoisonMode=PM_Curve
+    
     BasePercentage=0.05
     Curve=1.25
-	AbsDrainPerLevel=2
-	PercDrainPerLevel=0.10
-	MinHealth=10
-	//AI
-	AIRatingBonus=0.075
+    AbsDrainPerLevel=2
+    PercDrainPerLevel=0.10
+    MinHealth=10
+    //AI
+    AIRatingBonus=0.075
 }

@@ -4,58 +4,58 @@ var bool bKillNow;
 
 replication
 {
-	reliable if (bNetDirty && Role == ROLE_Authority)
-		bKillNow;
+    reliable if (bNetDirty && Role == ROLE_Authority)
+        bKillNow;
 }
 
 function BeginPlay()
 {
-	Super.BeginPlay();
+    Super.BeginPlay();
 
-	if (Instigator == None)
-		Destroy();
-	else if (Level.NetMode != NM_DedicatedServer)
-		SetOffsets();
+    if (Instigator == None)
+        Destroy();
+    else if (Level.NetMode != NM_DedicatedServer)
+        SetOffsets();
 }
 
 simulated function PostBeginPlay()
 {
-	Super.PostBeginPlay();
+    Super.PostBeginPlay();
 
-	if (Level.NetMode != NM_DedicatedServer)
-	{
-		Emitters[0].InitialDelay = FRand();
-		Emitters[1].InitialDelay = FRand();
-	}
+    if (Level.NetMode != NM_DedicatedServer)
+    {
+        Emitters[0].InitialDelay = FRand();
+        Emitters[1].InitialDelay = FRand();
+    }
 }
 
 simulated function PostNetReceive()
 {
-	if (bKillNow)
-		Kill();
-	else if (Instigator != None)
-		SetOffsets();
+    if (bKillNow)
+        Kill();
+    else if (Instigator != None)
+        SetOffsets();
 }
 
 simulated function SetOffsets()
 {
-	Instigator.PlayAnim('Jump_Mid');
-	Emitters[0].StartLocationOffset = Instigator.GetBoneCoords('lfoot').Origin - Instigator.Location;
-	Emitters[1].StartLocationOffset = Instigator.GetBoneCoords('rfoot').Origin - Instigator.Location;
+    Instigator.PlayAnim('Jump_Mid');
+    Emitters[0].StartLocationOffset = Instigator.GetBoneCoords('lfoot').Origin - Instigator.Location;
+    Emitters[1].StartLocationOffset = Instigator.GetBoneCoords('rfoot').Origin - Instigator.Location;
 }
 
 simulated function Kill()
 {
-	Super.Kill();
-	bKillNow = true;
+    Super.Kill();
+    bKillNow = true;
 
-	if (Level.NetMode == NM_DedicatedServer)
-		SetTimer(3, false);
+    if (Level.NetMode == NM_DedicatedServer)
+        SetTimer(3, false);
 }
 
 function Timer()
 {
-	Destroy();
+    Destroy();
 }
 
 defaultproperties

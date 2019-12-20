@@ -5,7 +5,7 @@ static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictemHealt
 {
     HitEffects[0] = class'HitSmoke';
     if (Rand(25) > VictemHealth)
-	HitEffects[1] = class'HitFlame';
+    HitEffects[1] = class'HitFlame';
 }
 
 defaultproperties {

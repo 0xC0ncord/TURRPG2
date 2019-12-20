@@ -1,8 +1,8 @@
 /*
-	Code base taken from mcgRPG - original author unknown.
+    Code base taken from mcgRPG - original author unknown.
 */
 class FriendlyTurretController extends ASSentinelController
-	config(TURRPG2);
+    config(TURRPG2);
 
 var Controller Master; //player who spawned this turret
 var RPGPlayerReplicationInfo MasterRPRI;
@@ -18,24 +18,24 @@ var FriendlyPawnReplicationInfo FPRI;
 
 event PostBeginPlay()
 {
-	Super.PostBeginPlay();
-	FPRI = Spawn(class'FriendlyPawnReplicationInfo');
+    Super.PostBeginPlay();
+    FPRI = Spawn(class'FriendlyPawnReplicationInfo');
 }
 
 function SetMaster(Controller NewMaster) {
-	Master = NewMaster;
+    Master = NewMaster;
     MasterRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Master);
-	FPRI.Master = Master.PlayerReplicationInfo;
+    FPRI.Master = Master.PlayerReplicationInfo;
     
-	if(Master.PlayerReplicationInfo != None && Master.PlayerReplicationInfo.Team != None) {
-		TeamNum = Master.PlayerReplicationInfo.Team.TeamIndex;
-	} else {
-		TeamNum = 255;
+    if(Master.PlayerReplicationInfo != None && Master.PlayerReplicationInfo.Team != None) {
+        TeamNum = Master.PlayerReplicationInfo.Team.TeamIndex;
+    } else {
+        TeamNum = 255;
     }
 }
 
 simulated function int GetTeamNum() {
-	return TeamNum;
+    return TeamNum;
 }
 
 function Possess(Pawn aPawn)
@@ -52,7 +52,7 @@ function Possess(Pawn aPawn)
         //TODO possibly modify fire rate
     }
     
-	Enable('Tick');
+    Enable('Tick');
 }
 
 function InitializeSkill(int x) {
@@ -70,7 +70,7 @@ event Tick(float dt) {
         return;
     }
 
-	//if I don't have a master or he switched teams, I should die
+    //if I don't have a master or he switched teams, I should die
     if(
         Master == None ||
         Master.PlayerReplicationInfo == None ||
@@ -102,28 +102,28 @@ state Searching
         Super.EndState();
     }
 
-	function ScanRotation() {
-		local Rotator OldDesired;
+    function ScanRotation() {
+        local Rotator OldDesired;
 
-		if(Pawn == None || Pawn.Controller != Self || Pawn.bPendingDelete)
-		{
-			Destroy();
-			return;
-		}
+        if(Pawn == None || Pawn.Controller != Self || Pawn.bPendingDelete)
+        {
+            Destroy();
+            return;
+        }
 
-		if(ASTurret_LinkTurret(Pawn) == None)
-		{
-			Super(TurretController).ScanRotation();
-			return;
-		}
+        if(ASTurret_LinkTurret(Pawn) == None)
+        {
+            Super(TurretController).ScanRotation();
+            return;
+        }
 
-		OldDesired = DesiredRotation;
-		DesiredRotation = ASTurret_LinkTurret(Pawn).OriginalRotation;
-		DesiredRotation.Yaw = DesiredRotation.Yaw + 8192;
+        OldDesired = DesiredRotation;
+        DesiredRotation = ASTurret_LinkTurret(Pawn).OriginalRotation;
+        DesiredRotation.Yaw = DesiredRotation.Yaw + 8192;
 
-		if((DesiredRotation.Yaw & 65535) == (OldDesired.Yaw & 65535))
-			DesiredRotation.Yaw -= 16384;
-	}
+        if((DesiredRotation.Yaw & 65535) == (OldDesired.Yaw & 65535))
+            DesiredRotation.Yaw -= 16384;
+    }
     
     event Tick(float dt) {
         local Pawn P;
@@ -140,28 +140,28 @@ state Searching
             }
         }
     }
-	
+    
     Begin:
-		ScanRotation();
-		FocalPoint = Pawn.Location + 1000 * vector(DesiredRotation);
-		Sleep(GetScanDelay());
-		Goto('Begin');
+        ScanRotation();
+        FocalPoint = Pawn.Location + 1000 * vector(DesiredRotation);
+        Sleep(GetScanDelay());
+        Goto('Begin');
 }
 
 state Closing {
-	event Tick(float dt) {
+    event Tick(float dt) {
         Global.Tick(dt);
     }
 }
 
 state Opening {
-	event Tick(float dt) {
+    event Tick(float dt) {
         Global.Tick(dt);
     }
 }
 
 state Engaged {
-	event Tick(float dt) {
+    event Tick(float dt) {
         Global.Tick(dt);
     }
 }
@@ -181,11 +181,11 @@ auto state Sleeping {
         }
     }
 
-	function Awake() {
-		LastRotation = Rotation;
-		ASVehicle_Sentinel(Pawn).Awake();
-		GotoState('Opening');
-	}
+    function Awake() {
+        LastRotation = Rotation;
+        ASVehicle_Sentinel(Pawn).Awake();
+        GotoState('Opening');
+    }
 }
 
 function bool IsSpawnCampProtecting() {

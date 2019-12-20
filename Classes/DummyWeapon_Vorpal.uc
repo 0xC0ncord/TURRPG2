@@ -1,9 +1,9 @@
 //Dummy weapon to track kills in the "F3 stats"
 class DummyWeapon_Vorpal extends Weapon
-	HideDropDown
-	CacheExempt;
-	
+    HideDropDown
+    CacheExempt;
+    
 defaultproperties
 {
-	ItemName="Vorpal Effect"
+    ItemName="Vorpal Effect"
 }

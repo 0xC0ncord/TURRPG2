@@ -6,18 +6,18 @@ var localized string ProjSpeedText;
 
 static function bool AllowedFor(class<Weapon> WeaponType, Pawn Other)
 {
-	local int x;
-	
-	if(!Super.AllowedFor(WeaponType, Other))
-		return false;
+    local int x;
+    
+    if(!Super.AllowedFor(WeaponType, Other))
+        return false;
 
-	for(x = 0; x < ArrayCount(WeaponType.default.FireModeClass); x++)
-	{
-		if (class<ProjectileFire>(WeaponType.default.FireModeClass[x]) != None)
-			return true;
-	}
+    for(x = 0; x < ArrayCount(WeaponType.default.FireModeClass); x++)
+    {
+        if (class<ProjectileFire>(WeaponType.default.FireModeClass[x]) != None)
+            return true;
+    }
 
-	return false;
+    return false;
 }
 
 function RPGTick(float dt) {
@@ -46,21 +46,21 @@ function RPGTick(float dt) {
 
 simulated function BuildDescription()
 {
-	Super.BuildDescription();
-	AddToDescription(ProjSpeedText, BonusPerLevel);
+    Super.BuildDescription();
+    AddToDescription(ProjSpeedText, BonusPerLevel);
 }
 
 defaultproperties
 {
-	DamageBonus=0.040000
-	BonusPerLevel=0.200000
-	ProjSpeedText="$1 projectile speed"
-	MinModifier=-4
-	MaxModifier=10
+    DamageBonus=0.040000
+    BonusPerLevel=0.200000
+    ProjSpeedText="$1 projectile speed"
+    MinModifier=-4
+    MaxModifier=10
     bCanHaveZeroModifier=False
-	ModifierOverlay=Shader'XGameShaders.PlayerShaders.PlayerTransRed'
-	PatternPos="$W of Force"
-	PatternNeg="$W of Slow Motion"
-	//AI
-	AIRatingBonus=0.000000
+    ModifierOverlay=Shader'XGameShaders.PlayerShaders.PlayerTransRed'
+    PatternPos="$W of Force"
+    PatternNeg="$W of Slow Motion"
+    //AI
+    AIRatingBonus=0.000000
 }

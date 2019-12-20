@@ -16,37 +16,37 @@ var float DenyPatientTime;
 
 function YellAt(Pawn Moron)
 {
-	//don't yell if being healed
-	if(class'WeaponModifier_Heal'.static.GetFor(Moron.Weapon) == None)
-	{
-		Super(xBot).YellAt(Moron);
-	}
+    //don't yell if being healed
+    if(class'WeaponModifier_Heal'.static.GetFor(Moron.Weapon) == None)
+    {
+        Super(xBot).YellAt(Moron);
+    }
 }
 
 function bool AllowVoiceMessage(name MessageType)
 {
-	return Super(xBot).AllowVoiceMessage(MessageType);
+    return Super(xBot).AllowVoiceMessage(MessageType);
 }
 
 event SeeMonster(Pawn Seen)
 {
-	if(FriendlyMonsterController(Seen.Controller) != None &&
+    if(FriendlyMonsterController(Seen.Controller) != None &&
         (FriendlyMonsterController(Seen.Controller).Master == Self || SameTeamAs(Seen.Controller)))
     {
-		return; //nevermind friendly monster
+        return; //nevermind friendly monster
     }
 
-	Super(xBot).SeeMonster(Seen);
+    Super(xBot).SeeMonster(Seen);
 }
 
 function StopFiring()
 {
-	Super.StopFiring();
+    Super.StopFiring();
 }
 
 function ChooseAttackMode()
 {
-	Super.ChooseAttackMode();
+    Super.ChooseAttackMode();
 }
 
 function float RelativeStrength(Pawn Other) {
@@ -60,16 +60,16 @@ function float RelativeStrength(Pawn Other) {
 //called by RPGONSAVRiLRocket
 function IncomingMissile(Projectile P)
 {
-	local Inventory Inv;
+    local Inventory Inv;
 
-	if(Pawn != None)
-	{
-		for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
-		{
-			if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
-				RPGArtifact(Inv).BotIncomingMissile(Self, P);
-		}
-	}
+    if(Pawn != None)
+    {
+        for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+        {
+            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+                RPGArtifact(Inv).BotIncomingMissile(Self, P);
+        }
+    }
 }
 
 event Tick(float dt) {
@@ -92,18 +92,18 @@ function AnnounceRole(PlayerController PC) {
 
 function ExecuteWhatToDoNext()
 {
-	local Inventory Inv;
+    local Inventory Inv;
 
-	Super.ExecuteWhatToDoNext();
-	
-	if(Pawn != None)
-	{
-		for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
-		{
-			if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
-				RPGArtifact(Inv).BotWhatNext(Self);
-		}
-	}
+    Super.ExecuteWhatToDoNext();
+    
+    if(Pawn != None)
+    {
+        for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+        {
+            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+                RPGArtifact(Inv).BotWhatNext(Self);
+        }
+    }
     
     if(Patient != None) {
         if(GetOrders() != 'Follow') {
@@ -149,7 +149,7 @@ function bool Medicare(Pawn P) {
 
 function FightEnemy(bool bCanCharge, float EnemyStrength)
 {
-	local Inventory Inv;
+    local Inventory Inv;
     
     if(
         Monster(Enemy) != None &&
@@ -163,50 +163,50 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
         return;
     }
 
-	Super.FightEnemy(bCanCharge, EnemyStrength);
-	
-	for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
-	{
-		if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
-			RPGArtifact(Inv).BotFightEnemy(Self);
-	}
+    Super.FightEnemy(bCanCharge, EnemyStrength);
+    
+    for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+    {
+        if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+            RPGArtifact(Inv).BotFightEnemy(Self);
+    }
 }
 
 function bool LoseEnemy()
 {
-	local Inventory Inv;
+    local Inventory Inv;
 
-	if(Super.LoseEnemy())
-	{
-		for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
-		{
-			if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
-				RPGArtifact(Inv).BotLoseEnemy(Self);
-		}
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+    if(Super.LoseEnemy())
+    {
+        for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+        {
+            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+                RPGArtifact(Inv).BotLoseEnemy(Self);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 function Possess(Pawn aPawn)
 {
-	Super.Possess(aPawn);
+    Super.Possess(aPawn);
 }
 
 function NotifyTakeHit(pawn InstigatedBy, vector HitLocation, int Damage, class<DamageType> damageType, vector Momentum)
 {
-	Super.NotifyTakeHit(InstigatedBy, HitLocation, Damage, damageType, Momentum);
-	
-	if(InstigatedBy != None)
-	{
-		LastDamageTypeSuffered = damageType;
-		
-		if(class<WeaponDamageType>(damageType) != None)
-			LastModifierSuffered = class'RPGWeaponModifier'.static.GetFor(InstigatedBy.Weapon);
-	}
+    Super.NotifyTakeHit(InstigatedBy, HitLocation, Damage, damageType, Momentum);
+    
+    if(InstigatedBy != None)
+    {
+        LastDamageTypeSuffered = damageType;
+        
+        if(class<WeaponDamageType>(damageType) != None)
+            LastModifierSuffered = class'RPGWeaponModifier'.static.GetFor(InstigatedBy.Weapon);
+    }
 }
 
 simulated function float RateWeapon(Weapon w)

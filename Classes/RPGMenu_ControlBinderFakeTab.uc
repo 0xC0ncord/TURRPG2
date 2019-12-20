@@ -2,18 +2,18 @@ class RPGMenu_ControlBinderFakeTab extends RPGMenu_TabPage;
 
 function ShowPanel(bool bShow)
 {
-	if(bShow)
-		Controller.OpenMenu("TURRPG2.RPGMenu_ControlBinder");
+    if(bShow)
+        Controller.OpenMenu("TURRPG2.RPGMenu_ControlBinder");
 
-	Super.ShowPanel(bShow);
+    Super.ShowPanel(bShow);
 }
 
 function CloseMenu()
 {
-	RPGMenu.RPRI.Interaction.CheckBindings();
+    RPGMenu.RPRI.Interaction.CheckBindings();
 }
 
 defaultproperties
 {
-	WinHeight=0.700000
+    WinHeight=0.700000
 }

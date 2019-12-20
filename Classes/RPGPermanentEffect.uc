@@ -1,9 +1,9 @@
 /*
-	Optimized for effects with an infinite duration
+    Optimized for effects with an infinite duration
 */
 class RPGPermanentEffect extends RPGEffect abstract;
 
 defaultproperties
 {
-	bPermanent=True
+    bPermanent=True
 }

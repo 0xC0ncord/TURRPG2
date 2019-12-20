@@ -1,5 +1,5 @@
 class ArtifactBase_PlusXModifier extends ArtifactBase_WeaponMaker
-	abstract
+    abstract
     HideDropDown;
 
 var config int X;
@@ -12,27 +12,27 @@ var localized string MsgMustBeMaxed, MsgAlreadyHigher, MsgUnableToModify;
 
 static function string GetMessageString(int Msg, optional int Value, optional Object Obj)
 {
-	switch(Msg)
-	{
-		case MSG_UnableToModify:
-			return default.MsgUnableToModify;
-			
-		case MSG_AlreadyHigher:
-			return default.MsgAlreadyHigher;
-			
-		case MSG_MustBeMaxed:
-			return default.MsgMustBeMaxed;
-	
-		default:
-			return Super.GetMessageString(Msg, Value, Obj);
-	}
+    switch(Msg)
+    {
+        case MSG_UnableToModify:
+            return default.MsgUnableToModify;
+            
+        case MSG_AlreadyHigher:
+            return default.MsgAlreadyHigher;
+            
+        case MSG_MustBeMaxed:
+            return default.MsgMustBeMaxed;
+    
+        default:
+            return Super.GetMessageString(Msg, Value, Obj);
+    }
 }
 
 function bool CanActivate()
 {
     local RPGWeaponModifier WM;
     
-	if(Instigator.Weapon != None) {
+    if(Instigator.Weapon != None) {
         WM = class'RPGWeaponModifier'.static.GetFor(Instigator.Weapon);
         if(WM == None || WM.MinModifier == WM.MaxModifier) {
             Msg(MSG_UnableToModify);
@@ -46,22 +46,22 @@ function bool CanActivate()
             Msg(MSG_AlreadyHigher);
             return false;
         }
-	}
-	else {
-		Msg(MSG_UnableToModify);
-		return false;
-	}
+    }
+    else {
+        Msg(MSG_UnableToModify);
+        return false;
+    }
 
-	return Super.CanActivate();
+    return Super.CanActivate();
 }
 
 state Activated
 {
-	function bool DoEffect()
-	{
+    function bool DoEffect()
+    {
         local RPGWeaponModifier WM;
     
-		if(OldWeapon != None) {
+        if(OldWeapon != None) {
             WM = class'RPGWeaponModifier'.static.GetFor(Instigator.Weapon);
             if(WM != None) {
                 WM.SetModifier(WM.MaxModifier + X, true);
@@ -70,21 +70,21 @@ state Activated
                 Msg(MSG_UnableToModify);
                 return false;
             }
-		}
-		else {
-			Msg(MSG_UnableToModify);
-			return false;
-		}
-	}
+        }
+        else {
+            Msg(MSG_UnableToModify);
+            return false;
+        }
+    }
 }
 
 defaultproperties
 {
-	MsgMustBeMaxed="Your weapon must be at MAX magic in order to modify it."
-	MsgAlreadyHigher="Your weapon is already higher than MAX magic."
-	MsgUnableToModify="Unable to modify your weapon."
-	CostPerSec=150
-	MinActivationTime=1.000000
-	HudColor=(G=0)
-	bCanBeTossed=False
+    MsgMustBeMaxed="Your weapon must be at MAX magic in order to modify it."
+    MsgAlreadyHigher="Your weapon is already higher than MAX magic."
+    MsgUnableToModify="Unable to modify your weapon."
+    CostPerSec=150
+    MinActivationTime=1.000000
+    HudColor=(G=0)
+    bCanBeTossed=False
 }

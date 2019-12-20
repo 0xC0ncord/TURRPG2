@@ -37,7 +37,7 @@ function PostRender(Canvas C) {
     
     FarAwayInv = 1.0f / TeamBeaconMaxDist;
 
-	for(i = 0; i < Ability.Teammates.Length; i++) {
+    for(i = 0; i < Ability.Teammates.Length; i++) {
         P = Ability.Teammates[i];
         if(IsPawnVisible(C, P, ScreenPos, Dist)) {
             ScaledDist = TeamBeaconMaxDist * FClamp(0.04f * P.CollisionRadius, 1.0f, 2.0f);
@@ -46,12 +46,12 @@ function PostRender(Canvas C) {
                 continue;
             }
 
-			if(Dist > ScaledDist) {
+            if(Dist > ScaledDist) {
                 ScreenPos.Z = 0;
                 if(VSize(ScreenPos) * VSize(ScreenPos) > 0.02f * Dist * Dist) {
                     continue;
                 }
-			}
+            }
             
             //Beacon scale
             Scale = FClamp(0.28f * (ScaledDist - Dist) / ScaledDist, 0.1f, 0.25f);

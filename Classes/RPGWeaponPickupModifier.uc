@@ -25,14 +25,14 @@ static function RPGWeaponPickupModifier Modify(WeaponPickup WP, RPGWeaponModifie
 }
 
 static function RPGWeaponPickupModifier GetFor(WeaponPickup WP) {
-	local RPGWeaponPickupModifier WPM;
+    local RPGWeaponPickupModifier WPM;
 
-	if(WP != None)
-	{
-		foreach WP.ChildActors(class'RPGWeaponPickupModifier', WPM)
-			return WPM;
-	}
-	return None;
+    if(WP != None)
+    {
+        foreach WP.ChildActors(class'RPGWeaponPickupModifier', WPM)
+            return WPM;
+    }
+    return None;
 }
 
 static function SimulateWeaponPickup(WeaponPickup Pickup, Pawn Other, class<RPGWeaponModifier> ModifierClass, int ModifierLevel, bool bIdentify, optional bool bForceGive) {

@@ -3,7 +3,7 @@ class RPGTotemIcon extends Actor abstract;
 defaultproperties {
     bFixedRotationDir=True
     Physics=PHYS_Rotating
-	RotationRate=(Yaw=24000)
+    RotationRate=(Yaw=24000)
 
     bAlwaysRelevant=True
     NetUpdateFrequency=1

@@ -5,13 +5,13 @@ var float NoAmmoTime;
 
 /*
 function WeaponFire(byte Mode) {
-	Identify();
+    Identify();
 }
 
 function RPGTick(float dt)
 {
-	//TODO: Find a way for ballistic weapons
-	Weapon.MaxOutAmmo();
+    //TODO: Find a way for ballistic weapons
+    Weapon.MaxOutAmmo();
 }
 */
 
@@ -80,33 +80,33 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 }
 
 function int GetMaxHealthBonus() {
-	local Ability_Medic LM;
+    local Ability_Medic LM;
 
-	if(RPRI != None)
-	{
-		LM = Ability_Medic(RPRI.GetOwnedAbility(class'Ability_Medic'));
-		if(LM != None)
-			return LM.GetHealMax();
-	}
-	
-	return Super.GetMaxHealthBonus();
+    if(RPRI != None)
+    {
+        LM = Ability_Medic(RPRI.GetOwnedAbility(class'Ability_Medic'));
+        if(LM != None)
+            return LM.GetHealMax();
+    }
+    
+    return Super.GetMaxHealthBonus();
 }
 
 simulated function BuildDescription() {
-	Super.BuildDescription();
-	//AddToDescription(class'WeaponModifier_Infinity'.default.InfAmmoText);
+    Super.BuildDescription();
+    //AddToDescription(class'WeaponModifier_Infinity'.default.InfAmmoText);
 }
 
 defaultproperties {
-	HealText="$1 healing, ammo refund"
-	bOmitModifierInName=True
+    HealText="$1 healing, ammo refund"
+    bOmitModifierInName=True
 
-	bAllowForSpecials=False
-	bCanThrow=False
+    bAllowForSpecials=False
+    bCanThrow=False
 
-	MinModifier=5
-	MaxModifier=5
-	AIRatingBonus=0.100000
-	//PatternPos="Medic $W of Infinity"
-	PatternPos="Medic $W"
+    MinModifier=5
+    MaxModifier=5
+    AIRatingBonus=0.100000
+    //PatternPos="Medic $W of Infinity"
+    PatternPos="Medic $W"
 }

@@ -5,44 +5,44 @@ var automated GUITabControl Tabs;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
-	local int i;
-	
-	Super.InitComponent(MyController, MyOwner);
+    local int i;
+    
+    Super.InitComponent(MyController, MyOwner);
 
-	for(i = 0; i < Panels.Length; i++)
-	{
-		//Prepend package name to class name
-		Panels[i].ClassName = "TURRPG2." $ Panels[i].ClassName;
-		Tabs.AddTabItem(Panels[i]);
-	}
+    for(i = 0; i < Panels.Length; i++)
+    {
+        //Prepend package name to class name
+        Panels[i].ClassName = "TURRPG2." $ Panels[i].ClassName;
+        Tabs.AddTabItem(Panels[i]);
+    }
 }
 
 function InitMenu()
 {
-	local int i;
-	
-	for(i = 0; i < Tabs.Controls.Length; i++)
-	{
-		RPGMenu_TabPage(Tabs.Controls[i]).RPGMenu = RPGMenu;
-		RPGMenu_TabPage(Tabs.Controls[i]).InitMenu();
-	}
+    local int i;
+    
+    for(i = 0; i < Tabs.Controls.Length; i++)
+    {
+        RPGMenu_TabPage(Tabs.Controls[i]).RPGMenu = RPGMenu;
+        RPGMenu_TabPage(Tabs.Controls[i]).InitMenu();
+    }
 }
 
 function CloseMenu()
 {
-	local int i;
+    local int i;
 
-	for(i = 0; i < Tabs.Controls.Length; i++)
-		RPGMenu_TabPage(Tabs.Controls[i]).CloseMenu();
+    for(i = 0; i < Tabs.Controls.Length; i++)
+        RPGMenu_TabPage(Tabs.Controls[i]).CloseMenu();
 }
 
 defaultproperties
 {
-	Panels(0)=(ClassName="RPGMenu_Settings",Caption="HUD",Hint="Customize TURRPG HUD features.")
-	Panels(1)=(ClassName="RPGMenu_Artifacts",Caption="Artifacts",Hint="Customize the order of artifacts.")
-	Panels(2)=(ClassName="RPGMenu_ControlBinderFakeTab",Caption="Keys",Hint="Change RPG related key bindings.")
+    Panels(0)=(ClassName="RPGMenu_Settings",Caption="HUD",Hint="Customize TURRPG HUD features.")
+    Panels(1)=(ClassName="RPGMenu_Artifacts",Caption="Artifacts",Hint="Customize the order of artifacts.")
+    Panels(2)=(ClassName="RPGMenu_ControlBinderFakeTab",Caption="Keys",Hint="Change RPG related key bindings.")
 
-	Begin Object Class=GUITabControl Name=RPGMenuTC
+    Begin Object Class=GUITabControl Name=RPGMenuTC
         WinWidth=1.0
         WinLeft=0
         WinTop=0
@@ -53,7 +53,7 @@ defaultproperties
         bBoundToParent=true
         bScaleToParent=true
         bFillSpace=True
-		BackgroundStyleName="TabBackground"
-	End Object
+        BackgroundStyleName="TabBackground"
+    End Object
     Tabs=GUITabControl'RPGMenuTC'
 }

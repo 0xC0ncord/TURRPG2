@@ -2,10 +2,10 @@ class Artifact_SummonMonster extends ArtifactBase_Summon;
 
 struct MonsterTypeStruct
 {
-	var class<Monster> MonsterClass;
-	var string DisplayName;
-	var int Cost;
-	var int Cooldown;
+    var class<Monster> MonsterClass;
+    var string DisplayName;
+    var int Cost;
+    var int Cooldown;
 };
 var config array<MonsterTypeStruct> MonsterTypes;
 
@@ -15,30 +15,30 @@ var localized string MsgMaxMonsters, SelectionTitle;
 
 replication
 {
-	reliable if(Role == ROLE_Authority)
-		ClientReceiveMonsterType;
+    reliable if(Role == ROLE_Authority)
+        ClientReceiveMonsterType;
 }
 
 static function string GetMessageString(int Msg, optional int Value, optional Object Obj)
 {
-	switch(Msg)
-	{
-		case MSG_MaxMonsters:
-			return default.MsgMaxMonsters;
-	
-		default:
-			return Super.GetMessageString(Msg, Value, Obj);
-	}
+    switch(Msg)
+    {
+        case MSG_MaxMonsters:
+            return default.MsgMaxMonsters;
+    
+        default:
+            return Super.GetMessageString(Msg, Value, Obj);
+    }
 }
 
 function GiveTo(Pawn Other, optional Pickup Pickup)
 {
-	local int i;
+    local int i;
 
-	Super.GiveTo(Other, Pickup);
-	
-	for(i = 0; i < MonsterTypes.Length; i++) {
-		ClientReceiveMonsterType(i, MonsterTypes[i]);
+    Super.GiveTo(Other, Pickup);
+    
+    for(i = 0; i < MonsterTypes.Length; i++) {
+        ClientReceiveMonsterType(i, MonsterTypes[i]);
     }
 }
 
@@ -54,66 +54,66 @@ simulated function ClientReceiveMonsterType(int i, MonsterTypeStruct M)
 
 function bool CanActivate()
 {
-	if(SelectedOption < 0)
-		CostPerSec = 0; //no cost until selection
+    if(SelectedOption < 0)
+        CostPerSec = 0; //no cost until selection
 
-	if(!Super.CanActivate())
-		return false;
-	
-	if(InstigatorRPRI.Monsters.Length >= InstigatorRPRI.MaxMonsters)
-	{
-		Msg(MSG_MaxMonsters);
-		return false;
-	}
-	
-	return true;
+    if(!Super.CanActivate())
+        return false;
+    
+    if(InstigatorRPRI.Monsters.Length >= InstigatorRPRI.MaxMonsters)
+    {
+        Msg(MSG_MaxMonsters);
+        return false;
+    }
+    
+    return true;
 }
 
 function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator SpawnRot)
 {
-	local FriendlyMonsterController C;
-	local Monster M;
-	
-	M = Monster(Super.SpawnActor(SpawnClass, SpawnLoc, SpawnRot));
-	if(M != None)
-	{
-		if(M.Controller != None)
-			M.Controller.Destroy();
+    local FriendlyMonsterController C;
+    local Monster M;
+    
+    M = Monster(Super.SpawnActor(SpawnClass, SpawnLoc, SpawnRot));
+    if(M != None)
+    {
+        if(M.Controller != None)
+            M.Controller.Destroy();
 
-		C = Spawn(class'FriendlyMonsterController',,, SpawnLoc, Instigator.Rotation);
-		C.Possess(M);
-		C.SetMaster(Instigator.Controller);
-		
-		if(InstigatorRPRI != None)
-			InstigatorRPRI.AddMonster(M);
-	}
-	return M;
+        C = Spawn(class'FriendlyMonsterController',,, SpawnLoc, Instigator.Rotation);
+        C.Possess(M);
+        C.SetMaster(Instigator.Controller);
+        
+        if(InstigatorRPRI != None)
+            InstigatorRPRI.AddMonster(M);
+    }
+    return M;
 }
 
 function OnSelection(int i)
 {
-	CostPerSec = MonsterTypes[i].Cost;
-	Cooldown = MonsterTypes[i].Cooldown;
-	SpawnActorClass = MonsterTypes[i].MonsterClass;
+    CostPerSec = MonsterTypes[i].Cost;
+    Cooldown = MonsterTypes[i].Cooldown;
+    SpawnActorClass = MonsterTypes[i].MonsterClass;
 }
 
 simulated function string GetSelectionTitle()
 {
-	return SelectionTitle;
+    return SelectionTitle;
 }
 
 simulated function int GetNumOptions()
 {
-	return MonsterTypes.Length;
+    return MonsterTypes.Length;
 }
 
 simulated function string GetOption(int i)
 {
-	return MonsterTypes[i].DisplayName;
+    return MonsterTypes[i].DisplayName;
 }
 
 simulated function int GetOptionCost(int i) {
-	return MonsterTypes[i].Cost;
+    return MonsterTypes[i].Cost;
 }
 
 function int SelectBestOption() {
@@ -138,22 +138,22 @@ function int SelectBestOption() {
 
 defaultproperties
 {
-	SelectionTitle="Pick a monster to summon:"
-	MsgMaxMonsters="You cannot spawn any more monsters at this time."
+    SelectionTitle="Pick a monster to summon:"
+    MsgMaxMonsters="You cannot spawn any more monsters at this time."
 
-	bSelection=true
+    bSelection=true
 
-	ArtifactID="MonsterSummon"
-	Description="Summons a friendly monster of your choice."
-	ItemName="Summoning Charm"
-	PickupClass=Class'ArtifactPickup_MonsterSummon'
-	IconMaterial=Texture'TURRPG2.ArtifactIcons.MonsterSummon'
-	HudColor=(B=96,G=64,R=192)
-	CostPerSec=0
-	Cooldown=0
+    ArtifactID="MonsterSummon"
+    Description="Summons a friendly monster of your choice."
+    ItemName="Summoning Charm"
+    PickupClass=Class'ArtifactPickup_MonsterSummon'
+    IconMaterial=Texture'TURRPG2.ArtifactIcons.MonsterSummon'
+    HudColor=(B=96,G=64,R=192)
+    CostPerSec=0
+    Cooldown=0
 
-	MonsterTypes(0)=(MonsterClass=class'SkaarjPack.SkaarjPupae',DisplayName="Skaarj Pupae",Cost=10,Cooldown=5)
-	MonsterTypes(1)=(MonsterClass=class'SkaarjPack.Krall',DisplayName="Krall",Cost=25,Cooldown=5)
-	MonsterTypes(2)=(MonsterClass=class'SkaarjPack.Brute',DisplayName="Brute",Cost=50,Cooldown=5)
-	MonsterTypes(3)=(MonsterClass=class'SkaarjPack.Warlord',DisplayName="Warlord",Cost=75,Cooldown=10)
+    MonsterTypes(0)=(MonsterClass=class'SkaarjPack.SkaarjPupae',DisplayName="Skaarj Pupae",Cost=10,Cooldown=5)
+    MonsterTypes(1)=(MonsterClass=class'SkaarjPack.Krall',DisplayName="Krall",Cost=25,Cooldown=5)
+    MonsterTypes(2)=(MonsterClass=class'SkaarjPack.Brute',DisplayName="Brute",Cost=50,Cooldown=5)
+    MonsterTypes(3)=(MonsterClass=class'SkaarjPack.Warlord',DisplayName="Warlord",Cost=75,Cooldown=10)
 }

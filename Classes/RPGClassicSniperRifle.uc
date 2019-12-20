@@ -1,6 +1,6 @@
 class RPGClassicSniperRifle extends ClassicSniperRifle
-	HideDropDown
-	CacheExempt;
+    HideDropDown
+    CacheExempt;
 
 //client-side for stealth
 var float BarCharge;

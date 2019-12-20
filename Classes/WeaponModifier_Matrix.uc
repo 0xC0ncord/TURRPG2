@@ -30,28 +30,28 @@ simulated function BuildDescription()
 {
     local float Multiplier;
 
-	Super.BuildDescription();
+    Super.BuildDescription();
     
     Multiplier = FMin(1 - SLOWDOWN_CAP, BonusPerLevel * float(Modifier));
-	AddToDescription(Repl(MatrixText, "$1", class'Util'.static.FormatPercent(Multiplier)));
+    AddToDescription(Repl(MatrixText, "$1", class'Util'.static.FormatPercent(Multiplier)));
 }
 
 defaultproperties
 {
-	MatrixText="$1 enemy projectile slowdown"
-	DamageBonus=0.03
-	
-	MatrixRadius=768
-	BonusPerLevel=0.20
+    MatrixText="$1 enemy projectile slowdown"
+    DamageBonus=0.03
+    
+    MatrixRadius=768
+    BonusPerLevel=0.20
 
-	MinModifier=1
-	MaxModifier=4
-	ModifierOverlay=ColorModifier'TURRPG2.Matrix.MatrixColorModifier'
-	PatternPos="Matrix $W"
-	//AI
-	AIRatingBonus=0.025000
-	CountersDamage(0)=class'DamTypeFlakChunk'
-	CountersDamage(1)=class'DamTypeFlakShell'
-	CountersDamage(2)=class'DamTypeRocket'
-	CountersDamage(3)=class'DamTypeRocketHoming'
+    MinModifier=1
+    MaxModifier=4
+    ModifierOverlay=ColorModifier'TURRPG2.Matrix.MatrixColorModifier'
+    PatternPos="Matrix $W"
+    //AI
+    AIRatingBonus=0.025000
+    CountersDamage(0)=class'DamTypeFlakChunk'
+    CountersDamage(1)=class'DamTypeFlakShell'
+    CountersDamage(2)=class'DamTypeRocket'
+    CountersDamage(3)=class'DamTypeRocketHoming'
 }

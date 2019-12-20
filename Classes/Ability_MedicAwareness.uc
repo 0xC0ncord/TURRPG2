@@ -5,13 +5,13 @@ var Interaction_MedicAwareness Interaction;
 var array<Pawn> Teammates;
 
 replication {
-	reliable if(Role == ROLE_Authority)
-		ClientCreateInteraction;
+    reliable if(Role == ROLE_Authority)
+        ClientCreateInteraction;
 }
 
 simulated function ClientCreateInteraction()
 {
-	local PlayerController PC;
+    local PlayerController PC;
 
     if(Level.NetMode != NM_DedicatedServer) {
         if(Interaction == None) {
@@ -79,10 +79,10 @@ simulated event Destroyed() {
 }
 
 defaultproperties {
-	AbilityName="Medic Awareness"
-	Description="Informs you of your teammates' current health by displaying a team-colored health bar above their heads."
-	StartingCost=20
-	CostAddPerLevel=5
-	MaxLevel=1
-	Category=class'AbilityCategory_Medic'
+    AbilityName="Medic Awareness"
+    Description="Informs you of your teammates' current health by displaying a team-colored health bar above their heads."
+    StartingCost=20
+    CostAddPerLevel=5
+    MaxLevel=1
+    Category=class'AbilityCategory_Medic'
 }

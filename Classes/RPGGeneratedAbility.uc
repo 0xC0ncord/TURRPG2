@@ -4,8 +4,8 @@ class RPGGeneratedAbility extends RPGAbility abstract;
 var RPGConfigAbility Module;
 
 replication {
-	reliable if(Role == ROLE_Authority)
-		ClientReceiveAbilityInfo, ClientReceiveLevelDescription;
+    reliable if(Role == ROLE_Authority)
+        ClientReceiveAbilityInfo, ClientReceiveLevelDescription;
 }
 
 function ServerRequestConfig() {

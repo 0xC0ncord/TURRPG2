@@ -33,7 +33,7 @@ function PostRender(Canvas C) {
     
     FarAwayInv = 1.0f / TeamBeaconMaxDist;
 
-	for(i = 0; i < Ability.Enemies.Length; i++) {
+    for(i = 0; i < Ability.Enemies.Length; i++) {
         P = Ability.Enemies[i];
         if(IsPawnVisible(C, P, ScreenPos, Dist)) {
             ScaledDist = TeamBeaconMaxDist * FClamp(0.04f * P.CollisionRadius, 1.0f, 2.0f);

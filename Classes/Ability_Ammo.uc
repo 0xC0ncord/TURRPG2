@@ -38,21 +38,21 @@ function ModifyGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out i
 
 function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> DamageType, vector HitLocation, bool bAlreadyPrevented)
 {
-	bSuicided = (Killed.Controller == Killer || Killed.Controller == None);
+    bSuicided = (Killed.Controller == Killer || Killed.Controller == None);
 
-	return Super.PreventDeath(Killed, Killer, DamageType, HitLocation, bAlreadyPrevented);
+    return Super.PreventDeath(Killed, Killer, DamageType, HitLocation, bAlreadyPrevented);
 }
 
 simulated function string DescriptionText() {
-	return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
+    return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
 }
 
 defaultproperties {
-	AbilityName="Arsenal"
-	StatName="Ammo Bonus"
-	Description="Increases the ammunition for any weapon at spawn by $1 per level. If the weapon is re-granted from Denial or similar and its ammo count is below that value, it will be stocked up to it.||This ability has no effect if you suicided in your previous spawn."
-	MaxLevel=10
-	StartingCost=5
-	BonusPerLevel=0.05
-	Category=class'AbilityCategory_Weapons'
+    AbilityName="Arsenal"
+    StatName="Ammo Bonus"
+    Description="Increases the ammunition for any weapon at spawn by $1 per level. If the weapon is re-granted from Denial or similar and its ammo count is below that value, it will be stocked up to it.||This ability has no effect if you suicided in your previous spawn."
+    MaxLevel=10
+    StartingCost=5
+    BonusPerLevel=0.05
+    Category=class'AbilityCategory_Weapons'
 }

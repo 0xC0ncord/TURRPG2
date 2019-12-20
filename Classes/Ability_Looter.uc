@@ -9,7 +9,7 @@ var config int MaxExpPickups;
 var int ExpPickups;
 
 function ModifyPawn(Pawn Other) {
-	Super.ModifyPawn(Other);
+    Super.ModifyPawn(Other);
     
     ExpPickups = 0; //reset
 }
@@ -17,8 +17,8 @@ function ModifyPawn(Pawn Other) {
 function ScoreKill(Controller Killed, class<DamageType> DamageType) {
     local array<class<Pickup> > Potentials;
     local int i, k, Num;
-	local Pickup Pickup;
-	local Pawn Victim;
+    local Pickup Pickup;
+    local Pawn Victim;
     local xPawn X;
     local Inventory Inv;
     local Weapon W;
@@ -26,9 +26,9 @@ function ScoreKill(Controller Killed, class<DamageType> DamageType) {
     if(FRand() < (1 - LootChance)) {
         return;
     }
-	
-	Victim = Killed.Pawn;
-	if(Victim != None && Victim.IsA('xPawn')) {
+    
+    Victim = Killed.Pawn;
+    if(Victim != None && Victim.IsA('xPawn')) {
         if(ExpPickups < MaxExpPickups) {
             Potentials[Potentials.Length] = class'ExperiencePickup';
         }
@@ -109,26 +109,26 @@ function ScoreKill(Controller Killed, class<DamageType> DamageType) {
                 }
             }
         }
-	}
+    }
 }
 
 defaultproperties {
-	AbilityName="Looter"
-	Description="If you kill somebody, your victim will drop more powerful pickups each level."
+    AbilityName="Looter"
+    Description="If you kill somebody, your victim will drop more powerful pickups each level."
     LevelDescription(0)="At level 1, your victims will drop single health vials, adrenaline pills or experience pickups."
     LevelDescription(1)="At level 2, there is a chance that your victims will drop health packs and ammo as needed."
     LevelDescription(2)="At level 3, there is a chance that your victims will drop shield packs as needed, as well as a chance to drop a UDamage or cause a pinata effect."
-	MaxLevel=3
-	BonusPerLevel=1
+    MaxLevel=3
+    BonusPerLevel=1
     PinataChance=0.05
     PinataMin=6
     PinataMax=12
     UDamageChance=0.15
     LootChance=0.67
     MaxExpPickups=5 //per life
-	bUseLevelCost=true
-	LevelCost(0)=15
-	LevelCost(1)=15
+    bUseLevelCost=true
+    LevelCost(0)=15
+    LevelCost(1)=15
     LevelCost(2)=10
-	Category=class'AbilityCategory_Misc'
+    Category=class'AbilityCategory_Misc'
 }

@@ -6,7 +6,7 @@ var config int SelfHealingCap;
 var config float SelfHealingMultiplier;
 
 static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier) {
-	if(!Other.IsA('Vehicle') && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0)) {
+    if(!Other.IsA('Vehicle') && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0)) {
         return false;
     }
 
@@ -36,52 +36,52 @@ function HealPassengers(Vehicle V) {
 
 function DoEffect()
 {
-	local Pawn Healer;
+    local Pawn Healer;
 
-	if(Instigator.IsA('Vehicle'))
-	{
-		HealPassengers(Vehicle(Instigator));
-		return; //don't heal the vehicle itself
-	}
-	
-	if(EffectCauser != None) {
-		Healer = EffectCauser.Pawn;
+    if(Instigator.IsA('Vehicle'))
+    {
+        HealPassengers(Vehicle(Instigator));
+        return; //don't heal the vehicle itself
+    }
+    
+    if(EffectCauser != None) {
+        Healer = EffectCauser.Pawn;
         
         if(Healer.IsA('Vehicle')) {
             Healer = Vehicle(Healer).Driver;
         }
     }
-	
-	if(Healer == Instigator && HealAmount > SelfHealingCap)
-		HealAmount = Max(1, int(float(HealAmount) * SelfHealingMultiplier));
-	
-	Instigator.GiveHealth(HealAmount, Instigator.HealthMax + Modifier);
-	
-	//Possibly grant experience
-	if(
-		Healer != None &&
-		Healer != Instigator &&
-		FriendlyMonsterController(Instigator.Controller) == None
-	)
-	{
+    
+    if(Healer == Instigator && HealAmount > SelfHealingCap)
+        HealAmount = Max(1, int(float(HealAmount) * SelfHealingMultiplier));
+    
+    Instigator.GiveHealth(HealAmount, Instigator.HealthMax + Modifier);
+    
+    //Possibly grant experience
+    if(
+        Healer != None &&
+        Healer != Instigator &&
+        FriendlyMonsterController(Instigator.Controller) == None
+    )
+    {
         class'Util'.static.DoHealableDamage(Healer, Instigator, HealAmount);
-	}
+    }
 }
 
 defaultproperties
 {
-	HealAmount=10
-	Modifier=0 //max bonus
-	
-	SelfHealingCap=0
-	SelfHealingMultiplier=0.25
-	
-	bHarmful=False
+    HealAmount=10
+    Modifier=0 //max bonus
+    
+    SelfHealingCap=0
+    SelfHealingMultiplier=0.25
+    
+    bHarmful=False
     bAllowOnEnemies=False
 
-	EffectOverlay=Shader'TURRPG2.Overlays.BlueShader'
-	EffectSound=Sound'TURRPG2.SoundEffects.Heal'
-	xEmitterClass=class'FX_Heal'
-	
-	EffectMessageClass=class'EffectMessage_Heal'
+    EffectOverlay=Shader'TURRPG2.Overlays.BlueShader'
+    EffectSound=Sound'TURRPG2.SoundEffects.Heal'
+    xEmitterClass=class'FX_Heal'
+    
+    EffectMessageClass=class'EffectMessage_Heal'
 }

@@ -1,10 +1,10 @@
 /*
-	Generic effect class.
-	Used for Poison, Freeze, Null Entropy, etc...
+    Generic effect class.
+    Used for Poison, Freeze, Null Entropy, etc...
 */
 class RPGEffect extends Inventory
-	config(TURRPG2)
-	abstract;
+    config(TURRPG2)
+    abstract;
 
 //Immunity
 var config array<class<Pawn> > ImmunePawnTypes;
@@ -57,16 +57,16 @@ var float EffectLimitInterval; //to avoid sounds and effects being spammed like 
 
 replication
 {
-	reliable if(Role == ROLE_Authority && bNetDirty)
-		Duration, EffectCauser;
+    reliable if(Role == ROLE_Authority && bNetDirty)
+        Duration, EffectCauser;
 }
 
 static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier)
 {
     local GameInfo Game;
-	local int i;
-	local RPGPlayerReplicationInfo RPRI;
-	local RPGWeaponModifier WM;
+    local int i;
+    local RPGPlayerReplicationInfo RPRI;
+    local RPGWeaponModifier WM;
     local array<RPGArtifact> ActiveArtifacts;
     local bool bSelf, bSameTeam;
     
@@ -77,12 +77,12 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         return false;
     }
 
-	//Stacking
-	if(!default.bAllowStacking && GetFor(Other) != None) {
-		return false;
+    //Stacking
+    if(!default.bAllowStacking && GetFor(Other) != None) {
+        return false;
     }
 
-	//Spawn Protection
+    //Spawn Protection
     if(
         default.bHarmful &&
         Other.Level.TimeSeconds <= Other.SpawnTime + DeathMatch(Game).SpawnProtectionTime)
@@ -90,7 +90,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         return false;
     }
 
-	//Self
+    //Self
     bSelf = (Causer != None && Causer == Other.Controller);
     
     if(!default.bAllowOnSelf && bSelf) {
@@ -106,7 +106,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         }
     }
 
-	//Teammates
+    //Teammates
     if(!bSelf && bSameTeam) {
         if(!default.bAllowOnTeammates) {
             return false;
@@ -117,7 +117,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         }
     }
     
-	//Vehicles
+    //Vehicles
     if(Other.IsA('Vehicle')) {
         if(!default.bAllowOnVehicles) {
             return false;
@@ -133,12 +133,12 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         return false;
     }
 
-	//Immune pawn types
+    //Immune pawn types
     if(class'Util'.static.InArray(Other.class, default.ImmunePawnTypes) >= 0) {
         return false;
     }
 
-	//Flag carriers
+    //Flag carriers
     if(
         !default.bAllowOnFlagCarriers &&
         Other.PlayerReplicationInfo != None &&
@@ -148,7 +148,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         return false;
     }
 
-	//Weapon Modifier
+    //Weapon Modifier
     WM = class'RPGWeaponModifier'.static.GetFor(Other.Weapon);
     if(WM != None && !WM.AllowEffect(default.class, Causer, Duration, Modifier)) {
         return false;
@@ -179,85 +179,85 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
 
 static function RPGEffect Create(Pawn Other, optional Controller Causer, optional float OverrideDuration, optional float NewModifier)
 {
-	local RPGEffect Effect;
-	
-	if(CanBeApplied(Other, Causer, OverrideDuration, NewModifier))
-	{
-		Effect = GetFor(Other);
-		if(Effect != None)
-		{
-			//Update
-			Effect.Stop();
-			
-			Effect.EffectCauser = Causer;
-			
-			if(OverrideDuration > 0)
-				Effect.Duration = Max(Effect.Duration, OverrideDuration);
-			
-			if(NewModifier > Effect.Modifier)
-				Effect.Modifier = NewModifier;
-		}
-		else
-		{
-			//Create
-			Effect = Other.Spawn(default.class, Other);
-			Effect.GiveTo(Other);
-			
-			if(Effect != None)
-			{
-				Effect.EffectCauser = Causer;
-			
-				if(OverrideDuration > 0.0f)
-					Effect.Duration = OverrideDuration;
-				
-				if(NewModifier > Effect.Modifier)
-					Effect.Modifier = NewModifier;
-			}
-		}
-	}
-	
-	return Effect;
+    local RPGEffect Effect;
+    
+    if(CanBeApplied(Other, Causer, OverrideDuration, NewModifier))
+    {
+        Effect = GetFor(Other);
+        if(Effect != None)
+        {
+            //Update
+            Effect.Stop();
+            
+            Effect.EffectCauser = Causer;
+            
+            if(OverrideDuration > 0)
+                Effect.Duration = Max(Effect.Duration, OverrideDuration);
+            
+            if(NewModifier > Effect.Modifier)
+                Effect.Modifier = NewModifier;
+        }
+        else
+        {
+            //Create
+            Effect = Other.Spawn(default.class, Other);
+            Effect.GiveTo(Other);
+            
+            if(Effect != None)
+            {
+                Effect.EffectCauser = Causer;
+            
+                if(OverrideDuration > 0.0f)
+                    Effect.Duration = OverrideDuration;
+                
+                if(NewModifier > Effect.Modifier)
+                    Effect.Modifier = NewModifier;
+            }
+        }
+    }
+    
+    return Effect;
 }
 
 static function RemoveAll(Pawn Other)
 {
-	local Inventory Inv;
-	local RPGEffect Effect;
-	
-	Inv = Other.Inventory;
-	while(Inv != None)
-	{
-		Effect = RPGEffect(Inv);
-		Inv = Inv.Inventory;
-		
-		if(Effect != None)
-			Effect.Destroy();
-	}
+    local Inventory Inv;
+    local RPGEffect Effect;
+    
+    Inv = Other.Inventory;
+    while(Inv != None)
+    {
+        Effect = RPGEffect(Inv);
+        Inv = Inv.Inventory;
+        
+        if(Effect != None)
+            Effect.Destroy();
+    }
 }
 
 static function Remove(Pawn Other)
 {
-	local Inventory Inv;
-	
-	Inv = Other.FindInventoryType(default.class);
-	if(Inv != None)
-		Inv.Destroy();
+    local Inventory Inv;
+    
+    Inv = Other.FindInventoryType(default.class);
+    if(Inv != None)
+        Inv.Destroy();
 }
 
 static function RPGEffect GetFor(Pawn Other)
 {
-	local RPGEffect Effect;
-	
-	Effect = RPGEffect(Other.FindInventoryType(default.class));
-	if(Effect != None && Effect.IsInState('Activated'))
-		return Effect;
-	else
-		return None;
+    local RPGEffect Effect;
+    
+    Effect = RPGEffect(Other.FindInventoryType(default.class));
+    if(Effect != None && Effect.IsInState('Activated'))
+        return Effect;
+    else
+        return None;
 }
 
 function Start()
 {
-	GotoState('Activated');
+    GotoState('Activated');
 }
 
 function Stop();
@@ -266,43 +266,43 @@ function DisplayEffect();
 
 function bool ShouldDisplayEffect()
 {
-	return true;
+    return true;
 }
 
 state Activated
 {
-	function DisplayEffect()
-	{
-		local PlayerReplicationInfo CauserPRI;
-		
-		if(Level.TimeSeconds - LastEffectTime >= EffectLimitInterval)
-		{
-			if(EffectCauser != None)
-				CauserPRI = EffectCauser.PlayerReplicationInfo;
+    function DisplayEffect()
+    {
+        local PlayerReplicationInfo CauserPRI;
+        
+        if(Level.TimeSeconds - LastEffectTime >= EffectLimitInterval)
+        {
+            if(EffectCauser != None)
+                CauserPRI = EffectCauser.PlayerReplicationInfo;
 
-			if(EffectMessageClass != None)
-				Instigator.ReceiveLocalizedMessage(EffectMessageClass, 0, Instigator.PlayerReplicationInfo, CauserPRI);
+            if(EffectMessageClass != None)
+                Instigator.ReceiveLocalizedMessage(EffectMessageClass, 0, Instigator.PlayerReplicationInfo, CauserPRI);
 
-			if(xEmitterClass != None)
-				Instigator.Spawn(xEmitterClass, Instigator);
-		}
-		
-		LastEffectTime = Level.TimeSeconds;
-	}
+            if(xEmitterClass != None)
+                Instigator.Spawn(xEmitterClass, Instigator);
+        }
+        
+        LastEffectTime = Level.TimeSeconds;
+    }
 
-	function BeginState()
-	{
+    function BeginState()
+    {
         local RPGPlayerReplicationInfo RPRI;
     
-		if(ShouldDisplayEffect())
-		{
+        if(ShouldDisplayEffect())
+        {
             Instigator.PlaySound(EffectSound, SLOT_Misc, 1.0,, 768);
-			
-			if(EffectOverlay != None)
-				class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, Duration, false);
-			
-			DisplayEffect();
-		}
+            
+            if(EffectOverlay != None)
+                class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, Duration, false);
+            
+            DisplayEffect();
+        }
         
         if(StatusIconClass != None) {
             RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
@@ -310,38 +310,38 @@ state Activated
                 RPRI.ClientCreateStatusIcon(StatusIconClass);
             }
         }
-		
-		LastStartTime = Level.TimeSeconds;
-		
-		if(Duration >= TimerInterval && TimerInterval > 0)
-			SetTimer(TimerInterval, true);
-	}
-	
-	function Timer()
-	{
-		if(ShouldDisplayEffect())
-			DisplayEffect();
-	}
-	
-	event Tick(float dt)
-	{
-		if(Instigator == None || Instigator.Health <= 0)
-		{
-			Destroy();
-			return;
-		}
-	
-		if(!bPermanent)
-		{
-			Duration -= dt;
-			
-			if(Duration <= 0)
-				Destroy();
-		}
-	}
-	
-	function EndState()
-	{
+        
+        LastStartTime = Level.TimeSeconds;
+        
+        if(Duration >= TimerInterval && TimerInterval > 0)
+            SetTimer(TimerInterval, true);
+    }
+    
+    function Timer()
+    {
+        if(ShouldDisplayEffect())
+            DisplayEffect();
+    }
+    
+    event Tick(float dt)
+    {
+        if(Instigator == None || Instigator.Health <= 0)
+        {
+            Destroy();
+            return;
+        }
+    
+        if(!bPermanent)
+        {
+            Duration -= dt;
+            
+            if(Duration <= 0)
+                Destroy();
+        }
+    }
+    
+    function EndState()
+    {
         local RPGPlayerReplicationInfo RPRI;
     
         if(StatusIconClass != None) {
@@ -351,15 +351,15 @@ state Activated
             }
         }
     
-		SetTimer(0, false);
-	}
-	
-	function Start();
-	
-	function Stop()
-	{
-		GotoState('');
-	}
+        SetTimer(0, false);
+    }
+    
+    function Start();
+    
+    function Stop()
+    {
+        GotoState('');
+    }
 }
 
 defaultproperties   {

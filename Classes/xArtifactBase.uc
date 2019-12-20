@@ -5,12 +5,12 @@ var() float RespawnTime;
 
 simulated event PostBeginPlay()
 {
-	if(ArtifactType != None)
-		PowerUp = ArtifactType.default.PickupClass;
+    if(ArtifactType != None)
+        PowerUp = ArtifactType.default.PickupClass;
 
     Super.PostBeginPlay();
-	
-	SetLocation(Location + vect(0, 0, -1));
+    
+    SetLocation(Location + vect(0, 0, -1));
 }
 
 function SpawnPickup() {
@@ -25,12 +25,12 @@ function SpawnPickup() {
 defaultproperties
 {
     RespawnTime=30.00
-	bDelayedSpawn=False
+    bDelayedSpawn=False
 
     DrawScale=0.8
     DrawType=DT_StaticMesh
     StaticMesh=StaticMesh'XGame_rc.AmmoChargerMesh'
-	SpiralEmitter=class'XEffects.Spiral'
+    SpiralEmitter=class'XEffects.Spiral'
 
     CollisionRadius=60.000000
     CollisionHeight=6.000000

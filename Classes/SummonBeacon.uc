@@ -10,66 +10,66 @@ var int Team;
 
 replication
 {
-	reliable if(Role == ROLE_Authority && bNetInitial)
-		Team;
+    reliable if(Role == ROLE_Authority && bNetInitial)
+        Team;
 }
 
 simulated event PostBeginPlay()
 {
-	Super.PostBeginPlay();
-	
-	if(Controller(Owner) != None)
-		Team = Controller(Owner).GetTeamNum();
-	else
-		Team = 255;
-	
-	SetSkin();
-	DesiredRotation = Rotation + RotAdd;
+    Super.PostBeginPlay();
+    
+    if(Controller(Owner) != None)
+        Team = Controller(Owner).GetTeamNum();
+    else
+        Team = 255;
+    
+    SetSkin();
+    DesiredRotation = Rotation + RotAdd;
 }
 
 simulated function SetSkin()
 {
-	if(Team >= 0 && Team <= 3)
-		Skins[2] = TeamSkin[Team];
+    if(Team >= 0 && Team <= 3)
+        Skins[2] = TeamSkin[Team];
 }
 
 simulated event PostNetBeginPlay()
 {
-	Super.PostNetBeginPlay();
-	SetSkin();
+    Super.PostNetBeginPlay();
+    SetSkin();
 }
 
 simulated event Tick(float dt)
 {
-	Super.Tick(dt);
-	DesiredRotation = Rotation + RotAdd; //keep rotating
+    Super.Tick(dt);
+    DesiredRotation = Rotation + RotAdd; //keep rotating
 }
 
 simulated event HitWall( vector HitNormal, actor Wall )
 {
-	Super.HitWall(HitNormal, Wall);
-	
-	if(!bPendingDelete)
-	{
-		RotAdd = rotator(-vector(RotAdd));
-		DesiredRotation = Rotation + RotAdd;
-		RotationRate = rotator(-0.7 * vector(RotationRate));
-	}
+    Super.HitWall(HitNormal, Wall);
+    
+    if(!bPendingDelete)
+    {
+        RotAdd = rotator(-vector(RotAdd));
+        DesiredRotation = Rotation + RotAdd;
+        RotationRate = rotator(-0.7 * vector(RotationRate));
+    }
 }
 
 defaultproperties
 {
-	StaticMesh=StaticMesh'TURRPG2.Pokeball.PokeballStatic' //oh my
+    StaticMesh=StaticMesh'TURRPG2.Pokeball.PokeballStatic' //oh my
     DrawScale=0.03125
-	
-	RotationRate=(Pitch=-49152,Yaw=0,Roll=0)
-	
-	RotAdd=(Pitch=-16384,Yaw=0,Roll=0);
-	
-	bRotateToDesired=true
-	
-	TeamSkin(0)=Combiner'TURRPG2.Pokeball.RedCombiner'
-	TeamSkin(1)=Combiner'TURRPG2.Pokeball.BlueCombiner'
-	TeamSkin(2)=Combiner'TURRPG2.Pokeball.GreenCombiner'
-	TeamSkin(3)=Combiner'TURRPG2.Pokeball.GoldCombiner'
+    
+    RotationRate=(Pitch=-49152,Yaw=0,Roll=0)
+    
+    RotAdd=(Pitch=-16384,Yaw=0,Roll=0);
+    
+    bRotateToDesired=true
+    
+    TeamSkin(0)=Combiner'TURRPG2.Pokeball.RedCombiner'
+    TeamSkin(1)=Combiner'TURRPG2.Pokeball.BlueCombiner'
+    TeamSkin(2)=Combiner'TURRPG2.Pokeball.GreenCombiner'
+    TeamSkin(3)=Combiner'TURRPG2.Pokeball.GoldCombiner'
 }

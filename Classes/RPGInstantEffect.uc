@@ -1,5 +1,5 @@
 /*
-	Optimized for effects without a duration
+    Optimized for effects without a duration
 */
 class RPGInstantEffect extends RPGEffect abstract;
 
@@ -7,17 +7,17 @@ function DoEffect();
 
 state Activated
 {
-	function BeginState()
-	{
-		Super.BeginState();
-		
-		DoEffect();
-	}
-	
-	function Timer()
-	{
-		Destroy();
-	}
+    function BeginState()
+    {
+        Super.BeginState();
+        
+        DoEffect();
+    }
+    
+    function Timer()
+    {
+        Destroy();
+    }
 }
 
 defaultproperties
