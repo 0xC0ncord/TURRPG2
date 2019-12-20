@@ -1,7 +1,6 @@
 //An ability a player can buy with stat points
 //Abilities are handled similarly to DamageTypes and LocalMessages (abstract to avoid replication)
-class RPGAbility extends Actor
-	config(TURRPG2);
+class RPGAbility extends Actor;
 
 var localized string
 	AndText, OrText, ReqPreText, ReqPostText,
@@ -15,29 +14,29 @@ var localized string AbilityName, StatName;
 var localized string Description;
 var localized array<string> LevelDescription;
 
-var config int StartingCost, CostAddPerLevel, MaxLevel;
-var config bool bUseLevelCost;
-var config array<int> LevelCost;
-var config array<int> RequiredLevels;
+var int StartingCost, CostAddPerLevel, MaxLevel;
+var bool bUseLevelCost;
+var array<int> LevelCost;
+var array<int> RequiredLevels;
 
 struct AbilityStruct
 {
 	var class<RPGAbility> AbilityClass;
 	var int Level;
 };
-var config bool bDisjunctiveRequirements; //true = logical OR, false = logical AND
-var config array<AbilityStruct> RequiredAbilities;
-var config array<AbilityStruct> ForbiddenAbilities;
+var bool bDisjunctiveRequirements; //true = logical OR, false = logical AND
+var array<AbilityStruct> RequiredAbilities;
+var array<AbilityStruct> ForbiddenAbilities;
 
 struct GrantItemStruct
 {
 	var int Level;
 	var class<Inventory> InventoryClass;
 };
-var config array<GrantItemStruct> GrantItem;
+var array<GrantItemStruct> GrantItem;
 
 //there is a bonus per level variable declared in so many abilities, I'm just moving it here
-var config float BonusPerLevel; //general purpose
+var float BonusPerLevel; //general purpose
 
 //Stats redux
 var bool bIsStat; //set internally
