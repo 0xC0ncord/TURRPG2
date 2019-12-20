@@ -1,4 +1,4 @@
-class FriendlyMonsterPickup extends TournamentPickUp config(TitanRPG) placeable;
+class FriendlyMonsterPickup extends TournamentPickUp config(TURRPG2) placeable;
 
 var() config array<class<Monster> > PossibleTypes;
 
@@ -69,7 +69,7 @@ defaultproperties {
     PickupSound=sound'PickupSounds.AdrenelinPickup'
     PickupForce="AdrenelinPickup"  // jdf
     DrawType=DT_StaticMesh
-    StaticMesh=StaticMesh'TitanRPG.Pokeball.PokeballStatic' //pokemans!
+    StaticMesh=StaticMesh'TURRPG2.Pokeball.PokeballStatic' //pokemans!
     ScaleGlow=0.6
     CullDistance=+5500.0
 }

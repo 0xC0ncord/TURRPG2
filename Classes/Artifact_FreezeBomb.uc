@@ -9,6 +9,6 @@ defaultproperties
 	ArtifactID="FreezeBomb"
 	Description="Immobilizes nearby enemies."
 	PickupClass=Class'ArtifactPickup_FreezeBomb'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.FreezeBomb'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.FreezeBomb'
 	ItemName="Freeze Bomb"
 }

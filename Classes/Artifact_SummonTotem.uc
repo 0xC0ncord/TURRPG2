@@ -150,7 +150,7 @@ defaultproperties
 	Description="Constructs a totem of your choice."
 	ItemName="Totem Constructor"
 	PickupClass=Class'ArtifactPickup_Totem'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Totem'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Totem'
 	HudColor=(B=96,G=96,R=192)
 	CostPerSec=0
 	Cooldown=0

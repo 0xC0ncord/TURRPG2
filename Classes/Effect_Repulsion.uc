@@ -8,6 +8,6 @@ defaultproperties
 	DamageType=class'DamTypeRepulsion'
 
 	EffectSound=None
-	EffectOverlay=Shader'TitanRPG.Overlays.RedShader'
+	EffectOverlay=Shader'TURRPG2.Overlays.RedShader'
 	EffectMessageClass=class'EffectMessage_Repulsion'
 }

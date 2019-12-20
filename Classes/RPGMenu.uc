@@ -24,7 +24,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	for(i = 0; i < Panels.Length; i++)
 	{
 		//Prepend package name to class name
-		Panels[i].ClassName = class'MutTitanRPG'.default.PackageName $ "." $ Panels[i].ClassName;
+		Panels[i].ClassName = class'MutTURRPG'.default.PackageName $ "." $ Panels[i].ClassName;
 		
 		Log("Adding tab:" @ Panels[i].ClassName, 'DEBUG');
 		Tabs.AddTabItem(Panels[i]);
@@ -83,7 +83,7 @@ defaultproperties
 	Panels(0)=(ClassName="RPGMenu_Character",Caption="Character",Hint="View your current character's statistics.")
 	Panels(1)=(ClassName="RPGMenu_Abilities",Caption="Buy",Hint="Distribute stat points and buy abilities.")
 	Panels(2)=(ClassName="RPGMenu_PlayerLevels",Caption="Player Levels",Hint="See the levels of the currently playing players.")
-	Panels(3)=(ClassName="RPGMenu_SettingsMaster",Caption="Settings",Hint="Customize TitanRPG features.")
+	Panels(3)=(ClassName="RPGMenu_SettingsMaster",Caption="Settings",Hint="Customize TURRPG features.")
 
 	bStats=False //should be left as default
 
@@ -113,5 +113,5 @@ defaultproperties
 	WinWidth=0.80
 	WinHeight=0.80
 
-	WindowTitle="TitanRPG Menu"
+	WindowTitle="TURRPG Menu"
 }

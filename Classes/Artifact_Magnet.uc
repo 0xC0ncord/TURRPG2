@@ -108,6 +108,6 @@ defaultproperties
 	ArtifactID="Magnet"
 	Description="Allows you to walk on walls."
 	PickupClass=Class'ArtifactPickup_Magnet'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.magnet'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.magnet'
 	ItemName="Magnet"
 }

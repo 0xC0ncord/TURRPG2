@@ -1,5 +1,5 @@
 class RPGTotemWall extends Actor
-    config(TitanRPG);
+    config(TURRPG2);
 
 var RPGTotem Totems[2];
 var bool bConnected;
@@ -54,10 +54,10 @@ defaultproperties {
     XSize=256
     XOffset=16
     
-    TeamSkins(0)=FinalBlend'TitanRPG.Totem.WallRed'
-    TeamSkins(1)=FinalBlend'TitanRPG.Totem.WallBlue'
-    TeamSkins(2)=FinalBlend'TitanRPG.Totem.WallGreen'
-    TeamSkins(3)=FinalBlend'TitanRPG.Totem.WallGold'
+    TeamSkins(0)=FinalBlend'TURRPG2.Totem.WallRed'
+    TeamSkins(1)=FinalBlend'TURRPG2.Totem.WallBlue'
+    TeamSkins(2)=FinalBlend'TURRPG2.Totem.WallGreen'
+    TeamSkins(3)=FinalBlend'TURRPG2.Totem.WallGold'
     
     bAlwaysRelevant=True
     NetUpdateFrequency=1
@@ -76,7 +76,7 @@ defaultproperties {
     bUseCylinderCollision=False
     
     DrawType=DT_StaticMesh
-    StaticMesh=StaticMesh'TitanRPG.Totem.Wall'
+    StaticMesh=StaticMesh'TURRPG2.Totem.Wall'
     
     //TODO ambient sound
 }

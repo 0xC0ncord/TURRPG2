@@ -1,12 +1,12 @@
 class RPGRules extends GameRules
-	config(TitanRPG);
+	config(TURRPG2);
 
 //for debugging, cba to code these up everytime, FALSE by default, can be toggled by "mutate damagelog"
 var bool bDamageLog;
 
 var Sound DisgraceAnnouncement, EagleEyeAnnouncement;
 
-var MutTitanRPG RPGMut;
+var MutTURRPG RPGMut;
 var int PointsPerLevel;
 var float LevelDiffExpGainDiv;
 var bool bAwardedFirstBlood;
@@ -1008,7 +1008,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 			KilledRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(KilledController);
 			if (KilledRPRI == None)
 			{
-				Log("KilledRPRI not found for " $ Killed.GetHumanReadableName(), 'TitanRPG');
+				Log("KilledRPRI not found for " $ Killed.GetHumanReadableName(), 'TURRPG2');
 				return true;
 			}
 			
@@ -1019,7 +1019,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 				KillerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killer);
 				if (KillerRPRI == None)
 				{
-					Log("KillerRPRI not found for " $ Killer.GetHumanReadableName(), 'TitanRPG');
+					Log("KillerRPRI not found for " $ Killer.GetHumanReadableName(), 'TURRPG2');
 					return true;
 				}
 
@@ -1199,8 +1199,8 @@ defaultproperties
 {
 	bDamageLog=False
 
-	DisgraceAnnouncement=Sound'TitanRPG.TranslocSounds.Disgrace'
-	EagleEyeAnnouncement=Sound'TitanRPG.TranslocSounds.EagleEye'
+	DisgraceAnnouncement=Sound'TURRPG2.TranslocSounds.Disgrace'
+	EagleEyeAnnouncement=Sound'TURRPG2.TranslocSounds.EagleEye'
 	DirectDamageTypes(0)=class'DamTypeEmo'
 	DirectDamageTypes(1)=class'DamTypePoison'
 	DirectDamageTypes(2)=class'DamTypeRetaliation'

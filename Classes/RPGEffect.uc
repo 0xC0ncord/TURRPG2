@@ -3,7 +3,7 @@
 	Used for Poison, Freeze, Null Entropy, etc...
 */
 class RPGEffect extends Inventory
-	config(TitanRPG)
+	config(TURRPG2)
 	abstract;
 
 //Immunity

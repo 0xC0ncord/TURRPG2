@@ -119,14 +119,14 @@ defaultproperties
 
 	AttachmentClass=class'ChuteAttachment'
 	
-	OpenSound=Sound'TitanRPG.Chute.chuteopen'
+	OpenSound=Sound'TURRPG2.Chute.chuteopen'
 	
 	MinActivationTime=1.000000
 	CostPerSec=0
 	HudColor=(R=192,G=128,B=64)
 	ArtifactID="Chute"
 	Description="Opens up a parachute, softening your landing."
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Chute'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Chute'
 	ItemName="Parachute"
 	
 	MsgOnlyIfFalling="You can only open the parachute if you are falling."

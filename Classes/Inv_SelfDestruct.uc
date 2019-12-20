@@ -1,4 +1,4 @@
-class SelfDestructInv extends Inventory;
+class Inv_SelfDestruct extends Inventory;
 
 var Vehicle V;
 var Controller Boesetaeter; //or Uebelwicht?
@@ -83,7 +83,7 @@ function Timer()
 static function string GetLocalString(optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2)
 {
 	return Repl(default.ActivationText, "$1",
-		Switch @ class'MutTitanRPG'.static.GetSecondsText(Switch));
+		Switch @ class'MutTURRPG'.static.GetSecondsText(Switch));
 }
 
 defaultproperties

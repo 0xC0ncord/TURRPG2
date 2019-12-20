@@ -1,6 +1,6 @@
 //character-specific settings
 class RPGCharSettings extends Object
-	config(TitanRPGSettings)
+	config(TURRPG2Settings)
 	PerObjectConfig;
 
 struct ArtifactOrderConfigStruct

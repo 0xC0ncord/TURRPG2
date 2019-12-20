@@ -1,5 +1,5 @@
 class RPGAIBuild extends Object
-	config(TitanRPGAI)
+	config(TURRPG2AI)
 	PerObjectConfig;
 
 struct AIBuildAction
@@ -60,12 +60,12 @@ function Build(RPGPlayerReplicationInfo RPRI)
 	{
 		if(RPRI.AIBuildAction >= BuildActions.Length)
 		{
-			Log(RPRI.PRI.PlayerName @ "has finished his/her AIBuild!", 'TitanRPG');
+			Log(RPRI.PRI.PlayerName @ "has finished his/her AIBuild!", 'TURRPG2');
 			break;
 		}
 	
 		Action = BuildActions[RPRI.AIBuildAction];
-		BuyAbility = RPRI.GetAbility(class'MutTitanRPG'.static.Instance(RPRI.Level).ResolveAbility(Action.BuyAbility));
+		BuyAbility = RPRI.GetAbility(class'MutTURRPG'.static.Instance(RPRI.Level).ResolveAbility(Action.BuyAbility));
 		if(BuyAbility != None)
 		{
 			Cost = BuyAbility.Cost();

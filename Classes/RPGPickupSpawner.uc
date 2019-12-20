@@ -1,6 +1,6 @@
 //Spawns pickups at random path nodes.
 class RPGPickupSpawner extends Info
-    config(TitanRPG);
+    config(TURRPG2);
 
 var config int SpawnDelay; //spawn a pickup every this many seconds - zero disables
 
@@ -25,7 +25,7 @@ var config float PickupDrawScale;
 
 var array<PathNode> PathNodes;
 
-var MutTitanRPG RPGMut;
+var MutTURRPG RPGMut;
 var bool bAdrenaline, bPickups;
 
 event PostBeginPlay() {
@@ -36,7 +36,7 @@ event PostBeginPlay() {
 
     Super.PostBeginPlay();
     
-    RPGMut = MutTitanRPG(Owner);
+    RPGMut = MutTURRPG(Owner);
 
     //Validate pickups
     x = 0;
@@ -67,7 +67,7 @@ event PostBeginPlay() {
         //Only spawn as many as required to achieve the spawn amount
         MaxAdrenalinePickups = Max(0, MaxAdrenalinePickups - x);
 
-        Log("Found " $ x $ " adrenaline pickups on the map, set MaxAdrenalinePickups to " $ MaxAdrenalinePickups, 'TitanRPG');
+        Log("Found " $ x $ " adrenaline pickups on the map, set MaxAdrenalinePickups to " $ MaxAdrenalinePickups, 'TURRPG2');
     }
 
     bPickups = (SpawnDelay > 0 && MaxPickups > 0 && AvailablePickups.Length > 0);

@@ -148,7 +148,7 @@ defaultproperties
 	MinModifier=0
 	MaxModifier=5
 	ModifierOverlay=Combiner'IllumShaders.IllumAComb'
-	BounceSound=Sound'TitanRPG.SoundEffects.boing'
+	BounceSound=Sound'TURRPG2.SoundEffects.boing'
 	PatternPos="Bouncy $W"
 	//AI
 	AIRatingBonus=0.00

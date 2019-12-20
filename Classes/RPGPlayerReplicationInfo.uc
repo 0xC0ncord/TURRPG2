@@ -1,11 +1,11 @@
 //If you were looking for RPGStatsInv, this replaces it. ~pd
 class RPGPlayerReplicationInfo extends LinkedReplicationInfo
 	DependsOn(RPGAbility)
-	Config(TitanRPG);
+	config(TURRPG2);
 
 //server
 var RPGData DataObject;
-var MutTitanRPG RPGMut;
+var MutTURRPG RPGMut;
 
 var bool bImposter;
 
@@ -260,7 +260,7 @@ simulated event PreBeginPlay() {
     
     if(Role < ROLE_Authority) {
         x = InStr(string(default.class), ".");
-        class'MutTitanRPG'.default.PackageName = Left(string(default.class), x);
+        class'MutTURRPG'.default.PackageName = Left(string(default.class), x);
     }
 }
 
@@ -277,10 +277,10 @@ simulated event BeginPlay()
 		Controller = Controller(Owner);
 		PRI = Controller.PlayerReplicationInfo;
 		
-		RPGMut = class'MutTitanRPG'.static.Instance(Level);
+		RPGMut = class'MutTURRPG'.static.Instance(Level);
 		if(RPGMut == None)
 		{
-			Warn("TitanRPG mutator no longer available - cancelling!");
+			Warn("TURRPG mutator no longer available - cancelling!");
 			Destroy();
 			return;
 		}
@@ -323,7 +323,7 @@ simulated event BeginPlay()
 					
 					if(PlayerController(Controller) != None)
 						PlayerController(Controller).ClientOpenMenu(
-							class'MutTitanRPG'.default.PackageName $ ".RPGImposterMessageWindow");
+							class'MutTURRPG'.default.PackageName $ ".RPGImposterMessageWindow");
 						
 					//Level.Game.ChangeName(Controller, string(Rand(65535)), true); //That's gotta suck, having a number for a name
 					Level.Game.ChangeName(Controller, Controller.GetHumanReadableName() $ "_Imposter", true);
@@ -967,7 +967,7 @@ function AwardExperience(float exp)
 	if(bGameEnded)
 		return;
 	
-	if(PlayerController(Controller) != None && Level.Game.NumPlayers < class'MutTitanRPG'.default.MinHumanPlayersForExp)
+	if(PlayerController(Controller) != None && Level.Game.NumPlayers < class'MutTURRPG'.default.MinHumanPlayersForExp)
 		return;
 	
 	if(RPGMut.GameSettings.ExpScale > 0.0)
@@ -1173,7 +1173,7 @@ function ModifyPlayer(Pawn Other)
 	if(Other != Controller.Pawn)
 	{
 		Log("RPGReplicationInfo was told to modify a Pawn that doesn't belong to this RPRI's Controller! Pawn is " $ 
-			Other.GetHumanReadableName() $ ", RPRI belongs to " $ PRI.PlayerName, 'TitanRPG');
+			Other.GetHumanReadableName() $ ", RPRI belongs to " $ PRI.PlayerName, 'TURRPG');
 			
 		return;
 	}
@@ -1348,7 +1348,7 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
 
 function ServerSwitchBuild(string NewBuild)
 {
-	Log(RPGName $ " switches build to " $ NewBuild, 'TitanRPG');
+	Log(RPGName $ " switches build to " $ NewBuild, 'TURRPG2');
 	RPGMut.SwitchBuild(Self, NewBuild);
 }
 
@@ -1367,7 +1367,7 @@ function ServerResetData()
 {
 	local string OwnerID;
 
-	Log(PRI.PlayerName $ " - RESET!", 'TitanRPG');
+	Log(PRI.PlayerName $ " - RESET!", 'TURRPG2');
     
     Reset();
 
@@ -1403,7 +1403,7 @@ function ServerRebuildData()
 
 	if(bAllowRebuild)
 	{
-		Log(PRI.PlayerName $ " - REBUILD!", 'TitanRPG');
+		Log(PRI.PlayerName $ " - REBUILD!", 'TURRPG2');
         
         Reset();
 		
@@ -1441,7 +1441,7 @@ function ServerRebuildData()
 
 function SetLevel(int NewLevel)
 {
-	Log(PRI.PlayerName $ " - SETLEVEL" @ NewLevel $ "!", 'TitanRPG');
+	Log(PRI.PlayerName $ " - SETLEVEL" @ NewLevel $ "!", 'TURRPG2');
 	
 	DataObject.LV = NewLevel;
 	DataObject.PA = RPGMut.StartingStatPoints + RPGMut.PointsPerLevel * (NewLevel - 1);
@@ -1512,7 +1512,7 @@ simulated function PerformWeaponSwitch(Weapon W)
 	{
 		if(W == None)
 		{
-			Log("Failed to switch weapon on client side - Weapon is NONE.", 'TitanRPG');
+			Log("Failed to switch weapon on client side - Weapon is NONE.", 'TURRPG2');
 			return;
 		}
 
@@ -1550,13 +1550,13 @@ function PickAIBuild()
 	
 	if(DataObject.AI == "")
 	{
-		List = class'RPGData'.static.GetPerObjectNames("TitanRPGAI", string(class'RPGAIBuild'.name));
+		List = class'RPGData'.static.GetPerObjectNames("TURRPGAI", string(class'RPGAIBuild'.name));
 		if(List.Length > 0)
 		{
 			DataObject.AI = List[Rand(List.Length)];
 			DataObject.AA = 0;
 			
-			Log(PRI.PlayerName @ "has picked the AIBuild \"" $ DataObject.AI $ "\".", 'TitanRPG');
+			Log(PRI.PlayerName @ "has picked the AIBuild \"" $ DataObject.AI $ "\".", 'TURRPG2');
 		}
 		else
 		{
@@ -1926,7 +1926,7 @@ defaultproperties
 {
 	HealingExpMultiplier=0 //gotten from RPGRules
 
-	LevelUpSound=Sound'TitanRPG.SoundEffects.LevelUp'
+	LevelUpSound=Sound'TURRPG2.SoundEffects.LevelUp'
 
 	bAlwaysRelevant=False
 	bOnlyRelevantToOwner=True
@@ -1934,6 +1934,6 @@ defaultproperties
 	RemoteRole=ROLE_SimulatedProxy
 	GameRestartingText="Sorry, you cannot perform the desired action once the endgame voting has begun."
 	ImposterText="Sorry, your name is already used on this server.|This is a roleplaying game server and every character has a unique name.||Please choose a different name and come back."
-	LevelUpText="You have leveled up!|Head to the TitanRPG menu (press L) to buy new abilities."
-	IntroText="Press L to open the TitanRPG menu."
+	LevelUpText="You have leveled up!|Head to the TURRPG menu (press L) to buy new abilities."
+	IntroText="Press L to open the TURRPG menu."
 }

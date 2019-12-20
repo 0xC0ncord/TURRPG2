@@ -46,6 +46,6 @@ defaultproperties
 	ArtifactID="EnhancedMaker"
 	bCanBeTossed=False
 	Description="Enchants a weapon with a rare magic."
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Enhanced'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Enhanced'
 	ItemName="Enhanced Magic Maker"
 }

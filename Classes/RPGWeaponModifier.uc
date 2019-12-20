@@ -2,7 +2,7 @@
 	FINALLY getting rid of RPGWeapon. This is the future.
 */
 class RPGWeaponModifier extends ReplicationInfo
-	Config(TitanRPG);
+	config(TURRPG2);
 
 //Weapon
 var Weapon Weapon;
@@ -61,8 +61,8 @@ replication{
 static function bool AllowedFor(class<Weapon> WeaponType, optional Pawn Other) {
     local int i;
 
-    for(i = 0; i < class'MutTitanRPG'.default.DisallowModifiersFor.Length; i++) {
-        if(ClassIsChildOf(WeaponType, class'MutTitanRPG'.default.DisallowModifiersFor[i])) {
+    for(i = 0; i < class'MutTURRPG'.default.DisallowModifiersFor.Length; i++) {
+        if(ClassIsChildOf(WeaponType, class'MutTURRPG'.default.DisallowModifiersFor[i])) {
             return false;
         }
     }

@@ -79,8 +79,8 @@ defaultproperties
 	bHarmful=False
     bAllowOnEnemies=False
 
-	EffectOverlay=Shader'TitanRPG.Overlays.BlueShader'
-	EffectSound=Sound'TitanRPG.SoundEffects.Heal'
+	EffectOverlay=Shader'TURRPG2.Overlays.BlueShader'
+	EffectSound=Sound'TURRPG2.SoundEffects.Heal'
 	xEmitterClass=class'FX_Heal'
 	
 	EffectMessageClass=class'EffectMessage_Heal'

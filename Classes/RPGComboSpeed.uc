@@ -1,5 +1,5 @@
 class RPGComboSpeed extends ComboSpeed
-	config(TitanRPG);
+	config(TURRPG2);
 	
 function StartEffect(xPawn P)
 {

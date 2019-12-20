@@ -1,6 +1,6 @@
 class TotemIcon_Lightning extends RPGTotemIcon;
 
 defaultproperties {
-	StaticMesh=StaticMesh'TitanRPG.ArtifactPickupStatics.Rod'
+	StaticMesh=StaticMesh'TURRPG2.ArtifactPickupStatics.Rod'
 	DrawScale=0.3
 }

@@ -1,5 +1,5 @@
 class RPGData extends Object
-	config(TitanRPGPlayerData)
+	config(TURRPG2PlayerData)
 	PerObjectConfig;
 
 //Player name is the object name

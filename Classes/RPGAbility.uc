@@ -1,7 +1,7 @@
 //An ability a player can buy with stat points
 //Abilities are handled similarly to DamageTypes and LocalMessages (abstract to avoid replication)
 class RPGAbility extends Actor
-	config(TitanRPG);
+	config(TURRPG2);
 
 var localized string
 	AndText, OrText, ReqPreText, ReqPostText,
@@ -148,7 +148,7 @@ simulated event PostBeginPlay()
 		StatName = AbilityName;
 
 	if(Role == ROLE_Authority) {
-		bAllowed = class'MutTitanRPG'.static.Instance(Level).GameSettings.AllowAbility(Self.class);
+		bAllowed = class'MutTURRPG'.static.Instance(Level).GameSettings.AllowAbility(Self.class);
         
         for(i = 0; i < GrantItem.Length; i++) {
             InventoryClass = Level.Game.BaseMutator.GetInventoryClass(string(GrantItem[i].InventoryClass));

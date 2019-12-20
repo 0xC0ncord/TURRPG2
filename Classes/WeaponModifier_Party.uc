@@ -31,8 +31,8 @@ defaultproperties {
     BonusPerLevel=0.25
 	MinModifier=1
 	MaxModifier=10
-	//ModifierOverlay=FinalBlend'TitanRPG.Disco.IonSphereFinal'
-	ModifierOverlay=Combiner'TitanRPG.Overlays.DiscoCombiner'
+	//ModifierOverlay=FinalBlend'TURRPG2.Disco.IonSphereFinal'
+	ModifierOverlay=Combiner'TURRPG2.Overlays.DiscoCombiner'
 	PatternPos="Party $W"
 	//AI
 	AIRatingBonus=0.0125

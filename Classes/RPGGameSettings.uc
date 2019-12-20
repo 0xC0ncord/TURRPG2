@@ -1,6 +1,6 @@
 //TitanRPG game type specific settings
 class RPGGameSettings extends Object
-	config(TitanRPG)
+	config(TURRPG2)
 	PerObjectConfig;
 
 var config bool bAllowTrans;

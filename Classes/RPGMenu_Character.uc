@@ -166,7 +166,7 @@ function bool SwitchClicked(GUIComponent Sender)
 {
 	if(!(cmbMyBuilds.GetText() ~= RPGMenu.RPRI.RPGName))
 	{
-		Controller.OpenMenu(class'MutTitanRPG'.default.PackageName $ ".RPGSwitchConfirmationWindow");
+		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGSwitchConfirmationWindow");
 		RPGSwitchConfirmationWindow(Controller.TopPage()).RPGMenu = RPGMenu;
 		RPGSwitchConfirmationWindow(Controller.TopPage()).NewBuild = cmbMyBuilds.GetText();
 		RPGSwitchConfirmationWindow(Controller.TopPage()).Init();
@@ -178,13 +178,13 @@ function bool ResetClicked(GUIComponent Sender)
 {
 	if(RPGMenu.RPRI.bAllowRebuild)
 	{
-		Controller.OpenMenu(class'MutTitanRPG'.default.PackageName $ ".RPGRebuildConfirmationWindow");
+		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGRebuildConfirmationWindow");
 		RPGRebuildConfirmationWindow(Controller.TopPage()).RPGMenu = RPGMenu;
 		RPGRebuildConfirmationWindow(Controller.TopPage()).Init();
 	}
 	else
 	{
-		Controller.OpenMenu(class'MutTitanRPG'.default.PackageName $ ".RPGResetConfirmationWindow");
+		Controller.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGResetConfirmationWindow");
 		RPGResetConfirmationWindow(Controller.TopPage()).RPGMenu = RPGMenu;
 		RPGResetConfirmationWindow(Controller.TopPage()).Init();
 	}
@@ -285,7 +285,7 @@ defaultproperties
 		WinTop=0.877558
 		CaptionWidth=0.350000
 		Caption="My Characters:"
-		Hint="Lists the characters that you have used in TitanRPG."
+		Hint="Lists the characters that you have used in TURRPG2."
 		OnChange=RPGMenu_Character.BuildSelected
 	End Object
 	cmbMyBuilds=cmbMyBuilds_

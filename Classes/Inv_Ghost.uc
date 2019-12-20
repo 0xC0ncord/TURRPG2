@@ -1,5 +1,5 @@
-class GhostInv extends Inventory
-	config(TitanRPG);
+class Inv_Ghost extends Inventory
+	config(TURRPG2);
 
 /*
 	Mostly unedited from DruidsRPG210_TC06 ~pd

@@ -1,7 +1,7 @@
 /*
     Introducing: Config abilities.
 
-    These are new special types of abilities that can be defined entirely in the TitanRPG.ini file.
+    These are new special types of abilities that can be defined entirely in the TURRPG2.ini file.
 
     They can be referred to by using a "@" sign followed by the name
     with which they were defined in the INI file.
@@ -11,7 +11,7 @@
     defined.
 */
 class RPGConfigAbility extends Object
-    config(TitanRPG)
+    config(TURRPG2)
     PerObjectConfig
     DependsOn(RPGAbility);
 
@@ -71,7 +71,7 @@ function class<RPGAbility> InitAbility() {
     local string ClassName;
     local int i;
 
-    ClassName = class'MutTitanRPG'.default.PackageName $ ".GeneratedAbility_";
+    ClassName = class'MutTURRPG'.default.PackageName $ ".GeneratedAbility_";
     if(default.ConfigAbilities.Length < 10) {
         ClassName $= "0";
     }

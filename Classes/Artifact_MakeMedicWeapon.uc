@@ -17,6 +17,6 @@ defaultproperties
 	bCanBeTossed=False
 	bAvoidRepetition=False
 	Description="Generates a medic weapon."
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.MedicMaker'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.MedicMaker'
 	ItemName="Medic Weapon Maker"
 }

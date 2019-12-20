@@ -9,6 +9,6 @@ defaultproperties
 	ArtifactID="PoisonBlast"
 	Description="Poisons nearby enemies."
 	PickupClass=Class'ArtifactPickup_PoisonBlast'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.poisonblast'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.poisonblast'
 	ItemName="Poison Blast"
 }

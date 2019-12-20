@@ -48,7 +48,7 @@ state Activated
 }
 
 defaultproperties {
-	EffectOverlay=Combiner'TitanRPG.Overlays.DiscoCombiner'
+	EffectOverlay=Combiner'TURRPG2.Overlays.DiscoCombiner'
 	//TODO: EffectSound=Sound'Slaughtersounds.Machinery.Heavy_End'
     
 	EffectMessageClass=class'EffectMessage_Disco'

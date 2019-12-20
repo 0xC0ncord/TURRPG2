@@ -186,7 +186,7 @@ state Activated
 
 defaultproperties
 {
-	ActivateSound=Sound'TitanRPG.SoundEffects.Rod'
+	ActivateSound=Sound'TURRPG2.SoundEffects.Rod'
 	bAllowInVehicle=False
 	bMustBeMoving=True
 	TargetRadius=2048.000000
@@ -201,6 +201,6 @@ defaultproperties
 	ArtifactID="Rod"
 	Description="Fires lightnings at nearby enemies."
 	PickupClass=Class'ArtifactPickup_LightningRod'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.rod'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.rod'
 	ItemName="Lightning Rod"
 }

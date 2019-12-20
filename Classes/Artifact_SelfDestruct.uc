@@ -95,7 +95,7 @@ defaultproperties
 	TeamMembersText="You cannot destruct the vehicle while other team members are in it."
 	ArtifactID="SelfDestruct"
 	bCanBeTossed=False
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.selfdestruct'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.selfdestruct'
 	ItemName="Self Destruction"
 	PickupClass=class'ArtifactPickup_SelfDestruct'
 

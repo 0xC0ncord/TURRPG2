@@ -1,5 +1,5 @@
 class RPGArtifact extends Powerups
-	config(TitanRPG)
+	config(TURRPG2)
 	abstract
     HideDropDown;
 
@@ -320,7 +320,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
 			return Repl(default.MSG_Text_Adrenaline, "$1", string(Value));
 		
 		case MSG_Cooldown:
-			return Repl(default.MSG_Text_Cooldown, "$1", string(Value) @ class'MutTitanRPG'.static.GetSecondsText(Value));
+			return Repl(default.MSG_Text_Cooldown, "$1", string(Value) @ class'MutTURRPG'.static.GetSecondsText(Value));
 			
 		case MSG_Expired:
 			return default.MSG_Text_Expired;
@@ -696,5 +696,5 @@ defaultproperties
 	MSG_Text_Expired="You have run out of adrenaline."
 	MSG_Text_NotInVehicle="You cannot use this artifact in a vehicle."
 	MSG_Text_Exclusive="You already have another exclusive artifact activated."
-	CantUseSound=Sound'TitanRPG.Interface.CantUse'
+	CantUseSound=Sound'TURRPG2.Interface.CantUse'
 }

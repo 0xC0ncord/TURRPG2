@@ -78,6 +78,6 @@ defaultproperties
 	ArtifactID="Max"
 	bCanBeTossed=False
 	Description="Maximizes the magic level of your weapon."
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.MaxMod'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.MaxMod'
 	ItemName="Max Magic Modifier"
 }

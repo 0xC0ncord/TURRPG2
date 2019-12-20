@@ -83,6 +83,6 @@ defaultproperties
 	bCanBeTossed=False
 	bExclusive=True
 	Description="Doubles your weapon's magic level."
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.DoubleMod'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.DoubleMod'
 	ItemName="Double Magic Modifier"
 }

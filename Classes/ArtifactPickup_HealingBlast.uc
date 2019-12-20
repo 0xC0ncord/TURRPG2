@@ -4,6 +4,6 @@ defaultproperties
 {
 	InventoryType=Class'Artifact_HealingBlast'
 	PickupMessage="You got the Healing Bomb!"
-	StaticMesh=StaticMesh'TitanRPG.ArtifactPickupStatics.HealingBomb'
+	StaticMesh=StaticMesh'TURRPG2.ArtifactPickupStatics.HealingBomb'
 	DrawScale=0.220000
 }

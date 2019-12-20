@@ -170,6 +170,6 @@ defaultproperties
 	ArtifactID="UDamage"
 	Description="Makes you deal twice as much damage as usual."
 	PickupClass=Class'ArtifactPickup_UDamage'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.DDamage'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.DDamage'
 	ItemName="Double Damage"
 }

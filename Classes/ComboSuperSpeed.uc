@@ -1,5 +1,5 @@
 class ComboSuperSpeed extends Combo
-	config(TitanRPG);
+	config(TURRPG2);
 	
 var xEmitter LeftTrail, RightTrail;
 var config float SpeedBonus, JumpZBonus;

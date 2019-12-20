@@ -1,5 +1,5 @@
 class RPGTotem extends ASVehicle abstract placeable
-    config(TitanRPG);
+    config(TURRPG2);
 
 var config int Strength;
 var config float Radius;
@@ -189,12 +189,12 @@ defaultproperties {
     Physics=PHYS_None
     
     DrawType=DT_StaticMesh
-    StaticMesh=StaticMesh'TitanRPG.Totem.Totem'
+    StaticMesh=StaticMesh'TURRPG2.Totem.Totem'
 
     TeamSkins[0]=None //original is red
-    TeamSkins[1]=Shader'TitanRPG.Totem.BlueShader'
-    TeamSkins[2]=Shader'TitanRPG.Totem.GreenShader'
-    TeamSkins[3]=Shader'TitanRPG.Totem.GoldShader'
+    TeamSkins[1]=Shader'TURRPG2.Totem.BlueShader'
+    TeamSkins[2]=Shader'TURRPG2.Totem.GreenShader'
+    TeamSkins[3]=Shader'TURRPG2.Totem.GoldShader'
     DeadSkin=Shader'cp_Evilmetal.plainmetal.cp_plainmet4_Shiny'
     
 	bAutoTurret=true

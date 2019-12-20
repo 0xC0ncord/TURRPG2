@@ -12,5 +12,5 @@ function string GetText()
 
 defaultproperties
 {
-	IconMaterial=Texture'TitanRPG.StatusIcons.Monster'
+	IconMaterial=Texture'TURRPG2.StatusIcons.Monster'
 }

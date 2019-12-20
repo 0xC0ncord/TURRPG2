@@ -1,5 +1,5 @@
 Class HealableDamageGameRules extends GameRules
-	config(TitanRPG);
+	config(TURRPG2);
 
 var config int MaxHealthBonus;
 

@@ -79,7 +79,7 @@ defaultproperties {
 	MaxHealth=50
 	MinModifier=1
 	MaxModifier=6
-	ModifierOverlay=Shader'TitanRPG.Overlays.BlueShader'
+	ModifierOverlay=Shader'TURRPG2.Overlays.BlueShader'
 	PatternPos="Healing $W"
 	//AI
 	AIRatingBonus=0

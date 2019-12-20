@@ -22,7 +22,7 @@ simulated function ClientCreateInteraction()
 
             Interaction = Interaction_MedicAwareness(
                 PC.Player.InteractionMaster.AddInteraction(
-                    class'MutTitanRPG'.default.PackageName $ ".Interaction_MedicAwareness", PC.Player));
+                    class'MutTURRPG'.default.PackageName $ ".Interaction_MedicAwareness", PC.Player));
 
             Interaction.Ability = Self;
             

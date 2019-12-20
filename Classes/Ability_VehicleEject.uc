@@ -106,7 +106,7 @@ simulated function ClientNotifyCooldown(float Time)
 defaultproperties
 {
 	StatusIconClass=class'StatusIcon_VehicleEject'
-	CantEnterSound=Sound'TitanRPG.Interface.CantUse'
+	CantEnterSound=Sound'TURRPG2.Interface.CantUse'
 	bResetTranslocatorCharge=True
 	VehicleCooldown=5.00
 	AbilityName="Ejector Seat"

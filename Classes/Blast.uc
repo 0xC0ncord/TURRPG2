@@ -2,7 +2,7 @@
 	Interface for blasts such as Ultima, Mega Blast, Healing Bomb, etc. ~pd
 */
 class Blast extends Actor
-	config(TitanRPG)
+	config(TURRPG2)
 	abstract;
 
 var class<xEmitter> ChargeEmitterClass;

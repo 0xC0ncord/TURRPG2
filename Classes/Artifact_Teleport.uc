@@ -60,7 +60,7 @@ defaultproperties
 	CostPerSec=25
 	MinActivationTime=1.000000
 	PickupClass=Class'ArtifactPickup_Teleport'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Teleport'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Teleport'
 	ItemName="Teleporter"
 	ArtifactID="Teleport"
 	Description="Teleports you to a random spawn point that belongs to your team."

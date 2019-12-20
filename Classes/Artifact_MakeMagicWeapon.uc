@@ -17,7 +17,7 @@ function BotWhatNext(Bot Bot)
 
 function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other)
 {
-	return class'MutTitanRPG'.static.Instance(Level).GetRandomWeaponModifier(WeaponType, Other, true);
+	return class'MutTURRPG'.static.Instance(Level).GetRandomWeaponModifier(WeaponType, Other, true);
 }
 
 defaultproperties
@@ -29,6 +29,6 @@ defaultproperties
 	ArtifactID="MagicWeaponMaker"
 	Description="Randomly enchants a weapon."
 	PickupClass=Class'ArtifactPickup_MakeMagicWeapon'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.MagicMaker'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.MagicMaker'
 	ItemName="Magic Weapon Maker"
 }

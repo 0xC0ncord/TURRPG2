@@ -78,6 +78,6 @@ defaultproperties
 	Modifier=1.00
 
 	EffectSound=Sound'WeaponSounds.Misc.ballgun_launch'
-	EffectOverlay=Shader'TitanRPG.Overlays.RedShader'
+	EffectOverlay=Shader'TURRPG2.Overlays.RedShader'
 	EffectMessageClass=class'EffectMessage_Knockback'
 }

@@ -8,6 +8,6 @@ defaultproperties {
 	ArtifactID="DiscoBall"
 	Description="It's party time!!"
 	PickupClass=Class'ArtifactPickup_DiscoBall'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.DiscoBall'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.DiscoBall'
 	ItemName="Disco Ball"
 }

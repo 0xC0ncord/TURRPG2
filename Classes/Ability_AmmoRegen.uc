@@ -3,7 +3,7 @@ class Ability_AmmoRegen extends RPGAbility;
 var config float RegenInterval;
 var config int MinRegenPerLevel;
 
-var MutTitanRPG RPGMut; //to avoid the nasty accessed none's at the end of a match
+var MutTURRPG RPGMut; //to avoid the nasty accessed none's at the end of a match
 
 replication
 {
@@ -15,7 +15,7 @@ simulated event PostBeginPlay()
 {
 	Super.PostBeginPlay();
 	
-	RPGMut = class'MutTitanRPG'.static.Instance(Level);
+	RPGMut = class'MutTURRPG'.static.Instance(Level);
 }
 
 function ModifyPawn(Pawn Other)

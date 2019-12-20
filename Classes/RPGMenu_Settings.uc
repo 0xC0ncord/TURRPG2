@@ -143,7 +143,7 @@ defaultproperties
 	//Y spacing: 0.052451
 
 	Begin Object Class=AltSectionBackground Name=sbCustomize_
-		Caption="TitanRPG Settings"
+		Caption="TURRPG Settings"
 		LeftPadding=0.000000
 		RightPadding=0.000000
 		WinWidth=0.997718

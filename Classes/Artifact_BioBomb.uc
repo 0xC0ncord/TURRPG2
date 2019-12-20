@@ -9,6 +9,6 @@ defaultproperties
 	ArtifactID="BioBomb"
 	Description="Causes a bio glob explosion."
 	PickupClass=Class'ArtifactPickup_BioBomb'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.biobomb'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.biobomb'
 	ItemName="Bio Bomb"
 }

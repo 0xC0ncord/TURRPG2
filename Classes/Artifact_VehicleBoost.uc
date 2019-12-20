@@ -153,6 +153,6 @@ defaultproperties
 	ArtifactID="NitroBoost"
 	Description="Gives a boost to your vehicle."
 	PickupClass=Class'ArtifactPickup_VehicleBoost'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.nitroboost'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.nitroboost'
 	ItemName="Nitro Boost"
 }

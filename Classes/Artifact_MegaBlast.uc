@@ -10,6 +10,6 @@ defaultproperties
 	ArtifactID="MegaBlast"
 	Description="Causes a big badda boom."
 	PickupClass=Class'ArtifactPickup_MegaBlast'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.MegaBlast'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.MegaBlast'
 	ItemName="Mega Blast"
 }

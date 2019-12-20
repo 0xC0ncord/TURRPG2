@@ -24,7 +24,7 @@ defaultproperties
 	MinModifier=1
 	MaxModifier=1
     bOmitModifierInName=True
-	ModifierOverlay=Shader'TitanRPG.Overlays.GreenShader'
+	ModifierOverlay=Shader'TURRPG2.Overlays.GreenShader'
 	PatternPos="Repair $W of Infinity"
 	bCanThrow=False
 }

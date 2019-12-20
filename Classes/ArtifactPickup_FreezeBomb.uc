@@ -4,6 +4,6 @@ defaultproperties
 {
 	InventoryType=Class'Artifact_FreezeBomb'
 	PickupMessage="You got the Freeze Bomb!"
-	StaticMesh=StaticMesh'TitanRPG.ArtifactPickupStatics.FreezeBomb'
+	StaticMesh=StaticMesh'TURRPG2.ArtifactPickupStatics.FreezeBomb'
 	DrawScale=0.220000
 }

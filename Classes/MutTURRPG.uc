@@ -1,8 +1,8 @@
-class MutTitanRPG extends Mutator
-	config(TitanRPG);
+class MutTURRPG extends Mutator
+	config(TURRPG2);
 
 //Import resources
-#exec OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TitanRPG
+#exec OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
 
 //Saving
 var config array<string> IgnoreNameTag;
@@ -10,7 +10,6 @@ var config int SaveDuringGameInterval;
 var float NextSaveTime;
 
 //General
-var string PackageName;
 var RPGRules Rules;
 
 var config string CustomVersion;
@@ -82,7 +81,7 @@ var config array<String> AdminGUID;
 var bool bGameStarted;
 
 //Instance
-static final function MutTitanRPG Instance(LevelInfo Level)
+static final function MutTURRPG Instance(LevelInfo Level)
 {
 	local Mutator Mut;
 	
@@ -90,8 +89,8 @@ static final function MutTitanRPG Instance(LevelInfo Level)
 	{
 		for(Mut = Level.Game.BaseMutator; Mut != None; Mut = Mut.NextMutator)
 		{
-			if(Mut.IsA('MutTitanRPG'))
-				return MutTitanRPG(Mut);
+			if(Mut.IsA('MutTURRPG'))
+				return MutTURRPG(Mut);
 		}
 	}
 	return None;
@@ -122,10 +121,10 @@ final function class<RPGAbility> ResolveAbility(string Alias)
 	}
 	
 	//Fallback, for seamless transitions from 1.5 or earlier
-	Loaded = class<RPGAbility>(DynamicLoadObject(PackageName $ ".Ability" $ Alias, class'Class'));
+	Loaded = class<RPGAbility>(DynamicLoadObject("TURRPG" $ ".Ability" $ Alias, class'Class'));
 
 	if(Loaded == None)
-		Log("WARNING: Could not resolve ability alias:" @ Alias, 'TitanRPG');
+		Log("WARNING: Could not resolve ability alias:" @ Alias, 'TURRPG2');
 
 	return Loaded;
 }
@@ -176,10 +175,6 @@ event PreBeginPlay() {
     local RPGConfigAbility Module;
     local class<RPGAbility> AbilityClass;
 	local int i, x;
-	
-    x = InStr(string(default.class), ".");
-    default.PackageName = Left(string(default.class), x);
-    PackageName = default.PackageName;
 
 	if(!Level.Game.IsA('Invasion'))
 		bAutoAdjustInvasionLevel = false; //don't waste any time doing Invasion stuff if we're not in Invasion
@@ -194,7 +189,7 @@ event PreBeginPlay() {
     //Generate ability modules
     class'RPGConfigAbility'.static.ResetAll();
     
-    ConfigAbilityNames = class'RPGConfigAbility'.static.GetPerObjectNames("TitanRPG", string(class'RPGConfigAbility'.name));
+    ConfigAbilityNames = class'RPGConfigAbility'.static.GetPerObjectNames("TURRPG2", string(class'RPGConfigAbility'.name));
     for(i = 0; i < ConfigAbilityNames.Length; i++) {
         Module = new(None, ConfigAbilityNames[i]) class'RPGConfigAbility';
         Module.ModuleName = ConfigAbilityNames[i];
@@ -217,7 +212,7 @@ event PreBeginPlay() {
 	
 		if(Abilities[i] == None)
 		{
-			Log("WARNING: Entry #" @ x @ "in the Abilities list doesn't resolve to a valid ability class!", 'TitanRPG');
+			Log("WARNING: Entry #" @ x @ "in the Abilities list doesn't resolve to a valid ability class!", 'TURRPG2');
 			Abilities.Remove(i, 1);
 			continue;
 		}
@@ -232,7 +227,7 @@ event PreBeginPlay() {
 	class'XGame.xPawn'.default.ControllerClass = class'RPGBot';
 	
 	if(Level.Game.PlayerControllerClassName ~= "XGame.xPlayer") //don't replace another mod's xPlayer replacement
-		Level.Game.PlayerControllerClassName = PackageName $ ".TitanPlayerController";
+		Level.Game.PlayerControllerClassName = "TURRPG.TitanPlayerController";
 
 	//Find specific settings for this gametype
 	GameSettings = new(None, GetGameSettingsName(Level.Game)) class'RPGGameSettings';
@@ -312,7 +307,7 @@ event PostBeginPlay()
 
 	//Artifacts
 	if(Artifacts.Length > RRI.MAX_ARTIFACTS)
-		Log("WARNING:" @ Artifacts.Length @ "artifact classes were configured, but only" @ RRI.MAX_ARTIFACTS @ "are supported!", 'TitanRPG');
+		Log("WARNING:" @ Artifacts.Length @ "artifact classes were configured, but only" @ RRI.MAX_ARTIFACTS @ "are supported!", 'TURRPG2');
 	
 	for(x = 0; x < RRI.MAX_ARTIFACTS && x < Artifacts.Length; x++)
 		RRI.Artifacts[x] = Artifacts[x];
@@ -337,17 +332,17 @@ function string GetInventoryClassOverride(string InventoryClassName)
 	}
 
 	if(InventoryClassName ~= "XWeapons.RocketLauncher")
-		return PackageName $ ".RPGRocketLauncher";
+		return "TURRPG.RPGRocketLauncher";
 	else if(InventoryClassName ~= "XWeapons.ShieldGun" || InventoryClassName ~= "OLTeamGames.OLTeamsShieldGun")
-		return PackageName $ ".RPGShieldGun";
+		return "TURRPG.RPGShieldGun";
 	else if(InventoryClassName ~= "XWeapons.LinkGun" || InventoryClassName ~= "OLTeamGames.OLTeamsLinkGun")
-		return PackageName $ ".RPGLinkGun";
+		return "TURRPG.RPGLinkGun";
 	else if(InventoryClassName ~= "Onslaught.ONSMineLayer" || InventoryClassName ~= "OLTeamGames.OLTeamsONSMineLayer")
-		return PackageName $ ".RPGMineLayer";
+		return "TURRPG.RPGMineLayer";
 	else if(InventoryClassName ~= "XWeapons.BallLauncher")
-		return PackageName $ ".RPGBallLauncher";
+		return "TURRPG.RPGBallLauncher";
 	else if(InventoryClassName ~= "UTClassic.ClassicSniperRifle")
-		return PackageName $ ".RPGClassicSniperRifle";
+		return "TURRPG.RPGClassicSniperRifle";
 
 	return InventoryClassName;
 }
@@ -396,7 +391,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	//Ball Launcher
 	if(Other.IsA('xBombFlag'))
 	{
-		xBombFlag(Other).BombLauncherClassName = PackageName $ ".RPGBallLauncher";
+		xBombFlag(Other).BombLauncherClassName = "TURRPG.RPGBallLauncher";
 		return true;
 	}
 	
@@ -795,7 +790,7 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
 		{
             if(RPRI.Abilities[x].AbilityLevel > RPRI.Abilities[x].MaxLevel) {
                 Log(RPRI.RPGName @ "has level" @ RPRI.Abilities[x].AbilityLevel @ "of" @ RPRI.Abilities[x].AbilityName $
-                    ", but max is" @ RPRI.Abilities[x].MaxLevel @ "- fixed.", 'TitanRPG');
+                    ", but max is" @ RPRI.Abilities[x].MaxLevel @ "- fixed.", 'TURRPG2');
                 
                 RPRI.Abilities[x].AbilityLevel = RPRI.Abilities[x].MaxLevel;
                 bSave = true;
@@ -809,7 +804,7 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
 			for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
 				RPRI.PointsAvailable += RPRI.Abilities[x].CostForNextLevel(y);
 				
-			Log("Ability" @ RPRI.Abilities[x] @ "was in" @ RPRI.RPGName $ "'s data but is not an available ability - removed (stat points refunded)", 'TitanRPG');
+			Log("Ability" @ RPRI.Abilities[x] @ "was in" @ RPRI.RPGName $ "'s data but is not an available ability - removed (stat points refunded)", 'TURRPG2');
 			RPRI.Abilities.Remove(x, 1);
 			x--;
 		}
@@ -823,15 +818,15 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
 		Warn(RPRI.RPGName @ "had" @ TotalPoints @ "total stat points at Level" @ RPRI.RPGLevel $
             ", should be" @ ShouldBe $ ", PointsAvailable changed by" @ string(ShouldBe - TotalPoints) @
             "to compensate.");
-		/*Log("Here's a breakdown:", 'TitanRPG');
-		Log(RPRI.PointsAvailable $ " (Points available)", 'TitanRPG');
+		/*Log("Here's a breakdown:", 'TURRPG2');
+		Log(RPRI.PointsAvailable $ " (Points available)", 'TURRPG2');
 		for (x = 0; x < RPRI.Abilities.Length; x++)
 		{
 			for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
-				Log("+ " $ RPRI.Abilities[x].CostForNextLevel(y) $ " (" $ RPRI.Abilities[x].default.AbilityName $ " " $ (y + 1) $ ")", 'TitanRPG');
+				Log("+ " $ RPRI.Abilities[x].CostForNextLevel(y) $ " (" $ RPRI.Abilities[x].default.AbilityName $ " " $ (y + 1) $ ")", 'TURRPG2');
 		}
-		Log("= " $ TotalPoints, 'TitanRPG');
-		Log("", 'TitanRPG');*/
+		Log("= " $ TotalPoints, 'TURRPG2');
+		Log("", 'TURRPG2');*/
 		
 		RPRI.PointsAvailable += ShouldBe - TotalPoints;
         
@@ -972,7 +967,7 @@ function SaveData()
 		}
 	}
 	
-	Log("TitanRPG player data has been saved!", 'TitanRPG');
+	Log("TURRPG player data has been saved!", 'TURRPG2');
 }
 
 function SwitchBuild(RPGPlayerReplicationInfo RPRI, string NewBuild)
@@ -1111,7 +1106,7 @@ function Mutate(string MutateString, PlayerController Sender)
 			}
 			else if(Args[0] ~= "save")
 			{
-				Log(Sender.PlayerReplicationInfo.PlayerName $ " has forced a save!", 'TitanRPG');
+				Log(Sender.PlayerReplicationInfo.PlayerName $ " has forced a save!", 'TURRPG2');
 				SaveData();
 				return;
 			}
@@ -1166,7 +1161,7 @@ function Mutate(string MutateString, PlayerController Sender)
 				else
 					Game = string(Level.Game.class);
 				
-				Level.ServerTravel(Args[1] $ "?Game=" $ Game $ "?Mutator=TitanRPG.MutTitanRPG", false);
+				Level.ServerTravel(Args[1] $ "?Game=" $ Game $ "?Mutator=TURRPG2.MutTURRPG", false);
 				return;
 			}
 		}
@@ -1276,7 +1271,7 @@ function Mutate(string MutateString, PlayerController Sender)
                 if(Args[1] ~= "None") {
                     class'RPGWeaponModifier'.static.RemoveModifier(Cheat.Weapon);
                 } else {
-                    WMClass = class<RPGWeaponModifier>(DynamicLoadObject(PackageName $ ".WeaponModifier_" $ Args[1], class'Class'));
+                    WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG.WeaponModifier_" $ Args[1], class'Class'));
                     if(WMClass != None) {
                         x = WMClass.static.GetRandomModifierLevel();
                     
@@ -1304,7 +1299,7 @@ function Mutate(string MutateString, PlayerController Sender)
             }
 			else if(Cheat != None && Args[0] ~= "effect" && Args.Length > 1)
 			{
-				EffectClass = class<RPGEffect>(DynamicLoadObject(PackageName $ ".Effect_" $ Args[1], class'Class'));
+				EffectClass = class<RPGEffect>(DynamicLoadObject("TURRPG.Effect_" $ Args[1], class'Class'));
 				if(EffectClass != None)
 				{
 					Effect = EffectClass.static.Create(Cheat, Sender);
@@ -1337,7 +1332,7 @@ function Mutate(string MutateString, PlayerController Sender)
 			}
 			else if(Cheat != None && Args[0] ~= "artifact" && Args.Length > 1)
 			{
-				ArtifactClass = class<RPGArtifact>(DynamicLoadObject(PackageName $ ".Artifact_" $ Args[1], class'Class'));
+				ArtifactClass = class<RPGArtifact>(DynamicLoadObject("TURRPG.Artifact_" $ Args[1], class'Class'));
 				if(ArtifactClass != None)
 					class'Util'.static.GiveInventory(Cheat, ArtifactClass);
 				else
@@ -1364,29 +1359,29 @@ function Mutate(string MutateString, PlayerController Sender)
 			{
 				W = Sender.Pawn.Weapon;
 				
-				Log("WeaponInfo:", 'TitanRPG');
-				Log("Class = " $ W.class, 'TitanRPG');
+				Log("WeaponInfo:", 'TURRPG2');
+				Log("Class = " $ W.class, 'TURRPG2');
 				
-				Log("InventoryGroup = " $ W.InventoryGroup, 'TitanRPG');
-				Log("", 'TitanRPG');
+				Log("InventoryGroup = " $ W.InventoryGroup, 'TURRPG2');
+				Log("", 'TURRPG2');
 			
 				for(i = 0; i < 2; i++)
 				{
 					WF = W.GetFireMode(i);
 					if(WF != None)
 					{
-						Log("WeaponFire[" $ i $ "] = " $ WF.class, 'TitanRPG');
-						Log("AmmoClass = " $ WF.AmmoClass, 'TitanRPG');
+						Log("WeaponFire[" $ i $ "] = " $ WF.class, 'TURRPG2');
+						Log("AmmoClass = " $ WF.AmmoClass, 'TURRPG2');
 						if(InstantFire(WF) != None)
 						{
-							Log("DamageType = "$ InstantFire(WF).DamageType, 'TitanRPG');
+							Log("DamageType = "$ InstantFire(WF).DamageType, 'TURRPG2');
 						}
 						else if(ProjectileFire(WF) != None)
 						{
-							Log("ProjectileClass = " $WF.ProjectileClass, 'TitanRPG');
-							Log("DamageType = " $WF.ProjectileClass.default.MyDamageType, 'TitanRPG');
+							Log("ProjectileClass = " $WF.ProjectileClass, 'TURRPG2');
+							Log("DamageType = " $WF.ProjectileClass.default.MyDamageType, 'TURRPG2');
 						}
-						Log("", 'TitanRPG');			
+						Log("", 'TURRPG2');			
 					}
 				}
 			}
@@ -1396,58 +1391,58 @@ function Mutate(string MutateString, PlayerController Sender)
 			V = Vehicle(Sender.Pawn);
 			if(V != None)
 			{
-				Log("VehicleInfo:", 'TitanRPG');
-				Log("Class = " $ V.class, 'TitanRPG');
-				Log("HealthMax = " $ V.HealthMax, 'TitanRPG');
-				Log("", 'TitanRPG');
+				Log("VehicleInfo:", 'TURRPG2');
+				Log("Class = " $ V.class, 'TURRPG2');
+				Log("HealthMax = " $ V.HealthMax, 'TURRPG2');
+				Log("", 'TURRPG2');
 			
 				OV = ONSVehicle(V);
 				if(OV != None)
 				{
 					for(i = 0; i < OV.DriverWeapons.length; i++)
 					{
-						Log("DriverWeapons[" $ i $ "] = " $ OV.DriverWeapons[i].WeaponClass, 'TitanRPG');
-						Log("DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.DamageType, 'TitanRPG');
+						Log("DriverWeapons[" $ i $ "] = " $ OV.DriverWeapons[i].WeaponClass, 'TURRPG2');
+						Log("DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.DamageType, 'TURRPG2');
 						
-						Log("ProjectileClass = " $ OV.DriverWeapons[i].WeaponClass.default.ProjectileClass, 'TitanRPG');
+						Log("ProjectileClass = " $ OV.DriverWeapons[i].WeaponClass.default.ProjectileClass, 'TURRPG2');
 						if(OV.DriverWeapons[i].WeaponClass.default.ProjectileClass != None)
-							Log("ProjectileClass - DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.ProjectileClass.default.MyDamageType, 'TitanRPG');
+							Log("ProjectileClass - DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.ProjectileClass.default.MyDamageType, 'TURRPG2');
 							
-						Log("AltFireProjectileClass = " $ OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass, 'TitanRPG');
+						Log("AltFireProjectileClass = " $ OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass, 'TURRPG2');
 						if(OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass != None)
-							Log("AltFireProjectileClass - DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass.default.MyDamageType, 'TitanRPG');
+							Log("AltFireProjectileClass - DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass.default.MyDamageType, 'TURRPG2');
 							
-						Log("", 'TitanRPG');
+						Log("", 'TURRPG2');
 					}
 					
 					for(i = 0; i < OV.PassengerWeapons.length; i++)
 					{
 						OWP = OV.PassengerWeapons[i].WeaponPawnClass;
-						Log("WeaponPawns[" $ i $ "] = " $ OWP, 'TitanRPG');
+						Log("WeaponPawns[" $ i $ "] = " $ OWP, 'TURRPG2');
 
-						Log("GunClass = " $ OWP.default.GunClass, 'TitanRPG');
-						Log("DamageType = " $ OWP.default.GunClass.default.DamageType, 'TitanRPG');
+						Log("GunClass = " $ OWP.default.GunClass, 'TURRPG2');
+						Log("DamageType = " $ OWP.default.GunClass.default.DamageType, 'TURRPG2');
 					
-						Log("ProjectileClass = " $ OWP.default.GunClass.default.ProjectileClass, 'TitanRPG');
+						Log("ProjectileClass = " $ OWP.default.GunClass.default.ProjectileClass, 'TURRPG2');
 						if(OWP.default.GunClass.default.ProjectileClass != None)
-							Log("ProjectileClass - DamageType = " $ OWP.default.GunClass.default.ProjectileClass.default.MyDamageType, 'TitanRPG');
+							Log("ProjectileClass - DamageType = " $ OWP.default.GunClass.default.ProjectileClass.default.MyDamageType, 'TURRPG2');
 						
-						Log("AltFireProjectileClass = " $ OWP.default.GunClass.default.AltFireProjectileClass, 'TitanRPG');
+						Log("AltFireProjectileClass = " $ OWP.default.GunClass.default.AltFireProjectileClass, 'TURRPG2');
 						if(OWP.default.GunClass.default.AltFireProjectileClass != None)
-							Log("AltFireProjectileClass - DamageType = " $ OWP.default.GunClass.default.AltFireProjectileClass.default.MyDamageType, 'TitanRPG');
+							Log("AltFireProjectileClass - DamageType = " $ OWP.default.GunClass.default.AltFireProjectileClass.default.MyDamageType, 'TURRPG2');
 						
-						Log("", 'TitanRPG');
+						Log("", 'TURRPG2');
 					}
 				}
 			}
 		}
 		else if(Args[0] ~= "inventory" && Sender.Pawn != None)
 		{
-			Log("Inventory of" @ Sender.Pawn $ ":", 'TitanRPG');
+			Log("Inventory of" @ Sender.Pawn $ ":", 'TURRPG2');
 			for(Inv = Sender.Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
-				Log("-" @ Inv, 'TitanRPG');
+				Log("-" @ Inv, 'TURRPG2');
 
-			Log("", 'TitanRPG');
+			Log("", 'TURRPG2');
 		}
 	}
 
@@ -1468,7 +1463,7 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
 	Super.GetServerDetails(ServerState);
 
-	KVP.Key = "TitanRPG Version";
+	KVP.Key = "TURRPG Version";
 	
     if(Len(CustomVersion) > 0) {
         KVP.Value = CustomVersion;
@@ -1502,8 +1497,8 @@ defaultproperties
 	SuperAmmoClasses(1)=class'XWeapons.BallAmmo'
 	SuperAmmoClasses(2)=class'XWeapons.TransAmmo'
 	bAddToServerPackages=True
-	GroupName="TitanRPG"
-	FriendlyName="TitanRPG 1.71 BETA" //also used in Server Browser
+	GroupName="TURRPG"
+	FriendlyName="TURRPG 2"
     CustomVersion=""
 	Description="A unified and heavily improved version of UT2004RPG and DruidsRPG, featuring a lot of new content, multi-game support and fixes of many bugs and other problems."
 	SecondTextSingular="second"

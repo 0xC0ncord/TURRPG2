@@ -5,5 +5,5 @@ function bool IsVisible() {
 }
 
 defaultproperties {
-	IconMaterial=Texture'TitanRPG.StatusIcons.Protection'
+	IconMaterial=Texture'TURRPG2.StatusIcons.Protection'
 }

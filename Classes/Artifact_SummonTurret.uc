@@ -175,7 +175,7 @@ defaultproperties {
 	Description="Constructs a floor sentinel."
 	ItemName="Turret Constructor"
 	PickupClass=Class'ArtifactPickup_TurretSummon'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.TurretSummon'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.TurretSummon'
 	HudColor=(B=192,G=128,R=128)
 	CostPerSec=0
 	Cooldown=0

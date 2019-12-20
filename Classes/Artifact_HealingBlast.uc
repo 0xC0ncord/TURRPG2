@@ -34,6 +34,6 @@ defaultproperties
 	ArtifactID="Healing Blast"
 	Description="Heals nearby teammates."
 	PickupClass=Class'ArtifactPickup_HealingBlast'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.HealingBomb'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.HealingBomb'
 	ItemName="Healing Blast"
 }

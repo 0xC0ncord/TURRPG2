@@ -60,8 +60,8 @@ defaultproperties
     PickupForce="AdrenelinPickup"  // jdf
     DrawType=DT_StaticMesh
     StaticMesh=StaticMesh'XPickups_rc.AdrenalinePack'
-    Skins(0)=Texture'TitanRPG.PickupStatics.Experience'
-    Skins(1)=Combiner'TitanRPG.Disco.Combiner3'
+    Skins(0)=Texture'TURRPG2.PickupStatics.Experience'
+    Skins(1)=Combiner'TURRPG2.Disco.Combiner3'
     Style=STY_AlphaZ
     ScaleGlow=0.6
     CullDistance=+5500.0

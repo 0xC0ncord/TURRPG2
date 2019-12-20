@@ -12,7 +12,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	for(i = 0; i < Panels.Length; i++)
 	{
 		//Prepend package name to class name
-		Panels[i].ClassName = class'MutTitanRPG'.default.PackageName $ "." $ Panels[i].ClassName;
+		Panels[i].ClassName = class'MutTURRPG'.default.PackageName $ "." $ Panels[i].ClassName;
 		Tabs.AddTabItem(Panels[i]);
 	}
 }
@@ -38,7 +38,7 @@ function CloseMenu()
 
 defaultproperties
 {
-	Panels(0)=(ClassName="RPGMenu_Settings",Caption="HUD",Hint="Customize TitanRPG HUD features.")
+	Panels(0)=(ClassName="RPGMenu_Settings",Caption="HUD",Hint="Customize TURRPG HUD features.")
 	Panels(1)=(ClassName="RPGMenu_Artifacts",Caption="Artifacts",Hint="Customize the order of artifacts.")
 	Panels(2)=(ClassName="RPGMenu_ControlBinderFakeTab",Caption="Keys",Hint="Change RPG related key bindings.")
 

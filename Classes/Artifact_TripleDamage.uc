@@ -7,6 +7,6 @@ defaultproperties
 	ArtifactID="Triple"
 	Description="Makes you deal three times as much damage as usual."
 	PickupClass=Class'ArtifactPickup_TripleDamage'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Triple'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Triple'
 	ItemName="Triple Damage"
 }

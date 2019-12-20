@@ -4,6 +4,6 @@ defaultproperties
 {
 	InventoryType=Class'Artifact_PoisonBlast'
 	PickupMessage="You got the Poison Blast!"
-	StaticMesh=StaticMesh'TitanRPG.ArtifactPickupStatics.PoisonBlast'
+	StaticMesh=StaticMesh'TURRPG2.ArtifactPickupStatics.PoisonBlast'
 	DrawScale=0.220000
 }

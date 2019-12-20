@@ -72,7 +72,7 @@ defaultproperties
 	ArtifactID="Decoy"
 	bCanBeTossed=False
 	Description="Distracts incoming homing missiles."
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Decoy'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Decoy'
 	ItemName="Decoy"
 	PickupClass=Class'ArtifactPickup_Decoy'
 }

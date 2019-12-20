@@ -96,9 +96,9 @@ state Activated
 
 defaultproperties
 {
-	ActivateSound=Sound'TitanRPG.SoundEffects.ProtectionArtifact'
+	ActivateSound=Sound'TURRPG2.SoundEffects.ProtectionArtifact'
 	bAllowWithFlag=False
-	EffectOverlay=Shader'TitanRPG.Overlays.GlobeOverlay'
+	EffectOverlay=Shader'TURRPG2.Overlays.GlobeOverlay'
 	DamageReduction=0.666667
 	NotWithFlagMessage="You cannot use this artifact while carrying $1."
 	FlagText="the flag"
@@ -110,6 +110,6 @@ defaultproperties
 	bExclusive=True
 	Description="Reduces all incoming damage."
 	PickupClass=Class'ArtifactPickup_Protection'
-	IconMaterial=Texture'TitanRPG.ArtifactIcons.Globe'
+	IconMaterial=Texture'TURRPG2.ArtifactIcons.Globe'
 	ItemName="Protection"
 }

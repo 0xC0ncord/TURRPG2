@@ -24,6 +24,6 @@ function string GetText()
 
 defaultproperties
 {
-	IconMaterial=Texture'TitanRPG.StatusIcons.Eject'
+	IconMaterial=Texture'TURRPG2.StatusIcons.Eject'
 	bShouldTick=True
 }

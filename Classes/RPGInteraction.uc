@@ -71,7 +71,7 @@ event Initialized()
 	TextFont = Font(DynamicLoadObject("UT2003Fonts.jFontSmall", class'Font'));
 	
 	//Load client settings
-	Settings = new(None, "TitanRPG") class'RPGSettings';
+	Settings = new(None, "TURRPG2") class'RPGSettings';
 	
 	FindRPRI();
 	CharSettings = new(None, RPRI.PRI.PlayerName) class'RPGCharSettings';
@@ -110,7 +110,7 @@ exec function RPGStatsMenu()
 
 		if(RPRI != None)
 		{
-			ViewportOwner.GUIController.OpenMenu(class'MutTitanRPG'.default.PackageName $ ".RPGMenu");
+			ViewportOwner.GUIController.OpenMenu(class'MutTURRPG'.default.PackageName $ ".RPGMenu");
 			RPGMenu(GUIController(ViewportOwner.GUIController).TopPage()).InitFor(RPRI);
 		}
 	}
@@ -217,7 +217,7 @@ function FindRPRI()
 			return;
 	}
 	
-	Log("Adding" @ RPRI.RPGName @ "to MyBuilds", 'TitanRPG');
+	Log("Adding" @ RPRI.RPGName @ "to MyBuilds", 'TURRPG2');
 	Settings.MyBuilds[Settings.MyBuilds.Length] = RPRI.RPGName;
 	Settings.SaveConfig();
 }
@@ -862,7 +862,7 @@ function PostRender(Canvas Canvas)
     if(RPRI.bDiscoMode) {
 		Canvas.SetPos(0, 0);
         Canvas.DrawColor = WhiteColor;
-		Canvas.DrawPattern(FinalBlend'TitanRPG.Disco.DiscoModeOverlay', Canvas.ClipX, Canvas.ClipY, 0.25);
+		Canvas.DrawPattern(FinalBlend'TURRPG2.Disco.DiscoModeOverlay', Canvas.ClipX, Canvas.ClipY, 0.25);
     }
 
 	//Reset
@@ -956,7 +956,6 @@ exec function KillTotems()
 
 exec function RPGFavoriteWeapon()
 {
-	Log("RPGFavoriteWeapon", 'TitanRPG');
 	if(RPRI != None)
 		RPRI.ServerFavoriteWeapon();
 }
@@ -967,8 +966,8 @@ event NotifyLevelChange()
 	
 	if(RPRI != None && RPRI.Level.Game != None)
 	{
-		if(class'MutTitanRPG'.static.Instance(RPRI.Level) != None)
-			class'MutTitanRPG'.static.Instance(RPRI.Level).SaveData();
+		if(class'MutTURRPG'.static.Instance(RPRI.Level) != None)
+			class'MutTURRPG'.static.Instance(RPRI.Level).SaveData();
 	}
 
 	Remove();

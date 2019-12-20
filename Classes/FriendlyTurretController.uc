@@ -2,7 +2,7 @@
 	Code base taken from mcgRPG - original author unknown.
 */
 class FriendlyTurretController extends ASSentinelController
-	config(TitanRPG);
+	config(TURRPG2);
 
 var Controller Master; //player who spawned this turret
 var RPGPlayerReplicationInfo MasterRPRI;

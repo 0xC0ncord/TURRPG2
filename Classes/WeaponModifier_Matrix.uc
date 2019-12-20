@@ -46,7 +46,7 @@ defaultproperties
 
 	MinModifier=1
 	MaxModifier=4
-	ModifierOverlay=ColorModifier'TitanRPG.Matrix.MatrixColorModifier'
+	ModifierOverlay=ColorModifier'TURRPG2.Matrix.MatrixColorModifier'
 	PatternPos="Matrix $W"
 	//AI
 	AIRatingBonus=0.025000

@@ -1,5 +1,5 @@
 class RPGSettings extends Object
-	config(TitanRPGSettings)
+	config(TURRPG2Settings)
 	PerObjectConfig;
 
 var config bool bHideWeaponExtra, bHideArtifactName, bHideExpGain, bHideHints, bHideExpBar, bHideStatusIcon;
