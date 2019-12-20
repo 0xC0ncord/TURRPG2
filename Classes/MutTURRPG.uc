@@ -349,6 +349,12 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
         if(Other.IsA('Monster'))
         {
             Pawn(Other).HealthMax = Pawn(Other).Health; //fix, e.g. to allow healing properly
+            // only stock invasion really has this issue nowadays; see FakeMonsterWeapon.uc for the reasoning behind this
+            if(Level.Game.Class == Class'SkaarjPack.Invasion')
+            {
+                W = Spawn(class'FakeMonsterWeapon',Other,,,rot(0,0,0));
+                W.GiveTo(Pawn(Other));
+            }
         }
     
         //Required Equipment
