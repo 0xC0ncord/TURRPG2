@@ -1,8 +1,8 @@
 class MutTURRPG extends Mutator
     config(TURRPG2);
 
-const TURRPG2_VERSION="1.0"
-const TITANRPG_VERSION="1.71b"
+const TURRPG2_VERSION="1.0";
+const TITANRPG_VERSION="1.71b";
 
 //Import resources
 #exec OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
