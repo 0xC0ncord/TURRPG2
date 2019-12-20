@@ -1,33 +1,6 @@
 class Ability_Medic extends RPGAbility;
 
-var config array<int> LevelCap;
-
-replication
-{
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveLevelCap;
-}
-
-simulated function ClientReceived()
-{
-    Super.ClientReceived();
-    LevelCap.Length = 0;
-}
-
-function ServerRequestConfig()
-{
-    local int i;
-
-    Super.ServerRequestConfig();
-
-    for(i = 0; i < LevelCap.Length; i++)
-        ClientReceiveLevelCap(i, LevelCap[i]);
-}
-
-simulated function ClientReceiveLevelCap(int i, int Cap)
-{
-    LevelCap[i] = Cap;
-}
+var array<int> LevelCap;
 
 function int GetHealMax()
 {

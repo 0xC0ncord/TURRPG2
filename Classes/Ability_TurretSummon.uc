@@ -12,31 +12,6 @@ var config array<TurretTypeStruct> TurretTypes;
 
 var localized string TurretPreText, TurretPostText;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveTurretType;
-}
-
-simulated event PostNetBeginPlay() {
-    Super.PostNetBeginPlay();
-    
-    if(Role < ROLE_Authority)
-        TurretTypes.Length = 0;
-}
-
-function ServerRequestConfig() {
-    local int i;
-
-    Super.ServerRequestConfig();
-
-    for(i = 0; i < TurretTypes.Length; i++)
-        ClientReceiveTurretType(i, TurretTypes[i]);
-}
-
-simulated function ClientReceiveTurretType(int i, TurretTypeStruct T) {
-    TurretTypes[i] = T;
-}
-
 function ModifyRPRI() {
     Super.ModifyRPRI();
     RPRI.MaxTurrets += (AbilityLevel - 1);

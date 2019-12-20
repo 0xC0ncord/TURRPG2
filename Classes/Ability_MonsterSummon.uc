@@ -15,33 +15,6 @@ var config array<MonsterTypeStruct> MonsterTypes;
 
 var localized string MonsterPreText, MonsterPostText;
 
-replication
-{
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveMonsterType;
-}
-
-simulated function ClientReceived()
-{
-    Super.ClientReceived();
-    MonsterTypes.Length = 0;
-}
-
-function ServerRequestConfig()
-{
-    local int i;
-
-    Super.ServerRequestConfig();
-
-    for(i = 0; i < MonsterTypes.Length; i++)
-        ClientReceiveMonsterType(i, MonsterTypes[i]);
-}
-
-simulated function ClientReceiveMonsterType(int i, MonsterTypeStruct M)
-{
-    MonsterTypes[i] = M;
-}
-
 function ModifyPawn(Pawn Other)
 {
     local int i;

@@ -12,31 +12,6 @@ var config array<TotemTypeStruct> TotemTypes;
 
 var localized string TotemPreText, TotemPostText;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveTotemType;
-}
-
-simulated event PostNetBeginPlay() {
-    Super.PostNetBeginPlay();
-    
-    if(Role < ROLE_Authority)
-        TotemTypes.Length = 0;
-}
-
-function ServerRequestConfig() {
-    local int i;
-
-    Super.ServerRequestConfig();
-
-    for(i = 0; i < TotemTypes.Length; i++)
-        ClientReceiveTotemType(i, TotemTypes[i]);
-}
-
-simulated function ClientReceiveTotemType(int i, TotemTypeStruct T) {
-    TotemTypes[i] = T;
-}
-
 function ModifyRPRI() {
     Super.ModifyRPRI();
     RPRI.MaxTotems += (AbilityLevel - 1);

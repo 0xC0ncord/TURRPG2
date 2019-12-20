@@ -10,22 +10,6 @@ var float RealHealthGain;
 
 var localized string AbsoluteCapText, VehicleText;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveVampConfig;
-}
-
-function ServerRequestConfig() {
-    Super.ServerRequestConfig();
-    ClientReceiveVampConfig(HealthBonusMax, HealthBonusAbsoluteCap, VehicleBonusPerLevel);
-}
-
-simulated function ClientReceiveVampConfig(float rHealthBonusMax, int rHealthBonusAbsoluteCap, float rVehicleBonusPerLevel) {
-    HealthBonusMax = rHealthBonusMax;
-    HealthBonusAbsoluteCap = rHealthBonusAbsoluteCap;
-    VehicleBonusPerLevel = rVehicleBonusPerLevel;
-}
-
 function ModifyPawn(Pawn Other) {
     Super.ModifyPawn(Other);
     RealHealthGain = 0; //reset on respawn
