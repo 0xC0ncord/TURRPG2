@@ -64,63 +64,12 @@ replication
 	
 	reliable if(Role == ROLE_Authority)
 		bIsStat;
-	
-	reliable if(Role < ROLE_Authority)
-		ServerRequestConfig;
-	
-	reliable if(Role == ROLE_Authority)
-		ClientReceiveRequired, ClientReceiveForbidden, ClientReceiveLevelCost,
-		ClientReceiveReqLevel, ClientReceiveGrantedItem, ClientReceiveBasicSettings;
-}
-
-function ServerRequestConfig()
-{
-	local int i;
-	
-	ClientReceiveBasicSettings(StartingCost, CostAddPerLevel, MaxLevel, bUseLevelCost, BonusPerLevel, bDisjunctiveRequirements);
-
-	for(i = 0; i < RequiredAbilities.Length; i++)
-		ClientReceiveRequired(i, RequiredAbilities[i]);
-		
-	for(i = 0; i < ForbiddenAbilities.Length; i++)
-		ClientReceiveForbidden(i, ForbiddenAbilities[i]);
-
-	for(i = 0; i < GrantItem.Length; i++)
-		ClientReceiveGrantedItem(i, GrantItem[i]);
-		
-	for(i = 0; i < RequiredLevels.Length; i++)
-		ClientReceiveReqLevel(i, RequiredLevels[i]);
-
-	if(bUseLevelCost)
-	{
-		for(i = 0; i < LevelCost.Length; i++)
-			ClientReceiveLevelCost(i, LevelCost[i]);
-	}
-}
-
-simulated function ClientReceiveBasicSettings(
-	int xStartingCost, int xCostAddPerLevel, int xMaxLevel, bool xbUseLevelCost, float xBonusPerLevel, bool xbDisjunctiveRequirements)
-{
-	StartingCost = xStartingCost;
-	CostAddPerLevel = xCostAddPerLevel;
-	MaxLevel = xMaxLevel;
-	bUseLevelCost = xbUseLevelCost;
-	BonusPerLevel = xBonusPerLevel;
-    bDisjunctiveRequirements = xbDisjunctiveRequirements;
 }
 
 simulated function ClientReceived()
 {
 	RPRI.ReceiveAbility(Self);
 	bClientReceived = true;
-	
-	ServerRequestConfig();
-	
-	RequiredAbilities.Length = 0;
-	ForbiddenAbilities.Length = 0;
-	RequiredLevels.Length = 0;
-	LevelCost.Length = 0;
-	GrantItem.Length = 0;
 }
 
 simulated event PostNetBeginPlay()
@@ -162,31 +111,6 @@ simulated event PostBeginPlay()
 		RPRI.ReceiveAbility(Self); //make sure RPG menu gets enabled in offline games
 	
 	Super.PostBeginPlay();
-}
-
-simulated function ClientReceiveRequired(int i, AbilityStruct Req)
-{
-	RequiredAbilities[i] = Req;
-}
-
-simulated function ClientReceiveForbidden(int i, AbilityStruct Forbidden)
-{
-	ForbiddenAbilities[i] = Forbidden;
-}
-
-simulated function ClientReceiveReqLevel(int i, int lv)
-{
-	RequiredLevels[i] = lv;
-}
-
-simulated function ClientReceiveLevelCost(int i, int Cost)
-{
-	LevelCost[i] = Cost;
-}
-
-simulated function ClientReceiveGrantedItem(int i, GrantItemStruct Grant)
-{
-	GrantItem[i] = Grant;
 }
 
 simulated function bool Buy(optional int Amount)
