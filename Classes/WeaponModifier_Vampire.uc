@@ -4,7 +4,7 @@ var config float VampireMaxHealth;
 
 var float RealHealthGain;
 
-var localized string VampireText, EmoText;
+var localized string VampireText, MasochismText;
 
 function StartEffect() {
     Super.StartEffect();
@@ -30,7 +30,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
                 Instigator.GiveHealth(Health, Instigator.HealthMax * VampireMaxHealth);
             } else if(Modifier < 0) {
                 Identify();
-                Instigator.TakeDamage(Health, Instigator, Instigator.Location, vect(0, 0, 0), class'DamTypeEmo');
+                Instigator.TakeDamage(Health, Instigator, Instigator.Location, vect(0, 0, 0), class'DamTypeMasochism');
             }
         }
     }
@@ -42,14 +42,14 @@ simulated function BuildDescription() {
     if(Modifier >= 0) {
         AddToDescription(VampireText, BonusPerLevel);
     } else {
-        AddToDescription(EmoText, -BonusPerLevel);
+        AddToDescription(MasochismText, -BonusPerLevel);
     }
 }
 
 defaultproperties
 {
     VampireText="$1 self-healing for dmg"
-    EmoText="$1 self-damage"
+    MasochismText="$1 self-damage"
     DamageBonus=0.04
     BonusPerLevel=0.0375 //VampireAmount * 0.05
     VampireMaxHealth=1.333333 //the good old 33%
@@ -58,7 +58,7 @@ defaultproperties
     bCanHaveZeroModifier=False
     ModifierOverlay=Shader'WeaponSkins.ShockLaser.LaserShader'
     PatternPos="Vampiric $W"
-    PatternNeg="$W of Emo"
+    PatternNeg="$W of Masochism"
     //AI
     AIRatingBonus=0.075
 }

@@ -1201,7 +1201,7 @@ defaultproperties
 
     DisgraceAnnouncement=Sound'TURRPG2.TranslocSounds.Disgrace'
     EagleEyeAnnouncement=Sound'TURRPG2.TranslocSounds.EagleEye'
-    DirectDamageTypes(0)=class'DamTypeEmo'
+    DirectDamageTypes(0)=class'DamTypeMasochism'
     DirectDamageTypes(1)=class'DamTypePoison'
     DirectDamageTypes(2)=class'DamTypeRetaliation'
     DirectDamageTypes(3)=class'DamTypeFatality'

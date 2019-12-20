@@ -1,11 +1,10 @@
-class DamTypeEmo extends RPGDamageType
+class DamTypeMasochism extends RPGDamageType
     abstract;
 
 var localized string MaleSuicides[3], FemaleSuicides[3];
 
 static function string DeathMessage(PlayerReplicationInfo Killer, PlayerReplicationInfo Victim)
 {
-    //Emos can't kill, only suicide. :D
     return static.SuicideMessage(Victim);
 }
 
@@ -18,13 +17,11 @@ static function string SuicideMessage(PlayerReplicationInfo Victim)
 }
 
 defaultproperties {
-    StatWeapon=class'DummyWeapon_Emo'
-    MaleSuicides(0)="%o got all emotional."
-    MaleSuicides(1)="Things got too much for %o."
-    MaleSuicides(2)="%o couldn't take any more."
-    FemaleSuicides(0)="%o got all emotional."
-    FemaleSuicides(1)="Things got too much for %o."
-    FemaleSuicides(2)="%o couldn't take any more."
+    StatWeapon=class'DummyWeapon_Masochism'
+    MaleSuicides(0)="%o had too much fun with pain."
+    MaleSuicides(1)="%o endured more than he could handle."
+    FemaleSuicides(0)="%o had too much fun with pain."
+    FemaleSuicides(1)="%o endured more than she could handle."
     bArmorStops=False
     bLocationalHit=False
     bAlwaysSevers=True
