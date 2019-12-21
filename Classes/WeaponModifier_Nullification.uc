@@ -29,17 +29,15 @@ defaultproperties {
     //Block effects
     DenyEffects(0)=class'DevoidEffect_Matrix'
     DenyEffects(1)=class'DevoidEffect_Vampire'
-    DenyEffects(2)=class'Effect_Disco'
-    DenyEffects(3)=class'Effect_Freeze'
-    DenyEffects(4)=class'Effect_Knockback'
-    DenyEffects(5)=class'Effect_NullEntropy'
-    DenyEffects(6)=class'Effect_Poison'
-    DenyEffects(7)=class'Effect_Vorpal'
+    DenyEffects(2)=class'Effect_Freeze'
+    DenyEffects(3)=class'Effect_Knockback'
+    DenyEffects(4)=class'Effect_NullEntropy'
+    DenyEffects(5)=class'Effect_Poison'
+    DenyEffects(6)=class'Effect_Vorpal'
     //AI
     CountersModifier(0)=class'WeaponModifier_Freeze'
     CountersModifier(1)=class'WeaponModifier_NullEntropy'
     CountersModifier(2)=class'WeaponModifier_Poison'
     CountersModifier(3)=class'WeaponModifier_Knockback'
-    CountersModifier(4)=class'WeaponModifier_Party'
     AIRatingBonus=0.025
 }

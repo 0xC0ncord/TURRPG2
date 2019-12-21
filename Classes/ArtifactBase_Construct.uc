@@ -57,7 +57,6 @@ defaultproperties {
     BlockingTypes(6)=class'xPickupBase'
     BlockingTypes(7)=class'WeaponLocker'
     BlockingTypes(8)=class'ASTurret'
-    BlockingTypes(9)=class'RPGTotem'
     BlockingTypeStrings(0)="game objective"
     BlockingTypeStrings(1)="player start"
     BlockingTypeStrings(2)="vehicle spawn"
@@ -67,5 +66,4 @@ defaultproperties {
     BlockingTypeStrings(6)="pickup base"
     BlockingTypeStrings(7)="weapon locker"
     BlockingTypeStrings(8)="turret"
-    BlockingTypeStrings(9)="totem"
 }

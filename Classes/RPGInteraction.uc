@@ -858,13 +858,6 @@ function PostRender(Canvas Canvas)
         }
     }
     
-    //Disco mode
-    if(RPRI.bDiscoMode) {
-        Canvas.SetPos(0, 0);
-        Canvas.DrawColor = WhiteColor;
-        Canvas.DrawPattern(FinalBlend'TURRPG2.Disco.DiscoModeOverlay', Canvas.ClipX, Canvas.ClipY, 0.25);
-    }
-
     //Reset
     Canvas.DrawColor = Canvas.default.DrawColor;
     Canvas.Font = Canvas.default.Font;
@@ -946,12 +939,6 @@ exec function KillTurrets()
 {
     if(RPRI != None)
         RPRI.ServerDestroyTurrets();
-}
-
-exec function KillTotems()
-{
-    if(RPRI != None)
-        RPRI.ServerDestroyTotems();
 }
 
 exec function RPGFavoriteWeapon()

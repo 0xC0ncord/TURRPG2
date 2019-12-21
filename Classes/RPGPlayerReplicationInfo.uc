@@ -72,17 +72,15 @@ var Weapon LastPawnWeapon;
 var array<Vehicle> Turrets;
 var array<Monster> Monsters;
 var array<ONSMineProjectile> Mines;
-var array<RPGTotem> Totems;
 
 //replicated
-var int NumMonsters, NumTurrets, NumMines, NumTotems;
-var bool bDiscoMode;
+var int NumMonsters, NumTurrets, NumMines;
 
 //stats
-var int MaxMines, MaxMonsters, MaxTurrets, MaxTotems;
+var int MaxMines, MaxMonsters, MaxTurrets;
 
 //determine if summons die on player death
-var bool bMonstersDie, bTurretsDie, bTotemsDie;
+var bool bMonstersDie, bTurretsDie;
 
 var float HealingExpMultiplier;
 
@@ -157,9 +155,8 @@ replication
     reliable if(Role == ROLE_Authority && bNetDirty)
         bImposter, RPGLevel, Experience, PointsAvailable, NeededExp,
         bGameEnded,
-        NumMines, NumMonsters, NumTurrets, NumTotems,
-        MaxMines, MaxTurrets, MaxMonsters, MaxTotems,
-        bDiscoMode;
+        NumMines, NumMonsters, NumTurrets,
+        MaxMines, MaxTurrets, MaxMonsters;
     reliable if(Role == ROLE_Authority)
         ClientReInitMenu, ClientEnableRPGMenu,
         ClientNotifyExpGain, ClientShowHint,
@@ -174,7 +171,7 @@ replication
         ServerSwitchBuild, ServerResetData, ServerRebuildData,
         ServerClearArtifactOrder, ServerAddArtifactOrderEntry, ServerSortArtifacts,
         ServerGetArtifact, ServerActivateArtifact, //moved from TitanPlayerController for better compatibility
-        ServerDestroyTurrets, ServerKillMonsters, ServerDestroyTotems,
+        ServerDestroyTurrets, ServerKillMonsters,
         ServerFavoriteWeapon;
 }
 
@@ -238,11 +235,9 @@ function ModifyStats()
     MaxMines = RPGMut.MaxMines;
     MaxMonsters = RPGMut.MaxMonsters;
     MaxTurrets = RPGMut.MaxTurrets;
-    MaxTotems = RPGMut.MaxTotems;
     
     bMonstersDie = RPGMut.bMonstersDie;
     bTurretsDie = RPGMut.bTurretsDie;
-    bTotemsDie = RPGMut.bTotemsDie;
     
     HealingExpMultiplier = class'RPGRules'.default.EXP_Healing;
     
@@ -352,7 +347,6 @@ simulated event BeginPlay()
 function Reset() {
     ServerKillMonsters();
     ServerDestroyTurrets();
-    ServerDestroyTotems();
 }
 
 simulated event Destroyed()
@@ -903,19 +897,6 @@ simulated event Tick(float dt)
                 x++;
         }
         
-        //Clean totems
-        x = 0;
-        while(x < Totems.Length)
-        {
-            if(Totems[x] == None)
-            {
-                NumTotems--;
-                Totems.Remove(x, 1);
-            }
-            else
-                x++;
-        }
-        
         //Award experience for daredevil points
         if(
             class'RPGRules'.default.EXP_Daredevil != 0 &&
@@ -1276,34 +1257,6 @@ function ServerDestroyTurrets()
         Turrets.Remove(0, 1);
     }
     NumTurrets = 0;
-}
-
-function AddTotem(RPGTotem T)
-{
-    local int i;
-    
-    Totems[Totems.Length] = T;
-    NumTotems++;
-    
-    for(i = 0; i < Abilities.Length; i++)
-    {
-        if(Abilities[i].bAllowed)
-            Abilities[i].ModifyTotem(T, Controller.Pawn);
-    }
-}
-
-function ServerDestroyTotems()
-{
-    while(Totems.Length > 0)
-    {
-        if(Totems[0] != None)
-        {
-            Totems[0].Suicide();
-        }
-        
-        Totems.Remove(0, 1);
-    }
-    NumTotems = 0;
 }
 
 simulated function ClientSetName(string NewName)

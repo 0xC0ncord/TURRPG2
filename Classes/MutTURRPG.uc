@@ -311,8 +311,6 @@ function string GetInventoryClassOverride(string InventoryClassName)
         return "TURRPG2.RPGMineLayer";
     else if(InventoryClassName ~= "XWeapons.BallLauncher")
         return "TURRPG2.RPGBallLauncher";
-    else if(InventoryClassName ~= "UTClassic.ClassicSniperRifle")
-        return "TURRPG2.RPGClassicSniperRifle";
 
     return InventoryClassName;
 }

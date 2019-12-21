@@ -37,7 +37,6 @@ simulated function ModeTick(float dt)
     local DestroyableObjective HealObjective;
     local RPGGameObjectiveObserver Observer;
     local Vehicle LinkedVehicle;
-    local RPGWeaponModifier WM;
 
     if ( !bIsFiring )
     {
@@ -253,12 +252,6 @@ simulated function ModeTick(float dt)
                             SetLinkTo(None);
                             bIsHealingObjective = true;
                             
-                            WM = class'WeaponModifier_Repair'.static.GetFor(Weapon);
-                            if(WM != None) {
-                                WM.Identify();
-                                AdjustedDamage *= 1.0 + WM.Modifier * WM.BonusPerLevel; //The actual Repair gun effect
-                            }
-                            
                             OldHealth = HealObjective.Health;
                             if(HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType)) {
                                 if(HealObjective.Health > OldHealth) {
@@ -286,13 +279,6 @@ simulated function ModeTick(float dt)
         if ( LinkedVehicle != None && bDoHit )
         {
             AdjustedDamage = Damage * (1.5*Linkgun.Links+1) * Instigator.DamageScaling;
-            
-            //Check whether we're using a Repair weapon modifier
-            WM = class'WeaponModifier_Repair'.static.GetFor(Weapon);
-            if(WM != None) {
-                WM.Identify();
-                AdjustedDamage *= 1.0 + WM.Modifier * WM.BonusPerLevel; //The actual Repair gun effect
-            }
             
             if(Instigator.HasUDamage())
                 AdjustedDamage *= 2;

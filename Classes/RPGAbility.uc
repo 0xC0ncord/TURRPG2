@@ -417,10 +417,6 @@ function ModifyMonster(Monster M, Pawn Master);
  */
 function ModifyTurret(Vehicle T, Pawn Other);
 
-/* Modify a totem constructed by the owning player.
- */
-function ModifyTotem(RPGTotem T, Pawn Other);
-
 function ModifyVehicle(Vehicle V);
 
 /* Remove any modifications to this vehicle, because the player is no longer driving it.

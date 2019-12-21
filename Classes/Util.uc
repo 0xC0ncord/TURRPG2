@@ -551,11 +551,7 @@ static function bool SameTeamC(Controller A, Controller B) {
     return
         (TeamA != 255 && TeamA == TeamB) ||
         (A.IsA('FriendlyMonsterController') && FriendlyMonsterController(A).Master == B) ||
-        (B.IsA('FriendlyMonsterController') && FriendlyMonsterController(B).Master == A) ||
-        (A.IsA('FriendlyTurretController') && FriendlyTurretController(A).Master == B) ||
-        (B.IsA('FriendlyTurretController') && FriendlyTurretController(B).Master == A) ||
-        (A.IsA('RPGTotemController') && RPGTotemController(A).Master == B) ||
-        (B.IsA('RPGTotemController') && RPGTotemController(B).Master == A);
+        (B.IsA('FriendlyMonsterController') && FriendlyMonsterController(B).Master == A);
 }
 
 //Gets the team a certain pawn is on

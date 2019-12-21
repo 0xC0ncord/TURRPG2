@@ -308,22 +308,6 @@ function ScoreKill(Controller Killer, Controller Killed)
                 if(Killer.IsA('PlayerController') && Killed.PlayerReplicationInfo != None)
                     PlayerController(Killer).ReceiveLocalizedMessage(class'FriendlyMonsterKillerMessage',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
             }
-            else if(Killer.IsA('FriendlyTurretController'))
-            {
-                Killer = FriendlyTurretController(Killer).Master;
-                RegisterWeaponKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class'DummyWeapon_Turret');
-
-                if(Killer.IsA('PlayerController') && Killed.PlayerReplicationInfo != None)
-                    PlayerController(Killer).ReceiveLocalizedMessage(class'FriendlyTurretKillerMessage',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
-            }
-            else if(Killer.IsA('RPGTotemController'))
-            {
-                Killer = RPGTotemController(Killer).Master;
-                RegisterWeaponKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class'DummyWeapon_Totem');
-
-                if(Killer.IsA('PlayerController') && Killed.PlayerReplicationInfo != None)
-                    PlayerController(Killer).ReceiveLocalizedMessage(class'TotemKillerMessage',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
-            }
             
             //Award experience
             KillerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killer);
