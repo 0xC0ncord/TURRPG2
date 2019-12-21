@@ -268,7 +268,8 @@ exec function TossArtifact()
 
     if(bCanBeTossed)
     {
-        Instigator.NextItem();
+        if(bCanHaveMultipleCopies && NumCopies <= 1)
+            Instigator.NextItem();
         Velocity = Vector(Instigator.Controller.GetViewRotation());
         Velocity = Velocity * ((Instigator.Velocity Dot Velocity) + 500) + Vect(0,0,200);
         GetAxes(Instigator.Rotation, X, Y, Z);
@@ -276,30 +277,74 @@ exec function TossArtifact()
     }
 }
 
+function RemoveOne()
+{
+    if(!bCanHaveMultipleCopies)
+        return;
+
+    NumCopies--;
+    if(NumCopies <= 0)
+        Destroy();
+}
+
 function DropFrom(vector StartLocation)
 {
-    if(Instigator != None && Instigator.Controller.IsA('PlayerController'))
+    local Pickup P;
+    local Inventory TossedInventory;
+
+    if(Instigator != None && Instigator.Controller.IsA('PlayerController') && NumCopies <= 1)
         CloseSelection();
 
-    if(bActive)
+    if(bActive && NumCopies <= 1)
+    {
         GotoState('');
-
-    bActive = false;
+        bActive = false;
+    }
 
     if(!bResetCooldownOnRespawn && InstigatorRPRI != None)
         InstigatorRPRI.SaveCooldown(Self);
 
+    NumCopies--;
+
+    // Toss out a single instance of this pickup instead of them all
     if(bCanBeTossed)
     {
-        Super.DropFrom(StartLocation);
+        if(NumCopies <= 0)
+        {
+            if(Instigator != None)
+            {
+                DetachFromPawn(Instigator);
+                Instigator.DeleteInventory(Self);
+            }
+
+            SetDefaultDisplayProperties();
+            Instigator = None;
+            StopAnimating();
+
+            TossedInventory = Self;
+            NumCopies = 1;
+        }
+        else
+            TossedInventory = Spawn(Class,,, StartLocation);
     }
     else
     {
-        Destroy();
+        RemoveOne();
         Instigator.NextItem();
     }
-    
-    InstigatorRPRI = None;
+
+    P = Spawn(PickupClass,,, StartLocation);
+    if(P == None)
+    {
+        if(TossedInventory == Self)
+            Destroy();
+        return;
+    }
+    P.InitDroppedPickupFor(TossedInventory);
+    P.Velocity = Velocity;
+
+    if(NumCopies <= 0)
+        Velocity = vect(0,0,0);
 }
 
 function UsedUp()
@@ -410,7 +455,7 @@ function DoAmmo()
     {
         NumUses--;
         if(NumUses <= 0)
-            Destroy(); //used up
+            RemoveOne(); //used up
     }
 }
 
@@ -678,7 +723,10 @@ defaultproperties
 {
     Description=""
     bCanBeTossed=True
-    bCanHaveMultipleCopies=False
+    bCanHaveMultipleCopies=True
+    NumCopies=1
+    MaxUses=-1
+    NumUses=-1
     bActivatable=True
     bDisplayableInv=True
     bReplicateInstigator=True

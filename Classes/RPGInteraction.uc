@@ -272,8 +272,9 @@ function Color GetHUDTeamTint(HudCDeathmatch HUD)
 function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas, HudCDeathmatch HUD, float X, float Y, float Size, optional bool bSelected)
 {
     local int Time;
-    local float XL, YL;
+    local float XL, YL, SXL;
     local Color HUDColor;
+    local string S;
 
     Canvas.Style = 5;
     HUDColor = GetHUDTeamColor(HUD);
@@ -305,14 +306,37 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
         Canvas.DrawTile(AClass.default.IconMaterial, Size * ArtifactIconInnerScale, Size * ArtifactIconInnerScale, 0, 0, AClass.default.IconMaterial.MaterialUSize(), AClass.default.IconMaterial.MaterialVSize());
     }
     
-    if(A != None && TimeSeconds < A.NextUseTime)
+    if(A != None)
     {
-        Time = int(A.NextUseTime - TimeSeconds) + 1;
-        
-        Canvas.DrawColor = WhiteColor;
-        Canvas.TextSize(string(Time), XL, YL);
-        Canvas.SetPos(X + (Size - XL) * 0.5, Y + (Size - YL) * 0.5);
-        Canvas.DrawText(string(Time));
+        if((A.MaxUses > -1 && A.NumUses < -1) || A.NumCopies > 1)
+        {
+            //TODO what if we have an artifact with more than one copy but also has more than one use?
+            if(A.NumUses > -1 && A.MaxUses > -1)
+                S = A.NumUses + (A.default.NumUses * (A.NumCopies - 1)) $ "/" $ A.MaxUses;
+            else
+                S = string(A.NumCopies);
+
+            Canvas.DrawColor = WhiteColor;
+            Canvas.FontScaleX = FontScale.X * 0.65;
+            Canvas.FontScaleY = FontScale.Y * 0.65;
+            Canvas.TextSize(S, XL, YL);
+            Canvas.TextSize("A", SXL, YL);
+            Canvas.SetPos((X + Size) - XL - (SXL * 0.2), (Y + Size) - YL - (YL * 0.2));
+            Canvas.DrawText(S);
+
+            Canvas.FontScaleX = FontScale.X;
+            Canvas.FontScaleY = FontScale.Y;
+        }
+
+        if(TimeSeconds < A.NextUseTime)
+        {
+            Time = int(A.NextUseTime - TimeSeconds) + 1;
+            
+            Canvas.DrawColor = WhiteColor;
+            Canvas.TextSize(string(Time), XL, YL);
+            Canvas.SetPos(X + (Size - XL) * 0.5, Y + (Size - YL) * 0.5);
+            Canvas.DrawText(string(Time));
+        }
     }
 }
 
