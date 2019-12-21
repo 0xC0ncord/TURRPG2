@@ -55,8 +55,8 @@ defaultproperties
     AbilityName="Weapon Speed"
     StatName="Weapon Speed Bonus"
     Description="Increases your firing rate for all weapons by $1 per level.|The Berserk adrenaline Combo will stack with this effect."
-    MaxLevel=10
-    StartingCost=5
-    BonusPerLevel=0.05
+    MaxLevel=100
+    StartingCost=1
+    BonusPerLevel=0.01
     Category=class'AbilityCategory_Weapons'
 }

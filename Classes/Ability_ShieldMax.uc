@@ -44,12 +44,12 @@ simulated function string DescriptionText()
 
 defaultproperties
 {
-    BonusPerLevel=25
+    BonusPerLevel=1
     AbilityName="Shields Up!"
     StatName="Max Shield Bonus"
     Description="Increases your maximum shield by $1 per level."
     StartingCost=1
     CostAddPerLevel=1
-    MaxLevel=4
+    MaxLevel=100
     Category=class'AbilityCategory_Health'
 }

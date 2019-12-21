@@ -16,8 +16,8 @@ defaultproperties
 {
     AbilityName="Damage Reduction"
     Description="Reduces all damage you take by $1 per level."
-    MaxLevel=6
-    StartingCost=5
-    BonusPerLevel=0.025
+    MaxLevel=500
+    StartingCost=1
+    BonusPerLevel=0.001
     Category=class'AbilityCategory_Damage'
 }

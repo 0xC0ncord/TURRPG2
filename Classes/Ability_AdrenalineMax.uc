@@ -31,8 +31,8 @@ defaultproperties
     AbilityName="Adrenaline Container"
     StatName="Max Adrenaline Bonus"
     Description="Increases your maximum adrenaline amount by $1 per level.|Combos can still be activated with 100 adrenaline."
-    MaxLevel=10
-    StartingCost=5
-    BonusPerLevel=5
+    MaxLevel=400
+    StartingCost=1
+    BonusPerLevel=1
     Category=class'AbilityCategory_Adrenaline'
 }

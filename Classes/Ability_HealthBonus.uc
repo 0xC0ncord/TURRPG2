@@ -23,8 +23,8 @@ defaultproperties
     AbilityName="Health"
     StatName="Health Bonus"
     Description="Increases your starting and maximum health by $1 per level."
-    MaxLevel=3
-    StartingCost=5
-    BonusPerLevel=10
+    MaxLevel=200
+    StartingCost=1
+    BonusPerLevel=1
     Category=class'AbilityCategory_Health'
 }
