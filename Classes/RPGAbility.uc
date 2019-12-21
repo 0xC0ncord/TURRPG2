@@ -35,6 +35,13 @@ struct GrantItemStruct
 };
 var array<GrantItemStruct> GrantItem;
 
+struct ComboReplaceStruct
+{
+    var array<class<Combo> > ComboClasses;
+    var class<Combo> NewComboClass;
+};
+var array<ComboReplaceStruct> ComboReplacements;
+
 //there is a bonus per level variable declared in so many abilities, I'm just moving it here
 var float BonusPerLevel; //general purpose
 
@@ -63,6 +70,9 @@ replication
     
     reliable if(Role == ROLE_Authority)
         bIsStat;
+
+    reliable if(Role == ROLE_Authority)
+        ClientReplaceCombos;
 }
 
 simulated function ClientReceived()
@@ -149,6 +159,12 @@ simulated function bool Buy(optional int Amount)
         else
         {
             ModifyPawn(RPRI.Controller.Pawn);
+        }
+
+        if(xPlayer(RPRI.Controller) != None && ComboReplacements.Length > 0)
+        {
+            ReplaceCombos(xPlayer(RPRI.Controller));
+            ClientReplaceCombos();
         }
         
         RPRI.ProcessGrantQueue(); //give weapons
@@ -395,6 +411,41 @@ function ModifyPawn(Pawn Other)
     }
 }
 
+simulated function ClientReplaceCombos()
+{
+    if(Role < Role_Authority)
+        ReplaceCombos(xPlayer(RPRI.Controller));
+}
+
+simulated function ReplaceCombos(xPlayer xP)
+{
+    local int i, x, y;
+
+    for(x = 0; x < ComboReplacements.Length; x++)
+    {
+        for(i = 0; i < 16; i++)
+        {
+            if(ComboReplacements[x].ComboClasses.Length == 0 && xP.ComboList[i] == None)
+            {
+                xP.ClientReceiveCombo(string(ComboReplacements[x].NewComboClass));
+                break;
+            }
+            else
+            {
+                for(y = 0; y < ComboReplacements[x].ComboClasses.Length; y++)
+                {
+                    if(xP.ComboList[i] == ComboReplacements[x].ComboClasses[y])
+                    {
+                        xP.ComboList[i] = ComboReplacements[x].NewComboClass;
+                        xP.ComboNameList[i] = string(ComboReplacements[x].NewComboClass);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+
 /* Modify the owning player's current weapon. Called whenever the player's weapon changes.
  */
 function ModifyWeapon(Weapon Weapon);
@@ -423,6 +474,11 @@ function bool CanEnterVehicle(Vehicle V)
 {
     return true;
 }
+
+/* Allow abilities to modify adrenaline gain and subtraction
+ */
+function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
+function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
 
 /* React to damage about to be done to the injured player's pawn. Called by RPGRules.NetDamage()
  * Note that this is called AFTER the damage has been affected by Damage Bonus/Damage Reduction.

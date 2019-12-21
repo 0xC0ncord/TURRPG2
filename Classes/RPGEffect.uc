@@ -362,6 +362,9 @@ state Activated
     }
 }
 
+function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
+function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
+
 defaultproperties   {
     bPermanent=False
 

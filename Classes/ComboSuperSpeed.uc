@@ -1,49 +1,87 @@
-class ComboSuperSpeed extends Combo
-    config(TURRPG2);
-    
-var xEmitter LeftTrail, RightTrail;
-var config float SpeedBonus, JumpZBonus;
+class ComboSuperSpeed extends RPGCombo;
 
-function StartEffect(xPawn P)
+var RPGPlayerReplicationInfo RPRI;
+
+var xEmitter LeftTrail, RightTrail;
+var float SpeedBonus, JumpZBonus;
+
+simulated function Tick(float DeltaTime)
+{
+    local Pawn P;
+    
+    P = Pawn(Owner);
+
+    if (P == None || P.Controller == None)
+	{
+        Destroy();
+        return;
+    }
+
+    if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
+		DeltaTime *= 2;
+	if(RPRI != None)
+		RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+	else
+		P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+    if (P.Controller.Adrenaline <= 0.0)
+    {
+        P.Controller.Adrenaline = 0.0;
+        Destroy();
+    }
+}
+
+function CreateEffects(Pawn P)
 {
     LeftTrail = Spawn(class'FX_SuperSpeedTrail', P,, P.Location, P.Rotation);
     P.AttachToBone(LeftTrail, 'lfoot');
 
     RightTrail = Spawn(class'FX_SuperSpeedTrail', P,, P.Location, P.Rotation);
     P.AttachToBone(RightTrail, 'rfoot');
-    
-    P.AirControl  *= (1.0 + SpeedBonus);
-    P.GroundSpeed *= (1.0 + SpeedBonus);
-    P.WaterSpeed  *= (1.0 + SpeedBonus);
-    P.AirSpeed    *= (1.0 + SpeedBonus);
-    P.JumpZ       *= (1.0 + JumpZBonus);
+}
+
+function DestroyEffects(Pawn P)
+{
+	if (LeftTrail != None)
+		LeftTrail.Destroy();
+
+	if (RightTrail != None)
+		RightTrail.Destroy();
+}
+
+function StartEffect(xPawn P)
+{
+	Super.StartEffect(P);
+
+	RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
+	
+	P.AirControl  *= (1.0 + SpeedBonus);
+	P.GroundSpeed *= (1.0 + SpeedBonus);
+	P.WaterSpeed  *= (1.0 + SpeedBonus);
+	P.AirSpeed    *= (1.0 + SpeedBonus);
+	P.JumpZ       *= (1.0 + JumpZBonus);
 }
 
 function StopEffect(xPawn P)
 {
-    if (LeftTrail != None)
-        LeftTrail.Destroy();
+	Super.StopEffect(P);
 
-    if (RightTrail != None)
-        RightTrail.Destroy();
-
-    // Our replacement: the opposite of what happens in ComboSpeed.StartEffect().
-    P.AirControl  /= (1.0 + SpeedBonus);
-    P.GroundSpeed /= (1.0 + SpeedBonus);
-    P.WaterSpeed  /= (1.0 + SpeedBonus);
-    P.AirSpeed    /= (1.0 + SpeedBonus);
-    P.JumpZ       /= (1.0 + JumpZBonus);
+	// Our replacement: the opposite of what happens in ComboSpeed.StartEffect().
+	P.AirControl  /= (1.0 + SpeedBonus);
+	P.GroundSpeed /= (1.0 + SpeedBonus);
+	P.WaterSpeed  /= (1.0 + SpeedBonus);
+	P.AirSpeed    /= (1.0 + SpeedBonus);
+	P.JumpZ       /= (1.0 + JumpZBonus);
 }
 
 defaultproperties
 {
-    SpeedBonus=0.6
-    JumpZBonus=0.5 //original speed combo value
-    Duration=16
-    ExecMessage="Super Speed!"
-    ComboAnnouncementName=Speed
-    keys(0)=1
-    keys(1)=1
-    keys(2)=1
-    keys(3)=1
+     SpeedBonus=0.600000
+     JumpZBonus=0.500000
+     ExecMessage="Super Speed!"
+     Duration=16.000000
+     ComboAnnouncementName="Speed"
+     keys(0)=1
+     keys(1)=1
+     keys(2)=1
+     keys(3)=1
 }

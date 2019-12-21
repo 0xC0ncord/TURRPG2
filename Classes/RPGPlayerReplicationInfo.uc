@@ -442,7 +442,11 @@ simulated event PostNetBeginPlay()
     Super.PostNetBeginPlay();
     
     if(Controller != None && Role == ROLE_Authority)
+    {
         Controller.AdrenalineMax = Controller.default.AdrenalineMax; //fix the build switching exploit
+        if(xPlayer(Controller) != None)
+            AdjustCombos();
+    }
     
     if(Level.NetMode != NM_DedicatedServer)
         ClientSetup(); //try setup. if it fails, it's tried again every tick
@@ -468,8 +472,8 @@ simulated function ClientSetup()
     PRI.CustomReplicationInfo = Self;
     
     if(xPlayer(Controller) != None)
-        xPlayer(Controller).ComboList[0] = class'RPGComboSpeed';
-    
+        AdjustCombos();
+
     if(Role < ROLE_Authority) //not offline
     {
         AbilitiesTotal = RRI.NumAbilities;
@@ -538,6 +542,36 @@ simulated function ClientSetup()
         ClientEnableRPGMenu();
     
     bClientSetup = true;
+}
+
+simulated final function AdjustCombos()
+{
+    local int i;
+
+    //reset the player's combo list
+    //without this, combos could potentially be carried across character switches
+    for(i = 0; i < 16; i++)
+    {
+        xPlayer(Controller).ComboNameList[i] = xPlayer(Controller).default.ComboNameList[i];
+
+        if(xPlayer(Controller).ComboNameList[i] != "")
+            xPlayer(Controller).ComboList[i] = class<Combo>(DynamicLoadObject(xPlayer(Controller).default.ComboNameList[i], class'Class'));
+        else
+            xPlayer(Controller).ComboList[i] = None;
+    }
+
+    xPlayer(Controller).ComboNameList[0] = string(class'RPGComboSpeed');
+    xPlayer(Controller).ComboList[0] = class'RPGComboSpeed';
+    xPlayer(Controller).ComboNameList[1] = string(class'RPGComboBerserk');
+    xPlayer(Controller).ComboList[1] = class'RPGComboBerserk';
+    xPlayer(Controller).ComboNameList[2] = string(class'RPGComboDefensive');
+    xPlayer(Controller).ComboList[2] = class'RPGComboDefensive';
+    xPlayer(Controller).ComboNameList[3] = string(class'RPGComboInvis');
+    xPlayer(Controller).ComboList[3] = class'RPGComboInvis';
+
+    for(i = 0; i < Abilities.Length; i++)
+        if(Abilities[i].ComboReplacements.Length > 0)
+            Abilities[i].ReplaceCombos(xPlayer(Controller));
 }
 
 simulated function int FindOrderEntry(class<RPGArtifact> AClass)
@@ -1864,6 +1898,58 @@ simulated function ClientSyncProjectile(vector Location, class<Projectile> Type,
         
         ModifyProjectiles[ModifyProjectiles.Length] = Mod;
     }
+}
+
+/*
+centralized functions for adrenaline gain/drain, allowing modification of added or subtracted adrenaline
+abilities and artifact should use these where possible
+*/
+final function AwardAdrenaline(float Amount, optional Object Source)
+{
+    local float OriginalAmount;
+    local int i;
+    local Inventory Inv;
+
+    OriginalAmount = Amount;
+
+    for(i = 0; i < Abilities.Length; i++)
+        Abilities[i].ModifyAdrenalineGain(Amount, OriginalAmount, Source);
+    if(Controller.Pawn != None)
+    {
+        for(Inv = Controller.Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+        {
+            if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
+                RPGArtifact(Inv).ModifyAdrenalineGain(Amount, OriginalAmount, Source);
+            else if(RPGEffect(Inv) != None && RPGEffect(Inv).IsInState('Activated'))
+                RPGEffect(Inv).ModifyAdrenalineGain(Amount, OriginalAmount, Source);
+        }
+    }
+
+    Controller.AwardAdrenaline(Amount);
+}
+
+final function DrainAdrenaline(float Amount, optional Object Source)
+{
+    local float OriginalAmount;
+    local int i;
+    local Inventory Inv;
+
+    OriginalAmount = Amount;
+
+    for(i = 0; i < Abilities.Length; i++)
+        Abilities[i].ModifyAdrenalineDrain(Amount, OriginalAmount, Source);
+    if(Controller.Pawn != None)
+    {
+        for(Inv = Controller.Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+        {
+            if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
+                RPGArtifact(Inv).ModifyAdrenalineDrain(Amount, OriginalAmount, Source);
+            else if(RPGEffect(Inv)!=None && RPGEffect(Inv).IsInState('Activated'))
+                RPGEffect(Inv).ModifyAdrenalineDrain(Amount, OriginalAmount, Source);
+        }
+    }
+
+    Controller.Adrenaline = FMax(Controller.Adrenaline - Amount, 0);
 }
 
 defaultproperties

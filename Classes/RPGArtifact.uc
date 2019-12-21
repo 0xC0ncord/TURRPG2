@@ -17,7 +17,7 @@ var float CurrentCostPerSec;
 var config float FlagMultiplier; //scale the cost per sec when holding the flag
 
 var config bool bAllowInVehicle;
-var string ArtifactID; //for GetArtifact / RPGGetArtifact
+var string ArtifactID; //for GetArtifact / RPGGetArtifact
 var float ActivatedTime;
 var config bool bCanBeTossed;
 
@@ -671,6 +671,9 @@ function RoundAdrenaline()
     if(Instigator != None && Instigator.Controller != None)
         Instigator.Controller.Adrenaline = float(int(Instigator.Controller.Adrenaline + 0.01));
 }
+
+function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
+function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
 
 defaultproperties
 {
