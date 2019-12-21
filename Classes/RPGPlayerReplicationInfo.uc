@@ -467,7 +467,8 @@ simulated function ClientSetup()
     NextReplicationInfo = PRI.CustomReplicationInfo;
     PRI.CustomReplicationInfo = Self;
     
-    xPlayer(Controller).ComboList[0] = class'RPGComboSpeed';
+    if(xPlayer(Controller) != None)
+        xPlayer(Controller).ComboList[0] = class'RPGComboSpeed';
     
     if(Role < ROLE_Authority) //not offline
     {
@@ -487,50 +488,52 @@ simulated function ClientSetup()
         Interaction = RPGInteraction(
             PlayerController(Controller).Player.InteractionMaster.AddInteraction(
                 string(class'RPGInteraction'), PlayerController(Controller).Player));
-    }
-    
-    if(Interaction != None)
-        Interaction.RPRI = Self;
-    else
-        Warn("Could not create RPGInteraction!");
-    
-    //build artifact order
-    ArtifactOrder.Remove(0, ArtifactOrder.Length);
-    ServerClearArtifactOrder();
-    
-    if(Interaction.CharSettings != None)
-    {
-        //load order from settings
-        for(x = 0; x < Interaction.CharSettings.ArtifactOrderConfig.Length; x++)
-        {
-            AClass = GetArtifactClass(Interaction.CharSettings.ArtifactOrderConfig[x].ArtifactID);
 
-            OrderEntry.ArtifactClass = AClass;
-            OrderEntry.ArtifactID = Interaction.CharSettings.ArtifactOrderConfig[x].ArtifactID;
-            OrderEntry.bShowAlways = Interaction.CharSettings.ArtifactOrderConfig[x].bShowAlways;
-            OrderEntry.bNeverShow = Interaction.CharSettings.ArtifactOrderConfig[x].bNeverShow;
+        if(Interaction != None)
+        {
+            Interaction.RPRI = Self;
+
+            //build artifact order
+            ArtifactOrder.Remove(0, ArtifactOrder.Length);
+            ServerClearArtifactOrder();
             
-            ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
-            ServerAddArtifactOrderEntry(OrderEntry);
+            if(Interaction.CharSettings != None)
+            {
+                //load order from settings
+                for(x = 0; x < Interaction.CharSettings.ArtifactOrderConfig.Length; x++)
+                {
+                    AClass = GetArtifactClass(Interaction.CharSettings.ArtifactOrderConfig[x].ArtifactID);
+
+                    OrderEntry.ArtifactClass = AClass;
+                    OrderEntry.ArtifactID = Interaction.CharSettings.ArtifactOrderConfig[x].ArtifactID;
+                    OrderEntry.bShowAlways = Interaction.CharSettings.ArtifactOrderConfig[x].bShowAlways;
+                    OrderEntry.bNeverShow = Interaction.CharSettings.ArtifactOrderConfig[x].bNeverShow;
+                    
+                    ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
+                    ServerAddArtifactOrderEntry(OrderEntry);
+                }
+                ServerSortArtifacts();
+            }
+
+            //add all artifacts that were not in the settings to the end
+            for(x = 0; x < AllArtifacts.Length; x++)
+            {
+                i = FindOrderEntry(AllArtifacts[x]);
+                if(i == -1)
+                {
+                    OrderEntry.ArtifactClass = AllArtifacts[x];
+                    OrderEntry.ArtifactID = AllArtifacts[x].default.ArtifactID;
+                    OrderEntry.bShowAlways = false;
+                    
+                    ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
+                    ServerAddArtifactOrderEntry(OrderEntry);
+                }
+            }
         }
-        ServerSortArtifacts();
+        else
+            Warn("Could not create RPGInteraction!");
     }
 
-    //add all artifacts that were not in the settings to the end
-    for(x = 0; x < AllArtifacts.Length; x++)
-    {
-        i = FindOrderEntry(AllArtifacts[x]);
-        if(i == -1)
-        {
-            OrderEntry.ArtifactClass = AllArtifacts[x];
-            OrderEntry.ArtifactID = AllArtifacts[x].default.ArtifactID;
-            OrderEntry.bShowAlways = false;
-            
-            ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
-            ServerAddArtifactOrderEntry(OrderEntry);
-        }
-    }
-    
     if(AbilitiesReceived >= AbilitiesTotal || Role == ROLE_Authority)
         ClientEnableRPGMenu();
     

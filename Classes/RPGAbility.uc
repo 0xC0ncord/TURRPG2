@@ -105,11 +105,6 @@ simulated event PostBeginPlay()
             }
         }
     }
-
-    if(Level.NetMode == NM_Standalone)
-        RPRI.ReceiveAbility(Self); //make sure RPG menu gets enabled in offline games
-    
-    Super.PostBeginPlay();
 }
 
 simulated function bool Buy(optional int Amount)
