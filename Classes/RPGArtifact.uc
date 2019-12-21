@@ -1,32 +1,31 @@
 class RPGArtifact extends Powerups
-    config(TURRPG2)
     abstract
     HideDropDown;
 
-var config int CostPerSec; //default adrenaline cost per second
-var config float MinActivationTime; //zero means single hit usage (e.g. Repulsion)
-var config int MinAdrenaline; //adrenaline required to activate this artifact
+var int CostPerSec; //default adrenaline cost per second
+var float MinActivationTime; //zero means single hit usage (e.g. Repulsion)
+var int MinAdrenaline; //adrenaline required to activate this artifact
 
-var config Color HudColor;
+var Color HudColor;
 
-var config float Cooldown;
-var config bool bChargeUp; //initial "cooldown"
-var config bool bResetCooldownOnRespawn;
+var float Cooldown;
+var bool bChargeUp; //initial "cooldown"
+var bool bResetCooldownOnRespawn;
 
 var float CurrentCostPerSec;
-var config float FlagMultiplier; //scale the cost per sec when holding the flag
+var float FlagMultiplier; //scale the cost per sec when holding the flag
 
-var config bool bAllowInVehicle;
+var bool bAllowInVehicle;
 var string ArtifactID; //for GetArtifact / RPGGetArtifact
 var float ActivatedTime;
-var config bool bCanBeTossed;
+var bool bCanBeTossed;
 
-var config bool bExclusive; //if true, cannot be activated if another Artifact with bExclusive is already active
+var bool bExclusive; //if true, cannot be activated if another Artifact with bExclusive is already active
 
 var Sound CantUseSound; //played when CanActivate() fails
 
 //Ammo
-var config int MaxUses; //num uses left
+var int MaxUses; //num uses left
 var int NumUses;
 
 var bool bHeld; //true if this artifact was ever held by anybody (used for initial charge-up)
