@@ -1439,8 +1439,11 @@ function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 
     Super.GetServerDetails(ServerState);
 
-    KVPa.Key = "TURRPG2 Version" @ TURRPG2_VERSION;
-    KVPb.Key = "TitanRPG Version" @ TITANRPG_VERSION;
+    KVPa.Key   = "TURRPG2 Version";
+    KVPa.Value = TURRPG2_VERSION;
+
+    KVPb.Key   = "TitanRPG Version";
+    KVPb.Value = TITANRPG_VERSION;
     
     ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVPa;
     ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVPb;
