@@ -1,4 +1,5 @@
-class Artifact_SummonMonster extends ArtifactBase_Summon;
+class Artifact_SummonMonster extends ArtifactBase_Summon
+    config(TURRPG2);
 
 struct MonsterTypeStruct
 {
