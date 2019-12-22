@@ -104,6 +104,11 @@ function DrawTeamBeacon(Canvas C, float X, float Y, Color Color, float Scale, op
         C.SetPos(X, Y - YL);
         C.DrawTextClipped(Text);
     }
+
+    //Reset canvas properties
+    C.Font = C.default.Font;
+    C.Style = C.default.Style;
+    C.DrawColor = C.default.DrawColor;
 }
 
 //Initialize settings
