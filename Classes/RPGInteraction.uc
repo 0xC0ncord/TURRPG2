@@ -51,6 +51,10 @@ var localized string ArtifactTutorialText;
 
 //Artifact selection options
 var RPGArtifact SelectionArtifact;
+var int CurrentPage, NumPages;
+var int StartOption;
+var localized string ArtifactMoreOptionsText;
+var localized string ArtifactNAText;
 
 //Status icon
 var Material StatusIconBorderMaterial;
@@ -141,21 +145,29 @@ function bool KeyEvent(EInputKey Key, EInputAction Action, float Delta)
         {
             SelectionArtifact.ServerCloseSelection();
             SelectionArtifact = None;
+            CurrentPage = 0;
+            NumPages = 0;
             return true;
         }
         else if(Key == IK_0)
         {
-            //TODO: next page
+            CurrentPage++;
+            if(CurrentPage > NumPages)
+                CurrentPage = 0;
             return true;
         }
         else if(Key >= IK_1 && Key <= IK_9)
         {
-            n = Key - IK_1; //TODO: consider page
+            n = Key - IK_1;
+
+            n += (9 * CurrentPage);
             
             if(n < SelectionArtifact.GetNumOptions())
             {
                 SelectionArtifact.ServerSelectOption(n);
                 SelectionArtifact = None;
+                CurrentPage = 0;
+                NumPages = 0;
             }
             
             return true;
@@ -419,7 +431,7 @@ function UpdateCanvas(Canvas Canvas)
 function PostRender(Canvas Canvas)
 {
     local float XL, YL, X, Y, CurrentX, CurrentY, Size, SizeX, Fade, MaxWidth;
-    local int i, n, Row, Cost;
+    local int i, n, Row, Cost, CurrentOption;
     local string Text;
     
     local array<class<RPGArtifact> > Artifacts;
@@ -791,7 +803,21 @@ function PostRender(Canvas Canvas)
     //Draw Artifact Selection
     if(SelectionArtifact != None)
     {
-        n = Min(9, SelectionArtifact.GetNumOptions());
+        NumPages = 0;
+        n = SelectionArtifact.GetNumOptions();
+        if(n > 9)
+        {
+            do
+            {
+                NumPages++;
+                n -= 9;
+            } until(n < 10);
+            n = 10;
+        }
+        if(CurrentPage == 0)
+            StartOption = 0;
+        else
+            StartOption = (9 * CurrentPage);
     
         Canvas.Font = HUD.GetMediumFontFor(Canvas);
         Canvas.FontScaleX = 0.5f;
@@ -836,46 +862,59 @@ function PostRender(Canvas Canvas)
         //Draw option strings
         MaxWidth = 0;
         for(i = 0; i < n; i++) {
-            //TODO: paging
-            Text = string(i + 1) @ "-" @ SelectionArtifact.GetOption(i);
-            
-            Canvas.TextSize(Text, CurrentX, CurrentY);
-            MaxWidth = FMax(MaxWidth, CurrentX);
-            
-            Cost = SelectionArtifact.GetOptionCost(i);
-            if(Cost > 0 && ViewportOwner.Actor.Adrenaline < Cost) {
+            CurrentOption = StartOption + i;
+            if(CurrentOption > SelectionArtifact.GetNumOptions() - 1)
+            {
+                Text = string(i + 1) @ "-" @ ArtifactNAText;
                 Canvas.DrawColor = DisabledOverlay;
-            } else {
+            }
+            if((i == 9 || i == n) && (i != 0 && NumPages > 0))
+            {
+                Text = "0 -" @ ArtifactMoreOptionsText;
                 Canvas.DrawColor = WhiteColor;
             }
-            
+            else if(CurrentOption < SelectionArtifact.GetNumOptions())
+            {
+                Text = string(i + 1) @ "-" @ SelectionArtifact.GetOption(CurrentOption);
+                Canvas.TextSize(Text, CurrentX, CurrentY);
+                MaxWidth = FMax(MaxWidth, CurrentX);
+                
+                Cost = SelectionArtifact.GetOptionCost(CurrentOption);
+                if(Cost > 0 && ViewportOwner.Actor.Adrenaline < Cost)
+                    Canvas.DrawColor = DisabledOverlay;
+                else
+                    Canvas.DrawColor = WhiteColor;
+            }
+
             Canvas.SetPos(X, Y);
             Canvas.DrawTextClipped(Text);
-
+            
             Y += YL;
         }
         
         //Draw option costs
         Y -= n * YL;
         for(i = 0; i < n; i++) {
-            //TODO: paging
-        
-            Cost = SelectionArtifact.GetOptionCost(i);
-            if(Cost > 0) {
-                Canvas.DrawColor = WhiteColor;
-                
-                Canvas.SetPos(X + MaxWidth + YL, Y);
-                Canvas.DrawTileClipped(
-                    Material'HUDContent.Generic.HUD',
-                    YL, YL,
-                    113, 38, 52, 68);
-                
-                if(ViewportOwner.Actor.Adrenaline < Cost) {
-                    Canvas.DrawColor = RedColor;
+            CurrentOption = StartOption + i;
+            if(!((i == 9 && i != 0 && NumPages > 0) || CurrentOption > SelectionArtifact.GetNumOptions() - 1))
+            {
+                Cost = SelectionArtifact.GetOptionCost(CurrentOption);
+                if(Cost > 0) {
+                    Canvas.DrawColor = WhiteColor;
+                    
+                    Canvas.SetPos(X + MaxWidth + YL, Y);
+                    Canvas.DrawTileClipped(
+                        Material'HUDContent.Generic.HUD',
+                        YL, YL,
+                        113, 38, 52, 68);
+                    
+                    if(ViewportOwner.Actor.Adrenaline < Cost) {
+                        Canvas.DrawColor = RedColor;
+                    }
+                    
+                    Canvas.SetPos(X + MaxWidth + 2 * YL, Y);
+                    Canvas.DrawTextClipped(string(Cost));
                 }
-                
-                Canvas.SetPos(X + MaxWidth + 2 * YL, Y);
-                Canvas.DrawTextClipped(string(Cost));
             }
             
             Y += YL;
@@ -1040,6 +1079,8 @@ defaultproperties
     LevelText="Level:"
     bVisible=True
     ArtifactTutorialText="You have collected a magic artifact!|Press $1 to use it or press $2 and $3 to browse|if you have multiple artifacts."
+    ArtifactMoreOptionsText="See more options..."
+    ArtifactNAText="N/A"
     ArtifactBorderMaterial=Texture'HudContent.Generic.HUD'
     ArtifactBorderSize=48
     ArtifactBorderMaterialRect=(X=0,Y=39,W=95,H=54)
