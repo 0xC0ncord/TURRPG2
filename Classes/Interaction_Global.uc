@@ -79,6 +79,11 @@ function PostRender(Canvas C) {
             }
         }
     }
+
+    //Reset canvas properties
+    C.Font = C.default.Font;
+    C.Style = C.default.Style;
+    C.DrawColor = C.default.DrawColor;
 }
 
 event NotifyLevelChange() {
