@@ -430,7 +430,7 @@ function UpdateCanvas(Canvas Canvas)
 
 function PostRender(Canvas Canvas)
 {
-    local float XL, YL, X, Y, CurrentX, CurrentY, Size, SizeX, Fade, MaxWidth;
+    local float XL, YL, X, Y, CurrentX, CurrentY, Size, SizeX, Fade, MaxWidth, MaxOptionWidth;
     local int i, n, Row, Cost, CurrentOption;
     local string Text;
     
@@ -824,10 +824,29 @@ function PostRender(Canvas Canvas)
         Canvas.FontScaleY = 0.5f;
         Canvas.DrawColor = WhiteColor;
         
+        //Determine sizing before drawing and scale the window to compensate
+
+        //Option strings sizes
+        for(i = 0; i < SelectionArtifact.GetNumOptions(); i++)
+        {
+            Canvas.TextSize(i @ "-" @ SelectionArtifact.GetOption(i) @ SelectionArtifact.GetOptionCost(i), CurrentX, CurrentY);
+            Canvas.TextSize(SelectionArtifact.GetOptionCost(i), XL, YL);
+
+            MaxWidth = FMax(MaxWidth, CurrentX + XL);
+            MaxOptionWidth = FMax(MaxOptionWidth, XL);
+        }
+
+        //Next page option text, but leave room for option costs so it's not too crowded
+        Canvas.TextSize("0 -" @ ArtifactMoreOptionsText, XL, YL);
+        MaxWidth = FMax(MaxWidth, XL + MaxOptionWidth);
+
+        //Title string size
         Text = SelectionArtifact.GetSelectionTitle();
         Canvas.TextSize(Text, XL, YL);
+        MaxWidth = FMax(MaxWidth, XL);
 
-        SizeX = FMax(300, XL + YL);
+        //Start drawing
+        SizeX = FMax(300, MaxWidth) + YL * 2;
         Size = YL * float(n + 2) + 3;
         X = (Canvas.ClipX - SizeX) * 0.5f;
         Y = (Canvas.ClipY - Size) * 0.5f;
@@ -860,7 +879,6 @@ function PostRender(Canvas Canvas)
         Y += YL + 3;
         
         //Draw option strings
-        MaxWidth = 0;
         for(i = 0; i < n; i++) {
             CurrentOption = StartOption + i;
             if(CurrentOption > SelectionArtifact.GetNumOptions() - 1)
@@ -877,7 +895,6 @@ function PostRender(Canvas Canvas)
             {
                 Text = string(i + 1) @ "-" @ SelectionArtifact.GetOption(CurrentOption);
                 Canvas.TextSize(Text, CurrentX, CurrentY);
-                MaxWidth = FMax(MaxWidth, CurrentX);
                 
                 Cost = SelectionArtifact.GetOptionCost(CurrentOption);
                 if(Cost > 0 && ViewportOwner.Actor.Adrenaline < Cost)
@@ -893,6 +910,7 @@ function PostRender(Canvas Canvas)
         }
         
         //Draw option costs
+        X += SizeX - YL;
         Y -= n * YL;
         for(i = 0; i < n; i++) {
             CurrentOption = StartOption + i;
@@ -902,7 +920,7 @@ function PostRender(Canvas Canvas)
                 if(Cost > 0) {
                     Canvas.DrawColor = WhiteColor;
                     
-                    Canvas.SetPos(X + MaxWidth + YL, Y);
+                    Canvas.SetPos(X - YL - MaxOptionWidth, Y);
                     Canvas.DrawTileClipped(
                         Material'HUDContent.Generic.HUD',
                         YL, YL,
@@ -912,7 +930,7 @@ function PostRender(Canvas Canvas)
                         Canvas.DrawColor = RedColor;
                     }
                     
-                    Canvas.SetPos(X + MaxWidth + 2 * YL, Y);
+                    Canvas.SetPos(X - MaxOptionWidth, Y);
                     Canvas.DrawTextClipped(string(Cost));
                 }
             }
