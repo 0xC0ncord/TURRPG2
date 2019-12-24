@@ -852,14 +852,14 @@ simulated event Tick(float dt)
                 if(W != None)
                 {
                     if(TransLauncher(W) != None && W.OldWeapon == None && LastPawnWeapon != None) {
-                        Log("Force set old weapon on translocator:" @ LastPawnWeapon);
+                        //Log("Force set old weapon on translocator:" @ LastPawnWeapon);
                         W.OldWeapon = LastPawnWeapon;
                     }
                 
                     //Maybe stop weapon modifier
                     WM = class'RPGWeaponModifier'.static.GetFor(W);
                     if(WM != None && WM.bActive) {
-                        Log("Restarting weapon modifier for" @ W);
+                        //Log("Restarting weapon modifier for" @ W);
                         bWasActive = true;
                         WM.StopEffect();
                     }
@@ -942,7 +942,7 @@ simulated event Tick(float dt)
         )
         {
             x = TeamPlayerReplicationInfo(PRI).DaredevilPoints - DaredevilPoints;
-            Log(RPGName @ "gained" @ x @ "daredevil points!");
+            //Log(RPGName @ "gained" @ x @ "daredevil points!");
             
             DaredevilPoints += x;
             AwardExperience(float(x) * class'RPGRules'.default.EXP_Daredevil);

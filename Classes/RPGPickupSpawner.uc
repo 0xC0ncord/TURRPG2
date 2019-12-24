@@ -67,7 +67,7 @@ event PostBeginPlay() {
         //Only spawn as many as required to achieve the spawn amount
         MaxAdrenalinePickups = Max(0, MaxAdrenalinePickups - x);
 
-        Log("Found " $ x $ " adrenaline pickups on the map, set MaxAdrenalinePickups to " $ MaxAdrenalinePickups, 'TURRPG2');
+        //Log("Found " $ x $ " adrenaline pickups on the map, set MaxAdrenalinePickups to " $ MaxAdrenalinePickups, 'TURRPG2');
     }
 
     bPickups = (SpawnDelay > 0 && MaxPickups > 0 && AvailablePickups.Length > 0);

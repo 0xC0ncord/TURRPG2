@@ -27,7 +27,7 @@ function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator Spaw
     foreach RadiusActors(class'Actor', A, ClearRadius, SpawnLoc) {
         for(i = 0; i < BlockingTypes.Length; i++) {
             if(ClassIsChildOf(A.class, BlockingTypes[i])) {
-                Log("Can't construct here because of" @ A);
+                //Log("Can't construct here because of" @ A);
                 Blocker = i;
                 break;
             }

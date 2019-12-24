@@ -37,7 +37,7 @@ function Returned()
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Closest);
     if(RPRI != None)
     {
-        Log(GO @ "was returned by" @ RPRI.RPGName);
+        //Log(GO @ "was returned by" @ RPRI.RPGName);
         
         //Find closest CTF base
         foreach AllActors(class'CTFBase', FlagBase)

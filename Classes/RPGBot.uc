@@ -108,12 +108,12 @@ function ExecuteWhatToDoNext()
     if(Patient != None) {
         if(GetOrders() != 'Follow') {
             SetTemporaryOrders('Follow', Patient.Controller);
-            Log("MEDIC BOT: Re-assigning medic task");
+            //Log("MEDIC BOT: Re-assigning medic task");
         } else if(Patient.Health >= Patient.HealthMax || Patient.Health <= 0) {
             //done taking care of him - or failed!
             ClearTemporaryOrders();
             Patient = None;
-            Log("MEDIC BOT: Done taking care of patient");
+            //Log("MEDIC BOT: Done taking care of patient");
         }
     }
 }
@@ -157,7 +157,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
         SameTeamAs(Enemy.Controller))
     {
         //Stop fighting friendly monsters
-        Log(GetHumanReadableName() @ "stopped fighting a friendly" @ Enemy.class, 'DEBUG');
+        //Log(GetHumanReadableName() @ "stopped fighting a friendly" @ Enemy.class, 'DEBUG');
         Enemy = None;
         StopFiring();
         return;

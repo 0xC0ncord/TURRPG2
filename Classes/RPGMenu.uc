@@ -26,7 +26,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
         //Prepend package name to class name
         Panels[i].ClassName = "TURRPG2." $ Panels[i].ClassName;
         
-        Log("Adding tab:" @ Panels[i].ClassName, 'DEBUG');
+        //Log("Adding tab:" @ Panels[i].ClassName, 'DEBUG');
         Tabs.AddTabItem(Panels[i]);
     }
     

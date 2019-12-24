@@ -103,16 +103,16 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
                 if(WF != None)
                 {
                     if(ProjectileFire(WF) != None) {
-                        Log("Reflection: SpawnProjectile" @ WF);
+                        //Log("Reflection: SpawnProjectile" @ WF);
                         ProjectileFire(WF).SpawnProjectile(Instigator.Location + Instigator.CollisionHeight * vector(ReflectDir), ReflectDir);
                     } else if(InstantFire(WF) != None) {
-                        Log("Reflection: DoTrace using " @ WF);
+                        //Log("Reflection: DoTrace using " @ WF);
                         InstantFire(WF).SpawnBeamEffect(Instigator.Location + Instigator.CollisionHeight * vector(ReflectDir), ReflectDir, HitLocation, vector(ReflectDir), 0);
                     }
                 }
                 else
                 {
-                    Log("Couldn't find" @ WFClass @ "for" @ InstigatedBy, 'DEBUG');
+                    //Log("Couldn't find" @ WFClass @ "for" @ InstigatedBy, 'DEBUG');
                 }
                 
                 bLock = false;

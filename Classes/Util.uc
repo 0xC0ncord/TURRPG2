@@ -416,7 +416,7 @@ static function IncreaseTAMWeaponFireStats(PlayerReplicationInfo PRI, string Hit
     HitStatStr = PRI.GetPropertyText(HitStatName);
     HitStat = DynamicLoadObject(HitStatStr, class'Object', true);
     
-    Log("HitStatStr =" @ HitStatStr @ "=>" @ HitStat, 'TURRPG2');
+    //Log("HitStatStr =" @ HitStatStr @ "=>" @ HitStat, 'TURRPG2');
 }
 
 //Forces the weapon to be given to the pawn - even if he has a weapon of the same type already
