@@ -194,6 +194,7 @@ simulated function string DescriptionText()
     local int x, lv, i;
     local array<string> list;
     local string text;
+    local RPGAbility tmpAbility;
     
     text = Description;
     
@@ -240,7 +241,11 @@ simulated function string DescriptionText()
     for(x = 0; x < RequiredAbilities.Length && RequiredAbilities[x].AbilityClass != None; x++)
     {
         i = list.Length;
-        list[i] = RPRI.GetAbility(RequiredAbilities[x].AbilityClass).GetName();
+        tmpAbility = RPRI.GetAbility(RequiredAbilities[x].AbilityClass);
+        if(tmpAbility == None)
+            continue;
+
+        list[i] = tmpAbility.GetName();
         
         if(RequiredAbilities[x].Level > 1)
             list[i] @= string(RequiredAbilities[x].Level);
@@ -272,7 +277,11 @@ simulated function string DescriptionText()
     for(x = 0; x < ForbiddenAbilities.Length && ForbiddenAbilities[x].AbilityClass != None; x++)
     {
         i = list.Length;
-        list[i] = RPRI.GetAbility(ForbiddenAbilities[x].AbilityClass).GetName();
+        tmpAbility = RPRI.GetAbility(ForbiddenAbilities[x].AbilityClass);
+        if(tmpAbility == None)
+            continue;
+
+        list[i] = tmpAbility.GetName();
         
         if(ForbiddenAbilities[x].Level > 1)
             list[i] @= string(ForbiddenAbilities[x].Level);
