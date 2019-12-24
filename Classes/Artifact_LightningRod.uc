@@ -6,6 +6,7 @@ var config int DamagePerHit;
 var config int ExtraCostPerPlayer;
 var config int ExtraCostPerMine;
 
+var config bool bAllowWithTrans;
 var config bool bMustBeMoving;
 
 const MSG_NotWithTrans = 0x1000;
@@ -85,17 +86,6 @@ function BotWhatNext(Bot Bot)
         Activate();
 }
 
-function bool CanActivate()
-{
-    //Don't allow rodding with a translocator -pd
-    if(TransLauncher(Instigator.Weapon) != None) {
-        Msg(MSG_NotWithTrans);
-        return false;
-    }
-
-    return Super.CanActivate();
-}
-
 state Activated
 {
     function Timer()
@@ -110,7 +100,7 @@ state Activated
         local int FinalDamage;
 
         //If the Instigator switches to a translocator, turn the rod off! -pd
-        if(TransLauncher(Instigator.Weapon) != None) {
+        if(!bAllowWithTrans && TransLauncher(Instigator.Weapon) != None) {
                 Activate();    //Don't be confused, this deactivates it...
         }
         
@@ -188,7 +178,8 @@ defaultproperties
 {
     ActivateSound=Sound'TURRPG2.SoundEffects.Rod'
     bAllowInVehicle=False
-    bMustBeMoving=True
+    bAllowWithTrans=True
+    bMustBeMoving=False
     TargetRadius=2048.000000
     DamagePerHit=30
     ExtraCostPerPlayer=8
@@ -199,7 +190,7 @@ defaultproperties
     bExclusive=True
     MinActivationTime=1.000000
     ArtifactID="Rod"
-    Description="Fires lightnings at nearby enemies."
+    Description="Fires lightning bolts at nearby enemies."
     PickupClass=Class'ArtifactPickup_LightningRod'
     IconMaterial=Texture'TURRPG2.ArtifactIcons.rod'
     ItemName="Lightning Rod"
