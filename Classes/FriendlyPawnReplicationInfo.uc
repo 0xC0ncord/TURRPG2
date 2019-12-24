@@ -25,7 +25,7 @@ simulated event PostNetBeginPlay()
         {
             for(i = 0; i < PC.Player.LocalInteractions.Length; i++)
             {
-                if(PC.Player.LocalInteractions[i].IsA('Interaction_Global'))
+                if(Interaction_Global(PC.Player.LocalInteractions[i]) != None)
                 {
                     Interaction = Interaction_Global(PC.Player.LocalInteractions[i]);
                     Interaction.AddFriendlyPawn(Self);

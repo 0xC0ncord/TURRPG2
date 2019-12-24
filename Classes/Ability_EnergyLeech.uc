@@ -16,7 +16,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         return;
     }
 
-    if(Injured.IsA('Vehicle') && Vehicle(Injured).IsVehicleEmpty())
+    if(Vehicle(Injured) != None && Vehicle(Injured).IsVehicleEmpty())
         return;
     
     AdrenalineBonus = FMax(0, (FMin(Damage, Injured.Health)) * BonusPerLevel * AbilityLevel);
@@ -27,7 +27,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
             FMin(InstigatedBy.Controller.Adrenaline + AdrenalineBonus, InstigatedBy.Controller.AdrenalineMax);
 
         if(
-            InstigatedBy.Controller.IsA('UnrealPlayer') &&
+            UnrealPlayer(InstigatedBy.Controller) != None &&
             InstigatedBy.Controller.Adrenaline >= InstigatedBy.Controller.AdrenalineMax
         )
         {

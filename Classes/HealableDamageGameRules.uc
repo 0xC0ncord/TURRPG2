@@ -12,11 +12,11 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     if(
         DamageRV > 0 &&
         injured != None &&
-        !injured.IsA('Monster') &&
+        Monster(Injured) == None &&
         instigatedBy != None &&
         instigatedBy.Controller != None &&
         instigatedBy != injured &&
-        (!injured.IsA('Vehicle') || !Vehicle(Injured).IsVehicleEmpty()) &&
+        (Vehicle(Injured) == None || !Vehicle(Injured).IsVehicleEmpty()) &&
         (injured.Controller == None || !injured.Controller.SameTeamAs(instigatedBy.Controller))
     )
     {

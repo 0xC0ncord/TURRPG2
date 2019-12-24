@@ -10,7 +10,7 @@ function ModifyWeapon(Weapon Weapon)
     for(i = 0; i < Weapon.NUM_FIRE_MODES; i++)
     {
         WF = Weapon.GetFireMode(i);
-        if(WF.IsA('RPGTransFire'))
+        if(RPGTransFire(WF) != None)
         {
             if(AbilityLevel <= MaxLevel) 
                 RPGTransFire(WF).TossForceScale = LevelTossForceScale[AbilityLevel - 1];

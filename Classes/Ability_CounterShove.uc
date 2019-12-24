@@ -13,7 +13,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     if(InstigatedBy == Injured || InstigatedBy == None || Injured.Controller.SameTeamAs(InstigatedBy.Controller))
         return;
 
-    if(Injured.isA('Vehicle'))
+    if(Vehicle(Injured) != None)
     {
         MomentumMod = -(0.0075 * float(AbilityLevel));
     }

@@ -151,7 +151,7 @@ simulated function bool Buy(optional int Amount)
     {
         RPRI.ModifyStats();
     
-        if(RPRI.Controller.Pawn.IsA('Vehicle'))
+        if(Vehicle(RPRI.Controller.Pawn) != None)
         {
             ModifyPawn(Vehicle(RPRI.Controller.Pawn).Driver);
             ModifyVehicle(Vehicle(RPRI.Controller.Pawn));

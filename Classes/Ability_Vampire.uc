@@ -24,7 +24,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         return;
     }
     
-    if(InstigatedBy.IsA('Vehicle')) {
+    if(Vehicle(InstigatedBy) != None) {
         Bonus = VehicleBonusPerLevel;
     } else {
         Bonus = BonusPerLevel;

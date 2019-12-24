@@ -9,7 +9,7 @@ event Initialized() {
     Super.Initialized();
 
     for(i = 0; i < ViewportOwner.LocalInteractions.Length; i++) {
-        if(ViewportOwner.LocalInteractions[i].IsA('Interaction_Global')) {
+        if(Interaction_Global(ViewportOwner.LocalInteractions[i]) != None) {
             GlobalInteraction = Interaction_Global(ViewportOwner.LocalInteractions[i]);
             break;
         }
@@ -73,7 +73,7 @@ function PostRender(Canvas C) {
             } else {
                 if(xPC != None) {
                     for(k = 0; k < P.Attached.Length; k++) {
-                        if(P.Attached[k].IsA('WeaponAttachment') && WeaponAttachment(P.Attached[k]).bMatchWeapons) {
+                        if(WeaponAttachment(P.Attached[k]) != None && WeaponAttachment(P.Attached[k]).bMatchWeapons) {
                             BeaconTexture = xPC.LinkBeaconTexture;
                             k = 999; //inner break
                         }
@@ -96,7 +96,7 @@ function PostRender(Canvas C) {
             //Bar height
             Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist / 2), 0.5, 1);
             
-            if(P.IsA('Vehicle')) {
+            if(Vehicle(P) != None) {
                 Height *= 1.75;
             }
             

@@ -9,7 +9,7 @@ event Initialized() {
     Super.Initialized();
 
     for(i = 0; i < ViewportOwner.LocalInteractions.Length; i++) {
-        if(ViewportOwner.LocalInteractions[i].IsA('Interaction_Global')) {
+        if(Interaction_Global(ViewportOwner.LocalInteractions[i]) != None) {
             GlobalInteraction = Interaction_Global(ViewportOwner.LocalInteractions[i]);
             break;
         }
@@ -51,13 +51,13 @@ function PostRender(Canvas C) {
             //Bar height
             Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist / 2), 0.5, 1);
             
-            if(P.IsA('Vehicle')) {
+            if(Vehicle(P) != None) {
                 Height *= 1.75;
             }
             
             BarColor.A = 255;
 
-            if(Ability.AbilityLevel >= 2 && P.IsA('xPawn') && P.ShieldStrength > 0) {
+            if(Ability.AbilityLevel >= 2 && xPawn(P) != None && P.ShieldStrength > 0) {
                 //Shield bar
                 ScreenPos.Y -= Height + 2;
                 Pct = P.ShieldStrength / xPawn(P).ShieldStrengthMax;

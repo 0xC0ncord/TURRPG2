@@ -112,13 +112,13 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
             return false;
         }
         
-        if(default.bHarmful && Game.IsA('TeamGame') && TeamGame(Other.Level.Game).FriendlyFireScale == 0) {
+        if(default.bHarmful && TeamGame(Game) != None && TeamGame(Other.Level.Game).FriendlyFireScale == 0) {
             return false;
         }
     }
     
     //Vehicles
-    if(Other.IsA('Vehicle')) {
+    if(Vehicle(Other) != None) {
         if(!default.bAllowOnVehicles) {
             return false;
         }
@@ -129,7 +129,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
     }
     
     //Monsters
-    if(!default.bAllowOnMonsters && Other.IsA('Monster')) {
+    if(!default.bAllowOnMonsters && Monster(Other) != None) {
         return false;
     }
 

@@ -18,7 +18,7 @@ var config float Aggressiveness, CombatStyle, Jumpiness, StrafingAbility, Accura
 
 function InitBot(Bot Bot)
 {
-    if(Bot.IsA('RPGBot'))
+    if(RPGBot(Bot) != None)
         RPGBot(Bot).AIBuild = Self;
 
     if(Aggressiveness != NO_CHANGE)

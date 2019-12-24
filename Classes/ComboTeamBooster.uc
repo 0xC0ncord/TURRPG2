@@ -22,11 +22,11 @@ function StartEffect(xPawn P)
         {
             //Check whether this player has an active team booster
             Other = C.Pawn;
-            if(Other.IsA('xPawn') && ComboTeamBooster(xPawn(Other).CurrentCombo) != None)
+            if(xPawn(Other) != None && ComboTeamBooster(xPawn(Other).CurrentCombo) != None)
             {
                 P.ReceiveLocalizedMessage(class'TeamBoosterMessage', 1, Other.PlayerReplicationInfo, , Self.class);
                 
-                if(P.Controller.IsA('PlayerController'))
+                if(PlayerController(P.Controller) != None)
                     PlayerController(P.Controller).ClientPlaySound(Sound'WeaponSounds.BSeekLost1');
                 
                 Destroy();
@@ -44,7 +44,7 @@ function StartEffect(xPawn P)
     {
         Other = Controllers[i].Pawn;
         
-        if(Other.IsA('Vehicle'))
+        if(Vehicle(Other) != None)
             Other = None; //do not boost players inside of vehicles!
             //Other = Vehicle(Other).Driver;
 
@@ -78,7 +78,7 @@ function Timer()
             Other = C.Pawn;
             if(Other != None)
             {
-                if(Other.IsA('Vehicle'))
+                if(Vehicle(Other) != None)
                     Other = None; //don't boost people in vehicles
                     //Other = Vehicle(Other).Driver;
             
@@ -116,7 +116,7 @@ function bool ProcessPawn(Pawn P)
         P.GiveHealth(5, P.SuperHealthMax);
         return true;
     }
-    else if(P.IsA('xPawn') && xPawn(P).ShieldStrength < xPawn(P).ShieldStrengthMax)
+    else if(xPawn(P) != None && xPawn(P).ShieldStrength < xPawn(P).ShieldStrengthMax)
     {
         P.AddShieldStrength(5);
         return true;

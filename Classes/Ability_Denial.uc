@@ -57,7 +57,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
             return false;
     }
     
-    if(Killed.IsA('Vehicle')) {
+    if(Vehicle(Killed) != None) {
         if(AbilityLevel >= ExtraSavingLevel) {
             Killed = Vehicle(Killed).Driver;
         } else {
@@ -86,7 +86,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
         else
         {
             //store last held weapon
-            if(Killed.IsA('Vehicle'))
+            if(Vehicle(Killed) != None)
             {
                 if(AbilityLevel >= ExtraSavingLevel)
                     W = Vehicle(Killed).Driver.Weapon;

@@ -36,7 +36,7 @@ function bool IsPawnVisible(Canvas C, Pawn P, out vector Pos, out float Dist) {
         return false;
     }
     
-    if(P.IsA('xPawn') && xPawn(P).bInvis) {
+    if(xPawn(P) != None && xPawn(P).bInvis) {
         return false;
     }
 

@@ -88,7 +88,7 @@ function bool CanEnterVehicle(Vehicle V)
 {
     if(Level.TimeSeconds < NextVehicleTime)
     {
-        if(RPRI.Controller.IsA('PlayerController'))
+        if(PlayerController(RPRI.Controller) != None)
             PlayerController(RPRI.Controller).ClientPlaySound(CantEnterSound,,, SLOT_Interface);
         
         return false;

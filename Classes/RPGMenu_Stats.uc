@@ -38,9 +38,7 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
     local float CellLeft, CellWidth;
     local GUIStyles DStyle;
     
-    if(Stats[i].IsA('RPGAbilityCategory'))
-        DStyle = Abilities.SectionStyle;
-    else if(bSelected)
+    if(bSelected)
         DStyle = Abilities.SelectedStyle;
     else
         DStyle = Abilities.Style;
@@ -50,16 +48,13 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
     Abilities.GetCellLeftWidth(0, CellLeft, CellWidth);
     DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, Stats[i].StatName @ Stats[i].StatDescriptionText(), Abilities.FontScale);
 
-    if(!Stats[i].IsA('RPGAbilityCategory'))
-    {
-        LevelString = string(Stats[i].AbilityLevel);
+    LevelString = string(Stats[i].AbilityLevel);
 
-        if(Stats[i].AbilityLevel >= Stats[i].MaxLevel)
-            LevelString @= Text_Max;
+    if(Stats[i].AbilityLevel >= Stats[i].MaxLevel)
+        LevelString @= Text_Max;
 
-        Abilities.GetCellLeftWidth(1, CellLeft, CellWidth);
-        DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, LevelString, Abilities.FontScale);
-    }
+    Abilities.GetCellLeftWidth(1, CellLeft, CellWidth);
+    DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, LevelString, Abilities.FontScale);
 }
 
 function InitMenu()

@@ -9,7 +9,7 @@ static function string GetString(
     optional Object OptionalObject 
     )
 {
-    if(RelatedPRI_2 == None || OptionalObject == None || !OptionalObject.IsA('Pawn'))
+    if(RelatedPRI_2 == None || OptionalObject == None || Pawn(OptionalObject) == None)
         return "";
 
     if(RelatedPRI_2.PlayerName != "")

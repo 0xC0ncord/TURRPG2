@@ -39,7 +39,7 @@ simulated function ModifyVehicle(Vehicle V)
     
     if(Role == ROLE_Authority)
     {
-        if(V.IsA('ONSVehicle'))
+        if(ONSVehicle(V) != None)
         {
             for(i = 0; i < ONSVehicle(V).Weapons.Length; i++)
             {
@@ -51,7 +51,7 @@ simulated function ModifyVehicle(Vehicle V)
             }
         }
         
-        if(V.IsA('ONSWeaponPawn'))
+        if(ONSWeaponPawn(V) != None)
         {
             Sync = Spawn(class'Sync_ONSWeaponRotSpeed');
             Sync.Target = ONSWeaponPawn(V).Gun;
@@ -60,18 +60,18 @@ simulated function ModifyVehicle(Vehicle V)
             ONSWeaponPawn(V).Gun.RotationsPerSecond *= Modifier;
         }
         
-        if(V.IsA('ONSTreadCraft'))
+        if(ONSTreadCraft(V) != None)
             ONSTreadCraft(V).MaxSteerTorque *= Modifier;
     }
     
-    if(V.IsA('ONSHoverCraft'))
+    if(ONSHoverCraft(V) != None)
     {
         ONSHoverCraft(V).TurnTorqueFactor *= Modifier;
         ONSHoverCraft(V).TurnTorqueMax *= Modifier;
         ONSHoverCraft(V).MaxYawRate *= Modifier;
     }
     
-    if(V.IsA('ONSChopperCraft'))
+    if(ONSChopperCraft(V) != None)
     {
         ONSChopperCraft(V).TurnTorqueFactor *= Modifier;
         ONSChopperCraft(V).TurnTorqueMax *= Modifier;
@@ -90,7 +90,7 @@ simulated function UnModifyVehicle(Vehicle V)
     //Reset
     if(Role == ROLE_Authority)
     {
-        if(V.IsA('ONSVehicle'))
+        if(ONSVehicle(V) != None)
         {
             for(i = 0; i < ONSVehicle(V).Weapons.Length; i++)
             {
@@ -102,7 +102,7 @@ simulated function UnModifyVehicle(Vehicle V)
             }
         }
         
-        if(V.IsA('ONSWeaponPawn'))
+        if(ONSWeaponPawn(V) != None)
         {
             ONSWeaponPawn(V).Gun.RotationsPerSecond = ONSWeaponPawn(V).Gun.default.RotationsPerSecond;
             
@@ -111,18 +111,18 @@ simulated function UnModifyVehicle(Vehicle V)
             Sync.RotationsPerSecond = ONSWeaponPawn(V).Gun.default.RotationsPerSecond;
         }
 
-        if(V.IsA('ONSTreadCraft'))
+        if(ONSTreadCraft(V) != None)
             ONSTreadCraft(V).MaxSteerTorque = ONSTreadCraft(V).default.MaxSteerTorque;
     }
     
-    if(V.IsA('ONSHoverCraft'))
+    if(ONSHoverCraft(V) != None)
     {
         ONSHoverCraft(V).TurnTorqueFactor = ONSHoverCraft(V).default.TurnTorqueFactor;
         ONSHoverCraft(V).TurnTorqueMax = ONSHoverCraft(V).default.TurnTorqueMax;
         ONSHoverCraft(V).MaxYawRate = ONSHoverCraft(V).default.MaxYawRate;
     }
     
-    if(V.IsA('ONSChopperCraft'))
+    if(ONSChopperCraft(V) != None)
     {
         ONSChopperCraft(V).TurnTorqueFactor = ONSChopperCraft(V).default.TurnTorqueFactor;
         ONSChopperCraft(V).TurnTorqueMax = ONSChopperCraft(V).default.TurnTorqueMax;

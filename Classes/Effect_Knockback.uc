@@ -6,7 +6,7 @@ var class<DamageType> DamageType;
 static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier)
 {
     //this causes way too funny bugs on turrets...
-    if(Other.IsA('ASTurret') || Other.IsA('ONSStationaryWeaponPawn') || Other.IsA('RPGTotem'))
+    if(ASTurret(Other) != None || ONSStationaryWeaponPawn(Other) != None)
         return false;
     
     //Don't allow if Other is the driver of a vehicle

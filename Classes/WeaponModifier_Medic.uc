@@ -43,7 +43,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
             for(i = 0; i < 2; i++) {
                 WF = Weapon.GetFireMode(i);
                 if(WF != None) {
-                    if(WF.IsA('InstantFire')) {
+                    if(InstantFire(WF) != None) {
                         if(InstantFire(WF).DamageType == DamageType) {
                             Ammo[i] = WF.AmmoPerFire;
                             break;

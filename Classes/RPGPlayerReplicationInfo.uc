@@ -329,7 +329,7 @@ simulated event BeginPlay()
         
         if(AIBuild != None)
         {
-            if(Controller.IsA('Bot'))
+            if(Bot(Controller) != None)
                 AIBuild.InitBot(Bot(Controller));
         
             AIBuild.Build(Self);
@@ -599,7 +599,7 @@ function ServerSortArtifacts()
         Inv = Controller.Pawn.Inventory;
         while(Inv != None)
         {
-            if(Inv.IsA('RPGArtifact'))
+            if(RPGArtifact(Inv) != None)
             {
                 A = RPGArtifact(Inv);
                 CurrentArtifacts[CurrentArtifacts.Length] = A;
@@ -781,7 +781,7 @@ simulated function CheckPlayerViewShake()
 {
     local float ShakeScaling;
 
-    if(Controller.IsA('PlayerController'))
+    if(PlayerController(Controller) != None)
     {
         ShakeScaling = VSize(PlayerController(Controller).ShakeRotMax) / 7500.0f;
         if(ShakeScaling > 1.0f)
@@ -844,14 +844,14 @@ simulated event Tick(float dt)
     if(Role == ROLE_Authority)
     {
         //Check weapon
-        if(Controller.Pawn != None && !Controller.Pawn.IsA('Vehicle'))
+        if(Controller.Pawn != None && Vehicle(Controller.Pawn) == None)
         {
             W = Controller.Pawn.Weapon;
             if(W != LastPawnWeapon)
             {
                 if(W != None)
                 {
-                    if(W.IsA('TransLauncher') && W.OldWeapon == None && LastPawnWeapon != None) {
+                    if(TransLauncher(W) != None && W.OldWeapon == None && LastPawnWeapon != None) {
                         Log("Force set old weapon on translocator:" @ LastPawnWeapon);
                         W.OldWeapon = LastPawnWeapon;
                     }
@@ -1144,9 +1144,9 @@ function bool HasThrownWeapon(class<Weapon> WeaponClass) {
 function AnnounceMyRole() {
     local Controller C;
     
-    if(Controller.IsA('RPGBot')) {
+    if(RPGBot(Controller) != None) {
         for(C = Level.ControllerList; C != None; C = C.NextController) {
-            if(C.SameTeamAs(Controller) && C.IsA('PlayerController')) {
+            if(C.SameTeamAs(Controller) && PlayerController(C) != None) {
                 RPGBot(Controller).AnnounceRole(PlayerController(C));
             }
         }
@@ -1156,9 +1156,9 @@ function AnnounceMyRole() {
 function AnnounceBotRoles() {
     local Controller C;
     
-    if(Controller.IsA('PlayerController')) {
+    if(PlayerController(Controller) != None) {
         for(C = Level.ControllerList; C != None; C = C.NextController) {
-            if(C.SameTeamAs(Controller) && C.IsA('RPGBot')) {
+            if(C.SameTeamAs(Controller) && RPGBot(C) != None) {
                 RPGBot(C).AnnounceRole(PlayerController(Controller));
             }
         }
@@ -1285,7 +1285,7 @@ function ServerDestroyTurrets()
             if(Turrets[0].Driver != None)
                 Turrets[0].KDriverLeave(true);
             
-            if(Turrets[0].Controller != None && !Turrets[0].Controller.IsA('PlayerController'))
+            if(Turrets[0].Controller != None && PlayerController(Turrets[0].Controller) == None)
                 Turrets[0].Controller.Destroy();
             
             Turrets[0].Suicide();
@@ -1486,7 +1486,7 @@ simulated function PerformWeaponSwitch(Weapon W)
     local Pawn Pawn;
     
     Pawn = Controller.Pawn;
-    if(Pawn != None && !Pawn.IsA('Vehicle'))
+    if(Pawn != None && Vehicle(Pawn) == None)
     {
         if(W == None)
         {

@@ -15,13 +15,13 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
 
     //spacefighters destroy all their inventory on possess, so if we do anything here it will never die
     //because our marker will get destroyed afterward
-    if(Killed.IsA('ASVehicle_SpaceFighter') || (Killed.DrivenVehicle != None && Killed.DrivenVehicle.IsA('ASVehicle_SpaceFighter')))
+    if(ASVehicle_SpaceFighter(Killed) != None || (Killed.DrivenVehicle != None && ASVehicle_SpaceFighter(Killed.DrivenVehicle) != None))
         return false;
         
-    if(Killed.IsA('Monster') || (ASVehicle(Killed) != None && ASVehicle(Killed).bNonHumanControl))
+    if(Monster(Killed) != None || (ASVehicle(Killed) != None && ASVehicle(Killed).bNonHumanControl))
         return false;
 
-    if(Killed.bStationary || Killed.IsA('SVehicle'))
+    if(Killed.bStationary || SVehicle(Killed) != None)
     {
         V = Vehicle(Killed);
         

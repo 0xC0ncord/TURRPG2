@@ -15,7 +15,7 @@ static function bool InVehicle(Pawn P, Vehicle V) {
     if(P.DrivenVehicle != None) {
         if(P.DrivenVehicle == V) {
             return true;
-        } else if(P.DrivenVehicle.IsA('ONSWeaponPawn') && ONSWeaponPawn(P.DrivenVehicle).VehicleBase == V) {
+        } else if(ONSWeaponPawn(P.DrivenVehicle) != None && ONSWeaponPawn(P.DrivenVehicle).VehicleBase == V) {
             return true;
         }
     }
@@ -244,12 +244,12 @@ static function SetVehicleWeaponFireRate(Actor W, float Modifier)
 {
     if(W != None)
     {
-        if(W.IsA('ONSWeapon'))
+        if(ONSWeapon(W) != None)
         {
             ONSWeapon(W).SetFireRateModifier(Modifier);
             return;
         }
-        else if(W.IsA('Weapon'))
+        else if(Weapon(W) != None)
         {
             SetWeaponFireRate(Weapon(W), Modifier);
             return;
@@ -288,7 +288,7 @@ static function function SetVehicleFireRate(Vehicle V, float Modifier)
             //at this point, the vehicle's Weapon is not yet set, but it should be its only inventory
             for(Inv = V.Inventory; Inv != None; Inv = Inv.Inventory)
             {
-                if(Inv.IsA('Weapon'))
+                if(Weapon(Inv) != None)
                 {
                     SetVehicleWeaponFireRate(Weapon(Inv), Modifier);
                 }
@@ -436,7 +436,7 @@ static function Weapon ForceGiveTo(Pawn Other, Weapon W, optional WeaponPickup P
     Prev = Other;
     Inv = Other.Inventory;
     while(Inv != None) {
-        if(First == None && Inv.IsA('Weapon')) {
+        if(First == None && Weapon(Inv) != None) {
             First = Weapon(Inv);
         }
     
@@ -550,8 +550,8 @@ static function bool SameTeamC(Controller A, Controller B) {
     
     return
         (TeamA != 255 && TeamA == TeamB) ||
-        (A.IsA('FriendlyMonsterController') && FriendlyMonsterController(A).Master == B) ||
-        (B.IsA('FriendlyMonsterController') && FriendlyMonsterController(B).Master == A);
+        (FriendlyMonsterController(A) != None && FriendlyMonsterController(A).Master == B) ||
+        (FriendlyMonsterController(B) != None && FriendlyMonsterController(B).Master == A);
 }
 
 //Gets the team a certain pawn is on
@@ -561,7 +561,7 @@ static function int GetPawnTeam(Pawn P) {
             return P.Controller.GetTeamNum();
         } else if(P.PlayerReplicationInfo != None && P.PlayerReplicationInfo.Team != None) {
             return P.PlayerReplicationInfo.Team.TeamIndex;
-        } else if(P.IsA('Vehicle')) {
+        } else if(Vehicle(P) != None) {
             return Vehicle(P).Team;
         } else if(P.DrivenVehicle != None) {
             return GetPawnTeam(P.DrivenVehicle);
@@ -628,9 +628,9 @@ static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Fl
         Proj.LifeSpan /= Multiplier;
     }
     
-    if(Proj.IsA('RocketProj')) {
+    if(RocketProj(Proj) != None) {
         RocketProj(Proj).FlockMaxForce *= Multiplier;
-    } else if(Proj.IsA('ONSMineProjectile')) {
+    } else if(ONSMineProjectile(Proj) != None) {
         //ONSMineProjectile(Proj).ScurrySpeed *= Multiplier;
     }
 
@@ -641,7 +641,7 @@ static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Fl
         }
         
         for(C = Proj.Level.ControllerList; C != None; C = C.NextController) {
-            if(C.IsA('PlayerController')) {
+            if(PlayerController(C) != None) {
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
                 if(RPRI != None) {
                     RPRI.ClientSyncProjectile(ClientLocation, Proj.class, Proj.Instigator,

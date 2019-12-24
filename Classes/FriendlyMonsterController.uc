@@ -291,7 +291,7 @@ state Fallback extends MoveToGoalWithEnemy
     function MayFall()
     {
         Pawn.bCanJump =
-            (MoveTarget != None && (MoveTarget.Physics != PHYS_Falling || !MoveTarget.IsA('Pickup')));
+            (MoveTarget != None && (MoveTarget.Physics != PHYS_Falling || Pickup(MoveTarget) == None));
     }
 
 Begin:

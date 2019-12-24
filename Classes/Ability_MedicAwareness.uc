@@ -52,7 +52,7 @@ simulated function Timer() {
                     continue;
                 }
                 
-                if(P.IsA('Monster') || P.IsA('Vehicle') || P.DrivenVehicle != None) {
+                if(Monster(P) != None || Vehicle(P) != None || P.DrivenVehicle != None) {
                     continue;
                 }
 

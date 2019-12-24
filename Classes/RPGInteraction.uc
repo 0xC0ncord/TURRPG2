@@ -469,7 +469,7 @@ function PostRender(Canvas Canvas)
     if(HUD == None || HUD.bHideHUD || HUD.bShowScoreboard || HUD.bShowLocalStats)
         return;
 
-    if(HUD.IsA('HUD_Assault') && !HUD_Assault(HUD).ShouldShowObjectiveBoard())
+    if(HUD_Assault(HUD) != None && !HUD_Assault(HUD).ShouldShowObjectiveBoard())
         DrawAdrenaline(Canvas, HUD);
 
     if(TextFont != None)
@@ -564,7 +564,7 @@ function PostRender(Canvas Canvas)
     }
 
     //Draw hints
-    if(Hint.Length > 0 && HintTimer > TimeSeconds && (!HUD.IsA('HUD_Assault') || !HUD_Assault(HUD).ShouldShowObjectiveBoard()))
+    if(Hint.Length > 0 && HintTimer > TimeSeconds && (HUD_Assault(HUD) == None || !HUD_Assault(HUD).ShouldShowObjectiveBoard()))
     {
         Canvas.DrawColor = HintColor;
         
@@ -589,7 +589,7 @@ function PostRender(Canvas Canvas)
         //Draw status icons
         if(
             !Settings.bHideStatusIcon &&
-            (!HUD.IsA('HUD_Assault') || !HUD_Assault(HUD).ShouldShowObjectiveBoard())
+            (HUD_Assault(HUD) == None || !HUD_Assault(HUD).ShouldShowObjectiveBoard())
         )
         {
             Canvas.FontScaleX *= 0.75f;

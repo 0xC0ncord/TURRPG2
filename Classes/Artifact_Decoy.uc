@@ -9,7 +9,7 @@ var RPGDecoy Decoy;
 
 function BotIncomingMissile(Bot Bot, Projectile P)
 {
-    if(P.IsA('RPGONSAVRiLRocket'))
+    if(RPGONSAVRiLRocket(P) != None)
         Activate();
 }
 
@@ -49,7 +49,7 @@ function bool DoEffect()
 {
     local rotator Dir;
 
-    if(Instigator.IsA('ONSAttackCraft'))
+    if(ONSAttackCraft(Instigator) != None)
         Dir = Instigator.Rotation;
     else
         Dir = rotator(vector(Instigator.Rotation) + vect(0, 0, 1));

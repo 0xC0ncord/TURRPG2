@@ -66,7 +66,7 @@ function IncomingMissile(Projectile P)
     {
         for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
         {
-            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+            if(RPGArtifact(Inv) != None && RPGArtifact(Inv).CanActivate())
                 RPGArtifact(Inv).BotIncomingMissile(Self, P);
         }
     }
@@ -100,7 +100,7 @@ function ExecuteWhatToDoNext()
     {
         for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
         {
-            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+            if(RPGArtifact(Inv) != None && RPGArtifact(Inv).CanActivate())
                 RPGArtifact(Inv).BotWhatNext(Self);
         }
     }
@@ -119,7 +119,7 @@ function ExecuteWhatToDoNext()
 }
 
 function bool Medicare(Pawn P) {
-    if(P.IsA('Vehicle')) {
+    if(Vehicle(P) != None) {
         P = Vehicle(P).Driver;
     }
     
@@ -167,7 +167,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
     
     for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
     {
-        if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+        if(RPGArtifact(Inv) != None && RPGArtifact(Inv).CanActivate())
             RPGArtifact(Inv).BotFightEnemy(Self);
     }
 }
@@ -180,7 +180,7 @@ function bool LoseEnemy()
     {
         for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
         {
-            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).CanActivate())
+            if(RPGArtifact(Inv) != None && RPGArtifact(Inv).CanActivate())
                 RPGArtifact(Inv).BotLoseEnemy(Self);
         }
         return true;

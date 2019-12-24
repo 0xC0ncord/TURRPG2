@@ -24,7 +24,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         
         //Adrenaline full
         if(
-            Instigator.Controller.IsA('UnrealPlayer') &&
+            UnrealPlayer(Instigator.Controller) != None &&
             Instigator.Controller.Adrenaline < Instigator.Controller.AdrenalineMax &&
             Instigator.Controller.Adrenaline + AdrenalineBonus >= Instigator.Controller.AdrenalineMax &&
             !Instigator.InCurrentCombo()

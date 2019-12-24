@@ -9,7 +9,7 @@ simulated event PostTouch(Actor Other)
 {
     local RPGPlayerReplicationInfo RPRI;
     
-    if(Other.IsA('Pawn'))
+    if(Pawn(Other) != None)
     {
         RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Pawn(Other).Controller);
         if(RPRI != None && RPRI.RPGLevel >= RequiredLevel)

@@ -34,10 +34,10 @@ static function bool Bounce(Projectile P, vector HitNormal, Actor Wall)
 {
     local vector NewVel;
     
-    if(Wall == None || Wall.IsA('Volume'))
+    if(Wall == None || Volume(Wall) != None)
         return false;
 
-    if(Wall.bStatic || Wall.bWorldGeometry || Wall.IsA('Mover'))
+    if(Wall.bStatic || Wall.bWorldGeometry || Mover(Wall) != None)
     {
         //abusing Actor.Buoyancy as bounciness - will never be used for projectiles anyway
         NewVel = P.Buoyancy * ReflectVector(P.Velocity, HitNormal);
@@ -45,7 +45,7 @@ static function bool Bounce(Projectile P, vector HitNormal, Actor Wall)
         if(VSize(NewVel) > default.ProjectileVelocityTreshold)
         {
             //if this is a rocket, reset its timer so rockets shot in a spiral will not cause weird effects
-            if(P.IsA('RocketProj'))
+            if(RocketProj(P) != None)
                 P.SetTimer(0.0f, false);
         
             P.Velocity = NewVel;
@@ -74,7 +74,7 @@ function StartEffect()
     local WeaponFire WF;
     local int i;
     
-    if(Weapon.IsA('RPGRocketLauncher'))
+    if(RPGRocketLauncher(Weapon) != None)
     {
         //fuck damnit, Epic...
         OldProjectileClasses[0] = RPGRocketLauncher(Weapon).RocketClass;
@@ -114,7 +114,7 @@ function StopEffect()
     
     if(OldProjectileClasses.Length > 0)
     {
-        if(Weapon.IsA('RPGRocketLauncher'))
+        if(RPGRocketLauncher(Weapon) != None)
         {
             RPGRocketLauncher(Weapon).RocketClass = class<RocketProj>(OldProjectileClasses[0]);
         }

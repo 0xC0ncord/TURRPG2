@@ -4,7 +4,7 @@ function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
 
-    if(Other.IsA('xPawn'))
+    if(xPawn(Other) != None)
     {
         // Increase the number of times a player can jump in mid air
         xPawn(Other).MaxMultiJump = 1 + AbilityLevel;

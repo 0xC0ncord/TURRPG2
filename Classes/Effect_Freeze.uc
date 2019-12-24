@@ -22,7 +22,7 @@ state Activated
         bCanDoubleJump = Instigator.bCanDoubleJump;
         bCanWallDodge = Instigator.bCanWallDodge;
         
-        if(Instigator.IsA('xPawn'))
+        if(xPawn(Instigator) != None)
         {
             bCanDodgeDoubleJump = xPawn(Instigator).bCanDodgeDoubleJump;
             MaxMultiJump = xPawn(Instigator).MaxMultiJump;
@@ -38,7 +38,7 @@ state Activated
         Instigator.bCanDoubleJump = false;
         Instigator.bCanWallDodge = false;
 
-        if(Instigator.IsA('xPawn'))
+        if(xPawn(Instigator) != None)
         {
             xPawn(Instigator).bCanDodgeDoubleJump = false;
             xPawn(Instigator).MultiJumpRemaining = 0;
@@ -58,7 +58,7 @@ state Activated
         Instigator.bCanDoubleJump = bCanDoubleJump;
         Instigator.bCanWallDodge = bCanWallDodge;
             
-        if(Instigator.IsA('xPawn'))
+        if(xPawn(Instigator) != None)
         {
             xPawn(Instigator).bCanDodgeDoubleJump = bCanDodgeDoubleJump;
             xPawn(Instigator).MultiJumpRemaining = MaxMultiJump;

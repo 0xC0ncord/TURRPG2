@@ -69,7 +69,7 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
             break;
 
         if(RandNavPt.bMayCausePain || RandNavPt.Location.Z <= RandNavPt.Region.Zone.KillZ ||
-            (RandNavPt.IsA('FlyingPathNode') && !Instigator.bCanFly) )
+            (FlyingPathNode(RandNavPt) != None && !Instigator.bCanFly) )
         {
             RandNavPt = None;
             continue;
@@ -229,7 +229,7 @@ function Tick(float deltaTime)
     if ( Level.Game.ResetCountdown != 3 && VSize(Instigator.Location - RevivePoint) > VSize(Instigator.Velocity) * deltaTime
         && (PrevDist >= VSize(Instigator.Location - RevivePoint) || PrevDist == 0.0 || TotalTime < 2.0)
         && TotalTime < TOBase + (TOMulti * (4 - OwnerAbilityLevel)) && !bTimedOut
-        && (!Level.Game.IsA('Invasion') || Invasion(Level.Game).bWaveInProgress || Invasion(Level.Game).WaveCountDown < 14) )
+        && (Invasion(Level.Game) == None || Invasion(Level.Game).bWaveInProgress || Invasion(Level.Game).WaveCountDown < 14) )
     {
         PrevDist = VSize(Instigator.Location - RevivePoint);
         //refresh Instigator velocity to counter air friction
@@ -337,7 +337,7 @@ state Deactivated
 {
     function BeginState()
     {
-        if (Level.Game.IsA('Invasion'))
+        if (Invasion(Level.Game) != None)
         {
             SetTimer(Level.TimeDilation, true);
         }

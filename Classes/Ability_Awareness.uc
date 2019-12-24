@@ -48,7 +48,7 @@ simulated function Timer() {
                     continue;
                 }
             
-                if(P.IsA('Vehicle') && ((!Vehicle(P).bDriving && !Vehicle(P).bAutoTurret) || Vehicle(P).GetVehicleBase() != None)) {
+                if(Vehicle(P) != None && ((!Vehicle(P).bDriving && !Vehicle(P).bAutoTurret) || Vehicle(P).GetVehicleBase() != None)) {
                     continue;
                 }
                 

@@ -6,7 +6,7 @@ function ScoreKill(Controller Killed, class<DamageType> DamageType)
 
     C = Instigator.Controller;
     if(C != None) {
-        if(Level.Game.IsA('Invasion') && Monster(Killed.Pawn) != None)
+        if(Invasion(Level.Game) != None && Monster(Killed.Pawn) != None)
         {
             C.AwardAdrenaline(Monster(Killed.Pawn).ScoringValue * BonusPerLevel * AbilityLevel);
         }

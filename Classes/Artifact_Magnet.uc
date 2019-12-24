@@ -26,7 +26,7 @@ function bool CanActivate()
 
     if(Instigator.Base == None ||
         Instigator.Physics != PHYS_Walking ||
-        (Instigator.Base.IsA('BlockingVolume') && !Instigator.Base.bBlockZeroExtentTraces))
+        (BlockingVolume(Instigator.Base) != None && !Instigator.Base.bBlockZeroExtentTraces))
     {
         Msg(MSG_OnlySolidGround);
         return false;
@@ -64,7 +64,7 @@ state Activated
         }
         else if (Instigator.Base != None )
         {
-            if(Instigator.Base.IsA('BlockingVolume') && !Instigator.Base.bBlockZeroExtentTraces)
+            if(BlockingVolume(Instigator.Base) != None && !Instigator.Base.bBlockZeroExtentTraces)
             {
                 Retry++;
                 if(Retry > 2)

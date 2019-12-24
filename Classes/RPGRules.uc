@@ -252,7 +252,7 @@ function ScoreKill(Controller Killer, Controller Killed)
         while(Inv != None)
         {
             NextInv = Inv.Inventory;
-            if(Inv.IsA('RPGArtifact'))
+            if(RPGArtifact(Inv) != None)
             {
                 TossVel = Vector(KilledPawn.GetViewRotation());
                 TossVel = TossVel * ((KilledPawn.Velocity dot TossVel) + 500) + Vect(0,0,200);
@@ -294,18 +294,16 @@ function ScoreKill(Controller Killer, Controller Killed)
     if(Killer != None)
     {
         if(
-            Killer.IsA('FriendlyMonsterController') ||
-            Killer.IsA('FriendlyTurretController') ||
-            Killer.IsA('RPGTotemController')
+            FriendlyMonsterController(Killer) != None
         )
         {
             //A summoned monster or constructed turret or totem killed something
-            if(Killer.IsA('FriendlyMonsterController'))
+            if(FriendlyMonsterController(Killer) != None)
             {
                 Killer = FriendlyMonsterController(Killer).Master;
                 RegisterWeaponKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class'DummyWeapon_Monster');
                 
-                if(Killer.IsA('PlayerController') && Killed.PlayerReplicationInfo != None)
+                if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
                     PlayerController(Killer).ReceiveLocalizedMessage(class'FriendlyMonsterKillerMessage',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
             }
             
@@ -321,7 +319,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 
                 //If this is TDM, give the team a point too
                 if(
-                    Level.Game.IsA('TeamGame') &&
+                    TeamGame(Level.Game) != None &&
                     TeamGame(Level.Game).bScoreTeamKills &&
                     Killer.PlayerReplicationInfo.Team != None
                 ) {
@@ -355,11 +353,11 @@ function ScoreKill(Controller Killer, Controller Killed)
                 */
                 
                 //Kill
-                if(!Killed.IsA('Bot') || RPGMut.GameSettings.bExpForKillingBots)
+                if(Bot(Killed) == None || RPGMut.GameSettings.bExpForKillingBots)
                     ShareExperience(KillerRPRI, GetKillEXP(KillerRPRI, KilledRPRI));
                 
                 //Type kill
-                if(Killed.IsA('PlayerController') && PlayerController(Killed).bIsTyping)
+                if(PlayerController(Killed) != None && PlayerController(Killed).bIsTyping)
                 {
                     KillerRPRI.AwardExperience(EXP_TypeKill);
                 }
@@ -396,7 +394,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 }
                 
                 //Multi kill
-                if(Killer.IsA('UnrealPlayer') && UnrealPlayer(Killer).MultiKillLevel > 0)
+                if(UnrealPlayer(Killer) != None && UnrealPlayer(Killer).MultiKillLevel > 0)
                 {
                     KillerRPRI.AwardExperience(EXP_MultiKill[Min(UnrealPlayer(Killer).MultiKillLevel, ArrayCount(EXP_MultiKill) - 1)]);
                 }
@@ -430,7 +428,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 }
                 
                 //Kill flag carrier
-                if(Level.Game.IsA('TeamGame') && TeamGame(Level.Game).CriticalPlayer(Killed)) {
+                if(TeamGame(Level.Game) != None && TeamGame(Level.Game).CriticalPlayer(Killed)) {
                     KillerRPRI.AwardExperience(EXP_CriticalFrag);
                 }
                 
@@ -469,7 +467,7 @@ function float GetDamageEXP(int Damage, Pawn InstigatedBy, Pawn Injured)
         return 0;
     }
     
-    if(Injured.IsA('Monster'))
+    if(Monster(Injured) != None)
         return RPGMut.GameSettings.ExpForDamageScale * (float(Damage) / Injured.HealthMax) * float(Monster(Injured).ScoringValue);
     
     return 0;
@@ -483,7 +481,7 @@ function Weapon GetDamageWeapon(Pawn Other, class<DamageType> DamageType)
     
     if(ClassIsChildOf(DamageType, class'WeaponDamageType'))
     {
-        if(Other.IsA('Vehicle')) {
+        if(Vehicle(Other) != None) {
             //whoever fired this might have just entered a vehicle
             Other = Vehicle(Other).Driver;
         }
@@ -612,7 +610,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     if(
         RPGMut.bAutoAdjustInvasionLevel &&
         RPGMut.InvasionDamageAdjustment > 0 &&
-        (injured.IsA('Monster') || Monster(instigatedBy) != None)
+        (Monster(injured) != None || Monster(instigatedBy) != None)
     )
     {
         x = float(Damage) * RPGMut.InvasionDamageAdjustment;
@@ -620,7 +618,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         if(Monster(instigatedBy) != None)
             Damage += x;
         
-        if(injured.IsA('Monster'))
+        if(Monster(injured) != None)
             Damage -= x;
     }
     
@@ -645,7 +643,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         //Active artifacts
         for(Inv = instigatedBy.Inventory; Inv != None; Inv = Inv.Inventory)
         {
-            if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).bActive)
+            if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
                 RPGArtifact(Inv).AdjustTargetDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
         
@@ -672,7 +670,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     //Active artifacts
     for(Inv = injured.Inventory; Inv != None; Inv = Inv.Inventory)
     {
-        if(Inv.IsA('RPGArtifact') && RPGArtifact(Inv).bActive)
+        if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
             RPGArtifact(Inv).AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
     }
     
@@ -719,7 +717,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Other.Controller);
     
     //Modified weapon pickup
-    if(item.IsA('WeaponPickup')) {
+    if(WeaponPickup(item) != None) {
         WPM = class'RPGWeaponPickupModifier'.static.GetFor(WeaponPickup(item));
         if(WPM != None) {
             //Remove thrown weapon
@@ -775,7 +773,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
     }
     
     //Weapon Locker
-    if(item.IsA('WeaponLocker') && RPGMut.CheckPDP(Other, class<Weapon>(item.InventoryType))) {
+    if(WeaponLocker(item) != None && RPGMut.CheckPDP(Other, class<Weapon>(item.InventoryType))) {
         //Simulate
         ModifierClass = None;
         ModifierLevel = -100;
@@ -819,7 +817,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
         }
     }
     
-    if(item.IsA('Ammo')) {
+    if(Ammo(item) != None) {
         //Handle ammo
         AmmoAmount = Ammo(item).AmmoAmount;
         AmmoClass = class<Ammunition>(item.InventoryType);
@@ -1020,7 +1018,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
                     DeathMatch(Level.Game).EndSpree(Killer, KilledController);
                 }
                 
-                if(KilledVehicleDriver.IsA('UnrealPawn'))
+                if(UnrealPawn(KilledVehicleDriver) != None)
                     UnrealPawn(KilledVehicleDriver).spree = 0;
             }
         }
@@ -1035,7 +1033,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 
     //Yet Another Invasion Hack - Invasion doesn't call ScoreKill() on the GameRules if a monster kills something
     //This one's so bad I swear I'm fixing it for a patch
-    if(int(Level.EngineVersion) < 3190 && Level.Game.IsA('Invasion') && KilledController != None && MonsterController(Killer) != None)
+    if(int(Level.EngineVersion) < 3190 && Invasion(Level.Game) != None && KilledController != None && MonsterController(Killer) != None)
     {
         if (KilledController.PlayerReplicationInfo != None)
             KilledController.PlayerReplicationInfo.bOutOfLives = true;

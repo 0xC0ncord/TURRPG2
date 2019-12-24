@@ -30,7 +30,7 @@ function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
     
-    if(Other.IsA('xPawn'))
+    if(xPawn(Other) != None)
     {
         ShieldMax = xPawn(Other).default.ShieldStrengthMax + BonusPerLevel * AbilityLevel;
         xPawn(Other).ShieldStrengthMax = ShieldMax;

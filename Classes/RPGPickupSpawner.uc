@@ -75,7 +75,7 @@ event PostBeginPlay() {
 
     if(bPickups || bAdrenaline) {
         for(N = Level.NavigationPointList; N != None; N = N.NextNavigationPoint) {
-            if (PathNode(N) != None && !N.IsA('FlyingPathNode')) {
+            if (PathNode(N) != None && FlyingPathNode(N) == None) {
                 PathNodes[PathNodes.length] = PathNode(N);
             }
         }

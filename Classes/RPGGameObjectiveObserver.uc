@@ -77,7 +77,7 @@ event Tick(float dt)
 
 function AssistMessage(Controller C)
 {
-    if(C.IsA('PlayerController'))
+    if(PlayerController(C) != None)
         PlayerController(C).ReceiveLocalizedMessage(class'RPGAssistLocalMessage');
 }
 

@@ -4,7 +4,7 @@ function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
     
-    if(Other.IsA('xPawn'))
+    if(xPawn(Other) != None)
     {
         xPawn(Other).DodgeSpeedFactor = Other.default.DodgeSpeedFactor * (1.0 + BonusPerLevel * float(AbilityLevel));
         xPawn(Other).DodgeSpeedZ = Other.default.DodgeSpeedZ * (1.0 + 0.5 * BonusPerLevel * float(AbilityLevel));

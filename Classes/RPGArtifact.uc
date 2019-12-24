@@ -149,7 +149,7 @@ function SortIn()
             {
                 for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)
                 {
-                    if(Inv.IsA('RPGArtifact'))
+                    if(RPGArtifact(Inv) != None)
                     {
                         i = InstigatorRPRI.FindOrderEntry(class<RPGArtifact>(Inv.class));
                         if(i == -1 || i > OrderEntry)
@@ -292,7 +292,7 @@ function DropFrom(vector StartLocation)
     local Pickup P;
     local Inventory TossedInventory;
 
-    if(Instigator != None && Instigator.Controller.IsA('PlayerController') && NumCopies <= 1)
+    if(Instigator != None && PlayerController(Instigator.Controller) != None && NumCopies <= 1)
         CloseSelection();
 
     if(bActive && NumCopies <= 1)
@@ -471,7 +471,7 @@ function bool CheckSelection()
 
     if(bSelection && SelectedOption < 0 && GetNumOptions() > 0)
     {
-        if(Instigator.Controller.IsA('PlayerController'))
+        if(PlayerController(Instigator.Controller) != None)
         {
             if(GetNumOptions() > 1) {
                 ShowSelection();
@@ -518,7 +518,7 @@ function Activate() //do NOT override, use CanActivate, CanDeactivate or BeginSt
             else
             {
                 SelectedOption = -1;
-                if(Instigator.Controller.IsA('PlayerController'))
+                if(PlayerController(Instigator.Controller) != None)
                     PlayerController(Instigator.Controller).ClientPlaySound(CantUseSound,,, SLOT_Interface);
             }
         }
@@ -543,7 +543,7 @@ function Activate() //do NOT override, use CanActivate, CanDeactivate or BeginSt
     else
     {
         SelectedOption = -1;
-        if(Instigator.Controller.IsA('PlayerController'))
+        if(PlayerController(Instigator.Controller) != None)
             PlayerController(Instigator.Controller).ClientPlaySound(CantUseSound,,, SLOT_Interface);
     }
 }
@@ -621,7 +621,7 @@ simulated event Destroyed()
         if(Instigator != None && Instigator.SelectedItem == Self)
             Instigator.NextItem();
         
-        if(Instigator != None && Instigator.Controller.IsA('PlayerController'))
+        if(Instigator != None && PlayerController(Instigator.Controller) != None)
             CloseSelection();
     }
 

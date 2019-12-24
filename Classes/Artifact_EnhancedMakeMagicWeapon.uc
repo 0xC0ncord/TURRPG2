@@ -17,7 +17,7 @@ function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponTy
         bAlreadyPresent = false;
         for(Inv = Instigator.Inventory; Inv != None && !bAlreadyPresent; Inv = Inv.Inventory)
         {
-            if(Inv.IsA('Weapon') && WMClass.static.GetFor(Weapon(Inv)) != None) {
+            if(Weapon(Inv) != None && WMClass.static.GetFor(Weapon(Inv)) != None) {
                 bAlreadyPresent = true;
                 //can't break here because yay UnrealScript
             }

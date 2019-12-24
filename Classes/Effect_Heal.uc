@@ -6,7 +6,7 @@ var config int SelfHealingCap;
 var config float SelfHealingMultiplier;
 
 static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier) {
-    if(!Other.IsA('Vehicle') && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0)) {
+    if(Vehicle(Other) == None && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0)) {
         return false;
     }
 
@@ -14,7 +14,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
 }
 
 function bool ShouldDisplayEffect() {
-    return !Instigator.IsA('Vehicle');
+    return Vehicle(Instigator) == None;
 }
 
 function HealPassengers(Vehicle V) {
@@ -38,7 +38,7 @@ function DoEffect()
 {
     local Pawn Healer;
 
-    if(Instigator.IsA('Vehicle'))
+    if(Vehicle(Instigator) != None)
     {
         HealPassengers(Vehicle(Instigator));
         return; //don't heal the vehicle itself
@@ -47,7 +47,7 @@ function DoEffect()
     if(EffectCauser != None) {
         Healer = EffectCauser.Pawn;
         
-        if(Healer.IsA('Vehicle')) {
+        if(Vehicle(Healer) != None) {
             Healer = Vehicle(Healer).Driver;
         }
     }

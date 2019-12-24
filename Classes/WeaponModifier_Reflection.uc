@@ -102,10 +102,10 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
                 WF = FindWeaponFire(InstigatedBy, WFClass);
                 if(WF != None)
                 {
-                    if(WF.IsA('ProjectileFire')) {
+                    if(ProjectileFire(WF) != None) {
                         Log("Reflection: SpawnProjectile" @ WF);
                         ProjectileFire(WF).SpawnProjectile(Instigator.Location + Instigator.CollisionHeight * vector(ReflectDir), ReflectDir);
-                    } else if(WF.IsA('InstantFire')) {
+                    } else if(InstantFire(WF) != None) {
                         Log("Reflection: DoTrace using " @ WF);
                         InstantFire(WF).SpawnBeamEffect(Instigator.Location + Instigator.CollisionHeight * vector(ReflectDir), ReflectDir, HitLocation, vector(ReflectDir), 0);
                     }

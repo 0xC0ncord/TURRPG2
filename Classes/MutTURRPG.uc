@@ -91,7 +91,7 @@ static final function MutTURRPG Instance(LevelInfo Level)
     {
         for(Mut = Level.Game.BaseMutator; Mut != None; Mut = Mut.NextMutator)
         {
-            if(Mut.IsA('MutTURRPG'))
+            if(MutTURRPG(Mut) != None)
                 return MutTURRPG(Mut);
         }
     }
@@ -163,7 +163,7 @@ final function string ProcessPlayerName(RPGPlayerReplicationInfo RPRI)
 event PreBeginPlay() {
     local int i, x;
 
-    if(!Level.Game.IsA('Invasion'))
+    if(Invasion(Level.Game) == None)
         bAutoAdjustInvasionLevel = false; //don't waste any time doing Invasion stuff if we're not in Invasion
 
     //OLTeamGames support
@@ -219,7 +219,7 @@ event PostBeginPlay()
     
     //Disable ONS mutator as it disables adrenaline pickups
     for(Mut = Level.Game.BaseMutator; Mut != None; Mut = Mut.NextMutator) {
-        if(Mut.IsA('ONSDefaultMut')) {
+        if(ONSDefaultMut(Mut) != None) {
             Mut.Destroy();
             break;
         }
@@ -236,11 +236,11 @@ event PostBeginPlay()
     
     //Game objective observers
     foreach AllActors(class'GameObjective', Objective) {
-        if(Objective.IsA('CTFBase')) { //CTF flag base
+        if(CTFBase(Objective) != None) { //CTF flag base
             Spawn(class'RPGFlagObserver', Objective);
-        } else if(Objective.IsA('xBombSpawn')) { //BR ball spawn
+        } else if(xBombSpawn(Objective) != None) { //BR ball spawn
             Spawn(class'RPGBallObserver', Objective);
-        } else if(Objective.IsA('ONSPowerCore')) { //ONS power nodes and power cores
+        } else if(ONSPowerCore(Objective) != None) { //ONS power nodes and power cores
             Spawn(class'RPGPowerCoreObserver', Objective);
         }
 
@@ -333,21 +333,21 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
         return true;
     
     //Disbale artifacts (game settings)
-    if(Other.IsA('RPGArtifact') && !GameSettings.AllowArtifact(class<RPGArtifact>(Other.class)))
+    if(RPGArtifact(Other) != None && !GameSettings.AllowArtifact(class<RPGArtifact>(Other.class)))
     {
         bSuperRelevant = 0;
         return false;
     }
     
-    if(Other.IsA('RPGArtifactPickup') && !GameSettings.AllowArtifact(class<RPGArtifact>(RPGArtifactPickup(Other).InventoryType)))
+    if(RPGArtifactPickup(Other) != None && !GameSettings.AllowArtifact(class<RPGArtifact>(RPGArtifactPickup(Other).InventoryType)))
     {
         bSuperRelevant = 0;
         return false;
     }
     
-    if(Other.IsA('UnrealPawn'))
+    if(UnrealPawn(Other) != None)
     {
-        if(Other.IsA('Monster'))
+        if(Monster(Other) != None)
         {
             Pawn(Other).HealthMax = Pawn(Other).Health; //fix, e.g. to allow healing properly
             // only stock invasion really has this issue nowadays; see FakeMonsterWeapon.uc for the reasoning behind this
@@ -366,14 +366,14 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     }
     
     //Ball Launcher
-    if(Other.IsA('xBombFlag'))
+    if(xBombFlag(Other) != None)
     {
         xBombFlag(Other).BombLauncherClassName = "TURRPG2.RPGBallLauncher";
         return true;
     }
     
     //Replace locker weapons
-    if(Other.IsA('WeaponLocker')) {
+    if(WeaponLocker(Other) != None) {
         Locker = WeaponLocker(Other);
     
         for(i = 0; i < Locker.Weapons.length; i++) {
@@ -388,7 +388,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     }
     
     //Replace weapon base weapons
-    if(Other.IsA('xWeaponBase'))
+    if(xWeaponBase(Other) != None)
     {
         ClassName = string(xWeaponBase(Other).WeaponType);
         NewClassName = GetInventoryClassOverride(ClassName);
@@ -400,7 +400,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     }
     
     //Modified weapon pickup
-    if(Other.IsA('WeaponPickup')) {
+    if(WeaponPickup(Other) != None) {
         WP = WeaponPickup(Other);
     
         //Thrown weapon
@@ -420,7 +420,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     }
     
     //Weapon
-    if(Other.IsA('Weapon'))
+    if(Weapon(Other) != None)
     {
         W = Weapon(Other);
     
@@ -447,15 +447,15 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
     }
     
     //Observe combos
-    if(Other.IsA('Combo')) {
+    if(Combo(Other) != None) {
         Spawn(class'RPGComboObserver', Other);
     }
     
     //Force adrenaline on
-    if(Other.IsA('Controller')) {
+    if(Controller(Other) != None) {
         Controller(Other).bAdrenalineEnabled = true;
         
-        if(Level.Game.IsA('ONSOnslaughtGame') && MessagingSpectator(Other) == None) {
+        if(ONSOnslaughtGame(Level.Game) != None && MessagingSpectator(Other) == None) {
             //Mimic ONSDefaultMut, which has been removed
             Controller(Other).PlayerReplicationInfoClass = class'ONSPlayerReplicationInfo';
         }
@@ -476,7 +476,7 @@ function Actor ReplaceWithActor(actor Other, string aClassName)
     aClass = class<Actor>(DynamicLoadObject(aClassName, class'Class'));
     if ( aClass != None )
         A = Spawn(aClass,Other.Owner,Other.tag,Other.Location, Other.Rotation);
-    if ( Other.IsA('Pickup') )
+    if ( Pickup(Other) != None )
     {
         if ( Pickup(Other).MyMarker != None )
         {
@@ -489,7 +489,7 @@ function Actor ReplaceWithActor(actor Other, string aClassName)
             }
             Pickup(Other).MyMarker = None;
         }
-        else if ( A.IsA('Pickup') )
+        else if ( Pickup(A) != None )
             Pickup(A).Respawntime = 0.0;
     }
     if ( A != None )
@@ -583,7 +583,7 @@ function ModifyPlayer(Pawn Other)
     //Modify starting weapons
     if(GameSettings.WeaponModifierChance > 0 && GameSettings.bMagicalStartingWeapons) {
         for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory) {
-            if(Inv.IsA('Weapon')) {
+            if(Weapon(Inv) != None) {
                 ModifierClass = GetRandomWeaponModifier(Weapon(Inv).class, Other);
                 if(ModifierClass != None) {
                     ModifierClass.static.Modify(Weapon(Inv), -100, GameSettings.bNoUnidentified);
@@ -905,7 +905,7 @@ function Timer()
     }
     
     //find level of lowest level player
-    if(Level.Game.IsA('Invasion') && bAutoAdjustInvasionLevel)
+    if(Invasion(Level.Game) != None && bAutoAdjustInvasionLevel)
     {
         LowestLevel = 0;
         for(C = Level.ControllerList; C != None; C = C.NextController)
@@ -1061,7 +1061,7 @@ function Mutate(string MutateString, PlayerController Sender)
             Cheat = Sender.Pawn;
             CheatController = Sender;
         }
-        else if(Sender.ViewTarget != None && Sender.ViewTarget.IsA('xPawn'))
+        else if(Sender.ViewTarget != None && xPawn(Sender.ViewTarget) != None)
         {
             Cheat = Pawn(Sender.ViewTarget);
             CheatController = Cheat.Controller;
@@ -1222,12 +1222,12 @@ function Mutate(string MutateString, PlayerController Sender)
             {
                 foreach AllActors(class'NavigationPoint', N)
                 {
-                    if(N.IsA('ONSPowerCore'))
+                    if(ONSPowerCore(N) != None)
                         N.Bump(Cheat);
                 }
                 return;
             }
-            else if(Args[0] ~= "nextwave" && Level.Game.IsA('Invasion'))
+            else if(Args[0] ~= "nextwave" && Invasion(Level.Game) != None)
             {
                 //Kill all monsters
                 foreach DynamicActors(class'Monster', M)
@@ -1295,7 +1295,7 @@ function Mutate(string MutateString, PlayerController Sender)
             {
                 for(Inv = Cheat.Inventory; Inv != None; Inv = Inv.Inventory)
                 {
-                    if(Inv.IsA('Weapon'))
+                    if(Weapon(Inv) != None)
                         Weapon(Inv).SuperMaxOutAmmo();
                 }
                 return;

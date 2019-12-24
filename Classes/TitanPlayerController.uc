@@ -153,10 +153,10 @@ function ServerSpeech(name Type, int Index, string Callsign) {
     if(Type == 'OTHER' && Index == 30 && Pawn != None && PlayerReplicationInfo != None && PlayerReplicationInfo.Team != None) {
         //Player is calling for a medic - find a medic bot of the same team
         for(C = Level.ControllerList; C != None; C = C.NextController) {
-            if(C.SameTeamAs(Self) && C.IsA('Bot')) {
+            if(C.SameTeamAs(Self) && Bot(C) != None) {
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
                 if(RPRI.HasAbility(class'Ability_Medic') > 0) {
-                    if(C.IsA('RPGBot') && RPGBot(C).Patient == None) {
+                    if(RPGBot(C) != None && RPGBot(C).Patient == None) {
                         //this medic currently has no patient!
                         Medic = Bot(C);
                         break;
@@ -169,7 +169,7 @@ function ServerSpeech(name Type, int Index, string Callsign) {
     }
     
     if(Medic != None) {
-        if(Medic.IsA('RPGBot')) {
+        if(RPGBot(Medic) != None) {
             //Check if this player is more important
             if(RPGBot(Medic).Medicare(Pawn)) {
                 Medic.SetTemporaryOrders('Follow', Self);

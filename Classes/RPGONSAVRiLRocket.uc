@@ -37,7 +37,7 @@ simulated function Timer()
         if (HomingTarget != None)
         {
             //RPGDecoys are set as OverrideTarget from outside so we need special treatment here -pd
-            if(OverrideTarget == None || !OverrideTarget.IsA('RPGDecoy'))
+            if(OverrideTarget == None || RPGDecoy(OverrideTarget) == None)
             {
                 // Check to see if it's lock has changed
                 if ( !HomingTarget.VerifyLock(self,NewTarget) )
