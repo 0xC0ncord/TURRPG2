@@ -168,7 +168,7 @@ static function SetWeaponFireRate(Weapon W, float Scale)
             if(MinigunFire(WF) != None) //minigun needs a hack because it fires differently than normal weapons
             {
                 MinigunFire(WF).BarrelRotationsPerSec = MinigunFire(WF).default.BarrelRotationsPerSec * Scale;
-                MinigunFire(WF).FireRate = 1.f / (MinigunFire(WF).RoundsPerRotation * MinigunFire(WF).BarrelRotationsPerSec);
+                WF.FireRate = 1.f / (MinigunFire(WF).RoundsPerRotation * MinigunFire(WF).BarrelRotationsPerSec);
                 MinigunFire(WF).MaxRollSpeed = 65536.f * MinigunFire(WF).BarrelRotationsPerSec;
             }
             else if(TransFire(WF) == None && BallShoot(WF) == None)
@@ -212,7 +212,7 @@ static function AdjustWeaponFireRate(Weapon W, float Scale)
             if(MinigunFire(WF) != None)
             {
                 MinigunFire(WF).BarrelRotationsPerSec *= Scale;
-                MinigunFire(WF).FireRate = 1.f / (MinigunFire(WF).RoundsPerRotation * MinigunFire(WF).BarrelRotationsPerSec);
+                WF.FireRate = 1.f / (MinigunFire(WF).RoundsPerRotation * MinigunFire(WF).BarrelRotationsPerSec);
                 MinigunFire(WF).MaxRollSpeed = 65536.f * MinigunFire(WF).BarrelRotationsPerSec;
             }
             else if(TransFire(WF) == None && BallShoot(WF) == None)
