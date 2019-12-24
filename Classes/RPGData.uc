@@ -7,7 +7,8 @@ var config string ID; //owner GUID ("Bot" for bots)
 
 var config int LV; //level
 var config float XP; //experience
-var config int PA, XN; //points available, experience needed
+var config int XN; //experience needed
+var config int SPA, APA; //stat points available, ability points available
 
 var config array<string> AB; //ability aliases (mapped to class refs in RPGPlayerReplicationInfo)
 var config array<int> AL; //ability levels

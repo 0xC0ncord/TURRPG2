@@ -128,10 +128,13 @@ simulated function bool Buy(optional int Amount)
     else
         NextCost = Cost();
 
-    if(NextCost <= 0 || NextCost > RPRI.PointsAvailable)
+    if(NextCost <= 0 || (bIsStat && NextCost > RPRI.StatPointsAvailable) || (!bIsStat && NextCost > RPRI.AbilityPointsAvailable))
         return false;
 
-    RPRI.PointsAvailable -= NextCost;
+    if(bIsStat)
+        RPRI.StatPointsAvailable -= NextCost;
+    else
+        RPRI.AbilityPointsAvailable -= NextCost;
     
     if(class'Util'.static.InArray(Self, RPRI.Abilities) == -1)
     {

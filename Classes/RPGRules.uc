@@ -7,7 +7,6 @@ var bool bDamageLog;
 var Sound DisgraceAnnouncement, EagleEyeAnnouncement;
 
 var MutTURRPG RPGMut;
-var int PointsPerLevel;
 var float LevelDiffExpGainDiv;
 var bool bAwardedFirstBlood;
 

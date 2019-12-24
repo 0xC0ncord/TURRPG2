@@ -24,7 +24,7 @@ var GUIStyles CategoryStyle;
 
 var localized string 
     Text_Buy, Text_BuyX, Text_Level, Text_Stats, Text_CantBuy, Text_Requirements, Text_AlreadyMax, Text_Max, Text_Forbidden, Text_DoNotHaveThisYet,
-    Text_StatsAvailable, Text_Intro, Text_Description;
+    Text_PointsAvailable, Text_Intro, Text_Description;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -158,7 +158,7 @@ function InitMenu()
     Abilities.SetIndex(OldAbilityListIndex);
     Abilities.SetTopItem(OldAbilityListTop);
     
-    lblStats.Caption = Text_StatsAvailable @ string(RPGMenu.RPRI.PointsAvailable);
+    lblStats.Caption = Text_PointsAvailable @ string(RPGMenu.RPRI.AbilityPointsAvailable);
     
     SelectAbility();
 }
@@ -178,7 +178,7 @@ function SelectAbility()
     {
         AInfo = AbilityInfos[Abilities.Index];
         
-        if(AInfo.Cost > 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.PointsAvailable >= AInfo.Cost)
+        if(AInfo.Cost > 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.AbilityPointsAvailable >= AInfo.Cost)
         {
             btBuy.Caption = Repl(Text_BuyX, "$1", AInfo.Name @ string(AInfo.NextLevel));
             btBuy.MenuState = MSAT_Blurry;
@@ -261,7 +261,7 @@ defaultproperties
     Categories(9)=class'AbilityCategory_Engineer'
     Categories(10)=class'AbilityCategory_Misc'
 
-    Text_StatsAvailable="Available Stat Points:"
+    Text_PointsAvailable="Available Ability Points:"
     Text_Buy="Buy"
     Text_BuyX="Buy $1"
     Text_Level="Level"

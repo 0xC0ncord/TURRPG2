@@ -18,7 +18,7 @@ var automated GUIButton btSwitch, btReset, btRemove;
 var localized string Rebuild_Caption, Rebuild_Hint;
 var localized string 
     Text_CharInfo, Text_Name, Text_Level, Text_Experience,
-    Text_StatPoints, Text_Stats, Text_Abilities, Text_Disabled;
+    Text_StatPoints, Text_AbilityPoints, Text_Stats, Text_Abilities, Text_Disabled;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -106,7 +106,8 @@ function InitMenu()
         string(int(RPGMenu.RPRI.Experience)) @ "/" @ string(RPGMenu.RPRI.NeededExp) @
         "(" $ class'Util'.static.FormatPercent(RPGMenu.RPRI.Experience / float(RPGMenu.RPRI.NeededExp)) $ ")");
 
-    Add(Text_StatPoints, string(RPGMenu.RPRI.PointsAvailable));
+    Add(Text_StatPoints, string(RPGMenu.RPRI.StatPointsAvailable));
+    Add(Text_AbilityPoints, string(RPGMenu.RPRI.AbilityPointsAvailable));
     
     for(i = 0; i < RPGMenu.RPRI.AllAbilities.Length; i++)
     {
@@ -241,6 +242,7 @@ defaultproperties
     Text_Level="Level:"
     Text_Experience="Experience:"
     Text_StatPoints="Stat Points:"
+    Text_AbilityPoints="Ability Points:"
     Text_Stats="Stats:"
     Text_Abilities="Abilities:"
     Text_Disabled="DISABLED"

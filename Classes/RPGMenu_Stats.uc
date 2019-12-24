@@ -90,7 +90,7 @@ function InitMenu()
     Abilities.SetIndex(OldAbilityListIndex);
     Abilities.SetTopItem(OldAbilityListTop);
     
-    lblStats.Caption = Text_StatsAvailable @ string(RPGMenu.RPRI.PointsAvailable);
+    lblStats.Caption = Text_StatsAvailable @ string(RPGMenu.RPRI.StatPointsAvailable);
     
     SelectAbility();
 }
@@ -112,7 +112,7 @@ function SelectAbility()
     {
         Stat = Stats[Abilities.Index];
         
-        if(Stat.AbilityLevel < Stat.MaxLevel && RPGMenu.RPRI.PointsAvailable >= Stat.StartingCost)
+        if(Stat.AbilityLevel < Stat.MaxLevel && RPGMenu.RPRI.StatPointsAvailable >= Stat.StartingCost)
             btBuy.MenuState = MSAT_Blurry;
         else
             btBuy.MenuState = MSAT_Disabled;
@@ -166,7 +166,7 @@ function bool BuyStat(GUIComponent Sender)
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
     
     LastAmount = int(ebAmount.GetText());
-    Amount = Min(RPGMenu.RPRI.PointsAvailable, Max(1, int(ebAmount.GetText())));
+    Amount = Min(RPGMenu.RPRI.StatPointsAvailable, Max(1, int(ebAmount.GetText())));
     if(Abilities.Index >= 0 && Amount > 0)
     {
         Stat = Stats[Abilities.Index];

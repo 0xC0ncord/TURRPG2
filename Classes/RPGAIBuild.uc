@@ -56,7 +56,7 @@ function Build(RPGPlayerReplicationInfo RPRI)
     if(AIController(RPRI.Controller) == None)
         return;
 
-    while(RPRI.PointsAvailable > 0)
+    while(RPRI.StatPointsAvailable > 0 || RPRI.AbilityPointsAvailable > 0)
     {
         if(RPRI.AIBuildAction >= BuildActions.Length)
         {
@@ -70,7 +70,8 @@ function Build(RPGPlayerReplicationInfo RPRI)
         {
             Cost = BuyAbility.Cost();
         
-            if(RPRI.PointsAvailable < Cost)
+            if(BuyAbility.bIsStat && RPRI.StatPointsAvailable < Cost ||
+                (!BuyAbility.bIsStat && RPRI.AbilityPointsAvailable < Cost))
             {
                 break;
             }

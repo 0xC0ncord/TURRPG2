@@ -105,7 +105,8 @@ var Controller Controller;
 var PlayerReplicationInfo PRI;
 
 var string RPGName;
-var int RPGLevel, PointsAvailable, NeededExp;
+var int RPGLevel, NeededExp;
+var int StatPointsAvailable, AbilityPointsAvailable;
 var float Experience;
 var array<RPGAbility> Abilities;
 
@@ -153,7 +154,8 @@ replication
         Controller, RPGName,
         bAllowRebuild, RebuildCost, RebuildMaxLevelLoss;
     reliable if(Role == ROLE_Authority && bNetDirty)
-        bImposter, RPGLevel, Experience, PointsAvailable, NeededExp,
+        bImposter, RPGLevel, Experience, NeededExp,
+        StatPointsAvailable, AbilityPointsAvailable,
         bGameEnded,
         NumMines, NumMonsters, NumTurrets,
         MaxMines, MaxTurrets, MaxMonsters;
@@ -287,7 +289,8 @@ simulated event BeginPlay()
             if(data.LV == 0) //new player
             {
                 data.LV = RPGMut.StartingLevel;
-                data.PA = RPGMut.StartingStatPoints + RPGMut.PointsPerLevel * (data.LV - 1);
+                data.SPA = RPGMut.StartingStatPoints + (Ceil(float(data.LV - 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
+                data.APA = RPGMut.StartingAbilityPoints + (Ceil(float(data.LV - 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
                 data.XN = RPGMut.GetRequiredXpForLevel(data.LV);
                     
                 if (PlayerController(Controller) != None)
@@ -989,7 +992,10 @@ function AwardExperience(float exp)
             Count++;
             
             RPGLevel++;
-            PointsAvailable += RPGMut.PointsPerLevel;
+            if(RPGLevel % RPGMut.StatPointsIncrement == 0)
+                StatPointsAvailable += RPGMut.StatPointsPerIncrement;
+            if(RPGLevel % RPGMut.AbilityPointsIncrement == 0)
+                AbilityPointsAvailable += RPGMut.AbilityPointsPerIncrement;
             Experience -= float(NeededExp);
             NeededExp = RPGMut.GetRequiredXpForLevel(RPGLevel);
             
@@ -1356,7 +1362,8 @@ function ServerResetData()
 
     DataObject.ID = OwnerID;
     DataObject.LV = RPGMut.StartingLevel;
-    DataObject.PA = RPGMut.StartingStatPoints + RPGMut.PointsPerLevel * (DataObject.LV - 1);
+    DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
+    DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
     DataObject.XN = RPGMut.GetRequiredXpForLevel(DataObject.LV);
     
     DataObject.AA = 0;
@@ -1400,7 +1407,8 @@ function ServerRebuildData()
         }
         DataObject.XP = FMax(0.0f, DataObject.XP - CostLeft);
         
-        DataObject.PA = RPGMut.StartingStatPoints + RPGMut.PointsPerLevel * (DataObject.LV - 1);
+        DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
+        DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
         DataObject.XN = RPGMut.GetRequiredXpForLevel(DataObject.LV);
         
         DataObject.SaveConfig();
@@ -1422,7 +1430,8 @@ function SetLevel(int NewLevel)
     Log(PRI.PlayerName $ " - SETLEVEL" @ NewLevel $ "!", 'TURRPG2');
     
     DataObject.LV = NewLevel;
-    DataObject.PA = RPGMut.StartingStatPoints + RPGMut.PointsPerLevel * (NewLevel - 1);
+    DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
+    DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
     DataObject.XN = RPGMut.GetRequiredXpForLevel(NewLevel);
     DataObject.XP = 0;
     DataObject.AB.Length = 0;
@@ -1559,7 +1568,8 @@ function LoadData(RPGData Data)
     RPGName = string(Data.Name);
 
     RPGLevel = DataObject.LV;
-    PointsAvailable = DataObject.PA;
+    StatPointsAvailable = DataObject.SPA;
+    AbilityPointsAvailable = DataObject.APA;
     Experience = DataObject.XP;
     NeededExp = DataObject.XN;
     
@@ -1594,7 +1604,8 @@ function SaveData()
     Log(RPGName @ "SaveData");
 
     DataObject.LV = RPGLevel;
-    DataObject.PA = PointsAvailable;
+    DataObject.SPA = StatPointsAvailable;
+    DataObject.APA = AbilityPointsAvailable;
     DataObject.XP = Experience;
     DataObject.XN = NeededExp;
 

@@ -16,8 +16,9 @@ var float NextSaveTime;
 var RPGRules Rules;
 
 var config bool bAllowCheats;
-var config int StartingLevel, StartingStatPoints;
-var config int PointsPerLevel;
+var config int StartingLevel, StartingStatPoints, StartingAbilityPoints;
+var config int StatPointsPerIncrement, AbilityPointsPerIncrement;
+var config int StatPointsIncrement, AbilityPointsIncrement;
 var config int MinHumanPlayersForExp;
 var config array<int> Levels;
 var config bool bLevelCap; //can't reach more levels than defined in the array above
@@ -228,7 +229,6 @@ event PostBeginPlay()
     //RPG Rules
     Rules = Spawn(class'RPGRules');
     Rules.RPGMut = self;
-    Rules.PointsPerLevel = PointsPerLevel;
     Rules.LevelDiffExpGainDiv = LevelDiffExpGainDiv;
     
     Rules.NextGameRules = Level.Game.GameRulesModifiers;
@@ -756,7 +756,9 @@ function int GetRequiredXpForLevel(int Level) {
 //This method also makes sure the "experience needed" is synchronized with the configuration.
 //If the "experience needed" has changed in the config, the player's experience will be adjusted so it fits.
 function ValidateData(RPGPlayerReplicationInfo RPRI) {
-    local int ShouldBe, TotalPoints, x, y;
+    local int StatPointsShouldBe, AbilityPointsShouldBe, XPShouldBe;
+    local int TotalStatPoints, TotalAbilityPoints;
+    local int x, y;
     local float Pct, XP;
     local bool bSave;
 
@@ -773,39 +775,81 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
                 bSave = true;
             }
         
-            for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
-                TotalPoints += RPRI.Abilities[x].CostForNextLevel(y);
+            if(RPRI.Abilities[x].bIsStat)
+                for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
+                    TotalStatPoints += RPRI.Abilities[x].CostForNextLevel(y);
+            else
+                for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
+                    TotalAbilityPoints += RPRI.Abilities[x].CostForNextLevel(y);
         }
         else
         {
-            for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
-                RPRI.PointsAvailable += RPRI.Abilities[x].CostForNextLevel(y);
-                
-            Log("Ability" @ RPRI.Abilities[x] @ "was in" @ RPRI.RPGName $ "'s data but is not an available ability - removed (stat points refunded)", 'TURRPG2');
+            if(RPRI.Abilities[x].bIsStat)
+            {
+                for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
+                    RPRI.StatPointsAvailable += RPRI.Abilities[x].CostForNextLevel(y);
+                Log("Ability" @ RPRI.Abilities[x] @ "was in" @ RPRI.RPGName $ "'s data but is not an available stat - removed (stat points refunded)", 'TURRPG2');
+            }
+            else
+            {
+                for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
+                    RPRI.AbilityPointsAvailable += RPRI.Abilities[x].CostForNextLevel(y);
+                Log("Ability" @ RPRI.Abilities[x] @ "was in" @ RPRI.RPGName $ "'s data but is not an available ability - removed (ability points refunded)", 'TURRPG2');
+            }
+
             RPRI.Abilities.Remove(x, 1);
             x--;
         }
     }
     
-    TotalPoints += RPRI.PointsAvailable;
+    TotalStatPoints += RPRI.StatPointsAvailable;
+    TotalAbilityPoints += RPRI.AbilityPointsAvailable;
     
-    ShouldBe = StartingStatPoints + ((RPRI.RPGLevel - 1) * PointsPerLevel);
-    if(TotalPoints != ShouldBe)
+    StatPointsShouldBe = StartingStatPoints + (Ceil(float(RPRI.RPGLevel + 1) / StatPointsIncrement) - 1) * StatPointsPerIncrement;
+    if(TotalStatPoints != StatPointsShouldBe)
     {
-        Warn(RPRI.RPGName @ "had" @ TotalPoints @ "total stat points at Level" @ RPRI.RPGLevel $
-            ", should be" @ ShouldBe $ ", PointsAvailable changed by" @ string(ShouldBe - TotalPoints) @
+        Warn(RPRI.RPGName @ "had" @ TotalStatPoints @ "total stat points at Level" @ RPRI.RPGLevel $
+            ", should be" @ StatPointsShouldBe $ ", StatPointsAvailable changed by" @ string(StatPointsShouldBe - TotalStatPoints) @
             "to compensate.");
         /*Log("Here's a breakdown:", 'TURRPG2');
-        Log(RPRI.PointsAvailable $ " (Points available)", 'TURRPG2');
+        Log(RPRI.StatPointsAvailable $ " (Stat points available)", 'TURRPG2');
         for (x = 0; x < RPRI.Abilities.Length; x++)
         {
-            for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
-                Log("+ " $ RPRI.Abilities[x].CostForNextLevel(y) $ " (" $ RPRI.Abilities[x].default.AbilityName $ " " $ (y + 1) $ ")", 'TURRPG2');
+            if(RPRI.Abilities[x].bIsStat)
+                for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
+                    Log("+ " $ RPRI.Abilities[x].CostForNextLevel(y) $ " (" $ RPRI.Abilities[x].default.AbilityName $ " " $ (y + 1) $ ")", 'TURRPG2');
         }
-        Log("= " $ TotalPoints, 'TURRPG2');
+        Log("= " $ TotalStatPoints, 'TURRPG2');
         Log("", 'TURRPG2');*/
         
-        RPRI.PointsAvailable += ShouldBe - TotalPoints;
+        RPRI.StatPointsAvailable += StatPointsShouldBe - TotalStatPoints;
+        
+        if(RPRI.AIBuild != None) {
+            //Update AI build
+            RPRI.AIBuild.Build(RPRI);
+        }
+        
+        bSave = true;
+    }
+    
+    AbilityPointsShouldBe = StartingAbilityPoints + (Ceil(float(RPRI.RPGLevel + 1) / AbilityPointsIncrement) - 1) * AbilityPointsPerIncrement;
+    if(TotalAbilityPoints != AbilityPointsShouldBe)
+    {
+        Warn(RPRI.RPGName @ "had" @ TotalAbilityPoints @ "total ability points at Level" @ RPRI.RPGLevel $
+            ", should be" @ AbilityPointsShouldBe $ ", AbilityPointsAvailable changed by" @ string(AbilityPointsShouldBe - TotalAbilityPoints) @
+            "to compensate.");
+        /*Log("Here's a breakdown:", 'TURRPG2');
+        Log(RPRI.AbilityPointsAvailable $ " (Stat points available)", 'TURRPG2');
+        for (x = 0; x < RPRI.Abilities.Length; x++)
+        {
+            if(!RPRI.Abilities[x].bIsStat)
+                for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
+                    Log("+ " $ RPRI.Abilities[x].CostForNextLevel(y) $ " (" $ RPRI.Abilities[x].default.AbilityName $ " " $ (y + 1) $ ")", 'TURRPG2');
+        }
+        Log("= " $ TotalAbilityPoints, 'TURRPG2');
+        Log("", 'TURRPG2');*/
+        
+        RPRI.AbilityPointsAvailable += AbilityPointsShouldBe - TotalAbilityPoints;
         
         if(RPRI.AIBuild != None) {
             //Update AI build
@@ -816,25 +860,25 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
     }
     
     //Validate XP scale
-    ShouldBe = GetRequiredXpForLevel(RPRI.RPGLevel);
-    if(RPRI.NeededExp != ShouldBe) {
-        if(RPRI.NeededExp > 0 && ShouldBe > 0) {
+    XPShouldBe = GetRequiredXpForLevel(RPRI.RPGLevel);
+    if(RPRI.NeededExp != XPShouldBe) {
+        if(RPRI.NeededExp > 0 && XPShouldBe > 0) {
             Pct = RPRI.Experience / float(RPRI.NeededExp);
-            XP = Pct * float(ShouldBe);
+            XP = Pct * float(XPShouldBe);
         } else {
             XP = RPRI.Experience;
         }
         
         Warn(RPRI.RPGName @ "needs" @ RPRI.NeededExp @ "XP to get to level" @ string(RPRI.RPGLevel + 1) $
-            ", should be" @ ShouldBe $ ", XP adjusted from" @ RPRI.Experience @ "to" @ XP @
+            ", should be" @ XPShouldBe $ ", XP adjusted from" @ RPRI.Experience @ "to" @ XP @
             "to compensate.");
         
-        RPRI.NeededExp = ShouldBe;
+        RPRI.NeededExp = XPShouldBe;
         RPRI.Experience = XP;
         
         if(RPRI.PlayerLevel != None) {
             RPRI.PlayerLevel.Experience = XP;
-            RPRI.PlayerLevel.ExpNeeded = ShouldBe;
+            RPRI.PlayerLevel.ExpNeeded = XPShouldBe;
         }
         
         bSave = true;
@@ -918,7 +962,7 @@ function Timer()
         if(LowestLevel > 0)
         {
             InvasionDamageAdjustment = 
-                0.0025f * float(PointsPerLevel) * (
+                0.0025f * float(AbilityPointsPerIncrement) * (
                 2 * (Invasion(Level.Game).WaveNum + 1) +
                 float(LowestLevel) * InvasionAutoAdjustFactor);
         }
@@ -1466,7 +1510,11 @@ defaultproperties
     SaveDuringGameInterval=0
     StartingLevel=1
     StartingStatPoints=0
-    PointsPerLevel=5
+    StatPointsPerIncrement=5
+    StatPointsIncrement=1
+    StartingAbilityPoints=0
+    AbilityPointsPerIncrement=5
+    AbilityPointsIncrement=1
     LevelDiffExpGainDiv=100.00
     MaxLevelupEffectStacking=1
     SuperAmmoClasses(0)=class'XWeapons.RedeemerAmmo'
