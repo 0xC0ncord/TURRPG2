@@ -1,10 +1,35 @@
-class ComboTeamBooster extends Combo;
+class ComboTeamBooster extends RPGCombo;
 
 var RPGPlayerReplicationInfo RPRI;
 
 var array<xEmitter> Effects;
 var array<Controller> Controllers;
 var array<Pawn> Pawns;
+
+simulated function Tick(float DeltaTime)
+{
+    local Pawn P;
+    
+    P = Pawn(Owner);
+
+    if (P == None || P.Controller == None)
+	{
+        Destroy();
+        return;
+    }
+
+    if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
+		DeltaTime *= 2;
+	if(RPRI != None)
+		RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+	else
+		P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+    if (P.Controller.Adrenaline <= 0.0)
+    {
+        P.Controller.Adrenaline = 0.0;
+        Destroy();
+    }
+}
 
 function StartEffect(xPawn P)
 {
@@ -45,8 +70,7 @@ function StartEffect(xPawn P)
         Other = Controllers[i].Pawn;
         
         if(Vehicle(Other) != None)
-            Other = None; //do not boost players inside of vehicles!
-            //Other = Vehicle(Other).Driver;
+            Other = Vehicle(Other).Driver;
 
         Pawns[i] = Other;
         
@@ -79,8 +103,7 @@ function Timer()
             if(Other != None)
             {
                 if(Vehicle(Other) != None)
-                    Other = None; //don't boost people in vehicles
-                    //Other = Vehicle(Other).Driver;
+                    Other = Vehicle(Other).Driver;
             
                 if(Other != Pawns[i]) //respawned or entered vehicle
                 {
