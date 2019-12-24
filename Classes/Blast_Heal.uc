@@ -45,7 +45,7 @@ function DoEffect()
                             Heal.HealAmount = HealthGiven;
                             Heal.Start();
                         }
-                        //class'HealableDamageGameRules'.static.Heal(P, HealthGiven, Instigator, localMaxHealth, EXPMultiplier, true);
+                        //class'GameRules_HealableDamage'.static.Heal(P, HealthGiven, Instigator, localMaxHealth, EXPMultiplier, true);
                     }
                 }
             }

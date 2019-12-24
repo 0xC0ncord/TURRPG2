@@ -122,12 +122,12 @@ state Activated
             P.EnableUDamage(EstimatedTimeLeft);
             if(xPawn(P) != None)
             {
-                if(TripleDamageTimer(xPawn(P).UDamageTimer) == None)
+                if(Info_TripleDamageTimer(xPawn(P).UDamageTimer) == None)
                 {
                     if(xPawn(P).UDamageTimer != None)
                         xPawn(P).UDamageTimer.Destroy();
 
-                    xPawn(P).UDamageTimer = Spawn(class'TripleDamageTimer', P);
+                    xPawn(P).UDamageTimer = Spawn(class'Info_TripleDamageTimer', P);
                 }
                 xPawn(P).UDamageTimer.SetTimer(xPawn(P).UDamageTime - Level.TimeSeconds - 3, false);
             }

@@ -56,7 +56,7 @@ function BeaconLanded(RPGArtifactBeacon Beacon)
     if(Instigator != None)
     {
         SpawnLoc = Beacon.Location;
-        SummonClass = SummonBeacon(Beacon).SummonClass;
+        SummonClass = BeaconBase_Summon(Beacon).SummonClass;
         
         SpawnDir = VRand();
         SpawnDir.Z = 0;
@@ -79,7 +79,7 @@ function RPGArtifactBeacon SpawnBeacon()
     Beacon = Super.SpawnBeacon();
     if(Beacon != None)
     {
-        SummonBeacon(Beacon).SummonClass = SpawnActorClass;
+        BeaconBase_Summon(Beacon).SummonClass = SpawnActorClass;
         RestoreAdrenaline = CostPerSec;
     }
     
@@ -95,6 +95,6 @@ function BotWhatNext(Bot Bot) {
 defaultproperties
 {
     MsgFailedToSpawn="Failed to spawn."
-    BeaconClass=class'SummonBeacon'
+    BeaconClass=class'BeaconBase_Summon'
     bShowFailureMessage=True
 }

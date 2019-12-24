@@ -1,5 +1,5 @@
 //UDamageTimer without any expiration sounds
-class TripleDamageTimer extends UDamageTimer;
+class Info_TripleDamageTimer extends UDamageTimer;
 
 function Timer()
 {

@@ -1,4 +1,4 @@
-class BouncyFlakShell extends FlakShell;
+class PROJ_FlakShellBouncy extends FlakShell;
 
 simulated event HitWall(vector HitNormal, actor Wall)
 {

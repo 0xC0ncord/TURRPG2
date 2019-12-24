@@ -1,4 +1,4 @@
-class BouncyRocket extends RPGRocketProj;
+class PROJ_LinkPlasmaBouncy extends RPGLinkProjectile;
 
 simulated event HitWall(vector HitNormal, actor Wall)
 {
@@ -9,5 +9,5 @@ simulated event HitWall(vector HitNormal, actor Wall)
 defaultproperties
 {
     Buoyancy=1.00 //abused as bounciness
-    LifeSpan=13.33
+    LifeSpan=5
 }

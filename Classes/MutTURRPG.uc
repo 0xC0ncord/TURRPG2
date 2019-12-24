@@ -213,7 +213,7 @@ event PostBeginPlay()
 {
     local Mutator Mut;
     local GameObjective Objective;
-    local HealableDamageGameRules HealRules;
+    local GameRules_HealableDamage HealRules;
     local RPGReplicationInfo RRI;
     local int x;
     
@@ -248,7 +248,7 @@ event PostBeginPlay()
     }
     
     //Healable damage rules
-    HealRules = Spawn(class'HealableDamageGameRules');
+    HealRules = Spawn(class'GameRules_HealableDamage');
     HealRules.NextGameRules = Rules.NextGameRules;
     Rules.NextGameRules = HealRules;
 

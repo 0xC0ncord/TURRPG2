@@ -1,4 +1,4 @@
-class TeamBoosterMessage extends ComboMessage;
+class LocalMessage_TeamBooster extends ComboMessage;
 
 var localized string MessageText, DisabledMessage;
 

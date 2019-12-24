@@ -1,4 +1,4 @@
-class BioBombGlob extends BioGlob;
+class PROJ_BioBombGlob extends BioGlob;
 
 defaultproperties
 {

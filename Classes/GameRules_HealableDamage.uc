@@ -1,4 +1,4 @@
-Class HealableDamageGameRules extends GameRules
+Class GameRules_HealableDamage extends GameRules
     config(TURRPG2);
 
 var config int MaxHealthBonus;

@@ -1,7 +1,7 @@
 class Blast_Flak extends Blast_Projectile;
 
 defaultproperties {
-    ProjectileClass=class'FlakBombShell'
+    ProjectileClass=class'PROJ_FlakBombShell'
     NumProjectiles=100
     SpeedMin=1000
     SpeedMax=1350

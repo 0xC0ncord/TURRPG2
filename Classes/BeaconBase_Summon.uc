@@ -1,4 +1,4 @@
-class SummonBeacon extends RPGArtifactBeacon;
+class BeaconBase_Summon extends RPGArtifactBeacon;
 
 var class<Actor> SummonClass;
 

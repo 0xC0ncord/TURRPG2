@@ -1,4 +1,4 @@
-class ExperiencePickup extends TournamentPickUp placeable;
+class Pickup_Experience extends TournamentPickUp placeable;
 
 var() float ExperienceAmount;
 

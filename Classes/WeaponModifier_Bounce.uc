@@ -78,7 +78,7 @@ function StartEffect()
     {
         //fuck damnit, Epic...
         OldProjectileClasses[0] = RPGRocketLauncher(Weapon).RocketClass;
-        RPGRocketLauncher(Weapon).RocketClass = class'BouncyRocket';
+        RPGRocketLauncher(Weapon).RocketClass = class'PROJ_RocketBouncy';
     }
     else
     {
@@ -90,11 +90,11 @@ function StartEffect()
                 OldProjectileClasses[i] = WF.ProjectileClass;
                 
                 if(ClassIsChildOf(WF.ProjectileClass, class'FlakShell'))
-                    WF.ProjectileClass = class'BouncyFlakShell';
+                    WF.ProjectileClass = class'PROJ_FlakShellBouncy';
                 else if(ClassIsChildOf(WF.ProjectileClass, class'ShockProjectile'))
-                    WF.ProjectileClass = class'BouncyShockBall';
+                    WF.ProjectileClass = class'PROJ_ShockBallBouncy';
                 else if(ClassIsChildOf(WF.ProjectileClass, class'LinkProjectile'))
-                    WF.ProjectileClass = class'BouncyLinkProjectile';
+                    WF.ProjectileClass = class'PROJ_LinkPlasmaBouncy';
             }
             else
             {

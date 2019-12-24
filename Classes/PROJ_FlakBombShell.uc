@@ -1,4 +1,4 @@
-class FlakBombShell extends FlakShell;
+class PROJ_FlakBombShell extends FlakShell;
 
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
@@ -17,7 +17,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
             rot.yaw += FRand()*32000-16000;
             rot.pitch += FRand()*32000-16000;
             rot.roll += FRand()*32000-16000;
-            NewChunk = Spawn( class 'FlakBombChunk',, '', Start, rot); //thanks epic, needed to copy this whole function thanks to your hardcoding bulls#$%
+            NewChunk = Spawn( class 'PROJ_FlakBombChunk',, '', Start, rot); //thanks epic, needed to copy this whole function thanks to your hardcoding bulls#$%
         }
     }
     Destroy();

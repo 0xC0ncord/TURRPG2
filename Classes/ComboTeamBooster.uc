@@ -24,7 +24,7 @@ function StartEffect(xPawn P)
             Other = C.Pawn;
             if(xPawn(Other) != None && ComboTeamBooster(xPawn(Other).CurrentCombo) != None)
             {
-                P.ReceiveLocalizedMessage(class'TeamBoosterMessage', 1, Other.PlayerReplicationInfo, , Self.class);
+                P.ReceiveLocalizedMessage(class'LocalMessage_TeamBooster', 1, Other.PlayerReplicationInfo, , Self.class);
                 
                 if(PlayerController(P.Controller) != None)
                     PlayerController(P.Controller).ClientPlaySound(Sound'WeaponSounds.BSeekLost1');
@@ -55,7 +55,7 @@ function StartEffect(xPawn P)
     
         //Show the message for all team members
         if(Other != None && Other != P && P.PlayerReplicationInfo != None)
-            Other.ReceiveLocalizedMessage(class'TeamBoosterMessage', 0, P.PlayerReplicationInfo, , Self.class);
+            Other.ReceiveLocalizedMessage(class'LocalMessage_TeamBooster', 0, P.PlayerReplicationInfo, , Self.class);
     }
 
     //Go
