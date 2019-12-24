@@ -1336,29 +1336,29 @@ function Mutate(string MutateString, PlayerController Sender)
             {
                 W = Sender.Pawn.Weapon;
                 
-                Log("WeaponInfo:", 'TURRPG2');
-                Log("Class = " $ W.class, 'TURRPG2');
+                Sender.ClientMessage("WeaponInfo:");
+                Sender.ClientMessage("Class = ");
                 
-                Log("InventoryGroup = " $ W.InventoryGroup, 'TURRPG2');
-                Log("", 'TURRPG2');
+                Sender.ClientMessage("InventoryGroup = ");
+                Sender.ClientMessage("");
             
                 for(i = 0; i < 2; i++)
                 {
                     WF = W.GetFireMode(i);
                     if(WF != None)
                     {
-                        Log("WeaponFire[" $ i $ "] = " $ WF.class, 'TURRPG2');
-                        Log("AmmoClass = " $ WF.AmmoClass, 'TURRPG2');
+                        Sender.ClientMessage("WeaponFire[" $ i $ "] = ");
+                        Sender.ClientMessage("AmmoClass = ");
                         if(InstantFire(WF) != None)
                         {
-                            Log("DamageType = "$ InstantFire(WF).DamageType, 'TURRPG2');
+                            Sender.ClientMessage("DamageType = ");
                         }
                         else if(ProjectileFire(WF) != None)
                         {
-                            Log("ProjectileClass = " $WF.ProjectileClass, 'TURRPG2');
-                            Log("DamageType = " $WF.ProjectileClass.default.MyDamageType, 'TURRPG2');
+                            Sender.ClientMessage("ProjectileClass = ");
+                            Sender.ClientMessage("DamageType = ");
                         }
-                        Log("", 'TURRPG2');         
+                        Sender.ClientMessage("");
                     }
                 }
             }
@@ -1368,58 +1368,58 @@ function Mutate(string MutateString, PlayerController Sender)
             V = Vehicle(Sender.Pawn);
             if(V != None)
             {
-                Log("VehicleInfo:", 'TURRPG2');
-                Log("Class = " $ V.class, 'TURRPG2');
-                Log("HealthMax = " $ V.HealthMax, 'TURRPG2');
-                Log("", 'TURRPG2');
+                Sender.ClientMessage("VehicleInfo:");
+                Sender.ClientMessage("Class = ");
+                Sender.ClientMessage("HealthMax = ");
+                Sender.ClientMessage("");
             
                 OV = ONSVehicle(V);
                 if(OV != None)
                 {
                     for(i = 0; i < OV.DriverWeapons.length; i++)
                     {
-                        Log("DriverWeapons[" $ i $ "] = " $ OV.DriverWeapons[i].WeaponClass, 'TURRPG2');
-                        Log("DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.DamageType, 'TURRPG2');
+                        Sender.ClientMessage("DriverWeapons[" $ i $ "] = ");
+                        Sender.ClientMessage("DamageType = ");
                         
-                        Log("ProjectileClass = " $ OV.DriverWeapons[i].WeaponClass.default.ProjectileClass, 'TURRPG2');
+                        Sender.ClientMessage("ProjectileClass = ");
                         if(OV.DriverWeapons[i].WeaponClass.default.ProjectileClass != None)
-                            Log("ProjectileClass - DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.ProjectileClass.default.MyDamageType, 'TURRPG2');
+                            Sender.ClientMessage("ProjectileClass - DamageType = ");
                             
-                        Log("AltFireProjectileClass = " $ OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass, 'TURRPG2');
+                        Sender.ClientMessage("AltFireProjectileClass = ");
                         if(OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass != None)
-                            Log("AltFireProjectileClass - DamageType = " $ OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass.default.MyDamageType, 'TURRPG2');
+                            Sender.ClientMessage("AltFireProjectileClass - DamageType = ");
                             
-                        Log("", 'TURRPG2');
+                        Sender.ClientMessage("");
                     }
                     
                     for(i = 0; i < OV.PassengerWeapons.length; i++)
                     {
                         OWP = OV.PassengerWeapons[i].WeaponPawnClass;
-                        Log("WeaponPawns[" $ i $ "] = " $ OWP, 'TURRPG2');
+                        Sender.ClientMessage("WeaponPawns[" $ i $ "] = ");
 
-                        Log("GunClass = " $ OWP.default.GunClass, 'TURRPG2');
-                        Log("DamageType = " $ OWP.default.GunClass.default.DamageType, 'TURRPG2');
+                        Sender.ClientMessage("GunClass = ");
+                        Sender.ClientMessage("DamageType = ");
                     
-                        Log("ProjectileClass = " $ OWP.default.GunClass.default.ProjectileClass, 'TURRPG2');
+                        Sender.ClientMessage("ProjectileClass = ");
                         if(OWP.default.GunClass.default.ProjectileClass != None)
-                            Log("ProjectileClass - DamageType = " $ OWP.default.GunClass.default.ProjectileClass.default.MyDamageType, 'TURRPG2');
+                            Sender.ClientMessage("ProjectileClass - DamageType = ");
                         
-                        Log("AltFireProjectileClass = " $ OWP.default.GunClass.default.AltFireProjectileClass, 'TURRPG2');
+                        Sender.ClientMessage("AltFireProjectileClass = ");
                         if(OWP.default.GunClass.default.AltFireProjectileClass != None)
-                            Log("AltFireProjectileClass - DamageType = " $ OWP.default.GunClass.default.AltFireProjectileClass.default.MyDamageType, 'TURRPG2');
+                            Sender.ClientMessage("AltFireProjectileClass - DamageType = ");
                         
-                        Log("", 'TURRPG2');
+                        Sender.ClientMessage("");
                     }
                 }
             }
         }
         else if(Args[0] ~= "inventory" && Sender.Pawn != None)
         {
-            Log("Inventory of" @ Sender.Pawn $ ":", 'TURRPG2');
+            Sender.ClientMessage("Inventory of" @ Sender.Pawn $ ":");
             for(Inv = Sender.Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
-                Log("-" @ Inv, 'TURRPG2');
+                Sender.ClientMessage("-");
 
-            Log("", 'TURRPG2');
+            Sender.ClientMessage("");
         }
     }
 
