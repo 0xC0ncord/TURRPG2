@@ -30,7 +30,7 @@ function Timer()
     if(VSize(Instigator.Velocity) ~= 0)
         return;
     
-    foreach Instigator.VisibleCollidingActors(class'Pawn', P, HealRadius)
+    foreach Instigator.CollidingActors(class'Pawn', P, HealRadius)
     {
         if(
             P != Instigator &&

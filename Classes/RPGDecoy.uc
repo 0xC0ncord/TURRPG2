@@ -26,9 +26,9 @@ simulated event Tick(float dt)
         Since we cannot react on vehicle events (cba to create a wrapper like RPGWeapon),
         we'll check every AVRiLRocket that is in range and make it home it.
     */
-    foreach VisibleCollidingActors(class'RPGONSAVRiLRocket', Rocket, DecoyRange, Location)
+    foreach CollidingActors(class'RPGONSAVRiLRocket', Rocket, DecoyRange, Location)
     {
-        if(Rocket.OverrideTarget == None)
+        if(Rocket.OverrideTarget == None && FastTrace(Location, Rocket.Location))
             Rocket.OverrideTarget = Self;
     }
     

@@ -635,12 +635,13 @@ function int CountNearbyEnemies(float Radius, optional bool bSameTeam)
     local Pawn P;
     local int n;
 
-    foreach Instigator.VisibleCollidingActors(class'Pawn', P, Radius)
+    foreach Instigator.CollidingActors(class'Pawn', P, Radius)
     {
         if(
             P.Controller != None &&
             //P.Controller.bIsPlayer &&
-            P.Controller.SameTeamAs(Instigator.Controller) == bSameTeam
+            P.Controller.SameTeamAs(Instigator.Controller) == bSameTeam &&
+            FastTrace(Instigator.Location, P.Location)
         )
         {
             n++;

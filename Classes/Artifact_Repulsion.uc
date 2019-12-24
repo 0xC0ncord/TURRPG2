@@ -46,11 +46,11 @@ function bool DoEffect()
     if(bDestroysMines)
     {
         //Destroy all nearby enemy mines
-        foreach Instigator.VisibleCollidingActors(class'ONSMineProjectile', Mine, BlastRadius)
+        foreach Instigator.CollidingActors(class'ONSMineProjectile', Mine, BlastRadius)
         {
             if(
-                FastTrace(Mine.Location, Instigator.Location) &&
-                Mine.TeamNum != Instigator.Controller.GetTeamNum()
+                Mine.TeamNum != Instigator.Controller.GetTeamNum() && 
+                FastTrace(Mine.Location, Instigator.Location)
             )
             {
                 Mine.Explode(Mine.Location, vect(0, 0, 1));
@@ -60,19 +60,16 @@ function bool DoEffect()
     
     foreach Instigator.VisibleCollidingActors(class'Pawn', P, BlastRadius)
     {
-        if(FastTrace(P.Location, Instigator.Location))
+        Repulsion = Effect_Repulsion(class'Effect_Repulsion'.static.Create(P, Instigator.Controller, MaxKnockbackTime));
+        if(Repulsion != None)
         {
-            Repulsion = Effect_Repulsion(class'Effect_Repulsion'.static.Create(P, Instigator.Controller, MaxKnockbackTime));
-            if(Repulsion != None)
-            {
-                Dir = P.Location - Instigator.Location;
-                Dist = FMax(1, VSize(Dir));
-                Dir = Normal(Dir);
+            Dir = P.Location - Instigator.Location;
+            Dist = FMax(1, VSize(Dir));
+            Dir = Normal(Dir);
 
-                RepulsionScale = 1 - FMax(0, Dist / BlastRadius);
-                Repulsion.Momentum = Dir * (MinKnockbackMomentum + RepulsionScale * (MaxKnockbackMomentum - MinKnockbackMomentum));
-                Repulsion.Start();
-            }
+            RepulsionScale = 1 - FMax(0, Dist / BlastRadius);
+            Repulsion.Momentum = Dir * (MinKnockbackMomentum + RepulsionScale * (MaxKnockbackMomentum - MinKnockbackMomentum));
+            Repulsion.Start();
         }
     }
     

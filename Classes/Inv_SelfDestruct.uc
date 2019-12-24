@@ -41,15 +41,17 @@ function Timer()
         }
         V.PlaySound(ExplosionSound,,1.5 * Instigator.TransientSoundVolume,,Instigator.TransientSoundRadius);
         
-        foreach V.VisibleCollidingActors(class'Actor', Victims, DamageRadius, Instigator.Location)
+        foreach V.CollidingActors(class'Actor', Victims, DamageRadius, Instigator.Location)
         {
             if(Victims != V && Victims.Role == ROLE_Authority)
             {
                 if(
-                    Pawn(Victims) != None && 
-                    Pawn(Victims).Controller != None &&
-                    Pawn(Victims).Controller != Boesetaeter &&
-                    Pawn(Victims).Controller.SameTeamAs(Boesetaeter)
+                    (
+                        Pawn(Victims) != None && 
+                        Pawn(Victims).Controller != None &&
+                        Pawn(Victims).Controller != Boesetaeter &&
+                        Pawn(Victims).Controller.SameTeamAs(Boesetaeter)
+                    ) || !FastTrace(Instigator.Location, Victims.Location)
                 )continue;
                     
                 Victims.TakeDamage(

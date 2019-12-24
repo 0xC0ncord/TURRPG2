@@ -25,7 +25,7 @@ function DoDamage(float LocalRadius)
         return;
 
     bHurtEntry = true;
-    foreach VisibleCollidingActors(class'Actor', victims, LocalRadius, Location)
+    foreach CollidingActors(class'Actor', victims, LocalRadius, Location)
     {
         //protect TransBeacon
         if(!bIgnoreUltimaShield)
@@ -71,7 +71,7 @@ function DoDamage(float LocalRadius)
             )
         )
         {
-            if(P == None || Level.TimeSeconds > P.SpawnTime + DeathMatch(Level.Game).SpawnProtectionTime)
+            if((P == None || Level.TimeSeconds > P.SpawnTime + DeathMatch(Level.Game).SpawnProtectionTime) && FastTrace(Location, victims.Location))
             {
                 dir = victims.Location - Location;
                 dist = FMax(1,VSize(dir));
@@ -93,7 +93,7 @@ function DoDamage(float LocalRadius)
                     DamageType
                 );
             } 
-            else if(xPawn(victims) != None)
+            else if(xPawn(victims) != None && FastTrace(Location, victims.Location))
             {
                 xPawn(victims).SetOverlayMaterial(xPawn(victims).ShieldHitMat, xPawn(victims).ShieldHitMatTime, false);
             }

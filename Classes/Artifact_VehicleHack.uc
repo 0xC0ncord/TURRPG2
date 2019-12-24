@@ -55,9 +55,9 @@ function bool CanActivate()
     
     V = None;
     
-    foreach Instigator.VisibleCollidingActors(class'Vehicle', Found, MaxRadius)
+    foreach Instigator.CollidingActors(class'Vehicle', Found, MaxRadius)
     {
-        if(Found.bTeamLocked && Found.Team != Instigator.GetTeamNum() && Found.IsVehicleEmpty())
+        if(Found.bTeamLocked && Found.Team != Instigator.GetTeamNum() && Found.IsVehicleEmpty() && FastTrace(Instigator.Location, Found.Location))
         {
             Distance = VSize(Found.Location - Instigator.Location);
             if(V == None || Distance < MinDistance)
