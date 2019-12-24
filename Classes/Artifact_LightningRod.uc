@@ -163,7 +163,7 @@ state Activated
     {
         Super.BeginState();
         CostPerSec = default.CostPerSec;
-        SetTimer(1.0, true);
+        SetTimer(0.5, true);
     }
 
     function EndState()
@@ -186,7 +186,7 @@ defaultproperties
     ExtraCostPerMine=2
     NotWithTransMessage="You cannot use this artifact while using the Translocator."
     HitEmitterClass=Class'XEffects.LightningBolt'
-    CostPerSec=4
+    CostPerSec=1
     bExclusive=True
     MinActivationTime=1.000000
     ArtifactID="Rod"
