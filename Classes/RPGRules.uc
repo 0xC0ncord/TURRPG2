@@ -315,19 +315,28 @@ function ScoreKill(Controller Killer, Controller Killed)
             //Add legitimate score
             if(Killer.PlayerReplicationInfo != None)
             {
-                Killer.PlayerReplicationInfo.Score += 1.0f;
-                
-                //If this is TDM, give the team a point too
-                if(
-                    TeamGame(Level.Game) != None &&
-                    TeamGame(Level.Game).bScoreTeamKills &&
-                    Killer.PlayerReplicationInfo.Team != None
-                ) {
-                    Killer.PlayerReplicationInfo.Team.Score += 1.0f;
+                //If this is invasion, don't do score checking!!!
+                if(Invasion(Level.Game) == None)
+                {
+                    Killer.PlayerReplicationInfo.Score += 1.0f;
+                    
+                    //If this is TDM, give the team a point too
+                    if(
+                        TeamGame(Level.Game) != None &&
+                        TeamGame(Level.Game).bScoreTeamKills &&
+                        Killer.PlayerReplicationInfo.Team != None
+                    ) {
+                        Killer.PlayerReplicationInfo.Team.Score += 1.0f;
+                    }
+                    
+                    if(Level.Game.MaxLives > 0)
+                        Level.Game.CheckScore(Killer.PlayerReplicationInfo); //possibly win the match
                 }
-                
-                if(Level.Game.MaxLives > 0)
-                    Level.Game.CheckScore(Killer.PlayerReplicationInfo); //possibly win the match
+                else if(Monster(KilledPawn) != None)
+                {
+                    Killer.PlayerReplicationInfo.Score += Monster(KilledPawn).ScoringValue;
+                    KillerRPRI.AwardAdrenaline(Monster(KilledPawn).ScoringValue, Self);
+                }
             }
             
             return;
