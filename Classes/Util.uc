@@ -98,7 +98,8 @@ static function string FormatPercent(float p)
 
 static function string FormatFloat(float p)
 {
-    if(float(int(p)) == p)
+    //~= to avoid evil floating point magic
+    if(float(int(p)) ~= p)
         return string(int(p));
     else
         return string(p);
