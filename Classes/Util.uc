@@ -157,6 +157,7 @@ static function SetWeaponFireRate(Weapon W, float Scale)
 {
     local int i;
     local WeaponFire WF;
+    local float BarrelRotationsPerSec;
     
     if(W == None)
         return;
@@ -171,6 +172,13 @@ static function SetWeaponFireRate(Weapon W, float Scale)
                 MinigunFire(WF).BarrelRotationsPerSec = MinigunFire(WF).default.BarrelRotationsPerSec * Scale;
                 WF.FireRate = 1.f / (MinigunFire(WF).RoundsPerRotation * MinigunFire(WF).BarrelRotationsPerSec);
                 MinigunFire(WF).MaxRollSpeed = 65536.f * MinigunFire(WF).BarrelRotationsPerSec;
+            }
+            else if(WF.IsA('TURMinigunFire'))
+            {
+                BarrelRotationsPerSec = class'MinigunFire'.default.BarrelRotationsPerSec * Scale;
+                WF.SetPropertyText("BarrelRotationsPerSec", string(BarrelRotationsPerSec)); 
+                WF.FireRate = 1.f / (float(WF.GetPropertyText("RoundsPerRotation")) * BarrelRotationsPerSec);
+                WF.SetPropertyText("MaxRollSpeed", string(65536.f * BarrelRotationsPerSec));
             }
             else if(TransFire(WF) == None && BallShoot(WF) == None)
             {
@@ -201,6 +209,7 @@ static function AdjustWeaponFireRate(Weapon W, float Scale)
 {
     local int i;
     local WeaponFire WF;
+    local float BarrelRotationsPerSec;
     
     if(W == None)
         return;
@@ -215,6 +224,13 @@ static function AdjustWeaponFireRate(Weapon W, float Scale)
                 MinigunFire(WF).BarrelRotationsPerSec *= Scale;
                 WF.FireRate = 1.f / (MinigunFire(WF).RoundsPerRotation * MinigunFire(WF).BarrelRotationsPerSec);
                 MinigunFire(WF).MaxRollSpeed = 65536.f * MinigunFire(WF).BarrelRotationsPerSec;
+            }
+            else if(WF.IsA('TURMinigunFire'))
+            {
+                BarrelRotationsPerSec = float(WF.GetPropertyText("BarrelRotationsPerSec")) * Scale;
+                WF.SetPropertyText("BarrelRotationsPerSec", string(BarrelRotationsPerSec)); 
+                WF.FireRate = 1.f / (float(WF.GetPropertyText("RoundsPerRotation")) * BarrelRotationsPerSec);
+                WF.SetPropertyText("MaxRollSpeed", string(65536.f * BarrelRotationsPerSec));
             }
             else if(TransFire(WF) == None && BallShoot(WF) == None)
             {
