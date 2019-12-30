@@ -649,7 +649,7 @@ function PostRender(Canvas Canvas)
             
             i = Min(Settings.IconsPerRow, Artifacts.Length);
             if(i > 10)
-                Size /= float(i) / 10.f;
+                Size /= float(i) * 0.1;
 
             CurrentX = ArtifactIconPos.X;
             CurrentY = ArtifactIconPos.Y;

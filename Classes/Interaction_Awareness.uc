@@ -49,7 +49,7 @@ function PostRender(Canvas C) {
             ScreenPos = C.WorldToScreen(P.Location + Height * vect(0, 0, 0.75));
             
             //Bar height
-            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist / 2), 0.5, 1);
+            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
             
             if(Vehicle(P) != None) {
                 Height *= 1.75;

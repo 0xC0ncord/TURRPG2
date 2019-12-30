@@ -64,7 +64,7 @@ state Activated
     function EndState()
     {
         if(WeaponModifier != None) {
-            WeaponModifier.SetModifier(WeaponModifier.Modifier / 2, true);
+            WeaponModifier.SetModifier(WeaponModifier.Modifier * 0.5, true);
             WeaponModifier.Weapon.bCanThrow = OldCanThrow;
         }
 

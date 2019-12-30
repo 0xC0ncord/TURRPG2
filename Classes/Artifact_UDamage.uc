@@ -42,7 +42,7 @@ function BotFightEnemy(Bot Bot)
             FRand() < FMin(0.666667, Bot.Aggressiveness))
         {
             Chance = FMin(0.3, Bot.Aggressiveness);
-            Chance += FMin(0.3, (Bot.Accuracy + 1.f) / 4.f);
+            Chance += FMin(0.3, (Bot.Accuracy + 1.f) * 0.25);
             
             Chance += 0.05 * (Bot.Skill - 4); //max 0.75
             

@@ -46,7 +46,7 @@ function BotFightEnemy(Bot Bot)
             Bot.Adrenaline >= 50 &&
             VSize(Bot.Enemy.Location - Instigator.Location) <= TargetRadius)
         {
-            Chance = FMin(0.4, (Bot.StrafingAbility + 1.f) / 4.f);
+            Chance = FMin(0.4, (Bot.StrafingAbility + 1.f) * 0.25);
             Chance += 0.05 * (Bot.Skill - 3); //max 0.6
             
             if(Bot.Enemy.PlayerReplicationInfo != None &&
