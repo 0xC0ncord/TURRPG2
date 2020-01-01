@@ -1,0 +1,3 @@
+class TURRPG2_rc extends Resource;
+
+#EXEC OBJ LOAD FILE=TURRPG2_rc.usx PACKAGE=TURRPG2
