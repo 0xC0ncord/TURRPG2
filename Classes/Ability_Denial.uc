@@ -22,11 +22,6 @@ var array<StoredWeapon> StoredWeapons;
 var config int ExtraSavingLevel;
 var config int StoreAllLevel;
 
-simulated function int Cost()
-{
-    return Super.Cost();
-}
-
 static function bool CanSaveWeapon(Weapon W)
 {
     local int x;
