@@ -15,6 +15,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     local int i;
     
     MyController.RegisterStyle(class'STY_RPGListSection');
+    MyController.RegisterStyle(class'STY_RPGAbilityListSelected');
     
     Super.InitComponent(MyController, MyOwner);
 

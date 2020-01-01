@@ -63,6 +63,18 @@ var class<RPGAbilityCategory> Category;
 //Status icons
 var class<RPGStatusIcon> StatusIconClass;
 
+//For menus
+var Material IconMaterial;
+var float IconScale;
+
+//Internal
+var const int CantBuyCost;
+var const int MaxedCost;
+var const int ClassRequirementsUnmetCost;
+var const int MaxedForClassCost;
+var const int RequiredAbilityUnpurchasedCost;
+var const int ForbiddenAbilityPurchasedCost;
+
 replication
 {
     reliable if(Role == ROLE_Authority && bNetInitial)
@@ -123,12 +135,12 @@ simulated function bool Buy(optional int Amount)
     
     Amount = Min(Amount, MaxLevel - AbilityLevel);
 
-    if(bIsStat)
+    if(bIsStat || RPGClass(Self) != None)
         NextCost = StartingCost * Amount;
     else
         NextCost = Cost();
 
-    if(NextCost <= 0 || (bIsStat && NextCost > RPRI.StatPointsAvailable) || (!bIsStat && NextCost > RPRI.AbilityPointsAvailable))
+    if(NextCost < 0 || (bIsStat && NextCost > RPRI.StatPointsAvailable) || (!bIsStat && NextCost > RPRI.AbilityPointsAvailable))
         return false;
 
     if(bIsStat)
@@ -353,44 +365,93 @@ simulated function int CostForNextLevel(int x)
     }
 }
 
-simulated function int Cost()
+simulated function int Cost(optional class<RPGClass> RPGClass)
 {
-    local int x, lv;
+    local int x, i;
+    local RPGClass OwnedClass;
+    local RPGSubclass OwnedSubclass;
+    local class<RPGClass> CheckedClass;
+    local int Idx;
     local bool bDisjunctiveResult;
 
     if(AbilityLevel >= MaxLevel)
-        return 0;
+        return default.MaxedCost;
 
     if(RPRI != None)
     {
-        //check required levels
-        if(AbilityLevel < RequiredLevels.Length && RPRI.RPGLevel < RequiredLevels[AbilityLevel])
-            return 0;
-    
-        //find forbidden abilities
-        for(x = 0; x < ForbiddenAbilities.length; x++)
+        //find their class/subclass, if any
+        for(i = 0; i < RPRI.Abilities.Length; i++)
         {
-            lv = RPRI.HasAbility(ForbiddenAbilities[x].AbilityClass, true);
-            
-            if(lv >= ForbiddenAbilities[x].Level)
-                return 0;
+            if(RPGSubclass(RPRI.Abilities[i]) != None)
+                OwnedSubclass = RPGSubclass(RPRI.Abilities[i]);
+            else if(RPGClass(RPRI.Abilities[i]) != None)
+                OwnedClass = RPGClass(RPRI.Abilities[i]);
+
+            if(OwnedClass != None && OwnedSubclass != None)
+                break;
         }
 
-        //look for required abilities
-        for(x = 0; x < RequiredAbilities.length; x++)
+        if(RPGClass == None)
         {
-            lv = RPRI.HasAbility(RequiredAbilities[x].AbilityClass, true);
-            
-            if(lv < RequiredAbilities[x].Level) {
-                return 0;
-            } else if(bDisjunctiveRequirements) {
-                bDisjunctiveResult = true;
-                break;
+            //special handling if this is a class or subclass
+            if(RPGSubclass(Self) != None)
+                if(OwnedSubclass != None)
+                    return default.CantBuyCost; //cant have more than one subclass
+            else if(RPGClass(Self) != None)
+            {
+                if(OwnedClass != None)
+                    return default.CantBuyCost; //cant have more than one class
+                if(OwnedSubclass != None)
+                    return default.CantBuyCost; //no.
+            }
+            else
+            {
+                if(OwnedSubclass != None)
+                    CheckedClass = OwnedSubclass.Class;
+                else if(OwnedClass != None)
+                    CheckedClass = OwnedClass.Class;
             }
         }
-        
-        if(bDisjunctiveRequirements && !bDisjunctiveResult) {
-            return 0;
+        else
+            CheckedClass = RPGClass;
+
+        if(CheckedClass != None)
+        {
+            //check required levels
+            if(AbilityLevel < RequiredLevels.Length && RPRI.RPGLevel < RequiredLevels[AbilityLevel])
+                return default.CantBuyCost;
+
+            //check forbidden abilities
+            for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
+            {
+                for(x = 0; x < CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities.Length; x++)
+                {
+                    Idx = CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Index;
+                    if(CheckedClass.default.ClassTreeInfos[Idx].AbilityClass == Class && RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass) >= CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Level)
+                        return default.ForbiddenAbilityPurchasedCost;
+                }
+            }
+
+            //check required abilities
+            for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
+            {
+                for(x = 0; x < CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities.Length; x++)
+                {
+                    Idx = CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Index;
+                    if(CheckedClass.default.ClassTreeInfos[Idx].AbilityClass == Class)
+                    {
+                        if(RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass) < CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Level)
+                            return default.CantBuyCost;
+                        else if(CheckedClass.default.ClassTreeInfos[Idx].bDisjunctiveRequirements)
+                        {
+                            bDisjunctiveResult = true;
+                            break;
+                        }
+                    }
+                }
+                if(bDisjunctiveResult)
+                    break;
+            }
         }
     }
 
@@ -570,13 +631,23 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
 
 defaultproperties
 {
+    CantBuyCost=-1
+    MaxedCost=-2
+    ClassRequirementsUnmetCost=-3
+    MaxedForClassCost=-4
+    RequiredAbilityUnpurchasedCost=-5
+    ForbiddenAbilityPurchasedCost=-6
+
     Category=class'AbilityCategory_Misc'
+
+    IconMaterial=Texture'S_Actor'
+    IconScale=0.85
 
     StartingCost=0
     CostAddPerLevel=0
     bUseLevelCost=False
     
-    bDisjunctiveRequirements=False;
+    bDisjunctiveRequirements=False
     
     AndText="and"
     OrText="or"

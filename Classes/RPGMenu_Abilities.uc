@@ -1,241 +1,573 @@
 class RPGMenu_Abilities extends RPGMenu_TabPage;
 
-var array<class<RPGAbilityCategory> > Categories;
+const NUM_COLUMNS = 9;
+
+struct GridPosition
+{
+    var int Row;
+    var int Column;
+};
+
+enum EAbilityState
+{
+    AS_None,
+    AS_Available,
+    AS_Disabled,
+    AS_Blocked,
+    AS_Purchased,
+};
 
 struct AbilityInfo
 {
-    var class<RPGAbilityCategory> Category; //if not None, this entry is a category header
-    
     var RPGAbility LinkedAbility;
+    var int Row;
+    var int Column;
     var string Name;
-    var int NextLevel;
     var int Cost;
+    var int NextLevel;
+    var int RelationshipIndex;
+    var EAbilityState State;
+    var array<RPGClass.ForbiddenStruct> ForbidsAbilities;
+    var array<RPGClass.RequiredStruct> RequiredByAbilities;
+    var bool bDisjunctiveRequirements;
 };
 var array<AbilityInfo> AbilityInfos;
+
+const RFLAG_FORBIDDEN = 1;
+const RFLAG_REQUIRED = 2;
+const RFLAG_DISJUNCTIVE = 4;
+
+struct AbilityRelationshipStruct
+{
+    var int FromIndex;
+    var array<int> ToIndex;
+    var array<byte> Flags;
+};
+var array<AbilityRelationshipStruct> Relationships;
+
+struct ClassInfo
+{
+    var class<RPGClass> RPGClass;
+    var string Name;
+};
+var array<ClassInfo> ClassInfos;
+
+var class<RPGClass> CurrentClass;
+var int SelectedIndex;
+var int LastSelectedClass, LastSelectedAbility;
+
+var bool bInitialized;
+
+var Color DisabledColor;
+var Color AvailableColor;
+var Color PurchasedColor;
+var Color ForbiddenColor;
+var Color DisabledForbiddenColor;
+var Color BlockedColor;
+
+var Shader IconSelectedShader;
+var Material IconSelectionMaterial;
 
 var automated GUISectionBackground sbAbilities, sbDesc;
 var automated GUIScrollTextBox lblDesc;
 var automated GUILabel lblStats;
-var automated GUIMultiColumnListBox lstAbilities;
-var automated GUIMultiColumnList Abilities;
+var automated GUIMultiOptionListBox lstAbilities;
+var automated GUIMultiOptionList Abilities;
 var automated GUIButton btBuy;
-
-var GUIStyles CategoryStyle;
+var automated GUIComboBox cbTree;
+var automated GUIImage imgAbilities;
 
 var localized string 
     Text_Buy, Text_BuyX, Text_Level, Text_Stats, Text_CantBuy, Text_Requirements, Text_AlreadyMax, Text_Max, Text_Forbidden, Text_DoNotHaveThisYet,
-    Text_PointsAvailable, Text_Intro, Text_Description;
+    Text_PointsAvailable, Text_Intro, Text_Description, Text_NoClassSelected, Text_Cost;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
+
+    OnDraw = SetListScaling;
     
+    lstAbilities.NumColumns = NUM_COLUMNS;
+    lstAbilities.MyScrollbar.WinWidth = 0.015;
     Abilities = lstAbilities.List;
-    Abilities.bMultiselect = false;
-    Abilities.bInitializeList = false;
-    Abilities.SortColumn = -1;
-    Abilities.OnDrawItem = DrawAbilityInfo;
-    Abilities.OnClick = OnAbilityClick;
-    Abilities.OnKeyEvent = OnAbilityKeyEvent;
-    
-    //sbAbilities.ManageComponent(lstAbilities);
-    //sbDesc.ManageComponent(lblDesc);
-    
-    lblDesc.MyScrollText.SetContent(Text_Intro);
+    Abilities.NumColumns = NUM_COLUMNS;
+    Abilities.ItemPadding = 0.0;
+    Abilities.SelectedStyle = MyController.GetStyle("RPGAbilityListSelected", FontScale);
+    Abilities.OnClickSound = CS_None;
+    Abilities.OnDraw = DrawAbilityRelationships;
+    Abilities.OnDrawItem = DrawAbilityIcon;
+
+    cbTree.Edit.bReadOnly = true;
+    cbTree.OnChange = SelectClassTree;
 }
 
-function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float H, bool bSelected, bool bPending)
+final function bool SetListScaling(Canvas Canvas)
 {
-    local int Level, MaxLevel;
-    local string CostString, LevelString;
-    local float CellLeft, CellWidth;
-    local GUIStyles DStyle;
-    
-    if(AbilityInfos[i].Category != None)
-        DStyle = Abilities.SectionStyle;
-    else if(bSelected)
-        DStyle = Abilities.SelectedStyle;
-    else
-        DStyle = Abilities.Style;
+    //hack to make list options square
+    if(Abilities.GetItem(0) != None && Abilities.Elements[0].WinHeight != Abilities.Elements[0].WinWidth)
+        Abilities.ItemScaling = Abilities.Elements[0].WinWidth / Canvas.ClipY;
+    return false;
+}
 
-    DStyle.Draw(Canvas, Abilities.MenuState, X, Y, W, H + 1);
+static final function int LayoutToIndex(int Row, int Column)
+{
+    return (NUM_COLUMNS * (Row - 1)) + (Column - 1);
+}
 
-    Abilities.GetCellLeftWidth(0, CellLeft, CellWidth);
-    DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, AbilityInfos[i].Name, Abilities.FontScale);
+static final function GridPosition IndexToLayout(int idx)
+{
+    local GridPosition Layout;
 
-    if(AbilityInfos[i].LinkedAbility != None)
-    {
-        MaxLevel = AbilityInfos[i].LinkedAbility.MaxLevel;
-        Level = AbilityInfos[i].LinkedAbility.AbilityLevel;
-        if(Level == 0)
-        {
-            LevelString = Text_DoNotHaveThisYet;
-        }
-        else
-        {
-            LevelString = Text_Level @ string(Level);
-            
-            if(Level >= MaxLevel)
-                LevelString @= Text_Max;
-        }
+    Layout.Row = Ceil(float(idx + 1) / NUM_COLUMNS);
+    Layout.Column = NUM_COLUMNS - (idx % NUM_COLUMNS);
 
-        Abilities.GetCellLeftWidth(1, CellLeft, CellWidth);
-        DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, LevelString, Abilities.FontScale);
-        
-        if(Level < MaxLevel)
-        {
-            if(AbilityInfos[i].Cost > 0)
-                CostString = string(AbilityInfos[i].Cost);
-            else
-                CostString = Text_CantBuy;
-        }
-        else
-        {
-            CostString = Text_AlreadyMax;
-        }
-            
-        Abilities.GetCellLeftWidth(2, CellLeft, CellWidth);
-        DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, CostString, Abilities.FontScale);
-    }
+    return Layout;
+}
+
+static final function float GetLineClippedX(float X1, float Y1, float X2, float Y2, float VC)
+{
+    return ((VC - Y1) / ((Y2 - Y1) / (X2 - X1))) + X1;
 }
 
 function InitMenu()
 {
-    local AbilityInfo AInfo;
-    local RPGAbility Ability;
-    local int OldAbilityListIndex, OldAbilityListTop;
-    local int i, k, n, x;
+    local int i, x;
+    local int OwnedIdx;
 
-    OldAbilityListIndex = Abilities.Index;
-    OldAbilityListTop = Abilities.Top;
-    
+    if(!bInitialized)
+    {
+        OwnedIdx = -1;
+        for(i = 0; i < RPGMenu.RPRI.AllAbilities.Length; i++)
+        {
+            if(RPGClass(RPGMenu.RPRI.AllAbilities[i]) != None)
+            {
+                x = ClassInfos.Length;
+                ClassInfos.Length = x + 1;
+                ClassInfos[x].RPGClass = RPGClass(RPGMenu.RPRI.AllAbilities[i]).Class;
+                ClassInfos[x].Name = ClassInfos[x].RPGClass.default.AbilityName;
+
+                cbTree.AddItem(ClassInfos[x].Name);
+
+                if(RPGMenu.RPRI.AllAbilities[i].AbilityLevel > 0)
+                    OwnedIdx = x;
+            }
+        }
+        if(OwnedIdx != -1)
+            cbTree.SetIndex(OwnedIdx);
+        else
+            cbTree.SetText(Text_NoClassSelected);
+
+        bInitialized = true;
+    }
+    else
+        cbTree.SetIndex(LastSelectedClass);
+
+    SelectClassTree(None);
+    SelectedIndex = LastSelectedAbility;
+    SelectAbility(None);
+
+    lblStats.Caption = Text_PointsAvailable @ string(RPGMenu.RPRI.AbilityPointsAvailable);
+}
+
+final function LoadClassTree(class<RPGClass> RPGClass)
+{
+    local int i, x, y;
+    local int MaxRow, MaxColumn;
+    local int NumItems;
+    local int idx;
+    local RPGMenu_AbilityListMenuOption Option;
+    local array<string> Tip;
+
+    if(RPGClass == None)
+        return;
+
+    CurrentClass = RPGClass;
+
     Abilities.Clear();
     AbilityInfos.Length = 0;
     
-    for(i = 0; i < Categories.Length; i++)
+    for(i = 0; i < RPGClass.default.ClassTreeInfos.Length; i++)
     {
-        x = AbilityInfos.Length;
-        n = 0;
+        y = AbilityInfos.Length;
+        AbilityInfos.Length = y + 1;
+        AbilityInfos[y].Row = RPGClass.default.ClassTreeInfos[i].Row;
+        AbilityInfos[y].Column = RPGClass.default.ClassTreeInfos[i].Column;
+        AbilityInfos[y].ForbidsAbilities = RPGClass.default.ClassTreeInfos[i].ForbidsAbilities;
+        AbilityInfos[y].RequiredByAbilities = RPGClass.default.ClassTreeInfos[i].RequiredByAbilities;
+        AbilityInfos[y].bDisjunctiveRequirements = RPGClass.default.ClassTreeInfos[i].bDisjunctiveRequirements;
         
-        for(k = 0; k < RPGMenu.RPRI.AllAbilities.Length; k++)
-        {
-            Ability = RPGMenu.RPRI.AllAbilities[k];
-            if(!Ability.bIsStat && Ability.Category == Categories[i])
-            {
-                n++;
-                
-                AInfo.LinkedAbility = Ability;
-                AInfo.Name = Ability.AbilityName;
-                
-                if(Ability.AbilityLevel < Ability.MaxLevel)
-                    AInfo.NextLevel = Ability.AbilityLevel + 1;
-                else
-                    AInfo.NextLevel = 0;
+        MaxRow = Max(MaxRow, AbilityInfos[y].Row);
+        MaxColumn = Max(MaxColumn, AbilityInfos[y].Column);
 
-                AInfo.Cost = Ability.Cost();
-    
-                AbilityInfos[AbilityInfos.Length] = AInfo;
-                Abilities.AddedItem();
+        for(x = 0; x < RPGMenu.RPRI.AllAbilities.Length; x++)
+        {
+            if(RPGMenu.RPRI.AllAbilities[x].Class == RPGClass.default.ClassTreeInfos[i].AbilityClass)
+            {
+                AbilityInfos[y].LinkedAbility = RPGMenu.RPRI.AllAbilities[x];
+                AbilityInfos[y].Cost = AbilityInfos[y].LinkedAbility.Cost(CurrentClass);
+                if(AbilityInfos[y].LinkedAbility.AbilityLevel < AbilityInfos[y].LinkedAbility.MaxLevel)
+                    AbilityInfos[y].NextLevel = AbilityInfos[y].LinkedAbility.AbilityLevel + 1;
+                AbilityInfos[y].Name = AbilityInfos[y].LinkedAbility.AbilityName;
             }
         }
-        
-        if(n > 0)
+    }
+
+    NumItems = LayoutToIndex(MaxRow, MaxColumn) + 1;
+    for(i = 0; i < NumItems; i++)
+    {
+        Option = RPGMenu_AbilityListMenuOption(Abilities.AddItem(string(class'RPGMenu_AbilityListMenuOption')));
+        Option.SetVisibility(false);
+        Option.MyButton.ToolTip.SetTip("");
+        Option.ComponentJustification = TXTA_Center;
+    }
+    for(i = 0; i < AbilityInfos.Length; i++)
+    {
+        idx = LayoutToIndex(AbilityInfos[i].Row, AbilityInfos[i].Column);
+        Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(idx));
+        Option.Index = i;
+        Option.LinkedAbility = AbilityInfos[i].LinkedAbility;
+        Option.OnChange = SelectAbility;
+        Option.SetVisibility(true);
+        Option.bNeverFocus = false;
+        Option.OnClickSound = CS_Click;
+
+        if(AbilityInfos[i].LinkedAbility != None)
         {
-            AInfo.LinkedAbility = None;
-            AInfo.Category = Categories[i];
-            AInfo.Cost = 0;
-            AInfo.NextLevel = 0;
-            AInfo.Name = Categories[i].default.CategoryName;
-            
-            AbilityInfos.Insert(x, 1);
-            AbilityInfos[x] = AInfo;
-            Abilities.AddedItem();
-            
-            AInfo.Category = None;
+            Tip[0] = AbilityInfos[i].Name;
+            Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
+            if(AbilityInfos[i].Cost == 0)
+                Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
+            else if(AbilityInfos[i].NextLevel == 0)
+                Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
+            else
+                Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
+
+            Option.MyButton.ToolTip.SetTip("a");
+            Option.ToolTip.Lines.Length = 0;
+            for(x = 0; x < Tip.Length; x++)
+                Option.MyButton.ToolTip.Lines[x] = Tip[x];
         }
     }
-    
-    Abilities.SetIndex(OldAbilityListIndex);
-    Abilities.SetTopItem(OldAbilityListTop);
-    
-    lblStats.Caption = Text_PointsAvailable @ string(RPGMenu.RPRI.AbilityPointsAvailable);
-    
-    SelectAbility();
+
+    CalculateAbilityStates();
+}
+
+final function CalculateAbilityStates()
+{
+    local int i;
+
+    for(i = 0; i < AbilityInfos.Length; i++)
+    {
+        if(AbilityInfos[i].State > AS_None)
+            continue;
+
+        CalculateSingleAbilityState(i, i);
+    }
+}
+
+final function CalculateSingleAbilityState(int FromIdx, int ToIdx)
+{
+    local int i, x;
+    local int Cost;
+
+    //Check for circular relationship in forbidden abilities
+    if(AbilityInfos[ToIdx].State == AS_Blocked && AbilityInfos[FromIdx].State == AS_Blocked)
+        for(i = 0; i < AbilityInfos[ToIdx].ForbidsAbilities.Length; i++)
+            if(AbilityInfos[ToIdx].ForbidsAbilities[i].Index == FromIdx)
+                return;
+
+    else if(AbilityInfos[FromIdx].State > AbilityInfos[ToIdx].State)
+        AbilityInfos[ToIdx].State = AbilityInfos[FromIdx].State;
+
+    if(AbilityInfos[ToIdx].LinkedAbility.AbilityLevel > 0)
+        AbilityInfos[ToIdx].State = AS_Purchased;
+    else
+    {
+        Cost = AbilityInfos[ToIdx].LinkedAbility.Cost(CurrentClass);
+        if(Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost)
+            AbilityInfos[ToIdx].State = AS_Blocked;
+        else if(Cost == class'RPGAbility'.default.CantBuyCost)
+            AbilityInfos[ToIdx].State = AS_Disabled;
+        else
+            AbilityInfos[ToIdx].State = AS_Available;
+    }
+
+    for(x = 0; x < AbilityInfos[ToIdx].ForbidsAbilities.Length; x++)
+        CalculateSingleAbilityState(ToIdx, AbilityInfos[ToIdx].ForbidsAbilities[x].Index);
+
+    for(x = 0; x < AbilityInfos[ToIdx].RequiredByAbilities.Length; x++)
+        CalculateSingleAbilityState(ToIdx, AbilityInfos[ToIdx].RequiredByAbilities[x].Index);
+}
+
+static final function CalcRelationshipLine(GUIMultiOptionList List, GridPosition Pos1, GridPosition Pos2, out float X1, out float Y1, out float X2, out float Y2)
+{
+    local int RowDist;
+    local int FromIdx, ToIdx;
+    local float Width, Height;
+
+    Width = List.ItemWidth;
+    Height = List.ItemHeight;
+
+    FromIdx = LayoutToIndex(Pos1.Row, Pos1.Column);
+    if(List.ElementVisible(FromIdx))
+    {
+        X1 = RPGMenu_AbilityListMenuOption(List.GetItem(FromIdx)).MyButton.ActualLeft() + (Width * 0.5);
+        Y1 = RPGMenu_AbilityListMenuOption(List.GetItem(FromIdx)).MyButton.ActualTop() + (Height * 0.5);
+    }
+    else
+    {
+        X1 = List.ActualLeft() + (Pos1.Column * Width) - (Width * 0.5);
+
+        RowDist = abs(Pos1.Row - IndexToLayout(List.Top).Row);
+        if(List.Top > FromIdx)
+            RowDist *= -1;
+
+        Y1 = List.ActualTop() + (RowDist * Height) + (Height * 0.5);
+    }
+
+    ToIdx = LayoutToIndex(Pos2.Row, Pos2.Column);
+    if(List.ElementVisible(ToIdx))
+    {
+        X2 = RPGMenu_AbilityListMenuOption(List.GetItem(ToIdx)).MyButton.ActualLeft() + (Width * 0.5);
+        Y2 = RPGMenu_AbilityListMenuOption(List.GetItem(ToIdx)).MyButton.ActualTop() + (Height * 0.5);
+    }
+    else
+    {
+        X2 = List.ActualLeft() + (Pos2.Column * Width) - (Width * 0.5);
+
+        RowDist = abs(Pos2.Row - IndexToLayout(List.Top).Row);
+        if(List.Top > ToIdx)
+            RowDist *= -1;
+
+        Y2 = List.ActualTop() + (RowDist * Height) + (Height * 0.5);
+    }
+
+    if(Y1 < List.ActualTop())
+    {
+        X1 = GetLineClippedX(X1, Y1, X2, Y2, List.ActualTop());
+        Y1 = List.ActualTop();
+    }
+    else if(Y1 > List.ActualTop() + List.ActualHeight())
+    {
+        X1 = GetLineClippedX(X1, Y1, X2, Y2, List.ActualTop() + List.ActualHeight());
+        Y1 = List.ActualTop() + List.ActualHeight();
+    }
+
+    if(Y2 < List.ActualTop())
+    {
+        X2 = GetLineClippedX(X1, Y1, X2, Y2, List.ActualTop());
+        Y2 = List.ActualTop();
+    }
+    else if(Y2 > List.ActualTop() + List.ActualHeight())
+    {
+        X2 = GetLineClippedX(X1, Y1, X2, Y2, List.ActualTop() + List.ActualHeight());
+        Y2 = List.ActualTop() + List.ActualHeight();
+    }
+}
+
+final function bool DrawAbilityRelationships(Canvas Canvas)
+{
+    local int i, x;
+    local int TopRow, BottomRow;
+    local GridPosition Pos1, Pos2;
+    local float X1, Y1, X2, Y2;
+    local Color Color;
+
+    TopRow = IndexToLayout(Abilities.Top).Row;
+    BottomRow = IndexToLayout(Abilities.Top + Abilities.ItemsPerPage - 1).Row;
+
+    for(i = 0; i < AbilityInfos.Length; i++)
+    {
+        for(x = 0; x < AbilityInfos[i].ForbidsAbilities.Length; x++)
+        {
+            Pos1.Row = AbilityInfos[i].Row;
+            Pos1.Column = AbilityInfos[i].Column;
+
+            Pos2.Row = AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].Row;
+            Pos2.Column = AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].Column;
+
+            if((TopRow > Pos1.Row && TopRow > Pos2.Row) || (BottomRow < Pos1.Row && BottomRow < Pos2.Row))
+                continue;
+
+            if(AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].State == AS_Blocked)
+                Color = BlockedColor;
+            else if(AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].State == AS_Disabled)
+                Color = DisabledForbiddenColor;
+            else
+                Color = ForbiddenColor;
+
+            CalcRelationshipLine(Abilities, Pos1, Pos2, X1, Y1, X2, Y2);
+
+            class'HUD'.static.StaticDrawCanvasLine(Canvas, X1, Y1, X2, Y2, Color);
+        }
+
+        for(x = 0; x < AbilityInfos[i].RequiredByAbilities.Length; x++)
+        {
+            Pos1.Row = AbilityInfos[i].Row;
+            Pos1.Column = AbilityInfos[i].Column;
+
+            Pos2.Row = AbilityInfos[AbilityInfos[i].RequiredByAbilities[x].Index].Row;
+            Pos2.Column = AbilityInfos[AbilityInfos[i].RequiredByAbilities[x].Index].Column;
+
+            if((TopRow > Pos1.Row && TopRow > Pos2.Row) || (BottomRow < Pos1.Row && BottomRow < Pos2.Row))
+                continue;
+
+            if(AbilityInfos[AbilityInfos[i].RequiredByAbilities[x].Index].State == AS_Purchased)
+                Color = PurchasedColor;
+            else if(AbilityInfos[AbilityInfos[i].RequiredByAbilities[x].Index].State == AS_Disabled)
+                Color = DisabledColor;
+            else
+                Color = AvailableColor;
+
+            CalcRelationshipLine(Abilities, Pos1, Pos2, X1, Y1, X2, Y2);
+
+            class'HUD'.static.StaticDrawCanvasLine(Canvas, X1, Y1, X2, Y2, Color);
+        }
+    }
+
+    return false;
+}
+
+final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float W, float HT, bool bSelected, bool bPending)
+{
+    local RPGMenu_AbilityListMenuOption Option;
+    local float Width, Height;
+    local float IconSize;
+    local Material Material;
+
+    Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(Item));
+    if(Option == None || Option.LinkedAbility == None)
+        return;
+
+    Width = Abilities.ItemWidth;
+    Height = Abilities.ItemHeight;
+    IconSize = FMin(Width, Height) * Option.LinkedAbility.IconScale;
+
+    Canvas.Style = 5; //STY_Alpha
+    Canvas.SetPos(Option.MyButton.ActualLeft() + Option.MyButton.ActualWidth() * 0.5, Option.MyButton.ActualTop() + Option.MyButton.ActualHeight() * 0.5);
+
+    Canvas.SetPos(
+        Canvas.CurX - (IconSize * 0.5),
+        Canvas.CurY - (IconSize * 0.5)
+    );
+
+    if(Option.Index == SelectedIndex)
+    {
+        Canvas.DrawColor = Canvas.MakeColor(255, 255, 255);
+        Material = IconSelectedShader;
+    }
+    else
+    {
+        Material = Option.LinkedAbility.IconMaterial;
+
+        switch(AbilityInfos[Option.Index].State)
+        {
+            case AS_Disabled:
+                Canvas.DrawColor = Canvas.MakeColor(48, 48, 48);
+                break;
+            case AS_Blocked:
+                Canvas.DrawColor = Canvas.MakeColor(255, 0, 0);
+                break;
+            case AS_Available:
+                Canvas.DrawColor = Canvas.MakeColor(128, 128, 128);
+                break;
+            case AS_Purchased:
+            case AS_None:
+                Canvas.DrawColor = Canvas.MakeColor(255, 255, 255);
+                break;
+        }
+    }
+
+    Canvas.DrawTile(Material, IconSize, IconSize, 0, 0, Material.MaterialUSize(), Material.MaterialVSize());
+
+    if(Option.Index == SelectedIndex)
+    {
+        Canvas.DrawColor = Canvas.MakeColor(255, 255, 255);
+        Canvas.SetPos(Option.MyButton.ActualLeft(), Option.MyButton.ActualTop());
+        Material = IconSelectionMaterial;
+        Canvas.DrawTileStretched(Material, Width, Height);
+    }
 }
 
 function CloseMenu()
 {
+    Abilities.Clear();
     AbilityInfos.Length = 0;
 }
 
-function SelectAbility()
+final function SelectClassTree(GUIComponent Sender)
+{
+    local int i;
+
+    if(!bInitialized)
+        return;
+
+    RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
+
+    for(i = 0; i < ClassInfos.Length; i++)
+    {
+        if(ClassInfos[i].Name == cbTree.TextStr)
+        {
+            LastSelectedClass = cbTree.GetIndex();
+            LoadClassTree(ClassInfos[i].RPGClass);
+            break;
+        }
+    }
+
+    if(Sender != None)
+    {
+        SelectedIndex = 0;
+        SelectAbility(None);
+    }
+}
+
+final function SelectAbility(GUIComponent Sender)
 {
     local AbilityInfo AInfo;
     
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
     
-    if(Abilities.Index >= 0)
+    if(Sender != None)
+        SelectedIndex = RPGMenu_AbilityListMenuOption(Sender).Index;
+    if(SelectedIndex >= 0 && AbilityInfos.Length > 0)
     {
-        AInfo = AbilityInfos[Abilities.Index];
-        
-        if(AInfo.Cost > 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.AbilityPointsAvailable >= AInfo.Cost)
-        {
-            btBuy.Caption = Repl(Text_BuyX, "$1", AInfo.Name @ string(AInfo.NextLevel));
-            btBuy.MenuState = MSAT_Blurry;
-        }
-        else
-        {
-            btBuy.Caption = Text_Buy;
-            btBuy.MenuState = MSAT_Disabled;
-        }    
-        
-        sbDesc.Caption = AInfo.Name;
-        
-        if(AInfo.Category != None)
-            lblDesc.MyScrollText.SetContent(AInfo.Category.default.Description);
-        else if(AInfo.LinkedAbility != None)
-            lblDesc.MyScrollText.SetContent(AInfo.LinkedAbility.DescriptionText());
+        LastSelectedAbility = SelectedIndex;
+        AInfo = AbilityInfos[SelectedIndex];
+    }
+    
+    if(AInfo.LinkedAbility != None && AInfo.Cost > 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.AbilityPointsAvailable >= AInfo.Cost)
+    {
+        btBuy.Caption = Repl(Text_BuyX, "$1", AInfo.Name @ string(AInfo.NextLevel));
+        btBuy.MenuState = MSAT_Blurry;
     }
     else
     {
         btBuy.Caption = Text_Buy;
         btBuy.MenuState = MSAT_Disabled;
-        
-        sbDesc.Caption = Text_Description;
+    
         lblDesc.MyScrollText.SetContent(Text_Intro);
-    }
-}
-
-function bool OnAbilityKeyEvent(out byte Key, out byte State, float delta)
-{
-    Abilities.InternalOnKeyEvent(Key, State, delta);
-
-    if((Key == 38 || Key == 40) && State == 3) //up / down key released
+        sbDesc.Caption = "";
+    }    
+    
+    if(AInfo.LinkedAbility != None)
     {
-        SelectAbility();
-        return true;
-    }
-    else
-    {
-        return false;
+        lblDesc.MyScrollText.SetContent(AInfo.LinkedAbility.DescriptionText());
+        sbDesc.Caption = AInfo.Name;
+
+        IconSelectedShader.Diffuse = AInfo.LinkedAbility.IconMaterial;
+        IconSelectedShader.Opacity = AInfo.LinkedAbility.IconMaterial;
+        IconSelectedShader.SpecularityMask = AInfo.LinkedAbility.IconMaterial;
     }
 }
 
-function bool OnAbilityClick(GUIComponent Sender)
-{
-    Abilities.InternalOnClick(Sender);
-    SelectAbility();
-    return true;
-}
-
-function bool BuyAbility(GUIComponent Sender)
+final function bool BuyAbility(GUIComponent Sender)
 {
     local AbilityInfo AInfo;
 
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
-    if(Abilities.Index >= 0)
+    if(SelectedIndex >= 0)
     {
-        AInfo = AbilityInfos[Abilities.Index];
+        AInfo = AbilityInfos[SelectedIndex];
         
         if(AInfo.LinkedAbility != None)
         {
@@ -249,18 +581,6 @@ function bool BuyAbility(GUIComponent Sender)
 
 defaultproperties
 {
-    Categories(0)=class'AbilityCategory_Damage'
-    Categories(1)=class'AbilityCategory_Health'
-    Categories(2)=class'AbilityCategory_Adrenaline'
-    Categories(3)=class'AbilityCategory_Weapons'
-    Categories(4)=class'AbilityCategory_Artifacts'
-    Categories(5)=class'AbilityCategory_Movement'
-    Categories(6)=class'AbilityCategory_Vehicles'
-    Categories(7)=class'AbilityCategory_Medic'
-    Categories(8)=class'AbilityCategory_Monsters'
-    Categories(9)=class'AbilityCategory_Engineer'
-    Categories(10)=class'AbilityCategory_Misc'
-
     Text_PointsAvailable="Available Ability Points:"
     Text_Buy="Buy"
     Text_BuyX="Buy $1"
@@ -274,47 +594,45 @@ defaultproperties
     Text_DoNotHaveThisYet="---"
     Text_Intro="Select an ability and see here for detailed information on it."
     Text_Description="Description"
+    Text_NoClassSelected="No class ability tree selected"
+    Text_Cost="Cost"
+    DisabledColor=(R=32,G=32,B=32,A=255)
+    BlockedColor=(R=255,A=255)
+    AvailableColor=(R=224,G=255,B=224,A=255)
+    PurchasedColor=(G=255,A=255)
+    ForbiddenColor=(R=255,G=255,A=255)
+    DisabledForbiddenColor=(R=32,G=32,A=255)
 
     Begin Object Class=AltSectionBackground Name=sbAbilities_
         Caption="Available Abilities"
         LeftPadding=0.000000
         RightPadding=0.000000
-        WinWidth=0.997718
-        WinHeight=0.457739
+        WinWidth=0.503737
+        WinHeight=0.831425
         WinLeft=0.000085
         WinTop=0.013567
         OnPreDraw=sbAbilities_.InternalPreDraw
     End Object
     sbAbilities=AltSectionBackground'sbAbilities_'
 
-    Begin Object Class=GUIMultiColumnListBox Name=lstAbilities_
+    Begin Object Class=GUIMultiOptionListBox Name=lstAbilities_
         bAcceptsInput=True
         bVisibleWhenEmpty=True
-        bDisplayHeader=True
-        ColumnHeadings(0)="Ability"
-        HeaderColumnPerc(0)=0.50
-        ColumnHeadings(1)="You have"
-        HeaderColumnPerc(1)=0.20
-        ColumnHeadings(2)="Cost"
-        HeaderColumnPerc(2)=0.30
         OnCreateComponent=lstAbilities_.InternalOnCreateComponent
-        StyleName="ServerBrowserGrid"
-        SelectedStyleName="BrowserListSelection"
-        SectionStyleName="RPGListSection"
-        WinWidth=0.969373
-        WinHeight=0.329539
-        WinLeft=0.014257
-        WinTop=0.082763
+        WinWidth=0.474912
+        WinHeight=0.712825
+        WinLeft=0.013702
+        WinTop=0.069684
     End Object
-    lstAbilities=GUIMultiColumnListBox'lstAbilities_'
+    lstAbilities=GUIMultiOptionListBox'lstAbilities_'
     
     Begin Object Class=AltSectionBackground Name=sbDesc_
         LeftPadding=0.000000
         RightPadding=0.000000
-        WinWidth=0.997719
-        WinHeight=0.387763
-        WinLeft=0.000085
-        WinTop=0.475889
+        WinWidth=0.492000
+        WinHeight=0.779109
+        WinLeft=0.505806
+        WinTop=0.013567
         OnPreDraw=sbDesc_.InternalPreDraw
     End Object
     sbDesc=AltSectionBackground'sbDesc_'
@@ -325,32 +643,51 @@ defaultproperties
         EOLDelay=0.001250
         OnCreateComponent=lblDesc_.InternalOnCreateComponent
         FontScale=FNS_Small
-        WinWidth=0.949444
-        WinHeight=0.204867
-        WinLeft=0.024222
-        WinTop=0.568014
+        WinWidth=0.463460
+        WinHeight=0.667102
+        WinLeft=0.520971
+        WinTop=0.069684
         bNeverFocus=True
     End Object
     lblDesc=GUIScrollTextBox'lblDesc_'
 
     Begin Object Class=GUIButton Name=btBuy_
-        WinWidth=0.516921
+        WinWidth=0.474561
         WinHeight=0.060028
-        WinLeft=0.479645
+        WinLeft=0.514525
         WinTop=0.868341
         OnClick=BuyAbility
         OnKeyEvent=btBuy_.InternalOnKeyEvent
     End Object
     btBuy=GUIButton'btBuy_'
+
+    Begin Object Class=GUIComboBox Name=cbTree_
+        WinWidth=0.479020
+        WinHeight=0.042526
+        WinLeft=0.012494
+        WinTop=0.875815
+    End Object
+    cbTree=GUIComboBox'cbTree_'
     
     Begin Object Class=GUILabel Name=lblStats_
         WinWidth=0.476529
         WinHeight=0.070657
-        WinLeft=0.016231
-        WinTop=0.864362
+        WinLeft=0.518262
+        WinTop=0.793360
         StyleName="NoBackground"
     End Object
     lblStats=GUILabel'lblStats_'
 
+    Begin Object Class=GUIImage Name=imgAbilities_
+        ImageStyle=ISTY_Scaled
+        WinWidth=0.503702
+        WinHeight=0.754053
+        WinLeft=0.000000
+        WinTop=0.049684
+        StyleName="NoBackground"
+    End Object
+    imgAbilities=GUIImage'imgAbilities_'
+
     WinHeight=0.700000
+    SelectedIndex=-1
 }
