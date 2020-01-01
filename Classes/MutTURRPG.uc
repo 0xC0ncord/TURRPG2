@@ -433,8 +433,6 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
                     W.FireModeClass[i] = class'RPGONSAVRiLFire';
                 else if(W.FireModeClass[i] == class'TransFire' || string(W.FireModeClass[i]) ~= "OLTeamGames.OLTeamsTransFire")
                     W.FireModeClass[i] = class'RPGTransFire';
-                else if(W.FireModeClass[i] == class'FM_Sentinel_Fire')
-                    W.FireModeClass[i] = class'RPGSentinelFire';
             }
         }
         
