@@ -58,7 +58,7 @@ function PostRender(Canvas C) {
                 FPRI.Master.Team == ViewportOwner.Actor.PlayerReplicationInfo.Team
             )
             {
-                Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist / 2), 0.5, 1);
+                Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
                 Pct = float(FPRI.Pawn.Health) / FPRI.Pawn.HealthMax;
                 
                 if(Pct > 0.5) {

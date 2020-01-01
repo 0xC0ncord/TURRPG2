@@ -65,6 +65,6 @@ function AdjustPlayerDamage( out int Damage, Pawn InstigatedBy, Vector HitLocati
         
         Damage = TempDamage;
         if(InstigatedBy != None && InstigatedBy.HasUDamage())
-            Damage = Damage / 2 / InstigatedBy.DamageScaling; //unapply UDamage as later code will apply it again
+            Damage = Damage * 0.5 / InstigatedBy.DamageScaling; //unapply UDamage as later code will apply it again
     }
 }

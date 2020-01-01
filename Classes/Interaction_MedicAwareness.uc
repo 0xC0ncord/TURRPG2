@@ -94,7 +94,7 @@ function PostRender(Canvas C) {
             }
             
             //Bar height
-            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist / 2), 0.5, 1);
+            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
             
             if(Vehicle(P) != None) {
                 Height *= 1.75;

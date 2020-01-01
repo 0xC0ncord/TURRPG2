@@ -414,7 +414,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                     UnrealPawn(Killer.Pawn).spree % 5 == 0
                 )
                 {
-                    KillerRPRI.AwardExperience(EXP_KillingSpree[Min(UnrealPawn(Killer.Pawn).spree / 5, ArrayCount(EXP_KillingSpree) - 1)]);
+                    KillerRPRI.AwardExperience(EXP_KillingSpree[Min(UnrealPawn(Killer.Pawn).spree * 0.2, ArrayCount(EXP_KillingSpree) - 1)]);
                 }
                 
                 //First blood
