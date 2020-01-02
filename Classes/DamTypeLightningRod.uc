@@ -1,4 +1,4 @@
-class DamTypeLightningRod extends RPGDamageType
+class DamTypeLightningRod extends RPGAdrenalineDamageType
     abstract;
 
 static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictemHealth)

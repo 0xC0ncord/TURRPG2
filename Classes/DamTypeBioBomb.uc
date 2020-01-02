@@ -1,4 +1,4 @@
-class DamTypeBioBomb extends RPGDamageType
+class DamTypeBioBomb extends RPGAdrenalineDamageType
     abstract;
 
 defaultproperties {

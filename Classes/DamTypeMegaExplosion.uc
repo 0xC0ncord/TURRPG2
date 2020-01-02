@@ -1,4 +1,4 @@
-class DamTypeMegaExplosion extends RPGDamageType
+class DamTypeMegaExplosion extends RPGAdrenalineDamageType
     abstract;
 
 defaultproperties {

@@ -1,4 +1,4 @@
-class DamTypeRepulsion extends RPGDamageType
+class DamTypeRepulsion extends RPGAdrenalineDamageType
     abstract;
 
 defaultproperties {

@@ -1,4 +1,4 @@
-class DamTypeFlakBomb extends RPGDamageType
+class DamTypeFlakBomb extends RPGAdrenalineDamageType
     abstract;
 
 defaultproperties {
