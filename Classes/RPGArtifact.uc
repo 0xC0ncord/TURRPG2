@@ -20,6 +20,8 @@ var string ArtifactID; //for GetArtifact / RPGGetArtifact
 var float ActivatedTime;
 var bool bCanBeTossed;
 
+var float AdrenalineUsage; //multiplier for adrenaline costs
+
 var bool bExclusive; //if true, cannot be activated if another Artifact with bExclusive is already active
 
 var Sound CantUseSound; //played when CanActivate() fails
@@ -418,14 +420,14 @@ function bool CanActivate()
         return false;
     }
 
-    if(MinAdrenaline == 0 && MinActivationTime > 0.0f && Instigator.Controller.Adrenaline < CostPerSec * MinActivationTime)
+    if(MinAdrenaline == 0 && MinActivationTime > 0.0f && Instigator.Controller.Adrenaline < CostPerSec * AdrenalineUsage * MinActivationTime)
     {
-        Msg(MSG_Adrenaline, int(CostPerSec * MinActivationTime));
+        Msg(MSG_Adrenaline, int(CostPerSec * AdrenalineUsage * MinActivationTime));
         return false;
     }
-    else if(Instigator.Controller.Adrenaline < Max(CostPerSec, MinAdrenaline))
+    else if(Instigator.Controller.Adrenaline < Max(CostPerSec * AdrenalineUsage, MinAdrenaline * AdrenalineUsage))
     {
-        Msg(MSG_Adrenaline, Max(CostPerSec, MinAdrenaline));
+        Msg(MSG_Adrenaline, Max(CostPerSec * AdrenalineUsage, MinAdrenaline * AdrenalineUsage));
         return false;
     }
     
@@ -532,7 +534,7 @@ function Activate() //do NOT override, use CanActivate, CanDeactivate or BeginSt
             if(DoEffect())
             {
                 if(CostPerSec > 0)
-                    Instigator.Controller.Adrenaline = FMax(0, Instigator.Controller.Adrenaline - CostPerSec);
+                    InstigatorRPRI.DrainAdrenaline(CostPerSec * AdrenalineUsage, Self);
             
                 DoAmmo();
                 DoCooldown();
@@ -586,7 +588,7 @@ state Activated
         {
             if(CostPerSec > 0)
             {
-                CurrentCostPerSec += float(CostPerSec);
+                CurrentCostPerSec += CostPerSec * AdrenalineUsage;
                 
                 if(Instigator.PlayerReplicationInfo.HasFlag != None)
                     CurrentCostPerSec *= FlagMultiplier;
@@ -728,6 +730,7 @@ defaultproperties
     NumCopies=1
     MaxUses=-1
     NumUses=-1
+    AdrenalineUsage=1.000000
     bActivatable=True
     bDisplayableInv=True
     bReplicateInstigator=True
