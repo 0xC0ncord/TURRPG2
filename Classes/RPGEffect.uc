@@ -21,6 +21,9 @@ var config bool bAllowOnTeammates;
 //Can affect enemies
 var config bool bAllowOnEnemies;
 
+//Can affect targets with god mode
+var config bool bAllowOnGodMode;
+
 //Can affect a flag carrier
 var config bool bAllowOnFlagCarriers;
 
@@ -116,6 +119,10 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
             return false;
         }
     }
+
+    //Invulnerability
+    if(default.bHarmful && !default.bAllowOnGodMode && Other.Controller != None && Other.Controller.bGodMode)
+        return false;
     
     //Vehicles
     if(Vehicle(Other) != None) {
@@ -379,6 +386,7 @@ defaultproperties   {
     bAllowOnSelf=True
     bAllowOnTeammates=True //harmful effects are still not allowed if FriendlyFireScale is 0
     bAllowOnEnemies=True
+    bAllowOnGodMode=True
     bAllowOnFlagCarriers=True
     bAllowOnVehicles=True
     bAllowOnMonsters=True
