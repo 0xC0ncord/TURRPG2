@@ -11,6 +11,7 @@ defaultproperties
     DamageBonus=0.10
     MinModifier=-3
     MaxModifier=6
+    bCanHaveZeroModifier=False
     ModifierOverlay=Combiner'AWGlobal.Shaders.Combiner4'
     PatternPos="$W of Damage"
     PatternNeg="$W of Reduced Damage"
