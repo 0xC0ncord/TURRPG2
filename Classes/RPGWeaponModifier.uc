@@ -531,7 +531,8 @@ simulated function string GetBonusPercentageString(float Bonus) {
     
     Bonus *= 100.0f;
     
-    if(float(int(Bonus)) == Bonus)
+    //~= to avoid evil floating point magic
+    if(float(int(Bonus)) ~= Bonus)
         text $= int(Bonus);
     else
         text $= Bonus;
