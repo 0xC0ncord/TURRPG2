@@ -648,11 +648,13 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
                 WM.AdjustTargetDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
         
-        //Active artifacts
+        //Active artifacts and effects
         for(Inv = instigatedBy.Inventory; Inv != None; Inv = Inv.Inventory)
         {
             if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
                 RPGArtifact(Inv).AdjustTargetDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
+            else if(RPGEffect(Inv) != None && Inv.IsInState('Activated'))
+                RPGEffect(Inv).AdjustTargetDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
         
         //Abilities
@@ -675,11 +677,13 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     if(WM != None)
         WM.AdjustPlayerDamage(Damage, OriginalDamage, instigatedBy, HitLocation, Momentum, DamageType);
     
-    //Active artifacts
+    //Active artifacts and effects
     for(Inv = injured.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
             RPGArtifact(Inv).AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
+        else if(RPGEffect(Inv) != None && Inv.IsInState('Activated'))
+            RPGEffect(Inv).AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
     }
     
     //Abilities

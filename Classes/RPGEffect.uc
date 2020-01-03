@@ -58,6 +58,9 @@ var float LastStartTime;
 var float LastEffectTime;
 var float EffectLimitInterval; //to avoid sounds and effects being spammed like hell
 
+//Internal
+var bool bRestarting; //set when restarting the effect (when stacking)
+
 replication
 {
     reliable if(Role == ROLE_Authority && bNetDirty)
@@ -193,6 +196,8 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
         Effect = GetFor(Other);
         if(Effect != None)
         {
+            Effect.bRestarting = true;
+
             //Update
             Effect.Stop();
             
@@ -265,6 +270,8 @@ static function RPGEffect GetFor(Pawn Other)
 function Start()
 {
     GotoState('Activated');
+    if(bRestarting)
+        bRestarting = false;
 }
 
 function Stop();
@@ -368,6 +375,9 @@ state Activated
         GotoState('');
     }
 }
+
+function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Victim, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType);
+function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType);
 
 function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
 function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
