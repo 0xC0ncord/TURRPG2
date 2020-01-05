@@ -753,16 +753,11 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
             bAllowPickup = 0;
             return true;
         } else if(RPGMut.CheckPDP(Other, class<Weapon>(item.InventoryType))) {
-            //Simulate using random
-            ModifierClass = None;
-            ModifierLevel = -100;
-            
             if(RPRI != None) {
                 for (x = 0; x < RPRI.Abilities.length; x++) {
                     if(RPRI.Abilities[x].bAllowed) {
-                        if(!RPRI.Abilities[x].ModifyGrantedWeapon(class<Weapon>(item.InventoryType), ModifierClass, ModifierLevel)) {
+                        if(RPRI.Abilities[x].OverridePickupQuery(Other, item, bAllowPickup)) {
                             //don't allow pickup
-                            bAllowPickup = 0;
                             return true;
                         }
                     }
@@ -786,16 +781,11 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
     
     //Weapon Locker
     if(WeaponLocker(item) != None && RPGMut.CheckPDP(Other, class<Weapon>(item.InventoryType))) {
-        //Simulate
-        ModifierClass = None;
-        ModifierLevel = -100;
-        
         if(RPRI != None) {
             for (x = 0; x < RPRI.Abilities.length; x++) {
                 if(RPRI.Abilities[x].bAllowed) {
-                    if(!RPRI.Abilities[x].ModifyGrantedWeapon(class<Weapon>(item.InventoryType), ModifierClass, ModifierLevel)) {
+                    if(RPRI.Abilities[x].OverridePickupQuery(Other, item, bAllowPickup)) {
                         //don't allow pickup
-                        bAllowPickup = 0;
                         return true;
                     }
                 }

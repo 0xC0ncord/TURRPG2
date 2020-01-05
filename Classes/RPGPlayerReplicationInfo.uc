@@ -1700,6 +1700,7 @@ function ServerFavoriteWeapon()
 function GrantQueuedWeapon(GrantWeapon GW) {
     local RPGWeaponModifier WM;
     local Weapon W;
+    local int i;
 
     W = Controller.Pawn.Spawn(GW.WeaponClass);
     if(W != None) {
@@ -1725,6 +1726,10 @@ function GrantQueuedWeapon(GrantWeapon GW) {
         if(GW.Ammo[1] > 0 && W.GetAmmoClass(1) != W.GetAmmoClass(0)) {
             class'Util'.static.SetWeaponAmmo(W, 1, GW.Ammo[1]);
         }
+
+        for(i = 0; i < Abilities.Length; i++)
+            if(Abilities[i].bAllowed)
+                Abilities[i].ModifyGrantedWeapon(W, WM);
     }
 }
 
@@ -1764,12 +1769,12 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
     for(i = 0; i < Abilities.Length; i++) {
         if(Abilities[i].bAllowed) {
             if(!bForce) {
-                if(!Abilities[i].ModifyGrantedWeapon(WeaponClass, ModifierClass, Modifier)) {
+                if(!Abilities[i].OverrideGrantedWeapon(WeaponClass, ModifierClass, Modifier)) {
                     return; //not granted
                 }
             }
             
-            Abilities[i].ModifyGrantedWeaponAmmo(WeaponClass, Ammo1, Ammo2);
+            Abilities[i].OverrideGrantedWeaponAmmo(WeaponClass, Ammo1, Ammo2);
         }
     }
 

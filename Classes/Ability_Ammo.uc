@@ -2,7 +2,7 @@ class Ability_Ammo extends RPGAbility;
 
 var bool bSuicided;
 
-function ModifyGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out int Ammo2) {
+function OverrideGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out int Ammo2) {
     local int i, StartingAmmo;
     local float Factor;
     local class<WeaponFire> WFClass[2];
@@ -33,7 +33,7 @@ function ModifyGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out i
         }
     }
     
-    Super.ModifyGrantedWeaponAmmo(WeaponClass, Ammo1, Ammo2);
+    Super.OverrideGrantedWeaponAmmo(WeaponClass, Ammo1, Ammo2);
 }
 
 function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> DamageType, vector HitLocation, bool bAlreadyPrevented)
