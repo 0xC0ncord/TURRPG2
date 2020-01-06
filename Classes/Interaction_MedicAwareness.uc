@@ -24,6 +24,7 @@ function PostRender(Canvas C) {
     local Color BarColor;
     local Texture BeaconTexture;
     local xPlayer xPC;
+    local int HealMax;
 
     if(Ability == None || Ability.AbilityLevel <= 0) {
         return;
@@ -32,6 +33,8 @@ function PostRender(Canvas C) {
     if(ViewportOwner.Actor.Pawn == None || ViewportOwner.Actor.Pawn.Health <= 0) {
         return;
     }
+
+    HealMax = class'Ability_Medic'.default.LevelCap[class'Ability_Medic'.default.MaxLevel - 1];
     
     xPC = xPlayer(ViewportOwner.Actor);
     
@@ -104,14 +107,21 @@ function PostRender(Canvas C) {
 
             //Health bar
             ScreenPos.Y -= Height + 4;
-            Pct = float(P.Health) / P.HealthMax;
+            Pct = FClamp(float(P.Health) / (P.HealthMax + HealMax), 0f, 1f);
             
-            BarColor = GetTeamBeaconColor(P.PlayerReplicationInfo);
-            BarColor.R = byte(FMin(255, float(BarColor.R) * 1.67 * FClamp(Pct, 0.33, 1.0)));
-            BarColor.G = byte(FMin(255, float(BarColor.G) * 1.67 * FClamp(Pct, 0.33, 1.0)));
-            BarColor.B = byte(FMin(255, float(BarColor.B) * 1.67 * FClamp(Pct, 0.33, 1.0)));
+            if(P.Health >= P.HealthMax + HealMax)
+                BarColor = class'HUD'.default.BlueColor;
+            else
+            {
+                if(P.Health < P.HealthMax * 0.33)
+                    BarColor = class'HUD'.default.RedColor;
+                else if(P.Health < P.HealthMax)
+                    BarColor = class'Util'.static.InterpolateColor(class'HUD'.default.RedColor, class'HUD'.default.GreenColor, (P.Health - P.HealthMax * 0.33) / P.HealthMax);
+                else
+                    BarColor = class'Util'.static.InterpolateColor(class'HUD'.default.GreenColor, class'HUD'.default.CyanColor, (P.Health - P.HealthMax) / (P.HealthMax + HealMax));
+            }
 
-            DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height, Height);
+            DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height, Height, true);
         }
     }
 }

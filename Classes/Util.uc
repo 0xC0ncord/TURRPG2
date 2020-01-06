@@ -671,6 +671,17 @@ static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Fl
     }
 }
 
+static function Color InterpolateColor(Color C1, Color C2, float Fraction)
+{
+    local Color Result;
+
+    Result.R = (int(C2.R) - C1.R) * Fraction + C1.R;
+    Result.G = (int(C2.G) - C1.G) * Fraction + C1.G;
+    Result.B = (int(C2.B) - C1.B) * Fraction + C1.B;
+    Result.A = (int(C2.A) - C1.A) * Fraction + C1.A;
+    return Result;
+}
+
 defaultproperties {
     HighlightColor=(R=255,G=255,B=255,A=255);
 }

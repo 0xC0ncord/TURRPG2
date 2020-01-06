@@ -72,16 +72,51 @@ function DrawBar(Canvas C, float X, float Y, Color Color, float Pct, float XSize
         X -= 0.5 * ActualXSize;
         Y -= 0.5 * YSize;
     }
-    
+
     C.SetPos(X, Y);
-    
     C.Style = 9; //STY_AlphaZ
+        
     C.DrawColor = WhiteColor;
     C.DrawTileStretched(HealthBarBorder, ActualXSize, YSize);
+
+    C.DrawTileStretched(HealthBar, ActualXSize, YSize);
     
     if(Pct > 0) {
         C.DrawColor = Color;
         C.DrawTileStretched(HealthBar, XSize * Pct, YSize);
+    }
+}
+
+//Draws a classic DruidsRPG health bar styled bar
+function DrawCenterStyleBar(Canvas C, float X, float Y, Color Color, float Pct, float XSize, float YSize, optional bool bCenter) {
+    local float ActualXSize;
+    
+    Pct = FMin(Pct, 2); //Prevent overly large bars
+    ActualXSize = FMax(XSize, XSize * Pct);
+    
+    if(bCenter) {
+        X -= 0.5 * ActualXSize;
+        Y -= 0.5 * YSize;
+    }
+
+    C.SetPos(X, Y);
+    C.Style = 9; //STY_AlphaZ
+        
+    C.DrawColor = WhiteColor;
+    C.DrawTileStretched(HealthBarBorder, ActualXSize, YSize);
+
+    if(Pct == 0.0 || Pct == 1.0)
+    {
+        C.DrawColor = Color;
+        C.DrawTileStretched(HealthBar, ActualXSize, YSize);
+    }
+    else
+    {
+        C.DrawTileStretched(HealthBar, ActualXSize, YSize);
+
+        C.DrawColor = Color;
+        C.SetPos(C.CurX + ActualXSize * Pct * 0.5, C.CurY);
+        C.DrawTileStretched(HealthBar, ActualXSize * (1 - Pct), YSize);
     }
 }
 
