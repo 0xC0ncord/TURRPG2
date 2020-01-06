@@ -342,12 +342,9 @@ simulated function ClientIdentify() {
 }
 
 simulated function ClientRestore() {
-    if(Role < ROLE_Authority) {
-        Weapon.ItemName = Weapon.default.ItemName;
-        
-        if(Instigator.Weapon == Weapon) {
-            Instigator.PendingWeapon = Weapon;
-        }
+    Weapon.ItemName = Weapon.default.ItemName;
+    if(Role < ROLE_Authority && Instigator.Weapon == Weapon) {
+        Instigator.PendingWeapon = Weapon;
     }
 }
 
