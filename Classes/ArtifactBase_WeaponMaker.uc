@@ -12,7 +12,8 @@ const MSG_Broken = 0x0102;
 
 var localized string MsgUnableToGenerate, MsgAlreadyConstructing, MsgBroken;
 
-var Weapon OldWeapon;
+var Weapon OldWeapon, ModifiedWeapon;
+var int OldAmmo[2];
 var() Sound BrokenSound;
 
 static function string GetMessageString(int Msg, optional int Value, optional Object Obj)
@@ -44,27 +45,25 @@ simulated event PostBeginPlay()
 function bool CanActivate()
 {
     local int i;
-    local class<Weapon> OldWeaponClass;
     
     if(!Super.CanActivate())
         return false;
 
-    OldWeapon = Instigator.Weapon;
-    OldWeaponClass = OldWeapon.class;
+    ModifiedWeapon = Instigator.Weapon;
 
-    if(OldWeapon != None)
+    if(ModifiedWeapon != None)
     {
         for(i = 0; i < ForbiddenWeaponTypes.Length; i++)
         {
-            if(ClassIsChildOf(OldWeaponClass, ForbiddenWeaponTypes[i]))
+            if(ClassIsChildOf(ModifiedWeapon.Class, ForbiddenWeaponTypes[i]))
             {
-                OldWeapon = None;
+                ModifiedWeapon = None;
                 break;
             }
         }
     }
 
-    if(OldWeapon == None)
+    if(ModifiedWeapon == None)
     {
         Msg(MSG_UnableToGenerate);
         return false;
@@ -72,7 +71,6 @@ function bool CanActivate()
     
     return true;
 }
-
 
 state Activated
 {
@@ -83,12 +81,12 @@ state Activated
         local class<RPGWeaponModifier> OldModifier, NewModifier;
         local int x, tries;
 
-        if(OldWeapon == None) {
+        if(ModifiedWeapon == None) {
             Msg(MSG_UnableToGenerate);
             return false;
         }
 
-        WM = class'RPGWeaponModifier'.static.GetFor(OldWeapon);
+        WM = class'RPGWeaponModifier'.static.GetFor(ModifiedWeapon);
         if(WM != None) {
             OldModifier = WM.class;
         }
@@ -97,17 +95,17 @@ state Activated
             if(bAvoidRepetition) {
                 //try to generate a weapon of different magic than the old one
                 for(tries = 0; tries < 50; tries++) {
-                    NewModifier = GetRandomWeaponModifier(OldWeapon.class, Instigator);
+                    NewModifier = GetRandomWeaponModifier(ModifiedWeapon.class, Instigator);
                     
                     if(NewModifier == None || NewModifier != OldModifier) {
                         tries = 50; //break inner loop
                     }
                 }
             } else {
-                NewModifier = GetRandomWeaponModifier(OldWeapon.class, Instigator);
+                NewModifier = GetRandomWeaponModifier(ModifiedWeapon.class, Instigator);
             }
             
-            if(NewModifier == None || NewModifier.static.AllowedFor(OldWeapon.class, Instigator)) {
+            if(NewModifier == None || NewModifier.static.AllowedFor(ModifiedWeapon.class, Instigator)) {
                 break;
             }
         }
@@ -118,9 +116,12 @@ state Activated
         }
 
         if(NewModifier != None) {
-            WM = NewModifier.static.Modify(OldWeapon, NewModifier.static.GetRandomPositiveModifierLevel(), true);
+            WM = ModifyWeapon(ModifiedWeapon, NewModifier);
+            OldWeapon = ModifiedWeapon;
+            OldAmmo[0] = OldWeapon.AmmoAmount(0);
+            OldAmmo[1] = OldWeapon.AmmoAmount(1);
         } else {
-            class'RPGWeaponModifier'.static.RemoveModifier(OldWeapon);
+            class'RPGWeaponModifier'.static.RemoveModifier(ModifiedWeapon);
         }
 
         //Former breaking logic
@@ -142,6 +143,15 @@ state Activated
         
         return true;
     }
+}
+
+function RPGWeaponModifier ModifyWeapon(Weapon Weapon, class<RPGWeaponModifier> NewModifier)
+{
+    local RPGWeaponModifier WM;
+
+    WM = NewModifier.static.Modify(Weapon, NewModifier.static.GetRandomPositiveModifierLevel(), true);
+
+    return WM;
 }
 
 function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other);
