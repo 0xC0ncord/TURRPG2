@@ -155,7 +155,7 @@ function ServerSpeech(name Type, int Index, string Callsign) {
         for(C = Level.ControllerList; C != None; C = C.NextController) {
             if(C.SameTeamAs(Self) && Bot(C) != None) {
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
-                if(RPRI.HasAbility(class'Ability_Medic') > 0) {
+                if(RPRI.HasAbility(class'Ability_LoadedMedic') > 0) {
                     if(RPGBot(C) != None && RPGBot(C).Patient == None) {
                         //this medic currently has no patient!
                         Medic = Bot(C);

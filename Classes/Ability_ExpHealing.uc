@@ -18,7 +18,7 @@ defaultproperties
     Description="You gain $1 additional experience from healing per level."
     StartingCost=10
     MaxLevel=9
-    RequiredAbilities(0)=(AbilityClass=class'Ability_Medic',Level=1)
+    RequiredAbilities(0)=(AbilityClass=class'Ability_LoadedMedic',Level=1)
     BonusPerLevel=0.01
     Category=class'AbilityCategory_Medic'
 }

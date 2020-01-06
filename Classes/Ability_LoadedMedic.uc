@@ -1,4 +1,4 @@
-class Ability_Medic extends RPGAbility;
+class Ability_LoadedMedic extends RPGAbility;
 
 var array<int> LevelCap;
 
@@ -22,7 +22,7 @@ simulated function string DescriptionText()
 
 defaultproperties
 {
-    AbilityName="Medic"
+    AbilityName="Loaded Medic"
     Description="Gives you bonuses towards healing."
     LevelDescription(0)="Level 1 allows you to heal teammates +$1 beyond their maximum health."
     LevelDescription(1)="Level 2 allows you to heal teammates +$2 beyond their maximum health."
@@ -32,8 +32,8 @@ defaultproperties
     StartingCost=10
     CostAddPerLevel=10
     MaxLevel=3
-    LevelCap(0)=30
-    LevelCap(1)=50
-    LevelCap(2)=70
+    LevelCap(0)=50
+    LevelCap(1)=100
+    LevelCap(2)=150
     Category=class'AbilityCategory_Medic'
 }

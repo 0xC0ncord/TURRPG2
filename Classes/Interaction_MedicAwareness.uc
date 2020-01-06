@@ -34,7 +34,7 @@ function PostRender(Canvas C) {
         return;
     }
 
-    HealMax = class'Ability_Medic'.default.LevelCap[class'Ability_Medic'.default.MaxLevel - 1];
+    HealMax = class'Ability_LoadedMedic'.default.LevelCap[class'Ability_LoadedMedic'.default.MaxLevel - 1];
     
     xPC = xPlayer(ViewportOwner.Actor);
     

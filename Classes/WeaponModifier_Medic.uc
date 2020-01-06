@@ -11,11 +11,11 @@ function RPGTick(float dt)
 }
 
 function int GetMaxHealthBonus() {
-    local Ability_Medic LM;
+    local Ability_LoadedMedic LM;
 
     if(RPRI != None)
     {
-        LM = Ability_Medic(RPRI.GetOwnedAbility(class'Ability_Medic'));
+        LM = Ability_LoadedMedic(RPRI.GetOwnedAbility(class'Ability_LoadedMedic'));
         if(LM != None)
             return LM.GetHealMax();
     }

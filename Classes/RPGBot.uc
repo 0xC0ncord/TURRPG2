@@ -85,7 +85,7 @@ function AnnounceRole(PlayerController PC) {
     local RPGPlayerReplicationInfo RPRI;
     
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Self);
-    if(RPRI != None && RPRI.HasAbility(class'Ability_Medic') > 0) {
+    if(RPRI != None && RPRI.HasAbility(class'Ability_LoadedMedic') > 0) {
         PC.ReceiveLocalizedMessage(class'LocalMessage_BotRole', 0, PlayerReplicationInfo);
     }
 }
