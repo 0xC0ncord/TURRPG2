@@ -69,6 +69,11 @@ var Rect ExpBarRect;
 var Font TextFont;
 var float ArtifactIconSize;
 
+//Labs stuff
+var string SAOFontArrayNames[9];
+var Font SAOFonts[9];
+var int SAOFontScreenWidthMedium[9];
+
 event Initialized()
 {
     CheckBindings();
@@ -79,6 +84,30 @@ event Initialized()
     
     FindRPRI();
     CharSettings = new(None, RPRI.PRI.PlayerName) class'RPGCharSettings';
+}
+
+static function Font LoadSAOFontStatic(int i)
+{
+    if( default.SAOFonts[i] == None )
+    {
+        default.SAOFonts[i] = Font(DynamicLoadObject("TURRPG2." $ default.SAOFontArrayNames[i], class'Font'));
+        if( default.SAOFonts[i] == None )
+            Log("Warning: "$default.Class$" Couldn't dynamically load font "$default.SAOFontArrayNames[i]);
+    }
+
+    return default.SAOFonts[i];
+}
+
+static function Font GetMediumSAOFontFor(Canvas Canvas)
+{
+    local int i;
+
+    for ( i=0; i<8; i++ )
+    {
+        if ( Default.SAOFontScreenWidthMedium[i] <= Canvas.ClipX )
+            return LoadSAOFontStatic(i);
+    }
+    return LoadSAOFontStatic(8);
 }
 
 function CheckBindings()
@@ -102,6 +131,18 @@ function CheckBindings()
 
         if(!bDefaultBindings && !bDefaultArtifactBindings)
             break;
+    }
+}
+
+exec function Labs()
+{
+    if(bMenuEnabled)
+    {
+        if(RPGMenu(GUIController(ViewportOwner.GUIController).TopPage()) != None && RPGMenu_SettingsMaster(RPGMenu(GUIController(ViewportOwner.GUIController).TopPage()).Tabs.ActiveTab.MyPanel) != None)
+        {
+            ViewportOwner.GUIController.OpenMenu("TURRPG2.RPGLabsMenu");
+            RPGLabsMenu(GUIController(ViewportOwner.GUIController).TopPage()).InitFor(RPRI);
+        }
     }
 }
 
@@ -488,79 +529,233 @@ function PostRender(Canvas Canvas)
     //Draw exp bar
     if(!Settings.bHideExpBar)
     {
-        //Progress
-        Canvas.DrawColor = EXPBarColor;
-        Canvas.SetPos(ExpBarRect.X, ExpBarRect.Y);
-        
-        if(RPRI.NeededExp > 0) {
-            XL = RPRI.Experience / RPRI.NeededExp;
-            Canvas.DrawTile(
-                Material'InterfaceContent.Hud.SkinA',
-                ExpBarRect.W * XL,
-                15.0f * Canvas.FontScaleY,
-                836, 454, -386 * XL, 36);
-        }
-        
-        //Tint
-        Canvas.DrawColor = GetHUDTeamTint(HUD);
-        Canvas.SetPos(ExpBarRect.X, ExpBarRect.Y);
-        Canvas.DrawTile(Material'InterfaceContent.Hud.SkinA', ExpBarRect.W, ExpBarRect.H * 0.9375f, 836, 454, -386, 36);
-        
-        //Border
-        Canvas.DrawColor = WhiteColor;
-        Canvas.SetPos(ExpBarRect.X, ExpBarRect.Y);
-        Canvas.DrawTile(Material'InterfaceContent.Hud.SkinA', ExpBarRect.W, ExpBarRect.H, 836, 415, -386, 38);
-
-        //Level Text
-        Text = LevelText @ RPRI.RPGLevel;
-        Canvas.TextSize(Text, XL, YL);
-        Canvas.SetPos(ExpBarRect.X + 0.5 * (ExpBarRect.W - XL), ExpBarRect.Y - YL);
-        Canvas.DrawText(Text);
-        
-        //Experience Text
-        Canvas.FontScaleX *= 0.75;
-        Canvas.FontScaleY *= 0.75;
-        
-        if(RPRI.NeededExp > 0) {
-            Text = int(RPRI.Experience) $ "/" $ RPRI.NeededExp;
-        } else {
-            Text = string(int(RPRI.Experience));
-        }
-        
-        Canvas.TextSize(Text, XL, YL);
-        Canvas.SetPos(ExpBarRect.X + 0.5 * (ExpBarRect.W - XL), ExpBarRect.Y + 0.5 * (ExpBarRect.H - YL) + 1);
-        Canvas.DrawText(Text);
-        
-        //Experience Gain
-        if(!Settings.bHideExpGain && Settings.ExpGainDuration > 0 &&
-            (Settings.ExpGainDuration >= ExpGainDurationForever || ExpGainTimer > TimeSeconds))
+        if(Settings.XPHudStyle == 0) //Classic style
         {
-            if(ExpGain >= 0)
-            {
-                Text = "+" $ class'Util'.static.FormatFloat(ExpGain);
-                Canvas.DrawColor = WhiteColor;
-            }
-            else
-            {
-                Text = class'Util'.static.FormatFloat(ExpGain);
-                Canvas.DrawColor = RedColor;
+            //Progress
+            Canvas.DrawColor = EXPBarColor;
+            Canvas.SetPos(ExpBarRect.X, ExpBarRect.Y);
+            
+            if(RPRI.NeededExp > 0) {
+                XL = RPRI.Experience / RPRI.NeededExp;
+                Canvas.DrawTile(
+                    Material'InterfaceContent.Hud.SkinA',
+                    ExpBarRect.W * XL,
+                    15.0f * Canvas.FontScaleY,
+                    836, 454, -386 * XL, 36);
             }
             
-            if(Settings.ExpGainDuration < ExpGainDurationForever)
-            {
-                Fade = ExpGainTimer - TimeSeconds;
-                if(Fade <= 1.0f)
-                    Canvas.DrawColor.A = 255 * Fade;
-            }
+            //Tint
+            Canvas.DrawColor = GetHUDTeamTint(HUD);
+            Canvas.SetPos(ExpBarRect.X, ExpBarRect.Y);
+            Canvas.DrawTile(Material'InterfaceContent.Hud.SkinA', ExpBarRect.W, ExpBarRect.H * 0.9375f, 836, 454, -386, 36);
+            
+            //Border
+            Canvas.DrawColor = WhiteColor;
+            Canvas.SetPos(ExpBarRect.X, ExpBarRect.Y);
+            Canvas.DrawTile(Material'InterfaceContent.Hud.SkinA', ExpBarRect.W, ExpBarRect.H, 836, 415, -386, 38);
 
+            //Level Text
+            Text = LevelText @ RPRI.RPGLevel;
             Canvas.TextSize(Text, XL, YL);
-            Canvas.SetPos(ExpBarRect.X + 0.5 * (ExpBarRect.W - XL), ExpBarRect.Y + ExpBarRect.H + 1);
+            Canvas.SetPos(ExpBarRect.X + 0.5 * (ExpBarRect.W - XL), ExpBarRect.Y - YL);
             Canvas.DrawText(Text);
+            
+            //Experience Text
+            Canvas.FontScaleX *= 0.75;
+            Canvas.FontScaleY *= 0.75;
+            
+            if(RPRI.NeededExp > 0) {
+                Text = int(RPRI.Experience) $ "/" $ RPRI.NeededExp;
+            } else {
+                Text = string(int(RPRI.Experience));
+            }
+            
+            Canvas.TextSize(Text, XL, YL);
+            Canvas.SetPos(ExpBarRect.X + 0.5 * (ExpBarRect.W - XL), ExpBarRect.Y + 0.5 * (ExpBarRect.H - YL) + 1);
+            Canvas.DrawText(Text);
+            
+            //Experience Gain
+            if(!Settings.bHideExpGain && Settings.ExpGainDuration > 0 &&
+                (Settings.ExpGainDuration >= ExpGainDurationForever || ExpGainTimer > TimeSeconds))
+            {
+                if(ExpGain >= 0)
+                {
+                    Text = "+" $ class'Util'.static.FormatFloat(ExpGain);
+                    Canvas.DrawColor = WhiteColor;
+                }
+                else
+                {
+                    Text = class'Util'.static.FormatFloat(ExpGain);
+                    Canvas.DrawColor = RedColor;
+                }
+                
+                if(Settings.ExpGainDuration < ExpGainDurationForever)
+                {
+                    Fade = ExpGainTimer - TimeSeconds;
+                    if(Fade <= 1.0f)
+                        Canvas.DrawColor.A = 255 * Fade;
+                }
+
+                Canvas.TextSize(Text, XL, YL);
+                Canvas.SetPos(ExpBarRect.X + 0.5 * (ExpBarRect.W - XL), ExpBarRect.Y + ExpBarRect.H + 1);
+                Canvas.DrawText(Text);
+            }
+            
+            //Reset
+            Canvas.FontScaleX = FontScale.X;
+            Canvas.FontScaleY = FontScale.Y;
         }
-        
-        //Reset
-        Canvas.FontScaleX = FontScale.X;
-        Canvas.FontScaleY = FontScale.Y;
+        else if(Settings.XPHudStyle == 1) //SAO style
+        {
+            Canvas.Font = GetMediumSAOFontFor(Canvas);
+            Canvas.FontScaleX *= 0.3;
+            Canvas.FontScaleY *= 0.3;
+
+            //Progress
+            Canvas.DrawColor = WhiteColor;
+            Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 5.836053), ExpBarRect.Y + (ExpBarRect.H * 0.918032));
+            
+            if(RPRI.NeededExp > 0) {
+                XL = RPRI.Experience / RPRI.NeededExp;
+
+                if(264 * XL <= 12)
+                {
+                    Canvas.DrawTile(
+                        Material'SAOHud',
+                        ExpBarRect.H * 17.311453 * XL,
+                        ExpBarRect.H * 1.180328,
+                        28 - (264 * XL), 108, 264 * XL, 18);
+                }
+                else if(XL <= 0.545454)
+                {
+                    if(XL < 0.25)
+                    {
+                        //Full part
+                        Canvas.DrawTile(
+                            Material'SAOHud',
+                            (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.786878),
+                            ExpBarRect.H * 1.180328,
+                            64, 108, (264 * XL) - 12, 18);
+
+                        //Slanted head
+                        Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 5.836053) + (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.786878) - 1, ExpBarRect.Y + (ExpBarRect.H * 0.918032));
+                        Canvas.DrawTile(
+                            Material'SAOHud',
+                            ExpBarRect.H * 0.786878,
+                            ExpBarRect.H * 1.180328,
+                            16, 108, 12, 18);
+                    }
+                    else if(XL < 0.5)
+                    {
+                        //Full part
+                        Canvas.DrawTile(
+                            Material'SAOHud',
+                            (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.786878),
+                            ExpBarRect.H * 1.180328,
+                            64, 86, (264 * XL) - 12, 18);
+
+                        //Slanted head
+                        Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 5.836053) + (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.786878) - 1, ExpBarRect.Y + (ExpBarRect.H * 0.918032));
+                        Canvas.DrawTile(
+                            Material'SAOHud',
+                            ExpBarRect.H * 0.786878,
+                            ExpBarRect.H * 1.180328,
+                            16, 86, 12, 18);
+                    }
+                    else
+                    {
+                        //Full part
+                        Canvas.DrawTile(
+                            Material'SAOHud',
+                            (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.786878),
+                            ExpBarRect.H * 1.180328,
+                            64, 64, (264 * XL) - 12, 18);
+
+                        //Slanted head
+                        Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 5.836053) + (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.786878) - 1, ExpBarRect.Y + (ExpBarRect.H * 0.918032));
+                        Canvas.DrawTile(
+                            Material'SAOHud',
+                            ExpBarRect.H * 0.786878,
+                            ExpBarRect.H * 1.180328,
+                            16, 64, 12, 18);
+                    }
+                }
+                else
+                {
+                    //Full part
+                    Canvas.DrawTile(
+                        Material'SAOHud',
+                        (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.459000),
+                        ExpBarRect.H * 1.180328,
+                        64, 64, (264 * XL) - 7, 18);
+
+                    //Slanted head
+                    Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 5.836053) + (ExpBarRect.H * 17.311453 * XL) - (ExpBarRect.H * 0.459000) - 1, ExpBarRect.Y + (ExpBarRect.H * 0.918032));
+                    Canvas.DrawTile(
+                        Material'SAOHud',
+                        ExpBarRect.H * 0.459000,
+                        ExpBarRect.H * 1.180328,
+                        321, 64, 7, 18);
+                }
+            }
+            
+            //Border
+            Canvas.DrawColor = WhiteColor;
+            Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14), ExpBarRect.Y);
+            Canvas.DrawTile(Material'SAOHud', ExpBarRect.H * 4 * 6.213115, ExpBarRect.H * 4, 0, 0, 379, 61);
+
+            //Level Text
+            Text = "LV:" $ RPRI.RPGLevel;
+            Canvas.TextSize(Text, XL, YL);
+            Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 22.557385) - (XL * 0.5), ExpBarRect.Y + (ExpBarRect.H * 3.081968) - (YL * 0.5));
+            Canvas.DrawText(Text);
+            
+            //Experience Text
+            if(RPRI.NeededExp > 0) {
+                Text = int(RPRI.Experience) @ "/" @ RPRI.NeededExp;
+            } else {
+                Text = string(int(RPRI.Experience));
+            }
+            
+            Canvas.TextSize(Text, XL, YL);
+            Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 18.491795) - (XL * 0.5), ExpBarRect.Y + (ExpBarRect.H * 3.081968) - (YL * 0.5));
+            Canvas.DrawText(Text);
+            
+            //Experience Gain
+            if(!Settings.bHideExpGain && Settings.ExpGainDuration > 0 &&
+                (Settings.ExpGainDuration >= ExpGainDurationForever || ExpGainTimer > TimeSeconds))
+            {
+                if(ExpGain >= 0)
+                {
+                    Text = "+" $ class'Util'.static.FormatFloat(ExpGain);
+                    Canvas.DrawColor = WhiteColor;
+                }
+                else
+                {
+                    Text = class'Util'.static.FormatFloat(ExpGain);
+                    Canvas.DrawColor = RedColor;
+                }
+                
+                if(Settings.ExpGainDuration < ExpGainDurationForever)
+                {
+                    Fade = ExpGainTimer - TimeSeconds;
+                    if(Fade <= 1.0f)
+                        Canvas.DrawColor.A = 255 * Fade;
+                }
+
+                Canvas.TextSize(Text, XL, YL);
+                Canvas.SetPos(ExpBarRect.X - (ExpBarRect.H * 14) + (ExpBarRect.H * 4.000003) - (XL * 0.5), ExpBarRect.Y + (ExpBarRect.H * 1.5) - (YL * 0.5));
+                Canvas.DrawText(Text);
+            }
+            
+            //Reset
+            if(TextFont != None)
+                Canvas.Font = TextFont;
+            else
+                Canvas.Font = Canvas.default.Font;
+            Canvas.FontScaleX = FontScale.X;
+            Canvas.FontScaleY = FontScale.Y;
+        }
     }
 
     //Draw hints
@@ -1104,4 +1299,23 @@ defaultproperties
     ArtifactBorderMaterialRect=(X=0,Y=39,W=95,H=54)
     ArtifactIconInnerScale=0.67
     ArtifactHighlightIndention=0.15
+    //
+    SAOFontArrayNames(0)="FontSAO37"
+    SAOFontArrayNames(1)="FontSAO29"
+    SAOFontArrayNames(2)="FontSAO24"
+    SAOFontArrayNames(3)="FontSAO21"
+    SAOFontArrayNames(4)="FontSAO17"
+    SAOFontArrayNames(5)="FontSAO14"
+    SAOFontArrayNames(6)="FontSAO12"
+    SAOFontArrayNames(7)="FontSAO11"
+    SAOFontArrayNames(8)="FontSAO9"
+    SAOFontScreenWidthMedium(0)=2048
+    SAOFontScreenWidthMedium(1)=1600
+    SAOFontScreenWidthMedium(2)=1280
+    SAOFontScreenWidthMedium(3)=1024
+    SAOFontScreenWidthMedium(4)=800
+    SAOFontScreenWidthMedium(5)=640
+    SAOFontScreenWidthMedium(6)=512
+    SAOFontScreenWidthMedium(7)=400
+    SAOFontScreenWidthMedium(8)=320
 }

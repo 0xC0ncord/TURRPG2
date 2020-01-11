@@ -2,6 +2,7 @@ class RPGSettings extends Object
     config(TURRPG2Settings)
     PerObjectConfig;
 
+
 var config bool bHideWeaponExtra, bHideArtifactName, bHideExpGain, bHideHints, bHideExpBar, bHideStatusIcon;
 var config bool bClassicArtifactSelection;
 var config int IconsPerRow;
@@ -9,6 +10,10 @@ var config float IconScale, IconsX, IconsY, IconClassicY, ExpBarX, ExpBarY;
 var config float ExpGainDuration;
 
 var config array<string> MyBuilds;
+
+//Labs settings
+var config byte XPHudStyle; //0 classic
+                            //1 SAO
 
 defaultproperties
 {
