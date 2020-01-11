@@ -8,6 +8,7 @@ var automated GUIImage imIcon;
 var automated GUIScrollTextBox lbDesc;
 var automated moCheckbox chShowAlways, chNeverShow;
 
+var automated GUIMultiOptionListBox lbGlobalSettings;
 var automated moCheckBox chShowAll;
 
 var bool bDirty, bOrderChanged;
@@ -16,6 +17,8 @@ var int SelectedOrderEntry;
 var bool bIgnoreNextChange;
 
 var localized string NotAvailableText, NotAvailableTitle, NotAvailableDesc;
+
+var localized string Text_HintShowAll;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -27,6 +30,29 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 
     lbArtifacts.OnClick = Clicked;
     lbArtifacts.OnKeyEvent = KeyEvent;
+
+    lbGlobalSettings.List.ColumnWidth = 0.45;
+    lbGlobalSettings.List.ItemScaling = 0.035;
+    lbGlobalSettings.List.bVerticalLayout = true;
+    lbGlobalSettings.List.bHotTrack = true;
+
+    chShowAll = moCheckBox(lbGlobalSettings.List.AddItem("XInterface.moCheckBox",, "Always show all artifacts", true));
+
+    chShowAll.ToolTip.SetTip(Text_HintShowAll);
+
+    SetDefaultComponent(chShowAll);
+}
+
+function SetDefaultComponent(GUIMenuOption PassedComponent)
+{
+    PassedComponent.CaptionWidth = 0.6;
+    PassedComponent.ComponentWidth = 0.4;
+    PassedComponent.ComponentJustification = TXTA_Right;
+    PassedComponent.bStandardized = false;
+    PassedComponent.bBoundToParent = false;
+    PassedComponent.bScaleToParent = false;
+    PassedComponent.MyLabel.TextAlign = TXTA_Left;
+    PassedComponent.OnChange = InternalOnChange;
 }
 
 function InitMenu()
@@ -375,24 +401,20 @@ defaultproperties
         RenderWeight=0.55
     End Object
     imIcon=GameCrossHairImage
+
+     Begin Object Class=GUIMultiOptionListBox Name=lbGlobalSettings_
+         bVisibleWhenEmpty=True
+         StyleName="ServerBrowserGrid"
+         WinTop=0.568679
+         WinLeft=0.487776
+         WinWidth=0.480227
+         WinHeight=0.296986
+         bBoundToParent=True
+         bScaleToParent=True
+     End Object
+     lbGlobalSettings=GUIMultiOptionListBox'RPGMenu_Artifacts.lbGlobalSettings_'
     
-    Begin Object class=moCheckBox Name=ShowAllChk
-        WinWidth=0.480585
-        WinHeight=0.044444
-        WinLeft=0.482611
-        WinTop=0.595503
-        Caption="Always show all artifacts"
-        Hint="Quickly toggles Show always for all artifacts."
-        CaptionWidth=0.9
-        bSquare=True
-        ComponentJustification=TXTA_Right
-        LabelJustification=TXTA_Left
-        ComponentWidth=-1
-        RenderWeight=1.01
-        TabOrder=7
-        OnChange=RPGMenu_Artifacts.InternalOnChange
-    End Object
-    chShowAll=ShowAllChk
-    
+    Text_HintShowAll="Quickly toggles Show always for all artifacts."
+
     WinHeight=0.700000
 }
