@@ -1,12 +1,90 @@
 class RPGMenu_Settings extends RPGMenu_TabPage;
 
 var automated GUISectionBackground sbCustomize;
+
+var automated GUIMultiOptionListBox lbSettings;
 var automated moCheckBox chkWeaponExtra, chkArtifactText, chkExpGain, chkExpBar, chkHints, chkClassicArtifactSelection;
 var automated moSlider slExpGain, slIconsPerRow, slIconScale, slIconsX, slIconsY, slExpBarX, slExpBarY;
+
+var localized string Text_HintWeaponExtra;
+var localized string Text_HintArtifactExtra;
+var localized string Text_HintShowExpBar;
+var localized string Text_HintShowHints;
+var localized string Text_HintClassicArtifactSelection;
+var localized string Text_HintExpGainDuration;
+var localized string Text_HintIconsPerRow;
+var localized string Text_HintIconScale;
+var localized string Text_HintIconsX;
+var localized string Text_HintIconsY;
+var localized string Text_HintExpBarX;
+var localized string Text_HintExpBarY;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
+
+    lbSettings.List.ColumnWidth = 0.45;
+    lbSettings.List.bVerticalLayout = true;
+    lbSettings.List.bHotTrack = true;
+
+    chkWeaponExtra = moCheckBox(lbSettings.List.AddItem("XInterface.moCheckBox",, "Display extra information", true));
+    chkArtifactText = moCheckBox(lbSettings.List.AddItem("XInterface.moCheckBox",, "Show Artifact name", true));
+    chkExpBar = moCheckBox(lbSettings.List.AddItem("XInterface.moCheckBox",, "Show experience bar", true));
+    chkHints = moCheckBox(lbSettings.List.AddItem("XInterface.moCheckBox",, "Display hints", true));
+    chkClassicArtifactSelection = moCheckBox(lbSettings.List.AddItem("XInterface.moCheckBox",, "Use classic artifact selection", true));
+    slExpGain = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Experience gain duration", true));
+    slIconsPerRow = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Artifact icons per row", true));
+    slIconScale = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Artifact icon scale", true));
+    slIconsX = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Artifact icons X", true));
+    slIconsY = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Artifact icons Y", true));
+    slExpBarX = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Experience bar X", true));
+    slExpBarY = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Experience bar Y", true));
+
+    chkWeaponExtra.ToolTip.SetTip(Text_HintWeaponExtra);
+    chkArtifactText.ToolTip.SetTip(Text_HintArtifactExtra);
+    chkExpBar.ToolTip.SetTip(Text_HintShowExpBar);
+    chkHints.ToolTip.SetTip(Text_HintShowHints);
+    chkClassicArtifactSelection.ToolTip.SetTip(Text_HintClassicArtifactSelection);
+    slExpGain.ToolTip.SetTip(Text_HintExpGainDuration);
+    slIconsPerRow.ToolTip.SetTip(Text_HintIconsPerRow);
+    slIconScale.ToolTip.SetTip(Text_HintIconScale);
+    slIconsX.ToolTip.SetTip(Text_HintIconsX);
+    slIconsY.ToolTip.SetTip(Text_HintIconsY);
+    slExpBarX.ToolTip.SetTip(Text_HintExpBarX);
+    slExpBarY.ToolTip.SetTip(Text_HintExpBarY);
+
+    slExpGain.Setup(0, 21, true);
+    slIconsPerRow.Setup(1, 25, true);
+    slIconScale.Setup(0.5, 1.5, false);
+    slIconsX.Setup(0, 1, false);
+    slIconsY.Setup(0, 1, false);
+    slExpBarX.Setup(0, 1, false);
+    slExpBarY.Setup(0, 1, false);
+
+    SetDefaultComponent(chkWeaponExtra);
+    SetDefaultComponent(chkArtifactText);
+    SetDefaultComponent(chkExpBar);
+    SetDefaultComponent(chkHints);
+    SetDefaultComponent(chkClassicArtifactSelection);
+    SetDefaultComponent(slExpGain);
+    SetDefaultComponent(slIconsPerRow);
+    SetDefaultComponent(slIconScale);
+    SetDefaultComponent(slIconsX);
+    SetDefaultComponent(slIconsY);
+    SetDefaultComponent(slExpBarX);
+    SetDefaultComponent(slExpBarY);
+}
+
+function SetDefaultComponent(GUIMenuOption PassedComponent)
+{
+    PassedComponent.CaptionWidth = 0.6;
+    PassedComponent.ComponentWidth = 0.4;
+    PassedComponent.ComponentJustification = TXTA_Right;
+    PassedComponent.bStandardized = false;
+    PassedComponent.bBoundToParent = false;
+    PassedComponent.bScaleToParent = false;
+    PassedComponent.MyLabel.TextAlign = TXTA_Left;
+    PassedComponent.OnChange = InternalOnChange;
 }
 
 function InitMenu()
@@ -140,8 +218,6 @@ function InternalOnChange(GUIComponent Sender)
 
 defaultproperties
 {
-    //Y spacing: 0.052451
-
     Begin Object Class=AltSectionBackground Name=sbCustomize_
         Caption="TURRPG Settings"
         LeftPadding=0.000000
@@ -153,170 +229,30 @@ defaultproperties
         OnPreDraw=sbCustomize_.InternalPreDraw
     End Object
     sbCustomize=AltSectionBackground'sbCustomize_'
-    
-    Begin Object Class=moCheckBox Name=chkArtifactInfo_
-        TabOrder=0
-        Caption="Show Artifact name"
-        Hint="If checked, the name of an artifact is displayed on the screen when selecting one (similar to weapons)."
-        WinWidth=0.469274
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.101052
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=chkArtifactInfo_.InternalOnCreateComponent
-    End Object
-    chkArtifactText=moCheckBox'chkArtifactInfo_'
-    
-    Begin Object Class=moCheckBox Name=chkWeaponExtra_
-        TabOrder=1
-        Caption="Show extra information"
-        Hint="If checked, a short description about a weapon's magic is displayed below its name when selected. Also controls the extra description for artifacts."
-        WinWidth=0.469274
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.153503
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=chkWeaponExtra_.InternalOnCreateComponent
-    End Object
-    chkWeaponExtra=moCheckBox'chkWeaponExtra_'
 
-    Begin Object Class=moCheckBox Name=chkClassicArtifactSelection_
-        TabOrder=2
-        Caption="Single artifact display"
-        Hint="If checked, only the currently selected artifact will be displayed on the screen like in the old UT2004 RPG versions."
-        WinWidth=0.469274
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.205954
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=chkClassicArtifactSelection_.InternalOnCreateComponent
+    Begin Object Class=GUIMultiOptionListBox Name=lbSettings_
+        bVisibleWhenEmpty=True
+        StyleName="ServerBrowserGrid"
+        WinTop=0.101564
+        WinLeft=0.034118
+        WinWidth=0.931141
+        WinHeight=0.751637
+        bBoundToParent=True
+        bScaleToParent=True
     End Object
-    chkClassicArtifactSelection=moCheckBox'chkClassicArtifactSelection_'
+    lbSettings=GUIMultiOptionListBox'RPGMenu_Settings.lbSettings_'
 
-    Begin Object Class=moSlider Name=slIconsPerRow_
-        TabOrder=3
-        Caption="Artifact icons per row"
-        Hint="Determine how many artifact icons can be displayed in one vertical row."
-        MinValue=1
-        MaxValue=25
-        bIntSlider=true
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.258405
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slIconsPerRow_.InternalOnCreateComponent
-    End Object
-    slIconsPerRow=moSlider'slIconsPerRow_'
-    
-    Begin Object Class=moSlider Name=slIconScale_
-        TabOrder=4
-        Caption="Artifact icon scale"
-        Hint="Determine the scale of the artifact icons."
-        MinValue=0.5
-        MaxValue=1.5
-        bIntSlider=false
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.310856
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slIconScale_.InternalOnCreateComponent
-    End Object
-    slIconScale=moSlider'slIconScale_'
-    
-    Begin Object Class=moSlider Name=slIconsX_
-        TabOrder=5
-        Caption="Artifact icon X"
-        Hint="Determine the X position of the artifact icon(s)."
-        MinValue=0.0
-        MaxValue=1.0
-        bIntSlider=false
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.363307
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slIconsX_.InternalOnCreateComponent
-    End Object
-    slIconsX=moSlider'slIconsX_'
-    
-    Begin Object Class=moSlider Name=slIconsY_
-        TabOrder=6
-        Caption="Artifact icon Y"
-        Hint="Determine the Y position of the artifact icon(s)."
-        MinValue=0.0
-        MaxValue=1.0
-        bIntSlider=false
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.415758
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slIconsY_.InternalOnCreateComponent
-    End Object
-    slIconsY=moSlider'slIconsY_'
-    
-    Begin Object Class=moCheckBox Name=chkExpBar_
-        TabOrder=7
-        Caption="Show experience bar"
-        Hint="If checked, your level, experience and experience gain is displayed on the right side of your screen."
-        WinWidth=0.469274
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.468209
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=chkExpBar_.InternalOnCreateComponent
-    End Object
-    chkExpBar=moCheckBox'chkExpBar_'
-    
-    Begin Object Class=moSlider Name=slExpBarX_
-        TabOrder=8
-        Caption="Experience bar X"
-        Hint="Determine the X position of the experience bar."
-        MinValue=0.0
-        MaxValue=1.0
-        bIntSlider=false
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.520660
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slExpBarX_.InternalOnCreateComponent
-    End Object
-    slExpBarX=moSlider'slExpBarX_'
-    
-    Begin Object Class=moSlider Name=slExpBarY_
-        TabOrder=9
-        Caption="Experience bar Y"
-        Hint="Determine the Y position of the experience bar."
-        MinValue=0.0
-        MaxValue=1.0
-        bIntSlider=false
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.573111
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slExpBarY_.InternalOnCreateComponent
-    End Object
-    slExpBarY=moSlider'slExpBarY_'
-    
-    Begin Object Class=moSlider Name=slExpGain_
-        TabOrder=10
-        Caption="Experience gain duration"
-        Hint="Select for how many seconds your exp gain should be displayed below the exp bar. 0 means never display, 21 means display for the whole match."
-        MinValue=0
-        MaxValue=21 //FIXME - somehow synchronize this with class'RPGInteraction'.default.ExpGainDurationForever
-        bIntSlider=true
-        WinWidth=0.877837
-        WinHeight=0.041475
-        WinLeft=0.022492
-        WinTop=0.625562
-        OnChange=RPGMenu_Settings.InternalOnChange
-        OnCreateComponent=slExpGain_.InternalOnCreateComponent
-    End Object
-    slExpGain=moSlider'slExpGain_'
+    Text_HintWeaponExtra="If checked, a short description about a weapon's magic is displayed below its name when selected. Also controls the extra description for artifacts."
+    Text_HintArtifactExtra="If checked, the name of an artifact is displayed on the screen when selecting one (similar to weapons)."
+    Text_HintShowExpBar="If checked, your level, experience and experience gain is displayed on the right side of your screen."
+    Text_HintClassicArtifactSelection="If checked, only the currently selected artifact will be displayed on the screen like in the old UT2004 RPG versions."
+    Text_HintExpGainDuration="Select for how many seconds your exp gain should be displayed below the experience bar. 0 means never display, 21 means display for the whole match."
+    Text_HintIconsPerRow="Determine how many artifact icons can be displayed in one vertical row."
+    Text_HintIconScale="Determine the scale of the artifact icons."
+    Text_HintIconsX="Determine the X position of the artifact icon(s)."
+    Text_HintIconsY="Determine the Y position of the artifact icon(s)."
+    Text_HintExpBarX="Determine the X position of the experience bar."
+    Text_HintExpBarY="Determine the Y position of the experience bar."
 
     WinHeight=0.700000
 }
