@@ -549,8 +549,8 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         instigatedBy.HasUDamage()
     )
     {
-        OriginalDamage /= 2;
-        Damage /= 2;
+        OriginalDamage *= 0.5;
+        Damage *= 0.5;
 
         if(bDamageLog)
         {

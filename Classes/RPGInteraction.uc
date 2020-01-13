@@ -314,9 +314,9 @@ function Color GetHUDTeamTint(HudCDeathmatch HUD)
     local Color Color;
     
     Color = GetHUDTeamColor(HUD);
-    Color.R /= 2;
-    Color.G /= 2;
-    Color.B /= 2;
+    Color.R *= 0.5;
+    Color.G *= 0.5;
+    Color.B *= 0.5;
     Color.A = 100;
     
     return Color;
