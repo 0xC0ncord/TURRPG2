@@ -671,6 +671,19 @@ static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Fl
     }
 }
 
+static final function bool KeyHasBinding(string TestBinding, string Binding)
+{
+    local array<string> Parts;
+    local int i;
+
+    Split(Caps(TestBinding), "|", Parts);
+    Binding = Caps(Binding);
+    for(i = 0; i < Parts.Length; i++)
+        if(Parts[i] == Binding)
+            return true;
+    return false;
+}
+
 static function Color InterpolateColor(Color C1, Color C2, float Fraction)
 {
     local Color Result;

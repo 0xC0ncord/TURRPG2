@@ -122,6 +122,15 @@ struct ArtifactOrderStruct
 };
 var array<ArtifactOrderStruct> ArtifactOrder;
 
+//artifact radial menu (client-side)
+struct RadialMenuArtifactStruct
+{
+    var class<RPGArtifact> ArtifactClass;
+    var string ArtifactID;
+    var bool bShowAlways;
+};
+var array<RadialMenuArtifactStruct> ArtifactRadialMenuOrder;
+
 //rebuild info
 var bool bAllowRebuild;
 var int RebuildCost;
@@ -461,6 +470,7 @@ simulated function ClientSetup()
     local RPGReplicationInfo RRI;
     local class<RPGArtifact> AClass;
     local ArtifactOrderStruct OrderEntry;
+    local RadialMenuArtifactStruct RadialEntry;
 
     if(Controller == None || Controller.PlayerReplicationInfo == None)
         return; //wait
@@ -520,6 +530,18 @@ simulated function ClientSetup()
                     ServerAddArtifactOrderEntry(OrderEntry);
                 }
                 ServerSortArtifacts();
+
+                //load radial menu order from settings
+                for(x = 0; x < Interaction.CharSettings.ArtifactRadialMenuConfig.Length; x++)
+                {
+                    AClass = GetArtifactClass(Interaction.CharSettings.ArtifactRadialMenuConfig[x].ArtifactID);
+
+                    RadialEntry.ArtifactClass = AClass;
+                    RadialEntry.ArtifactID = Interaction.CharSettings.ArtifactRadialMenuConfig[x].ArtifactID;
+                    RadialEntry.bShowAlways = Interaction.CharSettings.ArtifactRadialMenuConfig[x].bShowAlways;
+
+                    ArtifactRadialMenuOrder[ArtifactRadialMenuOrder.Length] = RadialEntry;
+                }
             }
 
             //add all artifacts that were not in the settings to the end

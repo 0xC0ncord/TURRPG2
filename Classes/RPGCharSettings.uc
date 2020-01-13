@@ -11,6 +11,13 @@ struct ArtifactOrderConfigStruct
 };
 var config array<ArtifactOrderConfigStruct> ArtifactOrderConfig;
 
+struct ArtifactRadialMenuConfigStruct
+{
+    var string ArtifactID;
+    var bool bShowAlways;
+};
+var config array<ArtifactRadialMenuConfigStruct> ArtifactRadialMenuConfig;
+
 defaultproperties
 {
 }

@@ -10,6 +10,7 @@ var automated moCheckbox chShowAlways, chNeverShow;
 
 var automated GUIMultiOptionListBox lbGlobalSettings;
 var automated moCheckBox chShowAll;
+var automated moButton btRadialMenu;
 
 var bool bDirty, bOrderChanged;
 var int SelectedOrderEntry;
@@ -19,6 +20,9 @@ var bool bIgnoreNextChange;
 var localized string NotAvailableText, NotAvailableTitle, NotAvailableDesc;
 
 var localized string Text_HintShowAll;
+var localized string Text_HintRadialMenu;
+
+var localized string Text_Open;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -37,10 +41,15 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     lbGlobalSettings.List.bHotTrack = true;
 
     chShowAll = moCheckBox(lbGlobalSettings.List.AddItem("XInterface.moCheckBox",, "Always show all artifacts", true));
+    btRadialMenu = moButton(lbGlobalSettings.List.AddItem("XInterface.moButton",, "Artifact radial menu", true));
 
     chShowAll.ToolTip.SetTip(Text_HintShowAll);
+    btRadialMenu.ToolTip.SetTip(Text_HintShowAll);
 
     SetDefaultComponent(chShowAll);
+    SetDefaultComponent(btRadialMenu);
+
+    btRadialMenu.MyButton.Caption = Text_Open;
 }
 
 function SetDefaultComponent(GUIMenuOption PassedComponent)
@@ -185,6 +194,11 @@ function InternalOnChange(GUIComponent Sender)
             bIgnoreNextChange = false;
             
             bDirty = true;
+            break;
+
+        case btRadialMenu:
+            Controller.OpenMenu("TURRPG2.RPGMenu_ArtifactRadialWindow");
+            RPGMenu_ArtifactRadialWindow(Controller.TopPage()).InitFor(RPGMenu.RPRI);
             break;
     }
 }
@@ -402,19 +416,21 @@ defaultproperties
     End Object
     imIcon=GameCrossHairImage
 
-     Begin Object Class=GUIMultiOptionListBox Name=lbGlobalSettings_
-         bVisibleWhenEmpty=True
-         StyleName="ServerBrowserGrid"
-         WinTop=0.568679
-         WinLeft=0.487776
-         WinWidth=0.480227
-         WinHeight=0.296986
-         bBoundToParent=True
-         bScaleToParent=True
-     End Object
-     lbGlobalSettings=GUIMultiOptionListBox'RPGMenu_Artifacts.lbGlobalSettings_'
+    Begin Object Class=GUIMultiOptionListBox Name=lbGlobalSettings_
+        bVisibleWhenEmpty=True
+        StyleName="ServerBrowserGrid"
+        WinTop=0.568679
+        WinLeft=0.487776
+        WinWidth=0.480227
+        WinHeight=0.296986
+        bBoundToParent=True
+        bScaleToParent=True
+    End Object
+    lbGlobalSettings=GUIMultiOptionListBox'RPGMenu_Artifacts.lbGlobalSettings_'
     
     Text_HintShowAll="Quickly toggles Show always for all artifacts."
+    Text_HintRadialMenu="Edit artifact radial menu settings."
+    Text_Open="Open"
 
     WinHeight=0.700000
 }

@@ -33,6 +33,21 @@ var float ArtifactBorderSize;
 var float ArtifactHighlightIndention;
 var float ArtifactIconInnerScale;
 
+var float ArtifactRadialSize;
+var bool bArtifactRadialActive;
+var int SelectedRadialSlot;
+var float ArtifactRadialInputTime;
+var bool bRadialInputChanged;
+var float RadialInputResetTime;
+var float RadialTimeAccum;
+var bool bRadialEntering, bRadialExiting, bRadialJustChanged;
+var float CalcRadialSize;
+var array<Object> ArtifactRadialItems;
+var array<float> RadialSlotTouchTime;
+
+var float MousePosX, MousePosY;
+var float ResX, ResY;
+
 var string LastWeaponExtra;
 
 var class<RPGArtifact> LastSelectedArtifact;
@@ -48,6 +63,9 @@ var float HintDuration;
 var Color HintColor;
 
 var localized string ArtifactTutorialText;
+
+//Keys
+var array<EInputKey> ArtifactUseKey;
 
 //Artifact selection options
 var RPGArtifact SelectionArtifact;
@@ -124,13 +142,15 @@ function CheckBindings()
         KeyName = ViewportOwner.Actor.ConsoleCommand("KEYNAME" @ Key);
         KeyBinding = ViewportOwner.Actor.ConsoleCommand("KEYBINDING" @ KeyName);
         
-        if(KeyBinding ~= "RPGStatsMenu")
+        if(class'Util'.static.KeyHasBinding(KeyBinding, "RPGStatsMenu"))
             bDefaultBindings = false;
-        else if (KeyBinding ~= "ActivateItem" || KeyBinding ~= "NextItem" || KeyBinding ~= "PrevItem")
+        else if(class'Util'.static.KeyHasBinding(KeyBinding, "ActivateItem"))
+        {
+            ArtifactUseKey[ArtifactUseKey.Length] = Key;
             bDefaultArtifactBindings = false;
-
-        if(!bDefaultBindings && !bDefaultArtifactBindings)
-            break;
+        }
+        else if(class'Util'.static.KeyHasBinding(KeyBinding, "NextItem") || class'Util'.static.KeyHasBinding(KeyBinding, "PrevItem"))
+            bDefaultArtifactBindings = false;
     }
 }
 
@@ -177,8 +197,63 @@ function bool KeyEvent(EInputKey Key, EInputAction Action, float Delta)
 {
     local int n;
 
+    if(Settings.bEnableArtifactRadialMenu)
+    {
+        if(Action == IST_Release && SelectionArtifact == None)
+        {
+            if(ViewportOwner.Actor.Pawn != None && static.HasKey(ArtifactUseKey, Key) || (bDefaultArtifactBindings && Key == IK_U))
+            {
+                if(ArtifactRadialInputTime < ViewportOwner.Actor.Level.TimeSeconds && ArtifactRadialInputTime != 0f)
+                {
+                    if(SelectedRadialSlot > -1 && ArtifactRadialItems.Length > 0)
+                    {
+                        RPGGetArtifact(RPGArtifact(ArtifactRadialItems[SelectedRadialSlot]).ArtifactID);
+                    }
+                    if(bArtifactRadialActive)
+                    {
+                        bRadialEntering = false;
+                        bRadialExiting = true;
+                    }
+                }
+                else if(ArtifactRadialInputTime > ViewportOwner.Actor.Level.TimeSeconds)
+                    ViewportOwner.Actor.ActivateItem();
+
+                ArtifactRadialInputTime = 0f;
+                bRadialInputChanged = true;
+                RadialInputResetTime = ViewportOwner.Actor.Level.TimeSeconds + 0.1f;
+                return true;
+            }
+        }
+        else if(bArtifactRadialActive && !bRadialExiting && (Key == IK_MouseX || Key == IK_MouseY))
+        {
+            if(!ViewportOwner.bWindowsMouseAvailable)
+            {
+                if(Key == IK_MouseX)
+                    MousePosX = FClamp(MousePosX + Delta * (GUIController(ViewportOwner.GUIController).MenuMouseSens) * Settings.ArtifactRadialMenuMouseSens, 0, ResX);
+                else
+                    MousePosY = FClamp(MousePosY - Delta * (GUIController(ViewportOwner.GUIController).MenuMouseSens) * Settings.ArtifactRadialMenuMouseSens, 0, ResY);
+            }
+            else
+            {
+                MousePosX = FClamp(ViewportOwner.WindowsMouseX, 0, ResX);
+                MousePosY = FClamp(ViewportOwner.WindowsMouseY, 0, ResY);
+            }
+            return true;
+        }
+    }
+
     if(Action != IST_Press)
         return false;
+
+    if(Settings.bEnableArtifactRadialMenu && (static.HasKey(ArtifactUseKey, Key) || (bDefaultArtifactBindings && Key == IK_U)) && SelectionArtifact == None)
+    {
+        if(!bRadialInputChanged && ArtifactRadialInputTime == 0f)
+        {
+            ArtifactRadialInputTime = ViewportOwner.Actor.Level.TimeSeconds + 0.3f;
+            RadialSlotTouchTime.Length = 0;
+        }
+        return true;
+    }
     
     if(SelectionArtifact != None)
     {
@@ -242,6 +317,16 @@ function bool KeyEvent(EInputKey Key, EInputAction Action, float Delta)
     }
 
     //Don't care about this event, pass it on for further processing
+    return false;
+}
+
+static final function bool HasKey(array<EInputKey> Keys, EInputKey Key)
+{
+    local int i;
+
+    for(i = 0; i < Keys.Length; i++)
+        if(Key == Keys[i])
+            return true;
     return false;
 }
 
@@ -469,19 +554,136 @@ function UpdateCanvas(Canvas Canvas)
     ArtifactIconSize = ArtifactBorderSize * Settings.IconScale * (Canvas.ClipY / 768.0f);
 }
 
+function Tick(float DeltaTime)
+{
+    local int i;
+    local int TrySelectedRadialSlot;
+
+    if(!Settings.bEnableArtifactRadialMenu)
+        return;
+
+    if(bArtifactRadialActive)
+    {
+        if(!bRadialExiting)
+        {
+            //test to see if we have this artifact. don't selected it if we don't
+            TrySelectedRadialSlot = GetArtifactRadialSelection(MousePosX - (ResX * 0.5), MousePosY - (ResY * 0.5), ArtifactRadialItems.Length);
+            if(TrySelectedRadialSlot > -1 && RPGArtifact(ArtifactRadialItems[TrySelectedRadialSlot]) != None)
+                SelectedRadialSlot = TrySelectedRadialSlot;
+        }
+    }
+
+    if(bRadialInputChanged && RadialInputResetTime < ViewportOwner.Actor.Level.TimeSeconds && RadialInputResetTime != 0f)
+    {
+        bRadialInputChanged = false;
+        RadialInputResetTime = 0f;
+    }
+
+    if(!bArtifactRadialActive && ArtifactRadialInputTime < ViewportOwner.Actor.Level.TimeSeconds && ArtifactRadialInputTime != 0f)
+    {
+        bRadialJustChanged = true;
+        MousePosX = ResX * 0.5;
+        MousePosY = ResY * 0.5;
+        SelectedRadialSlot = -1;
+        RadialSlotTouchTime.Length = 0;
+    }
+
+    if(!bArtifactRadialActive && !bRadialJustChanged)
+        return;
+
+    if(bRadialEntering || bRadialJustChanged)
+    {
+        if(bRadialJustChanged)
+        {
+            bArtifactRadialActive = true;
+            bRadialJustChanged = false;
+            bRadialEntering = true;
+        }
+
+        RadialTimeAccum = FMin(RadialTimeAccum + DeltaTime * 1.5 * Settings.ArtifactRadialMenuAnimSpeed, 1f);
+        if(RadialTimeAccum >= 1f)
+            bRadialEntering = false;
+    }
+    else if(bRadialExiting)
+    {
+        RadialTimeAccum = FMax(RadialTimeAccum - DeltaTime * 1.5 * Settings.ArtifactRadialMenuAnimSpeed, 0f);
+        if(RadialTimeAccum <= 0f)
+        {
+            bRadialExiting = false;
+            bArtifactRadialActive = false;
+        }
+    }
+
+    if(bArtifactRadialActive)
+    {
+        CalcRadialSize = ArtifactRadialSize * (ResX / 1920) * RadialTimeAccum;
+
+        for(i = 0; i < RadialSlotTouchTime.Length; i++)
+        {
+            if(i == SelectedRadialSlot && !bRadialExiting)
+                RadialSlotTouchTime[i] = FMin(RadialSlotTouchTime[i] + DeltaTime * 10, 1f);
+            else if(RadialSlotTouchTime[i] > 0)
+                RadialSlotTouchTime[i] = FMax(RadialSlotTouchTime[i] - DeltaTime * 10, 0f);
+        }
+    }
+    else
+        CalcRadialSize = 0;
+}
+
+static final function Vec2 GetArtifactRadialPosition(int Slot, int NumArtifacts, float RadialSize, float Time)
+{
+    local Vec2 Pos;
+
+//  no animation
+//  Pos.X = RadialSize * sin((2 * pi * Slot * Time) / NumArtifacts);
+//  Pos.Y = -1 * RadialSize * cos((2 * pi * Slot * Time) / NumArtifacts);
+
+//  lerp from top artifact
+//  Pos.X = RadialSize * sin((2 * pi * Slot) / (NumArtifacts * Time));
+//  Pos.Y = -1 * RadialSize * cos((2 * pi * Slot) / (NumArtifacts * Time));
+
+//  span
+//  sqrt(ArtifactRadialSize ^ 2 - (RadialTimeAccum - 1) ^ 2)
+
+    Pos.X = RadialSize * sin(((2 * pi / Clamp(NumArtifacts, 1, 4)) * (Time - 1))  + (2 * pi * Slot) / NumArtifacts);
+    Pos.Y = -1 * RadialSize * cos(((2 * pi / Clamp(NumArtifacts, 1, 4)) * (Time - 1))  + (2 * pi * Slot) / NumArtifacts);
+
+    return Pos;
+}
+
+static final function int GetArtifactRadialSelection(float MouseX, float MouseY, int NumArtifacts)
+{
+    local int s;
+
+    if(MouseX == 0 && MouseY == 0)
+        return -1;
+
+    s = int(Ceil(((atan(MouseX, MouseY * -1) * NumArtifacts + pi) / (2 * pi)) - 1));
+    if(s < 0)
+        s = NumArtifacts + s;
+    return s;
+}
+
 function PostRender(Canvas Canvas)
 {
     local float XL, YL, X, Y, CurrentX, CurrentY, Size, SizeX, Fade, MaxWidth, MaxOptionWidth;
     local int i, n, Row, Cost, CurrentOption;
     local string Text;
+    local Vec2 RadialArtifactPos;
     
     local array<class<RPGArtifact> > Artifacts;
     local class<RPGArtifact> AClass;
     local RPGArtifact A;
     local RPGWeaponModifier WM;
     local Pawn P;
+    local Material Material;
     
     local HudCDeathmatch HUD;
+
+    if(ResX != Canvas.ClipX)
+        ResX = Canvas.ClipX;
+    if(ResY != Canvas.ClipY)
+        ResY = Canvas.ClipY;
     
     if(ViewportOwner == None || ViewportOwner.Actor == None)
         return;
@@ -525,6 +727,65 @@ function PostRender(Canvas Canvas)
     Canvas.TextSize(LevelText @ RPRI.RPGLevel, XL, YL);
     
     Canvas.Style = 5; //STY_Alpha
+
+    //Draw artifact radial menu
+    if(bArtifactRadialActive)
+    {
+        Canvas.DrawColor = GetHUDTeamColor(HudCDeathmatch(ViewportOwner.Actor.myHUD));
+        Canvas.DrawColor.A = 128;
+        Canvas.SetPos((Canvas.ClipX * 0.5) - CalcRadialSize, (Canvas.ClipY * 0.5) - CalcRadialSize);
+        Canvas.DrawTile(TexRotator'ArtifactRadial1Rot', CalcRadialSize * 2, CalcRadialSize * 2, 0, 0, 256, 256);
+        Canvas.SetPos((Canvas.ClipX * 0.5) - CalcRadialSize, (Canvas.ClipY * 0.5) - CalcRadialSize);
+        Canvas.DrawTile(TexRotator'ArtifactRadial2Rot', CalcRadialSize * 2, CalcRadialSize * 2, 0, 0, 256, 256);
+
+        Canvas.DrawColor = WhiteColor;
+
+        //TODO: optimize this. completely unnecessary to do loops this big in rendering code
+        ArtifactRadialItems.Length = 0;
+        for(i = 0; i < RPRI.ArtifactRadialMenuOrder.Length; i++)
+        {
+            A = RPGArtifact(P.FindInventoryType(RPRI.ArtifactRadialMenuOrder[i].ArtifactClass));
+            if(A != None)
+                ArtifactRadialItems[ArtifactRadialItems.Length] = A;
+            else if(RPRI.ArtifactRadialMenuOrder[i].bShowAlways)
+                ArtifactRadialItems[ArtifactRadialItems.Length] = RPRI.ArtifactRadialMenuOrder[i].ArtifactClass;
+        }
+        RadialSlotTouchTime.Length = ArtifactRadialItems.Length;
+
+        for(i = 0; i < ArtifactRadialItems.Length; i++)
+        {
+            RadialArtifactPos = GetArtifactRadialPosition(i, ArtifactRadialItems.Length, CalcRadialSize * 0.9, RadialTimeAccum);
+
+            if(RadialSlotTouchTime[i] > 0)
+            {
+                Canvas.DrawColor = WhiteColor;
+                Canvas.DrawColor.A = 200;
+                Canvas.SetPos(Canvas.ClipX * 0.5 + RadialArtifactPos.X - (64 * RadialSlotTouchTime[i]) * (ResX / 1920), Canvas.ClipY * 0.5 + (RadialArtifactPos.Y) - (64 * RadialSlotTouchTime[i]) * (ResX / 1920));
+                Canvas.DrawTile(Texture'GlowCircle', 128 * RadialSlotTouchTime[i] * (ResX / 1920), 128 * RadialSlotTouchTime[i] * (ResX / 1920), 0, 0, 64, 64);
+            }
+
+            Canvas.SetPos(Canvas.ClipX * 0.5 + RadialArtifactPos.X - (32 * RadialTimeAccum) * (ResX / 1920), Canvas.ClipY * 0.5 + RadialArtifactPos.Y - (32 * RadialTimeAccum) * (ResX / 1920));
+            if(RPGArtifact(ArtifactRadialItems[i]) != None)
+            {
+                Canvas.DrawColor = WhiteColor;
+                Material = RPGArtifact(ArtifactRadialItems[i]).IconMaterial;
+            }
+            else
+            {
+                Canvas.DrawColor = DisabledOverlay;
+                Material = class<RPGArtifact>(ArtifactRadialItems[i]).default.IconMaterial;
+            }
+            Canvas.DrawTile(Material, 64 * RadialTimeAccum * (ResX / 1920), 64 * RadialTimeAccum * (ResX / 1920), 0, 0, Material.MaterialUSize(), Material.MaterialVSize());
+        }
+
+        if(!bRadialExiting)
+        {
+            // Draw mouse pointer.
+            Canvas.DrawColor = WhiteColor;
+            Canvas.SetPos(MousePosX, MousePosY);
+            Canvas.DrawIcon(Texture'Pointer', 1);
+        }
+    }
     
     //Draw exp bar
     if(!Settings.bHideExpBar)
@@ -1291,6 +1552,7 @@ defaultproperties
     DisabledOverlay=(R=0,G=0,B=0,A=150)
     LevelText="Level:"
     bVisible=True
+    bRequiresTick=True
     ArtifactTutorialText="You have collected a magic artifact!|Press $1 to use it or press $2 and $3 to browse|if you have multiple artifacts."
     ArtifactMoreOptionsText="See more options..."
     ArtifactNAText="N/A"
@@ -1299,6 +1561,8 @@ defaultproperties
     ArtifactBorderMaterialRect=(X=0,Y=39,W=95,H=54)
     ArtifactIconInnerScale=0.67
     ArtifactHighlightIndention=0.15
+    ArtifactRadialSize=250
+    SelectedRadialSlot=-1
     //
     SAOFontArrayNames(0)="FontSAO37"
     SAOFontArrayNames(1)="FontSAO29"

@@ -8,6 +8,9 @@ var config bool bClassicArtifactSelection;
 var config int IconsPerRow;
 var config float IconScale, IconsX, IconsY, IconClassicY, ExpBarX, ExpBarY;
 var config float ExpGainDuration;
+var config bool bEnableArtifactRadialMenu;
+var config float ArtifactRadialMenuAnimSpeed;
+var config float ArtifactRadialMenuMouseSens;
 
 var config array<string> MyBuilds;
 
@@ -31,4 +34,6 @@ defaultproperties
     IconsY=0.20
     IconClassicY=0.666667
     bClassicArtifactSelection=False
+    ArtifactRadialMenuAnimSpeed=2.000000
+    ArtifactRadialMenuMouseSens=1.750000
 }
