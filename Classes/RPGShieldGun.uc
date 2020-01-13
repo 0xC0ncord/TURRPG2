@@ -58,8 +58,8 @@ function AdjustPlayerDamage( out int Damage, Pawn InstigatedBy, Vector HitLocati
             }
             else
             {
-                ConsumeAmmo(1,Drain/2);
-                DoReflectEffect(Drain/2);
+                ConsumeAmmo(1,Drain*0.5);
+                DoReflectEffect(Drain*0.5);
             }
         }
         

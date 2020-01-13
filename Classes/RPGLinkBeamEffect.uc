@@ -149,7 +149,7 @@ simulated event Tick(float dt)
             Child[c].SetRotation( Rotation );
             Child[c].mSpawnVecA     = mSpawnVecA;
             Child[c].mWaveShift     = mWaveShift*0.6;
-            Child[c].mWaveAmplitude = n*4.0 + mWaveAmplitude*((16.0-n*4.0)/16.0);
+            Child[c].mWaveAmplitude = n*4.0 + mWaveAmplitude*((16.0-n*4.0)*0.0625); // /16
             Child[c].mWaveLockEnd   = (LinkColor > 0); //mWaveLockEnd;
             Child[c].Skins[0]       = Skins[0];
         }

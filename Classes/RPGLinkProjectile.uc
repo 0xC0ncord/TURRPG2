@@ -71,7 +71,7 @@ simulated event PostNetBeginPlay()
             {
                 dist = VSize(Location - Instigator.Location);
                 if ( dist < 100 )
-                    Trail.Delay(0.1 - dist/1000);
+                    Trail.Delay(0.1 - dist*0.001);
             }
         }
 
