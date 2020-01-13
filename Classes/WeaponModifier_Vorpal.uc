@@ -2,22 +2,6 @@ class WeaponModifier_Vorpal extends RPGWeaponModifier;
 
 var localized string VorpalText;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveVorpalConfig;
-}
-
-function SendConfig() {
-    Super.SendConfig();
-    ClientReceiveVorpalConfig(MinModifier);
-}
-
-simulated function ClientReceiveVorpalConfig(int a) {
-    if(Role < ROLE_Authority) {
-        MinModifier = a;
-    }
-}
-
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType) {
     local RPGEffect Vorpal;
 

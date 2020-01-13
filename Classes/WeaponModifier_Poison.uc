@@ -15,23 +15,6 @@ var config float PercDrainPerLevel;
 
 var config int MinHealth; //cannot drain below this
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceivePoisonConfig;
-}
-
-function SendConfig() {
-    Super.SendConfig();
-    ClientReceivePoisonConfig(PoisonMode, AbsDrainPerLevel);
-}
-
-simulated function ClientReceivePoisonConfig(int a, int b) {
-    if(Role < ROLE_Authority) {
-        PoisonMode = a;
-        AbsDrainPerLevel = b;
-    }
-}
-
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     local Effect_Poison Poison;

@@ -5,23 +5,6 @@ var config int MinimumHealth;
 
 var localized string RageText;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveRageConfig;
-}
-
-function SendConfig() {
-    Super.SendConfig();
-    ClientReceiveRageConfig(DamageReturn, MinimumHealth);
-}
-
-simulated function ClientReceiveRageConfig(float a, int b) {
-    if(Role < ROLE_Authority) {
-        DamageReturn = a;
-        MinimumHealth = b;
-    }
-}
-
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     local int localDamage;

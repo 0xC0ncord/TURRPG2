@@ -4,23 +4,6 @@ var config float FreezeMax, FreezeDuration;
 
 var localized string FreezeText;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveFreezeConfig;
-}
-
-function SendConfig() {
-    Super.SendConfig();
-    ClientReceiveFreezeConfig(FreezeMax, FreezeDuration);
-}
-
-simulated function ClientReceiveFreezeConfig(float a, float b) {
-    if(Role < ROLE_Authority) {
-        FreezeMax = a;
-        FreezeDuration = b;
-    }
-}
-
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     local RPGEffect Effect;

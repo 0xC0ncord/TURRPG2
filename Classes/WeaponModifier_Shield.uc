@@ -6,22 +6,6 @@ var localized string ShieldText;
 
 var float RegenTime;
 
-replication {
-    reliable if(Role == ROLE_Authority)
-        ClientReceiveShieldConfig;
-}
-
-function SendConfig() {
-    Super.SendConfig();
-    ClientReceiveShieldConfig(RegenInterval);
-}
-
-simulated function ClientReceiveShieldConfig(float a) {
-    if(Role < ROLE_Authority) {
-        RegenInterval = a;
-    }
-}
-
 function RestartRegenTimer() {
     RegenTime = Level.TimeSeconds + RegenInterval;
 }

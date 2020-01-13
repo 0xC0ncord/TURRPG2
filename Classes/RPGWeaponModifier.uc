@@ -55,7 +55,7 @@ replication{
         Modifier, bIdentified;
     
     reliable if(Role == ROLE_Authority)
-        ClientReceiveBaseConfig, ClientSetFirstPersonOverlay, ClientSetActive, ClientRestore;
+        ClientSetFirstPersonOverlay, ClientSetActive, ClientRestore;
 }
 
 static function bool AllowedFor(class<Weapon> WeaponType, optional Pawn Other) {
@@ -200,14 +200,6 @@ simulated event PostBeginPlay() {
     }
 }
 
-simulated event PostNetBeginPlay() {
-    Super.PostNetBeginPlay();
-    
-    if(Role == ROLE_Authority) {
-        SendConfig();
-    }
-}
-
 function SetWeapon(Weapon W) {
     Weapon = W;
     Instigator = W.Instigator;
@@ -241,17 +233,6 @@ function SetModifier(int x, optional bool bIdentify) {
     
     if(bWasActive) {
         SetActive(true);
-    }
-}
-
-function SendConfig() {
-    ClientReceiveBaseConfig(DamageBonus, BonusPerLevel);
-}
-
-simulated function ClientReceiveBaseConfig(float xDamageBonus, float xBonusPerLevel) {
-    if(Role < ROLE_Authority) {
-        DamageBonus = xDamageBonus;
-        BonusPerLevel = xBonusPerLevel;
     }
 }
 
