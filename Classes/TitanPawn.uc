@@ -63,13 +63,13 @@ function DoCombo( class<Combo> ComboClass )
 
             // Record stats for using the combo
             UnrealMPGameInfo(Level.Game).SpecialEvent(PlayerReplicationInfo, string(CurrentCombo.Class));
-            if (ClassIsChildOf(ComboClass, class'ComboSpeed'))
+            if (ClassIsChildOf(ComboClass, class'ComboSpeed') || ClassIsChildOf(ComboClass, class'RPGComboSpeed'))
                 i = 0;
-            else if (ClassIsChildOf(ComboClass, class'ComboBerserk'))
+            else if (ClassIsChildOf(ComboClass, class'ComboBerserk') || ClassIsChildOf(ComboClass, class'RPGComboBerserk'))
                 i = 1;
-            else if (ClassIsChildOf(ComboClass, class'ComboDefensive'))
+            else if (ClassIsChildOf(ComboClass, class'ComboDefensive') || ClassIsChildOf(ComboClass, class'RPGComboDefensive'))
                 i = 2;
-            else if (ClassIsChildOf(ComboClass, class'ComboInvis'))
+            else if (ClassIsChildOf(ComboClass, class'ComboInvis') || ClassIsChildOf(ComboClass, class'RPGComboInvis'))
                 i = 3;
             else
                 i = 4;
