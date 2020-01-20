@@ -1,5 +1,7 @@
 class Effect_NullEntropy extends RPGEffect;
 
+var EPhysics OriginalPhysics;
+
 replication
 {
     unreliable if(Role == ROLE_Authority)
@@ -21,7 +23,10 @@ state Activated
     {
         Super.BeginState();
         
+        OriginalPhysics = Instigator.Physics;
         Instigator.SetPhysics(PHYS_None);
+        if(PlayerController(Instigator.Controller) != None)
+            Instigator.Controller.GotoState('PlayerWalking');
     }
 
     event Tick(float dt)
@@ -44,7 +49,11 @@ state Activated
     function EndState()
     {
         if(Instigator != None && Instigator.Physics == PHYS_None)
-            Instigator.SetPhysics(PHYS_Falling);
+        {
+            Instigator.SetPhysics(OriginalPhysics);
+            if(PlayerController(Instigator.Controller) != None && OriginalPhysics == PHYS_Flying)
+                Instigator.Controller.GotoState('PlayerFlying');
+        }
         
         Super.EndState();
     }
