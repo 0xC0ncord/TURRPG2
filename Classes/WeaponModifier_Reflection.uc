@@ -114,6 +114,17 @@ simulated function BuildDescription()
     AddToDescription(Repl(ReflectionText, "$1", class'Util'.static.FormatPercent(BaseChance + float(Modifier) * BonusPerLevel)));
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, Repl(default.ReflectionText, "$1", class'Util'.static.FormatPercent(default.BaseChance + float(Modifier) * default.BonusPerLevel)));
+
+    return Description;
+}
+
 defaultproperties
 {
     ReflectionText="$1 reflection chance"

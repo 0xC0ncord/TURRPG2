@@ -12,6 +12,16 @@ simulated function BuildDescription()
     AddToDescription(class'WeaponModifier_Sturdy'.default.SturdyText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, class'WeaponModifier_Sturdy'.default.SturdyText);
+
+    return Description;
+}
+
 defaultproperties
 {
     DamageBonus=0.075

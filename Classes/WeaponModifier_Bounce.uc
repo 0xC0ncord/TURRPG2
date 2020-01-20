@@ -137,6 +137,16 @@ simulated function BuildDescription()
     AddToDescription(BouncyText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.BouncyText);
+
+    return Description;
+}
+
 defaultproperties
 {
     BouncyText="bouncy projectiles"

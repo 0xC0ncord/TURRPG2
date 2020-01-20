@@ -32,6 +32,18 @@ simulated function BuildDescription() {
     AddToDescription(ProtectionText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.DRText, default.BonusPerLevel);
+    StaticAddToDescription(Description, Modifier, default.ProtectionText);
+
+    return Description;
+}
+
 defaultproperties
 {
     DRText="$1 dmg reduction"

@@ -21,6 +21,16 @@ simulated function BuildDescription()
     AddToDescription(LCText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.LCText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     LCText="$1 lightning dmg reduction"

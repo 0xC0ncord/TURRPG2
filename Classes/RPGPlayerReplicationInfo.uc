@@ -1,6 +1,7 @@
 //If you were looking for RPGStatsInv, this replaces it. ~pd
 class RPGPlayerReplicationInfo extends LinkedReplicationInfo
     DependsOn(RPGAbility)
+    DependsOn(RPGCharSettings)
     config(TURRPG2);
 
 //server
@@ -28,16 +29,11 @@ struct ArtifactCooldown
 var array<ArtifactCooldown> SavedCooldown;
 
 //Favorite Weapons
-struct FavoriteWeapon
-{
-    var class<Weapon> WeaponClass;
-    var class<RPGWeaponModifier> ModifierClass;
-};
-var array<FavoriteWeapon> FavoriteWeapons;
+var array<RPGCharSettings.FavoriteWeaponStruct> FavoriteWeapons;
 
 //Weapon and Artifact Restoration
 var class<Powerups> LastSelectedPowerupType;
-var FavoriteWeapon LastSelectedWeapon;
+var RPGCharSettings.FavoriteWeaponStruct LastSelectedWeapon;
 
 var Weapon SwitchToWeapon; //client
 
@@ -182,8 +178,7 @@ replication
         ServerSwitchBuild, ServerResetData, ServerRebuildData,
         ServerClearArtifactOrder, ServerAddArtifactOrderEntry, ServerSortArtifacts,
         ServerGetArtifact, ServerActivateArtifact, //moved from TitanPlayerController for better compatibility
-        ServerDestroyTurrets, ServerKillMonsters,
-        ServerFavoriteWeapon;
+        ServerDestroyTurrets, ServerKillMonsters;
 }
 
 static function RPGPlayerReplicationInfo CreateFor(Controller C)
@@ -542,6 +537,9 @@ simulated function ClientSetup()
 
                     ArtifactRadialMenuOrder[ArtifactRadialMenuOrder.Length] = RadialEntry;
                 }
+
+                //load weapon favorites from settings
+                FavoriteWeapons = Interaction.CharSettings.FavoriteWeaponsConfig;
             }
 
             //add all artifacts that were not in the settings to the end
@@ -1656,66 +1654,39 @@ simulated function ClientCloseSelection()
         Interaction.CloseSelection();
 }
 
-function AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
+function bool AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
 {
-    local FavoriteWeapon FW;
+    local RPGCharSettings.FavoriteWeaponStruct FW;
     local int i;
     
     for(i = 0; i < FavoriteWeapons.Length; i++) {
-        if(FavoriteWeapons[i].WeaponClass == WeaponClass) {
-            FavoriteWeapons[i].ModifierClass = ModifierClass;
-            return;
+        if(FavoriteWeapons[i].WeaponClass == WeaponClass && FavoriteWeapons[i].ModifierClass == ModifierClass) {
+            return false;
         }
     }
     
     FW.WeaponClass = WeaponClass;
     FW.ModifierClass = ModifierClass;
+
     FavoriteWeapons[FavoriteWeapons.Length] = FW;
+    Interaction.CharSettings.FavoriteWeaponsConfig[Interaction.CharSettings.FavoriteWeaponsConfig.Length] = FW;
+
+    return true;
 }
 
-function RemoveFavorite(class<Weapon> WeaponClass)
+function bool RemoveFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
 {
     local int i;
     
     for(i = 0; i < FavoriteWeapons.Length; i++) {
-        if(FavoriteWeapons[i].WeaponClass == WeaponClass) {
+        if(FavoriteWeapons[i].WeaponClass == WeaponClass && FavoriteWeapons[i].ModifierClass == ModifierClass) {
             FavoriteWeapons.Remove(i, 1);
-            return;
+            Interaction.CharSettings.FavoriteWeaponsConfig.Remove(i, 1);
+            return true;
         }
     }
-}
 
-function ServerFavoriteWeapon()
-{
-    local RPGWeaponModifier WM;
-    
-    if(Controller == None || Controller.Pawn == None)
-        return;
-    
-    WM = class'RPGWeaponModifier'.static.GetFor(Controller.Pawn.Weapon);
-    if(WM != None)
-    {
-        /*
-        if(RW.bFavorite)
-        {
-            if(Controller.IsA('PlayerController'))
-                PlayerController(Controller).ClientMessage(
-                    "Removed favorite:" @ RW.ModifiedWeapon.class @ "/" @ RW.class);
-            RemoveFavorite(WM.Weapon.class);
-            TODO RW.bFavorite = false;
-        }
-        else
-        {
-            if(Controller.IsA('PlayerController'))
-                PlayerController(Controller).ClientMessage(
-                    "Added favorite:" @ RW.ModifiedWeapon.class @ "/" @ RW.class);
-
-            AddFavorite(WM.Weapon.class, WM.class);
-            TODO RW.bFavorite = true;
-        }
-        */
-        //TODO rewrite
-    }
+    return false;
 }
 
 //grant queued weapons
@@ -1863,7 +1834,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
 }
 
 //Find out whether a Weapon/Modifier combination is a favorite
-function bool IsFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
+simulated function bool IsFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass, optional bool bWeaponOnly)
 {
     local int i;
     
@@ -1871,13 +1842,18 @@ function bool IsFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> Mod
     {
         if(
             WeaponClass == FavoriteWeapons[i].WeaponClass &&
-            ModifierClass == FavoriteWeapons[i].ModifierClass
+            (bWeaponOnly || ModifierClass == FavoriteWeapons[i].ModifierClass)
         )
         {
             return true;
         }
     }
     return false;
+}
+
+simulated function NotifyFavorite(RPGWeaponModifier WeaponModifier)
+{
+    PlayerController(Controller).ReceiveLocalizedMessage(class'LocalMessage_FavoriteWeapon',,,, WeaponModifier);
 }
 
 simulated function ProcessProjectileMods() {

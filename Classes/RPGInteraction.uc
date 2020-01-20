@@ -1480,8 +1480,22 @@ exec function KillTurrets()
 
 exec function RPGFavoriteWeapon()
 {
-    if(RPRI != None)
-        RPRI.ServerFavoriteWeapon();
+    local RPGWeaponModifier Modifier;
+    local bool bIsFavorite;
+
+    if(ViewportOwner.Actor.Pawn == None && ViewportOwner.Actor.Pawn.Weapon == None || RPRI == None)
+        return;
+
+    Modifier = class'RPGWeaponModifier'.static.GetFor(ViewportOwner.Actor.Pawn.Weapon, true);
+
+    if(Modifier != None)
+    {
+        bIsFavorite = RPRI.IsFavorite(Modifier.Weapon.Class, Modifier.Class);
+        if(!bIsFavorite)
+            RPRI.AddFavorite(ViewportOwner.Actor.Pawn.Weapon.Class, Modifier.Class);
+        else
+            RPRI.RemoveFavorite(ViewportOwner.Actor.Pawn.Weapon.Class, Modifier.Class);
+    }
 }
 
 event NotifyLevelChange()

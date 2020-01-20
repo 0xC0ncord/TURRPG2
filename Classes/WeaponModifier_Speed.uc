@@ -29,6 +29,17 @@ simulated function BuildDescription()
     AddToDescription(SpeedText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.SpeedText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     SpeedText="$1 movement speed"

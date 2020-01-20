@@ -40,7 +40,8 @@ defaultproperties
 {
     Panels(0)=(ClassName="RPGMenu_Settings",Caption="HUD",Hint="Customize TURRPG HUD features.")
     Panels(1)=(ClassName="RPGMenu_Artifacts",Caption="Artifacts",Hint="Customize the order of artifacts.")
-    Panels(2)=(ClassName="RPGMenu_ControlBinderFakeTab",Caption="Keys",Hint="Change RPG related key bindings.")
+    Panels(2)=(ClassName="RPGMenu_Weapons",Caption="Weapons",Hint="Browse and configure favorited weapons.")
+    Panels(3)=(ClassName="RPGMenu_ControlBinderFakeTab",Caption="Keys",Hint="Change RPG related key bindings.")
 
     Begin Object Class=GUITabControl Name=RPGMenuTC
         WinWidth=1.0

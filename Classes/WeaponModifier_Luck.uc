@@ -142,6 +142,19 @@ simulated function BuildDescription()
     }
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    if(Modifier >= 0)
+        StaticAddToDescription(Description, Modifier, default.LuckText);
+    else
+        StaticAddToDescription(Description, Modifier, default.MisfortuneText);
+
+    return Description;
+}
+
 defaultproperties {
     LuckText="spawns pickups nearby"
     MisfortuneText="destroys nearby pickups"

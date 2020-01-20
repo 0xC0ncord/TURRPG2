@@ -28,6 +28,17 @@ simulated function BuildDescription() {
     AddToDescription(class'WeaponModifier_Infinity'.default.InfAmmoText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, class'WeaponModifier_Infinity'.default.InfAmmoText);
+
+    return Description;
+}
+
 defaultproperties {
     HealText="$1 healing"
     bOmitModifierInName=True

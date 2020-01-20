@@ -671,6 +671,15 @@ static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Fl
     }
 }
 
+static final function string Trim(string S)
+{
+    while (Left(S, 1) == " " || Left(S, 1) == "  ")
+        S = Mid(S, 1);
+    while (Right(S, 1) == " " || Right(S, 1) == "  ")
+        S = Left(S, Len(S) - 1);
+    return S;
+}
+
 static final function bool KeyHasBinding(string TestBinding, string Binding)
 {
     local array<string> Parts;

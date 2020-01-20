@@ -18,6 +18,17 @@ simulated function BuildDescription() {
     AddToDescription(MagicNullText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.MagicNullText);
+
+    return Description;
+}
+
 defaultproperties {
     MagicNullText="nullifies harmful effects"
     bCanHaveZeroModifier=True

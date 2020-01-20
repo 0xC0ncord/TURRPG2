@@ -52,6 +52,16 @@ simulated function BuildDescription()
     AddToDescription(KnockbackText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.KnockbackText);
+
+    return Description;
+}
+
 defaultproperties
 {
     DamageBonus=0.04

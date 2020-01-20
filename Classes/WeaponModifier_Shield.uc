@@ -42,6 +42,17 @@ simulated function BuildDescription()
         "$2", class'Util'.static.FormatFloat(RegenInterval)));
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, Repl(Repl(default.ShieldText, "$1", int(default.BonusPerLevel) * Modifier), "$2", class'Util'.static.FormatFloat(default.RegenInterval)));
+
+    return Description;
+}
+
 defaultproperties
 {
     ShieldText="$1 shield every $2s out of combat"

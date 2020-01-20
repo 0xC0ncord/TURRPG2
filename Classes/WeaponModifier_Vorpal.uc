@@ -24,6 +24,17 @@ simulated function BuildDescription() {
         class'Util'.static.FormatPercent(0.01f * float(Modifier + 1 - MinModifier))));
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, Repl(default.VorpalText, "$1", class'Util'.static.FormatPercent(0.01f * float(Modifier + 1 - default.MinModifier))));
+
+    return Description;
+}
+
 defaultproperties
 {
     VorpalText="$1 instant kill chance"

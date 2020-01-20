@@ -32,6 +32,17 @@ simulated function BuildDescription()
     AddToDescription(Repl(RageText, "$2", MinimumHealth), DamageReturn);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, Repl(default.RageText, "$2", default.MinimumHealth), default.DamageReturn);
+
+    return Description;
+}
+
 defaultproperties
 {
     RageText="$1 self-damage down to $2"

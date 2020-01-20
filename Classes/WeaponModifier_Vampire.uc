@@ -46,6 +46,20 @@ simulated function BuildDescription() {
     }
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    if(Modifier >= 0)
+        StaticAddToDescription(Description, Modifier, default.VampireText, default.BonusPerLevel);
+    else
+        StaticAddToDescription(Description, Modifier, default.MasochismText, -default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     VampireText="$1 self-healing for dmg"

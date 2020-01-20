@@ -14,6 +14,17 @@ simulated function BuildDescription()
     AddToDescription(SturdyText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.SturdyText);
+
+    return Description;
+}
+
 defaultproperties
 {
     SturdyText="sturdiness"

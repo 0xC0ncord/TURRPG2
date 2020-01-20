@@ -19,6 +19,16 @@ simulated function BuildDescription()
     AddToDescription(InfAmmoText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.InfAmmoText);
+
+    return Description;
+}
+
 defaultproperties
 {
     bAllowForSpecials=False

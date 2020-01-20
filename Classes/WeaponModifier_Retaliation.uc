@@ -39,6 +39,17 @@ simulated function BuildDescription()
     AddToDescription(RetalText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.RetalText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     RetalText="$1 dmg return"

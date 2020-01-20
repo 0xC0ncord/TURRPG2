@@ -31,6 +31,17 @@ simulated function BuildDescription()
     AddToDescription(Repl(NullEntropyText, "$1", class'Util'.static.FormatFloat(BonusPerLevel * Modifier)));
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, Repl(default.NullEntropyText, "$1", class'Util'.static.FormatFloat(default.BonusPerLevel * Modifier)));
+
+    return Description;
+}
+
 defaultproperties
 {
     BonusPerLevel=0.333333

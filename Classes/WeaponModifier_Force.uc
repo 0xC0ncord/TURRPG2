@@ -50,6 +50,16 @@ simulated function BuildDescription()
     AddToDescription(ProjSpeedText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.ProjSpeedText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     DamageBonus=0.040000

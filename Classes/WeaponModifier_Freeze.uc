@@ -32,6 +32,16 @@ simulated function BuildDescription()
     AddToDescription(FreezeText, FMin(BonusPerLevel, FreezeMax / float(Modifier)));
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.FreezeText, FMin(default.BonusPerLevel, default.FreezeMax / float(Modifier)));
+
+    return Description;
+}
+
 defaultproperties
 {
     BonusPerLevel=0.15

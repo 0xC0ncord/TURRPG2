@@ -18,6 +18,13 @@ struct ArtifactRadialMenuConfigStruct
 };
 var config array<ArtifactRadialMenuConfigStruct> ArtifactRadialMenuConfig;
 
+struct FavoriteWeaponStruct
+{
+    var class<Weapon> WeaponClass;
+    var class<RPGWeaponModifier> ModifierClass;
+};
+var config array<FavoriteWeaponStruct> FavoriteWeaponsConfig;
+
 defaultproperties
 {
 }

@@ -41,6 +41,17 @@ simulated function BuildDescription()
     AddToDescription(FallDamageText, MaxFallSpeedBonus);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.FeatherText, default.BonusPerLevel);
+    StaticAddToDescription(Description, Modifier, default.FallDamageText, default.MaxFallSpeedBonus);
+
+    return Description;
+}
+
 defaultproperties
 {
     FeatherText="$1 jump height"

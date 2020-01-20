@@ -73,6 +73,16 @@ simulated function BuildDescription() {
     AddToDescription(HealText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.HealText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties {
     HealText="$1 healing"
     BonusPerLevel=0.05

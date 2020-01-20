@@ -46,6 +46,19 @@ simulated function BuildDescription()
     }
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.PoisonText);
+    if(EPoisonMode(default.PoisonMode) == PM_Absolute)
+        StaticAddToDescription(Description, Modifier, Repl(default.PoisonAbsText, "$1", Modifier * default.AbsDrainPerLevel));
+
+    return Description;
+}
+
 defaultproperties
 {
     PoisonText="poisons targets"

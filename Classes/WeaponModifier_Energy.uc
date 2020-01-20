@@ -49,6 +49,19 @@ simulated function BuildDescription()
     }
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    if(Modifier > 0)
+        StaticAddToDescription(Description, Modifier, default.AdrenBonusText, default.BonusPerLevel);
+    else
+        StaticAddToDescription(Description, Modifier, default.AdrenLossText, -default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     DamageBonus=0.040000

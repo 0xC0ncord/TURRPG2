@@ -50,6 +50,17 @@ simulated function BuildDescription()
     AddToDescription(SpamText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.SpamText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     SpamText="$1 fire rate"

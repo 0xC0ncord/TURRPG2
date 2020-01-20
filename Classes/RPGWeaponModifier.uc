@@ -320,6 +320,15 @@ simulated function ClientIdentify() {
             bResetPendingWeapon = true;
         }
     }
+
+    //notify the player if this is a favorite
+    if(Level.NetMode != NM_DedicatedServer && Level.GetLocalPlayerController() == Instigator.Controller)
+    {
+        if(RPRI == None && Instigator.PlayerReplicationInfo != None)
+            RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
+        if(RPRI != None && RPRI.IsFavorite(Weapon.Class, Class))
+            RPRI.NotifyFavorite(Self);
+    }
 }
 
 simulated function ClientRestore() {
@@ -474,14 +483,7 @@ simulated event Destroyed() {
 }
 
 simulated function AddToDescription(string Format, optional float Bonus) {
-    if(Description != "")
-        Description $= ", ";
-        
-    if(Bonus != 0) {
-        Description $= Repl(Format, "$1", GetBonusPercentageString(Bonus));
-    } else {
-        Description $= Format;
-    }
+    StaticAddToDescription(Description, Modifier, Format, Bonus);
 }
 
 simulated function BuildDescription() {
@@ -497,8 +499,13 @@ simulated function string GetDescription() {
     return Description;
 }
 
-//Helper function
 simulated function string GetBonusPercentageString(float Bonus) {
+    return StaticGetBonusPercentageString(Bonus, Modifier);
+}
+
+//Helper function
+simulated static final function string StaticGetBonusPercentageString(float Bonus, int Modifier)
+{
     local string text;
 
     Bonus *= float(Modifier);
@@ -518,6 +525,28 @@ simulated function string GetBonusPercentageString(float Bonus) {
     text $= "%";
     
     return text;
+}
+
+simulated static final function StaticAddToDescription(out string Description, int Modifier, string Format, optional float Bonus)
+{
+    if(Description != "")
+        Description $= ", ";
+
+    if(Bonus != 0) {
+        Description $= Repl(Format, "$1", StaticGetBonusPercentageString(Bonus, Modifier));
+    } else {
+        Description $= Format;
+    }
+}
+
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    if(default.DamageBonus != 0)
+        StaticAddToDescription(Description, Modifier, default.DamageBonusText, default.DamageBonus);
+
+    return Description;
 }
 
 defaultproperties {

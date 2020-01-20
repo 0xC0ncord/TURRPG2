@@ -64,6 +64,16 @@ simulated function BuildDescription()
     AddToDescription(PiercingText, BonusPerLevel);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+    StaticAddToDescription(Description, Modifier, default.PiercingText, default.BonusPerLevel);
+
+    return Description;
+}
+
 defaultproperties
 {
     PiercingText="pierces shield, $1 dmg bonus against vehicles"

@@ -69,6 +69,17 @@ simulated function BuildDescription()
     AddToDescription(PenetratingText);
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    StaticAddToDescription(Description, Modifier, default.PenetratingText);
+
+    return Description;
+}
+
 defaultproperties
 {
     DamageBonus=0.05

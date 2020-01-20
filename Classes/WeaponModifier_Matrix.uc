@@ -36,6 +36,19 @@ simulated function BuildDescription()
     AddToDescription(Repl(MatrixText, "$1", class'Util'.static.FormatPercent(Multiplier)));
 }
 
+simulated static function string StaticGetDescription(int Modifier)
+{
+    local string Description;
+    local float Multiplier;
+
+    Description = Super.StaticGetDescription(Modifier);
+
+    Multiplier = FMin(1 - SLOWDOWN_CAP, default.BonusPerLevel * float(Modifier));
+    StaticAddToDescription(Description, Modifier, Repl(default.MatrixText, "$1", class'Util'.static.FormatPercent(Multiplier)));
+
+    return Description;
+}
+
 defaultproperties
 {
     MatrixText="$1 enemy projectile slowdown"
