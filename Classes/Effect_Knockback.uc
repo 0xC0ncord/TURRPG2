@@ -3,8 +3,14 @@ class Effect_Knockback extends RPGEffect;
 var vector Momentum;
 var class<DamageType> DamageType;
 
+var EPhysics OriginalPhysics;
+
 static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier)
 {
+    //don't knock something that's stuck
+    if(class'Effect_NullEntropy'.static.GetFor(Other) != None)
+        return false;
+
     //this causes way too funny bugs on turrets...
     if(ASTurret(Other) != None || ONSStationaryWeaponPawn(Other) != None)
         return false;
@@ -27,6 +33,7 @@ state Activated
             Instigator.Physics != PHYS_Falling &&
             Instigator.Physics != PHYS_Hovering)
         {
+            OriginalPhysics = Instigator.Physics;
             Instigator.SetPhysics(PHYS_Hovering);
         }
         
@@ -63,7 +70,7 @@ state Activated
     function EndState()
     {
         if(Instigator != None && Instigator.Physics != PHYS_Walking && Instigator.Physics != PHYS_Falling)
-            Instigator.SetPhysics(PHYS_Falling);
+            Instigator.SetPhysics(OriginalPhysics);
         
         Super.EndState();
     }
