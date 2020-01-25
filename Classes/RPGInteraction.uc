@@ -1342,7 +1342,7 @@ function PostRender(Canvas Canvas)
                 Text = string(i + 1) @ "-" @ ArtifactNAText;
                 Canvas.DrawColor = DisabledOverlay;
             }
-            if((i == 9 || i == n) && (i != 0 && NumPages > 0))
+            else if((i == 9 || i == n) && (i != 0 && NumPages > 0))
             {
                 Text = "0 -" @ ArtifactMoreOptionsText;
                 Canvas.DrawColor = WhiteColor;
