@@ -1337,17 +1337,17 @@ function PostRender(Canvas Canvas)
         //Draw option strings
         for(i = 0; i < n; i++) {
             CurrentOption = StartOption + i;
-            if(CurrentOption > SelectionArtifact.GetNumOptions() - 1)
-            {
-                Text = string(i + 1) @ "-" @ ArtifactNAText;
-                Canvas.DrawColor = DisabledOverlay;
-            }
-            else if((i == 9 || i == n) && (i != 0 && NumPages > 0))
+            if((i == 9 || i == n) && (i != 0 && NumPages > 0))
             {
                 Text = "0 -" @ ArtifactMoreOptionsText;
                 Canvas.DrawColor = WhiteColor;
             }
-            else if(CurrentOption < SelectionArtifact.GetNumOptions())
+            else if(CurrentOption > SelectionArtifact.GetNumOptions() - 1)
+            {
+                Text = string(i + 1) @ "-" @ ArtifactNAText;
+                Canvas.DrawColor = DisabledOverlay;
+            }
+            else
             {
                 Text = string(i + 1) @ "-" @ SelectionArtifact.GetOption(CurrentOption);
                 Canvas.TextSize(Text, CurrentX, CurrentY);
