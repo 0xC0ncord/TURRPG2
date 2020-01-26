@@ -65,6 +65,7 @@ var int TotalModifierChance;
 
 //Stuff
 var config array<class<Ammunition> > SuperAmmoClasses;
+var config array<class<Weapon> > SuperWeaponClasses;
 
 //admin commands
 var config array<String> AdminGUID;
@@ -86,6 +87,12 @@ static final function MutTURRPG Instance(LevelInfo Level)
         }
     }
     return None;
+}
+
+//returns true if the specified weapon class is a weapon that we consider a superweapon
+static final function bool IsSuperWeapon(class<Weapon> Weapon)
+{
+    return class'Util'.static.InArray(Weapon, default.SuperWeaponClasses) > -1;
 }
 
 //returns true if the specified ammo belongs to a weapon that we consider a superweapon
