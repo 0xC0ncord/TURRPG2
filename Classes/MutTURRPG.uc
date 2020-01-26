@@ -66,17 +66,6 @@ var int TotalModifierChance;
 //Stuff
 var config array<class<Ammunition> > SuperAmmoClasses;
 
-var config int MaxMonsters; //minimum MaxMonsters per player...
-var config bool bMonstersDie; //if True, all monsters summoned by a player die when the player dies
-
-var config int MaxTurrets; //minimum MaxTurrets per player...
-var config bool bTurretsDie; //if True, all turrets built by a player die when the player dies
-
-var config int MaxTotems; //minimum MaxTotems per player...
-var config bool bTotemsDie; //if True, all totems built by a player die when the player dies
-
-var config int MaxMines; //minimum MaxMines per player...
-
 //admin commands
 var config array<String> AdminGUID;
 
@@ -1499,10 +1488,6 @@ defaultproperties
 
     MinHumanPlayersForExp=0
     bAllowCheats=False
-    MaxMonsters=1
-    MaxTurrets=1
-    MaxMines=8
-    MaxTotems=1
     bAutoAdjustInvasionLevel=True
     InvasionAutoAdjustFactor=0.30
     SaveDuringGameInterval=0

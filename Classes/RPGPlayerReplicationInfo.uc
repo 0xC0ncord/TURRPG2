@@ -67,16 +67,15 @@ var Weapon LastPawnWeapon;
 //stuff that belongs to me
 var array<Vehicle> Turrets;
 var array<Monster> Monsters;
-var array<ONSMineProjectile> Mines;
 
 //replicated
-var int NumMonsters, NumTurrets, NumMines;
+var int NumMonsters;
 
 //stats
-var int MaxMines, MaxMonsters, MaxTurrets;
+var int MaxMonsters;
 
 //determine if summons die on player death
-var bool bMonstersDie, bTurretsDie;
+var bool bMonstersDie;
 
 var float HealingExpMultiplier;
 
@@ -162,8 +161,8 @@ replication
         bImposter, RPGLevel, Experience, NeededExp,
         StatPointsAvailable, AbilityPointsAvailable,
         bGameEnded,
-        NumMines, NumMonsters, NumTurrets,
-        MaxMines, MaxTurrets, MaxMonsters;
+        NumMonsters,
+        MaxMonsters;
     reliable if(Role == ROLE_Authority)
         ClientReInitMenu, ClientEnableRPGMenu,
         ClientNotifyExpGain, ClientShowHint,
@@ -237,13 +236,6 @@ static function RPGPlayerReplicationInfo GetLocalRPRI(LevelInfo Level)
 function ModifyStats()
 {
     local int x;
-    
-    MaxMines = RPGMut.MaxMines;
-    MaxMonsters = RPGMut.MaxMonsters;
-    MaxTurrets = RPGMut.MaxTurrets;
-    
-    bMonstersDie = RPGMut.bMonstersDie;
-    bTurretsDie = RPGMut.bTurretsDie;
     
     HealingExpMultiplier = class'RPGRules'.default.EXP_Healing;
     
@@ -943,19 +935,6 @@ simulated event Tick(float dt)
             else
                 x++;
         }
-
-        //Clean mines
-        x = 0;
-        while(x < Mines.Length)
-        {
-            if(Mines[x] == None)
-            {
-                NumMines--;
-                Mines.Remove(x, 1);
-            }
-            else
-                x++;
-        }
         
         //Award experience for daredevil points
         if(
@@ -1252,12 +1231,6 @@ function ModifyPlayer(Pawn Other)
     
     if(Other.SelectedItem == None) //if not possible, do this
         Other.NextItem();
-}
-
-function AddMine(ONSMineProjectile Mine)
-{
-    Mines[Mines.Length] = Mine;
-    NumMines++;
 }
 
 function AddMonster(Monster M) {
@@ -1971,6 +1944,8 @@ defaultproperties
     HealingExpMultiplier=0 //gotten from RPGRules
 
     LevelUpSound=Sound'TURRPG2.SoundEffects.LevelUp'
+
+    MaxMonsters=3
 
     bAlwaysRelevant=False
     bOnlyRelevantToOwner=True
