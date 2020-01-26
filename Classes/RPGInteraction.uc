@@ -1206,6 +1206,16 @@ function PostRender(Canvas Canvas)
         {
             if(!Settings.bHideWeaponExtra && !HUD.bHideWeaponName)
             {
+                //Get new description
+                if(P.PendingWeapon != None)
+                {
+                    WM = class'RPGWeaponModifier'.static.GetFor(P.PendingWeapon);
+                    if(WM != None)
+                        LastWeaponExtra = WM.GetDescription();
+                    else
+                        LastWeaponExtra = "";
+                }
+
                 //Draw weapon extra
                 if(LastWeaponExtra != "" && HUD.WeaponDrawTimer > TimeSeconds)
                 {
@@ -1223,16 +1233,6 @@ function PostRender(Canvas Canvas)
                     
                     Canvas.SetPos((Canvas.ClipX - XL) * 0.5f, Canvas.ClipY * 0.8f);
                     Canvas.DrawText(LastWeaponExtra);
-                }
-                
-                //Get new description
-                if(P.PendingWeapon != None)
-                {
-                    WM = class'RPGWeaponModifier'.static.GetFor(P.PendingWeapon);
-                    if(WM != None)
-                        LastWeaponExtra = WM.GetDescription();
-                    else
-                        LastWeaponExtra = "";
                 }
             }
         }
