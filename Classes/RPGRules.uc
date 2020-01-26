@@ -1050,6 +1050,10 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
     if(KillerRPRI != None)
         KillerRPRI.AdrenalineBeforeKill = Killer.Adrenaline;
 
+    // sort out UDamage for vehicles
+    if(Killed.DrivenVehicle != None && Killed.DrivenVehicle.Weapon != None && xPawn(Killed) != None && Killed.HasUDamage())
+        Killed.DrivenVehicle.Weapon.SetOverlayMaterial(xPawn(Killed).UDamageWeaponMaterial, 0, false);
+
     return false;
 }
 

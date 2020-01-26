@@ -658,6 +658,10 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
     }
     P.Controller = None;
 
+    // sort out UDamage for vehicles
+    if(xPawn(P) != None && P.HasUDamage() && V.Weapon != None)
+        V.Weapon.SetOverlayMaterial(xPawn(P).UDamageWeaponMaterial, xPawn(P).UDamageTime - Level.TimeSeconds, false);
+
     Super.DriverEnteredVehicle(V, P);
 }
 
@@ -696,6 +700,10 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
         V.DeleteInventory(MyArtifacts[i]);
         MyArtifacts[i].GiveTo(P);
     }
+
+    // sort out UDamage for vehicles
+    if(xPawn(P) != None && P.HasUDamage() && V.Weapon != None)
+        V.Weapon.SetOverlayMaterial(xPawn(P).UDamageWeaponMaterial, 0, false);
 
     Super.DriverLeftVehicle(V, P);
 }
