@@ -188,9 +188,10 @@ function bool DoEffect()
     Target = FindTarget();
     
     //TODO maybe be a bit nice and don't drain adrenaline if the target is at least valid?
-    if(!CanAffectTarget(Target) && AdrenalineForMiss > 0)
+    if(!CanAffectTarget(Target))
     {
-        InstigatorRPRI.DrainAdrenaline(AdrenalineForMiss * AdrenalineUsage, Self);
+        if(AdrenalineForMiss > 0)
+            InstigatorRPRI.DrainAdrenaline(AdrenalineForMiss * AdrenalineUsage, Self);
         return false;
     }
 
