@@ -54,7 +54,7 @@ function SpawnEffects(Pawn Other)
 
 defaultproperties
 {
-    HitEmitterClass=Class'FX_LightningBolt'
+    HitEmitterClass=Class'FX_Bolt_White'
     MyDamageType=Class'DamTypeLightningBolt'
     TargetRadius=2000.000000
     DamagePerAdrenaline=4

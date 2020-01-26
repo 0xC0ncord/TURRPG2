@@ -65,7 +65,7 @@ defaultproperties
     bAllowOnTeammates=True
     bAllowOnGodMode=True
     Msg_Text_CannotAccept="That person cannot accept the powerup."
-    HitEmitterClass=Class'FX_LightningBeam'
+    HitEmitterClass=Class'FX_Bolt_Cyan'
     MaxRange=3000.000000
     MinAdrenaline=100
     CostPerSec=100

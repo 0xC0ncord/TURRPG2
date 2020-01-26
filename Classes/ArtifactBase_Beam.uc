@@ -207,7 +207,7 @@ defaultproperties
     bAllowOnMonsters=True
     bAllowOnVehicles=True
     bAllowOnFlagCarriers=True
-    HitEmitterClass=Class'FX_LightningBeam'
+    HitEmitterClass=Class'FX_Bolt_Cyan'
     MaxRange=3000.000000
     DamagePerAdrenaline=7
     MyDamageType=Class'DamTypeLightningBeam'

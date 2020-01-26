@@ -199,7 +199,7 @@ function Timer()
 
 defaultproperties
 {
-    HitEmitterClass=Class'FX_ChainLightning'
+    HitEmitterClass=Class'FX_Bolt_Red'
     MyDamageType=Class'DamTypeChainLightning'
     MaxRange=3000.000000
     MaxStepRange=650.000000
