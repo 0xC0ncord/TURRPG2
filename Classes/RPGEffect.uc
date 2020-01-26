@@ -59,6 +59,7 @@ var float LastEffectTime;
 var float EffectLimitInterval; //to avoid sounds and effects being spammed like hell
 
 //Internal
+var RPGPlayerReplicationInfo InstigatorRPRI;
 var bool bRestarting; //set when restarting the effect (when stacking)
 
 replication
@@ -224,6 +225,8 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
                 
                 if(NewModifier > Effect.Modifier)
                     Effect.Modifier = NewModifier;
+
+                Effect.InstigatorRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Other.Controller);
             }
         }
     }
