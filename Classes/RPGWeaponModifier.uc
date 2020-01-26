@@ -508,7 +508,8 @@ simulated static final function string StaticGetBonusPercentageString(float Bonu
 {
     local string text;
 
-    Bonus *= float(Modifier);
+    if(default.MinModifier != 0 && default.MaxModifier != 0)
+        Bonus *= float(Modifier);
     
     if(Bonus > 0) {
         text = "+";
