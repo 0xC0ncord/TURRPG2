@@ -26,7 +26,9 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
 
 function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator SpawnRot)
 {
-    return Instigator.Spawn(SpawnClass, Instigator.Controller,, SpawnLoc, SpawnRot);
+    if(!ClassIsChildOf(SpawnClass, class'Vehicle'))
+        return Instigator.Spawn(SpawnClass, Instigator.Controller,, SpawnLoc, SpawnRot);
+    return Instigator.Spawn(SpawnClass,,, SpawnLoc, SpawnRot);
 }
 
 function Failed()
