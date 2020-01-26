@@ -2,7 +2,7 @@ class ArtifactBase_Construct extends ArtifactBase_Summon
     abstract
     HideDropDown;
 
-var config float ClearRadius;
+var float ClearRadius;
 
 var array<class<Actor> > BlockingTypes;
 
@@ -26,7 +26,7 @@ function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator Spaw
     Blocker = -1;
     foreach RadiusActors(class'Actor', A, ClearRadius, SpawnLoc) {
         for(i = 0; i < BlockingTypes.Length; i++) {
-            if(ClassIsChildOf(A.class, BlockingTypes[i])) {
+            if(BlockingTypes[i] != None && ClassIsChildOf(A.class, BlockingTypes[i])) {
                 //Log("Can't construct here because of" @ A);
                 Blocker = i;
                 break;
