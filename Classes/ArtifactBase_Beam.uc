@@ -163,7 +163,7 @@ function SpawnEffects(Pawn Other)
     local xEmitter HitEmitter;
     local Actor A;
 
-    HitEmitter = Spawn(HitEmitterClass,,, Instigator.Location + Instigator.EyePosition(), Rotator(Other.Location - (Instigator.Location + Instigator.EyePosition())));
+    HitEmitter = Spawn(HitEmitterClass,,, Instigator.Location + Instigator.EyePosition() - Instigator.CollisionHeight * vect(0, 0, 0.4), Rotator(Other.Location - (Instigator.Location + Instigator.EyePosition())));
     if (HitEmitter != None)
         HitEmitter.mSpawnVecA = Other.Location;
 
