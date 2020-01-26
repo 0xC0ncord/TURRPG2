@@ -35,6 +35,12 @@ var bool bHeld; //true if this artifact was ever held by anybody (used for initi
 //Selection menu
 var bool bSelection, bInSelection;
 var int SelectedOption;
+struct OptionCostStruct
+{
+    var Material Icon;
+    var int Cost;
+    var bool bCanAfford;
+};
 
 var localized string Description;
 
@@ -686,6 +692,14 @@ simulated function string GetSelectionTitle(); //title line of selection
 simulated function int GetNumOptions(); //amount of selection options
 simulated function string GetOption(int i); //get text to display for option i
 simulated function int GetOptionCost(int i); //get the adrenaline cost of option i
+
+//get the icons and numbers for costs of option i
+simulated function array<OptionCostStruct> GetHUDOptionCosts(int i)
+{
+    local array<OptionCostStruct> OptionCosts;
+
+    return OptionCosts;
+}
 
 //close the selection
 function CloseSelection()

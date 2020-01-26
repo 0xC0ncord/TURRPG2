@@ -1,4 +1,5 @@
-class RPGInteraction extends Interaction;
+class RPGInteraction extends Interaction
+    dependson(RPGArtifact);
 
 struct Vec2
 {
@@ -54,6 +55,10 @@ var class<RPGArtifact> LastSelectedArtifact;
 var string LastSelItemName, LastSelExtra;
 var float ArtifactDrawTimer;
 var Color ArtifactDrawColor;
+struct OptionCostArrayStruct
+{
+    var array<RPGArtifact.OptionCostStruct> Arr;
+};
 
 var float ExpGain, ExpGainTimer, ExpGainDurationForever;
 
@@ -667,7 +672,7 @@ static final function int GetArtifactRadialSelection(float MouseX, float MouseY,
 function PostRender(Canvas Canvas)
 {
     local float XL, YL, X, Y, CurrentX, CurrentY, Size, SizeX, Fade, MaxWidth, MaxOptionWidth;
-    local int i, n, Row, Cost, CurrentOption;
+    local int i, j, k, l, n, Row, Cost, CurrentOption;
     local string Text;
     local Vec2 RadialArtifactPos;
     
@@ -677,6 +682,8 @@ function PostRender(Canvas Canvas)
     local RPGWeaponModifier WM;
     local Pawn P;
     local Material Material;
+    local array<OptionCostArrayStruct> OptionCosts;
+    local array<float> OptionCostWidths;
     
     local HudCDeathmatch HUD;
 
@@ -1282,14 +1289,47 @@ function PostRender(Canvas Canvas)
         
         //Determine sizing before drawing and scale the window to compensate
 
+        for(i = 0; i < SelectionArtifact.GetNumOptions(); i++)
+        {
+            j = OptionCosts.Length;
+            OptionCosts.Length = j + 1;
+            OptionCosts[j].Arr = SelectionArtifact.GetHUDOptionCosts(i);
+
+            if(OptionCosts[j].Arr.Length > 0)
+            {
+                for(k = 0; k < OptionCosts[j].Arr.Length; k++)
+                {
+                    if(k >= OptionCostWidths.Length)
+                    {
+                        l = OptionCostWidths.Length;
+                        OptionCostWidths.Length = l + 1;
+                    }
+                    Canvas.TextSize(OptionCosts[j].Arr[k].Cost, XL, YL);
+                    if(OptionCostWidths[l] < XL)
+                        OptionCostWidths[l] = XL;
+                }
+            }
+            else
+            {
+                Canvas.TextSize(SelectionArtifact.GetOptionCost(i), XL, YL);
+                if(MaxOptionWidth < XL + YL)
+                    MaxOptionWidth = XL + YL;
+            }
+        }
+        if(MaxOptionWidth == 0)
+        {
+            if(OptionCostWidths.Length > 0)
+            {
+                for(k = 0; k < OptionCostWidths.Length; k++)
+                    MaxOptionWidth += OptionCostWidths[k];
+            }
+        }
+
         //Option strings sizes
         for(i = 0; i < SelectionArtifact.GetNumOptions(); i++)
         {
             Canvas.TextSize(i @ "-" @ SelectionArtifact.GetOption(i) @ SelectionArtifact.GetOptionCost(i), CurrentX, CurrentY);
-            Canvas.TextSize(SelectionArtifact.GetOptionCost(i), XL, YL);
-
-            MaxWidth = FMax(MaxWidth, CurrentX + XL);
-            MaxOptionWidth = FMax(MaxOptionWidth, XL);
+            MaxWidth = FMax(MaxWidth, CurrentX + XL + MaxOptionWidth + OptionCostWidths.Length * YL);
         }
 
         //Next page option text, but leave room for option costs so it's not too crowded
@@ -1352,11 +1392,24 @@ function PostRender(Canvas Canvas)
                 Text = string(i + 1) @ "-" @ SelectionArtifact.GetOption(CurrentOption);
                 Canvas.TextSize(Text, CurrentX, CurrentY);
                 
-                Cost = SelectionArtifact.GetOptionCost(CurrentOption);
-                if(Cost > 0 && ViewportOwner.Actor.Adrenaline < Cost)
-                    Canvas.DrawColor = DisabledOverlay;
+                Canvas.DrawColor = WhiteColor;
+                if(OptionCosts[CurrentOption].Arr.Length > 0)
+                {
+                    for(j = 0; j < OptionCosts[CurrentOption].Arr.Length; j++)
+                    {
+                        if(!OptionCosts[CurrentOption].Arr[j].bCanAfford)
+                        {
+                            Canvas.DrawColor = DisabledOverlay;
+                            break;
+                        }
+                    }
+                }
                 else
-                    Canvas.DrawColor = WhiteColor;
+                {
+                    Cost = SelectionArtifact.GetOptionCost(CurrentOption);
+                    if(Cost > 0 && ViewportOwner.Actor.Adrenaline < Cost)
+                        Canvas.DrawColor = DisabledOverlay;
+                }
             }
 
             Canvas.SetPos(X, Y);
@@ -1372,22 +1425,45 @@ function PostRender(Canvas Canvas)
             CurrentOption = StartOption + i;
             if(!((i == 9 && i != 0 && NumPages > 0) || CurrentOption > SelectionArtifact.GetNumOptions() - 1))
             {
-                Cost = SelectionArtifact.GetOptionCost(CurrentOption);
-                if(Cost > 0) {
-                    Canvas.DrawColor = WhiteColor;
-                    
-                    Canvas.SetPos(X - YL - MaxOptionWidth, Y);
-                    Canvas.DrawTileClipped(
-                        Material'HUDContent.Generic.HUD',
-                        YL, YL,
-                        113, 38, 52, 68);
-                    
-                    if(ViewportOwner.Actor.Adrenaline < Cost) {
-                        Canvas.DrawColor = RedColor;
+                if(CurrentOption < SelectionArtifact.GetNumOptions() && OptionCosts[CurrentOption].Arr.Length > 0)
+                {
+                    for(j = OptionCosts[CurrentOption].Arr.Length - 1; j >= 0; j--)
+                    {
+                        Canvas.DrawColor = WhiteColor;
+
+                        Canvas.SetPos(X - OptionCostWidths[j] - YL * (j + 1), Y);
+                        Canvas.DrawTileClipped(
+                            OptionCosts[CurrentOption].Arr[j].Icon,
+                            YL, YL,
+                            0, 0, OptionCosts[CurrentOption].Arr[j].Icon.MaterialUSize(), OptionCosts[CurrentOption].Arr[j].Icon.MaterialVSize());
+
+                        if(!OptionCosts[CurrentOption].Arr[j].bCanAfford) {
+                            Canvas.DrawColor = RedColor;
+                        }
+
+                        Canvas.SetPos(X - OptionCostWidths[j] - YL * j, Y);
+                        Canvas.DrawTextClipped(string(OptionCosts[CurrentOption].Arr[j].Cost));
                     }
-                    
-                    Canvas.SetPos(X - MaxOptionWidth, Y);
-                    Canvas.DrawTextClipped(string(Cost));
+                }
+                else
+                {
+                    Cost = SelectionArtifact.GetOptionCost(CurrentOption);
+                    if(Cost > 0) {
+                        Canvas.DrawColor = WhiteColor;
+
+                        Canvas.SetPos(X - YL - MaxOptionWidth, Y);
+                        Canvas.DrawTileClipped(
+                            Material'HUDContent.Generic.HUD',
+                            YL, YL,
+                            113, 38, 52, 68);
+
+                        if(ViewportOwner.Actor.Adrenaline < Cost) {
+                            Canvas.DrawColor = RedColor;
+                        }
+
+                        Canvas.SetPos(X - MaxOptionWidth, Y);
+                        Canvas.DrawTextClipped(string(Cost));
+                    }
                 }
             }
             
