@@ -31,7 +31,7 @@ event Tick(float dt) {
     Super.Tick(dt);
     
     foreach CollidingActors(class'Projectile', Proj, Radius) {
-        if(Proj.Tag == 'Matrix') {
+        if(Proj.Tag == 'Matrix' || Proj.Tag == 'Force') {
             continue;
         }
         
