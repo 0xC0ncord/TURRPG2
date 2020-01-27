@@ -303,7 +303,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 RegisterWeaponKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class'DummyWeapon_Monster');
                 
                 if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
-                    PlayerController(Killer).ReceiveLocalizedMessage(class'FriendlyMonsterKillerMessage',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
+                    PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_FriendlyMonsterKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
             }
             
             //Award experience

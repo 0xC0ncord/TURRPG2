@@ -1,4 +1,4 @@
-class FriendlyMonsterKillerMessage extends xKillerMessagePlus;
+class LocalMessage_FriendlyMonsterKiller extends xKillerMessagePlus;
 
 var localized string YourMonsterKilled;
 
