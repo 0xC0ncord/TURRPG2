@@ -580,15 +580,20 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     
     //Get info
     
-    //TODO: Friendly monster / turret
-    //TODO: Vehicles
-    
     injuredController = injured.Controller;
-    injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(injuredController);
+
+    if(FriendlyMonsterController(injuredController) != None)
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(FriendlyMonsterController(injuredController).Master);
+    else
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(injuredController);
 
     if(instigatedBy != None)
     {
         instigatorController = instigatedBy.Controller;
+
+        if(FriendlyMonsterController(instigatorController) != None)
+            instigatorController = FriendlyMonsterController(instigatorController).Master;
+
         instigatorRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(instigatorController);
     }
     
