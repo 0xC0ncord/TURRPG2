@@ -1156,8 +1156,6 @@ static function RegisterWeaponKill(PlayerReplicationInfo Killer, PlayerReplicati
         {
             NewWeaponStats.WeaponClass = WeaponClass;
             NewWeaponStats.Kills = 1;
-            NewWeaponStats.Deaths = 0;
-            NewWeaponStats.DeathsHolding = 0;
             TPRI.WeaponStatsArray[TPRI.WeaponStatsArray.Length] = NewWeaponStats;
         }
     }
@@ -1180,9 +1178,7 @@ static function RegisterWeaponKill(PlayerReplicationInfo Killer, PlayerReplicati
         if(!bFound)
         {
             NewWeaponStats.WeaponClass = WeaponClass;
-            NewWeaponStats.Kills = 0;
             NewWeaponStats.Deaths = 1;
-            NewWeaponStats.DeathsHolding = 0;
             TPRI.WeaponStatsArray[TPRI.WeaponStatsArray.Length] = NewWeaponStats;
         }
     }
