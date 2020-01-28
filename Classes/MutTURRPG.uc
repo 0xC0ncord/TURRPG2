@@ -2,10 +2,14 @@ class MutTURRPG extends Mutator
     config(TURRPG2);
 
 #mode string SSS "\"" "\"" "\\"
-const TURRPG2_VERSION="0.01a-__BUILDINFO__";
-const TITANRPG_VERSION="1.71b";
-const BUILD_DATE="__BUILDDATE__";
+#define TURRPG2_VERSION "0.01a-__BUILDINFO__"
+#define TITANRPG_VERSION "1.71b"
+#define BUILD_DATE "__BUILDDATE__"
 #mode string sss "\"" "\"" "\\"
+
+var const string TURRPG2Version;
+var const string TitanRPGVersion;
+var const string BuildDate;
 
 //Import resources
 #EXEC OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
@@ -1486,15 +1490,26 @@ static function string GetSecondsText(int Amount)
 function GetServerDetails(out GameInfo.ServerResponseLine ServerState)
 {
     local GameInfo.KeyValuePair KVPa, KVPb;
+#ifdef __DEBUG__
+    local GameInfo.KeyValuePair KVPc, KVPd;
+#endif
 
     Super.GetServerDetails(ServerState);
 
     KVPa.Key   = "TURRPG2 Version";
-    KVPa.Value = TURRPG2_VERSION;
+    KVPa.Value = default.TURRPG2Version;
 
     KVPb.Key   = "TitanRPG Version";
-    KVPb.Value = TITANRPG_VERSION;
-    
+    KVPb.Value = default.TitanRPGVersion;
+
+#ifdef __DEBUG__
+    KVPc.Key   = "Build Date";
+    KVPc.Value = default.BuildDate;
+
+    KVPd.Key   = "Release Type";
+    KVPd.Value = "DEBUG";
+#endif
+
     ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVPa;
     ServerState.ServerInfo[ServerState.ServerInfo.Length] = KVPb;
 }
@@ -1527,4 +1542,8 @@ defaultproperties
     Description="A unified and heavily improved version of UT2004RPG and DruidsRPG, featuring a lot of new content, multi-game support and fixes of many bugs and other problems."
     SecondTextSingular="second"
     SecondTextPlural="seconds"
+
+    TURRPG2Version=TURRPG2_VERSION
+    TitanRPGVersion=TITANRPG_VERSION
+    BuildDate=BUILD_DATE
 }
