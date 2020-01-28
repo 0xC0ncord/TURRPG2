@@ -9,7 +9,7 @@
 
 class RPGAssistLocalMessage extends CriticalEventPlus;
 
-#exec OBJ LOAD FILE=AnnouncerClassic.uax
+#EXEC OBJ LOAD FILE=AnnouncerClassic.uax
 
 //============================================================================
 // GetString

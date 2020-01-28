@@ -1,11 +1,14 @@
 class MutTURRPG extends Mutator
     config(TURRPG2);
 
-const TURRPG2_VERSION="0.01a";
+#mode string SSS "\"" "\"" "\\"
+const TURRPG2_VERSION="0.01a-__BUILDINFO__";
 const TITANRPG_VERSION="1.71b";
+const BUILD_DATE="__BUILDDATE__";
+#mode string sss "\"" "\"" "\\"
 
 //Import resources
-#exec OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
+#EXEC OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
 
 //Saving
 var config array<string> IgnoreNameTag;
