@@ -10,19 +10,20 @@ BASENAME = $(shell basename $(CURRENT_DIR))
 SYSTEM_DIR = $(CURRENT_DIR)/../System
 UCC = "$(SYSTEM_DIR)/ucc.exe"
 
+BUILD_INFO = $(shell git rev-parse --short HEAD)$(shell [ -z "$(shell git diff --shortstat 2>/dev/null | tail -n1)" ] || echo '-dirty')
+BUILD_DATE = $(shell date +"%a %d %b %Y %H:%M:%S %Z")
+
 default: compile
 .PHONY: compile clean
 
 compile:
 	@echo -e $(PREFIX) $@ $(SUFFIX)
-	$(eval SHA1SUM := $(shell find $(CURRENT_DIR)/Classes -type f -iname '*.uc' -print0 | sort -z | xargs -0 sha1sum | sha1sum | awk '{print $$1}'))
-	$(eval SHA1SUM_OLD := $(shell cat $(SYSTEM_DIR)/$(BASENAME)_src.sha1sum))
-	@if [[ -f $(SYSTEM_DIR)/$(BASENAME)_src.sha1sum && "$(SHA1SUM_OLD)" = "$(SHA1SUM)" ]]; then echo Source directory unchanged since last build. Nothing to do. Exiting. && false; fi
-	@if [[ -f $(SYSTEM_DIR)/$(BASENAME).u ]]; then mv -vf $(SYSTEM_DIR)/$(BASENAME).u $(SYSTEM_DIR)/$(BASENAME).u.bak; fi; \
-	wine $(UCC) MakeCommandletUtils.EditPackagesCommandlet 1 $(BASENAME) 2>/dev/null; \
-	wine $(UCC) make 2>/dev/null && echo $(SHA1SUM) > $(SYSTEM_DIR)/$(BASENAME)_src.sha1sum
-	@wine $(UCC) MakeCommandletUtils.EditPackagesCommandlet 0 $(BASENAME) 2>/dev/null
+	@$(CURRENT_DIR)/build.sh
 
 clean:
 	@echo -e $(PREFIX) $@ $(SUFFIX)
-	@-rm -vrf $(SYSTEM_DIR)/$(BASENAME).u $(SYSTEM_DIR)/$(BASENAME).u.bak $(SYSTEM_DIR)/$(BASENAME)_src.sha1sum
+	@-rm -vrf $(SYSTEM_DIR)/$(BASENAME).u $(SYSTEM_DIR)/$(BASENAME).u.bak $(CURRENT_DIR)/Classes.sha1sum
+	@if [[ -d $(CURRENT_DIR)/.Classes ]]; then \
+		rm -rf $(CURRENT_DIR)/Classes &&\
+		mv -vf $(CURRENT_DIR)/.Classes $(CURRENT_DIR)/Classes;\
+	fi
