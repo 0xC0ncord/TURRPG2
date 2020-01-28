@@ -294,9 +294,14 @@ function ScoreKill(Controller Killer, Controller Killed)
     {
         if(
             FriendlyMonsterController(Killer) != None
+            || RPGBaseSentinelController(Killer) != None
+            || RPGSentinelController(Killer) != None
+            || RPGLightningSentinelController(Killer) != None
+            || RPGAutoGunController(Killer) != None
+            || RPGEnergyWallController(Killer) != None
         )
         {
-            //A summoned monster or constructed turret or totem killed something
+            //A summoned monster or construction killed something
             if(FriendlyMonsterController(Killer) != None)
             {
                 Killer = FriendlyMonsterController(Killer).Master;
@@ -305,7 +310,47 @@ function ScoreKill(Controller Killer, Controller Killed)
                 if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
                     PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_FriendlyMonsterKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
             }
-            
+            else if(RPGBaseSentinelController(Killer) != None)
+            {
+                Killer = RPGBaseSentinelController(Killer).PlayerSpawner;
+                RegisterVehicleKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class<Vehicle>(KillerPawn.Class));
+
+                if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
+                    PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_SentinelKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
+            }
+            else if(RPGSentinelController(Killer) != None)
+            {
+                Killer = RPGSentinelController(Killer).PlayerSpawner;
+                RegisterVehicleKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class<Vehicle>(KillerPawn.Class));
+
+                if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
+                    PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_SentinelKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
+            }
+            else if(RPGLightningSentinelController(Killer) != None)
+            {
+                Killer = RPGLightningSentinelController(Killer).PlayerSpawner;
+                RegisterVehicleKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class<Vehicle>(KillerPawn.Class));
+
+                if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
+                    PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_SentinelKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
+            }
+            else if(RPGAutoGunController(Killer) != None)
+            {
+                Killer = RPGAutoGunController(Killer).PlayerSpawner;
+                RegisterVehicleKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class<Vehicle>(KillerPawn.Class));
+
+                if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
+                    PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_SentinelKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
+            }
+            else if(RPGEnergyWallController(Killer) != None)
+            {
+                Killer = RPGEnergyWallController(Killer).PlayerSpawner;
+                RegisterVehicleKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class<Vehicle>(KillerPawn.Class));
+
+                if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
+                    PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_SentinelKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
+            }
+
             //Award experience
             KillerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killer);
             if(KillerRPRI != None)
@@ -528,6 +573,9 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     local Inventory Inv;
     local Weapon W;
     local int x;
+    local float OldXP, CurXP, XPForEach, XPDiff, XPGiven;
+    local int OldLevel;
+    local RPGPlayerReplicationInfo HealerRPRI;
 
     if(bDamageLog)
     {
@@ -584,6 +632,16 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 
     if(FriendlyMonsterController(injuredController) != None)
         injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(FriendlyMonsterController(injuredController).Master);
+    else if(RPGBaseSentinelController(instigatorController) != None)
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(RPGBaseSentinelController(injuredController).PlayerSpawner);
+    else if(RPGSentinelController(instigatorController) != None)
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(RPGSentinelController(injuredController).PlayerSpawner);
+    else if(RPGLightningSentinelController(instigatorController) != None)
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(RPGLightningSentinelController(injuredController).PlayerSpawner);
+    else if(RPGAutoGunController(instigatorController) != None)
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(RPGAutoGunController(injuredController).PlayerSpawner);
+    else if(RPGEnergyWallController(instigatorController) != None)
+        injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(RPGEnergyWallController(injuredController).PlayerSpawner);
     else
         injuredRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(injuredController);
 
@@ -593,10 +651,29 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
 
         if(FriendlyMonsterController(instigatorController) != None)
             instigatorController = FriendlyMonsterController(instigatorController).Master;
+        else if(RPGBaseSentinelController(instigatorController) != None)
+            instigatorController = RPGBaseSentinelController(instigatorController).PlayerSpawner;
+        else if(RPGSentinelController(instigatorController) != None)
+            instigatorController = RPGSentinelController(instigatorController).PlayerSpawner;
+        else if(RPGLightningSentinelController(instigatorController) != None)
+            instigatorController = RPGLightningSentinelController(instigatorController).PlayerSpawner;
+        else if(RPGAutoGunController(instigatorController) != None)
+            instigatorController = RPGAutoGunController(instigatorController).PlayerSpawner;
+        else if(RPGEnergyWallController(instigatorController) != None)
+            instigatorController = RPGEnergyWallController(instigatorController).PlayerSpawner;
 
         instigatorRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(instigatorController);
     }
-    
+
+    if(Vehicle(instigatedBy) != None && instigatorRPRI != None && instigatorRPRI.NumVehicleHealers > 0)
+    {
+        OldXP = instigatorRPRI.Experience;
+        OldLevel = instigatorRPRI.RPGLevel;
+
+        if(Level.TimeSeconds > instigatorRPRI.LastVehicleHealTime + class'EngineerLinkGun'.default.HealTimeDelay && instigatorRPRI.NumVehicleHealers > 0)
+            Damage = Damage * class'WeaponModifier_EngineerLink'.static.DamageIncreasedByLinkers(instigatorRPRI.NumVehicleHealers);
+    }
+
     if(bDamageLog)
     {
         Log("instigatorController =" @ instigatorController, 'RPGDamage');
@@ -708,6 +785,37 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     if(instigatorRPRI != None)
     {
         ShareExperience(instigatorRPRI, GetDamageEXP(Damage, instigatedBy, Injured));
+
+        //Possibly share experience with vehicle linkers
+        if(OldLevel == instigatorRPRI.RPGLevel && instigatorRPRI.NumVehicleHealers > 0)
+        {
+            CurXP = instigatorRPRI.Experience;
+            XPDiff = CurXP - OldXP;
+            if(XPDiff > 0)
+            {
+                // split the xp amongst the healers
+                XPForEach = class'WeaponModifier_EngineerLink'.static.XPForLinker(XPDiff, instigatorRPRI.VehicleHealers.Length);
+                XPGiven = 0;
+
+                for(x = 0; x < instigatorRPRI.VehicleHealers.Length; x++)
+                {
+                    if(instigatorRPRI.VehicleHealers[x].Pawn != None && instigatorRPRI.VehicleHealers[x].Pawn.Health >0)
+                    {
+                        if(RPGLinkSentinelController(instigatorRPRI.VehicleHealers[x]) != None)
+                            HealerRPRI = RPGLinkSentinelController(instigatorRPRI.VehicleHealers[x]).RPRI;
+                        else
+                            HealerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(instigatorRPRI.VehicleHealers[x]);
+                        if(HealerRPRI != None)
+                            class'RPGRules'.static.ShareExperience(HealerRPRI, XPForEach);
+                        XPGiven += XPForEach;
+                    }
+                }
+                if(XPGiven > 0) // now adjust the turret operator
+                {
+                    instigatorRPRI.Experience = Max(instigatorRPRI.Experience - XPGiven, 0); //don't go negative
+                }
+            }
+        }
     }
     
     //Done
@@ -1180,6 +1288,63 @@ static function RegisterWeaponKill(PlayerReplicationInfo Killer, PlayerReplicati
             NewWeaponStats.WeaponClass = WeaponClass;
             NewWeaponStats.Deaths = 1;
             TPRI.WeaponStatsArray[TPRI.WeaponStatsArray.Length] = NewWeaponStats;
+        }
+    }
+}
+
+static function RegisterVehicleKill(PlayerReplicationInfo Killer, PlayerReplicationInfo Victim, class<Vehicle> VehicleClass)
+{
+    local int i;
+    local bool bFound;
+    local TeamPlayerReplicationInfo TPRI;
+    local TeamPlayerReplicationInfo.VehicleStats NewVehicleStats;
+
+    if(VehicleClass == None)
+        return;
+
+    //kill for the killer
+    TPRI = TeamPlayerReplicationInfo(Killer);
+    if(TPRI != None)
+    {
+        bFound = false;
+        for (i = 0; i < TPRI.VehicleStatsArray.Length; i++ )
+        {
+            if(TPRI.VehicleStatsArray[i].VehicleClass == VehicleClass)
+            {
+                TPRI.VehicleStatsArray[i].Kills++;
+                bFound = true;
+                break;
+            }
+        }
+
+        if(!bFound)
+        {
+            NewVehicleStats.VehicleClass = VehicleClass;
+            NewVehicleStats.Kills = 1;
+            TPRI.VehicleStatsArray[TPRI.VehicleStatsArray.Length] = NewVehicleStats;
+        }
+    }
+
+    //death for the victim
+    TPRI = TeamPlayerReplicationInfo(Victim);
+    if(TPRI != None)
+    {
+        bFound = false;
+        for (i = 0; i < TPRI.VehicleStatsArray.Length; i++ )
+        {
+            if(TPRI.VehicleStatsArray[i].VehicleClass == VehicleClass)
+            {
+                TPRI.VehicleStatsArray[i].Deaths++;
+                bFound = true;
+                break;
+            }
+        }
+
+        if(!bFound)
+        {
+            NewVehicleStats.VehicleClass = VehicleClass;
+            NewVehicleStats.Deaths = 1;
+            TPRI.VehicleStatsArray[TPRI.VehicleStatsArray.Length] = NewVehicleStats;
         }
     }
 }

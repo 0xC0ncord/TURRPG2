@@ -471,9 +471,9 @@ function ModifyArtifact(RPGArtifact A);
  */
 function ModifyMonster(Monster M, Pawn Master);
 
-/* Modify a turret constructed by the owning player.
+/* Modify a thing constructed by the owning player.
  */
-function ModifyTurret(Vehicle T, Pawn Other);
+function ModifyConstruction(Pawn Other);
 
 function ModifyVehicle(Vehicle V);
 

@@ -12,5 +12,5 @@ function string GetText()
 
 defaultproperties
 {
-    IconMaterial=Texture'TURRPG2.StatusIcons.Turret'
+    IconMaterial=Texture'TURRPG2.StatusIcons.TurretIcon'
 }

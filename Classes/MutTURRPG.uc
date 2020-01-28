@@ -738,6 +738,19 @@ function bool CanEnterVehicle(Vehicle V, Pawn P)
                     return false;
             }
         }
+
+        if(P.Controller != RPRI.Controller)
+        {
+            for(i = 0; i < RPRI.LockedVehicles.Length; i++)
+            {
+                if(RPRI.LockedVehicles[i] == V)
+                {
+                    if(PlayerController(P.Controller) != None)
+                        PlayerController(P.Controller).ReceiveLocalizedMessage(class'LocalMessage_VehicleLocked',, P.PlayerReplicationInfo);
+                    return false;
+                }
+            }
+        }
     }
     
     return Super.CanEnterVehicle(V, P);

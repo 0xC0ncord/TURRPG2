@@ -86,6 +86,44 @@ static function array<Controller> GetAllPassengerControllers(Vehicle V)
     return Passengers;
 }
 
+static final function EjectAllDrivers(Vehicle V)
+{
+    local int x;
+    local ONSVehicle OV;
+    local ONSWeaponPawn WP;
+
+    if(ONSVehicle(V) != None)
+        OV = ONSVehicle(V);
+    else if(ONSWeaponPawn(V) != None)
+        OV = ONSWeaponPawn(V).VehicleBase;
+
+    if(OV != None)
+    {
+        for(x = 0; x < OV.WeaponPawns.Length; x++)
+        {
+            WP = OV.WeaponPawns[x];
+
+            if(WP.Driver != None)
+                WP.EjectDriver();
+        }
+
+        if(OV.Driver != None)
+            OV.EjectDriver();
+    }
+    else
+    {
+        if(V.Driver != None)
+            V.EjectDriver();
+    }
+}
+
+static final function Vehicle GetRootVehicle(Vehicle V)
+{
+    if(ONSWeaponPawn(V) != None && ONSWeaponPawn(V).VehicleBase != None)
+        return ONSWeaponPawn(V).VehicleBase;
+    return V;
+}
+
 static function string HighlightText(string Text, Color Highlight, Color Old)
 {
     return class'GameInfo'.static.MakeColorCode(Highlight) $ Text $ class'GameInfo'.static.MakeColorCode(Old);
@@ -628,6 +666,12 @@ static function bool SameTeamP(Pawn A, Pawn B) {
     TeamB = GetPawnTeam(B);
     
     return (TeamA != 255 && TeamA == TeamB);
+}
+
+//Check if a projectile belongs to the same team as a controller
+static final function bool ProjectileSameTeamC(Projectile P, Controller C)
+{
+    return (P.InstigatorController != None && static.SameTeamC(P.InstigatorController, C) || (P.Instigator != None && static.SameTeamCP(C, P.Instigator)));
 }
 
 //

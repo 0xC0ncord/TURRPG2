@@ -65,14 +65,38 @@ var bool bTeamChanged; //set by RPGRules, reset each spawn
 var Weapon LastPawnWeapon;
 
 //stuff that belongs to me
-var array<Vehicle> Turrets;
+struct ConstructionStruct
+{
+    var Pawn Pawn;
+    var int Points;
+};
+var array<ConstructionStruct> Buildings;
+var array<ConstructionStruct> Sentinels;
+var array<ConstructionStruct> Turrets;
+var array<ConstructionStruct> Vehicles;
+var array<ConstructionStruct> Utilities;
 var array<Monster> Monsters;
+
+//engineer stuff
+var array<Vehicle> LockedVehicles;
+var array<Controller> VehicleHealers;
+var int NumVehicleHealers;
+var float LastVehicleHealTime;
 
 //replicated
 var int NumMonsters;
+var int NumBuildings, NumSentinels, NumTurrets;
+var int NumVehicles, NumUtilities;
 
 //stats
 var int MaxMonsters;
+var int MaxBuildings, MaxSentinels, MaxTurrets;
+var int MaxVehicles, MaxUtilities;
+var int BuildingPoints, MaxBuildingPoints;
+var int SentinelPoints, MaxSentinelPoints;
+var int TurretPoints, MaxTurretPoints;
+var int VehiclePoints, MaxVehiclePoints;
+var int UtilityPoints, MaxUtilityPoints;
 
 //determine if summons die on player death
 var bool bMonstersDie;
@@ -149,6 +173,9 @@ var int AdrenalineBeforeKill;
 //Sound
 var Sound LevelUpSound;
 
+//Materials
+var Material LockedVehicleOverlay;
+
 //Text
 var localized string GameRestartingText, ImposterText, LevelUpText, IntroText;
 
@@ -162,7 +189,10 @@ replication
         StatPointsAvailable, AbilityPointsAvailable,
         bGameEnded,
         NumMonsters,
-        MaxMonsters;
+        MaxMonsters,
+        NumBuildings, NumSentinels, NumTurrets, NumVehicles, NumUtilities,
+        MaxBuildings, MaxSentinels, MaxTurrets, MaxVehicles, MaxUtilities,
+        NumVehicleHealers;
     reliable if(Role == ROLE_Authority)
         ClientReInitMenu, ClientEnableRPGMenu,
         ClientNotifyExpGain, ClientShowHint,
@@ -177,7 +207,8 @@ replication
         ServerSwitchBuild, ServerResetData, ServerRebuildData,
         ServerClearArtifactOrder, ServerAddArtifactOrderEntry, ServerSortArtifacts,
         ServerGetArtifact, ServerActivateArtifact, //moved from TitanPlayerController for better compatibility
-        ServerDestroyTurrets, ServerKillMonsters;
+        ServerDestroyBuildings, ServerDestroySentinels, ServerDestroyTurrets,
+        ServerDestroyVehicles, ServerDestroyUtilities, ServerKillMonsters;
 }
 
 static function RPGPlayerReplicationInfo CreateFor(Controller C)
@@ -922,20 +953,87 @@ simulated event Tick(float dt)
             else
                 x++;
         }
-        
+
+        //Clean buildings
+        x = 0;
+        while(x < Buildings.Length)
+        {
+            if(Buildings[x].Pawn == None || Buildings[x].Pawn.Health <= 0)
+            {
+                NumBuildings--;
+                BuildingPoints += Buildings[x].Points;
+                Buildings.Remove(x, 1);
+            }
+            else
+                x++;
+        }
+
+        //Clean sentinels
+        x = 0;
+        while(x < Sentinels.Length)
+        {
+            if(Sentinels[x].Pawn == None || Sentinels[x].Pawn.Health <= 0)
+            {
+                NumSentinels--;
+                SentinelPoints += Sentinels[x].Points;
+                Sentinels.Remove(x, 1);
+            }
+            else
+                x++;
+        }
+
         //Clean turrets
         x = 0;
         while(x < Turrets.Length)
         {
-            if(Turrets[x] == None)
+            if(Turrets[x].Pawn == None || Turrets[x].Pawn.Health <= 0)
             {
                 NumTurrets--;
+                TurretPoints += Turrets[x].Points;
                 Turrets.Remove(x, 1);
             }
             else
                 x++;
         }
-        
+
+        //Clean vehicles
+        x = 0;
+        while(x < Vehicles.Length)
+        {
+            if(Vehicles[x].Pawn == None || Vehicles[x].Pawn.Health <= 0)
+            {
+                NumVehicles--;
+                VehiclePoints += Vehicles[x].Points;
+                Vehicles.Remove(x, 1);
+            }
+            else
+                x++;
+        }
+
+        //Clean utilities
+        x = 0;
+        while(x < Utilities.Length)
+        {
+            if(Utilities[x].Pawn == None || Utilities[x].Pawn.Health <= 0)
+            {
+                NumUtilities--;
+                UtilityPoints += Utilities[x].Points;
+                Utilities.Remove(x, 1);
+            }
+            else
+                x++;
+        }
+
+        //Clean locked vehicles
+        x = 0;
+        while(x < LockedVehicles.Length)
+        {
+            if(LockedVehicles[x] == None || LockedVehicles[x].Health <= 0)
+                LockedVehicles.Remove(x , 1);
+            else
+                x++;
+        }
+
         //Award experience for daredevil points
         if(
             class'RPGRules'.default.EXP_Daredevil != 0 &&
@@ -945,11 +1043,47 @@ simulated event Tick(float dt)
         {
             x = TeamPlayerReplicationInfo(PRI).DaredevilPoints - DaredevilPoints;
             //Log(RPGName @ "gained" @ x @ "daredevil points!");
-            
+
             DaredevilPoints += x;
             AwardExperience(float(x) * class'RPGRules'.default.EXP_Daredevil);
         }
     }
+}
+
+function Timer()
+{
+    local int ValidHealers;
+    local Controller C;
+
+    if(Vehicle(Controller.Pawn) == None)
+    {
+        SetTimer(0.0, false);
+        return;
+    }
+
+    // keep a list of who is healing
+    VehicleHealers.Length = 0;
+    for(C = Level.ControllerList; C != None; C = C.NextController)
+    {
+        if((C.Pawn != None && C.Pawn.Weapon != None && LinkFire(C.Pawn.Weapon.GetFireMode(1)) != None
+        && LinkFire(C.Pawn.Weapon.GetFireMode(1)).LockedPawn == class'Util'.static.GetRootVehicle(Vehicle(Controller.Pawn))
+        && WeaponModifier_EngineerLink(class'WeaponModifier_EngineerLink'.static.GetFor(C.Pawn.Weapon)) != None)
+        || (RPGLinkSentinelController(C) != None && RPGLinkSentinelController(C).HealingVehicle == class'Util'.static.GetRootVehicle(Vehicle(Controller.Pawn))))
+        {
+            VehicleHealers[VehicleHealers.Length] = C;
+            ValidHealers++;
+        }
+    }
+
+    if(ValidHealers > 0 && Controller.Pawn.Health < Controller.Pawn.HealthMax)
+    {
+        // healed turret of health, so no damage/xp bonus this second
+        LastVehicleHealTime = Level.TimeSeconds;
+    }
+
+    // now update the replicated value
+    if(NumVehicleHealers != ValidHealers)
+        NumVehicleHealers = ValidHealers;
 }
 
 function ServerNoteActivity()
@@ -1261,38 +1395,232 @@ function ServerKillMonsters()
     NumMonsters = 0;
 }
 
-function AddTurret(Vehicle T)
+final function ServerDestroyBuildings()
 {
-    local int i;
-    
-    Turrets[Turrets.Length] = T;
-    NumTurrets++;
-    
-    for(i = 0; i < Abilities.Length; i++)
+    while(Buildings.Length > 0)
     {
-        if(Abilities[i].bAllowed)
-            Abilities[i].ModifyTurret(T, Controller.Pawn);
+        if(Vehicle(Buildings[0].Pawn) != None)
+        {
+            class'Util'.static.EjectAllDrivers(Vehicle(Buildings[0].Pawn));
+            if(Buildings[0].Pawn.Controller != None && PlayerController(Buildings[0].Pawn.Controller) == None)
+                Buildings[0].Pawn.Controller.Destroy();
+        }
+        if(Buildings[0].Pawn != None)
+            Buildings[0].Pawn.Destroy();
+        Buildings.Remove(0, 1);
     }
+    NumBuildings = 0;
+    BuildingPoints = MaxBuildingPoints;
 }
 
-function ServerDestroyTurrets()
+final function ServerDestroySentinels()
+{
+    while(Sentinels.Length > 0)
+    {
+        if(Vehicle(Sentinels[0].Pawn) != None)
+        {
+            class'Util'.static.EjectAllDrivers(Vehicle(Sentinels[0].Pawn));
+            if(Sentinels[0].Pawn.Controller != None && PlayerController(Sentinels[0].Pawn.Controller) == None)
+                Sentinels[0].Pawn.Controller.Destroy();
+        }
+        if(Sentinels[0].Pawn != None)
+            Sentinels[0].Pawn.Destroy();
+        Sentinels.Remove(0, 1);
+    }
+    NumSentinels = 0;
+    SentinelPoints = MaxSentinelPoints;
+}
+
+final function ServerDestroyTurrets()
 {
     while(Turrets.Length > 0)
     {
-        if(Turrets[0] != None)
+        if(Vehicle(Turrets[0].Pawn) != None)
         {
-            if(Turrets[0].Driver != None)
-                Turrets[0].KDriverLeave(true);
-            
-            if(Turrets[0].Controller != None && PlayerController(Turrets[0].Controller) == None)
-                Turrets[0].Controller.Destroy();
-            
-            Turrets[0].Suicide();
+            class'Util'.static.EjectAllDrivers(Vehicle(Turrets[0].Pawn));
+            if(Turrets[0].Pawn.Controller != None && PlayerController(Turrets[0].Pawn.Controller) == None)
+                Turrets[0].Pawn.Controller.Destroy();
         }
-        
+        if(Turrets[0].Pawn != None)
+            Turrets[0].Pawn.Destroy();
         Turrets.Remove(0, 1);
     }
     NumTurrets = 0;
+    TurretPoints = MaxTurretPoints;
+}
+
+final function ServerDestroyVehicles()
+{
+    while(Vehicles.Length > 0)
+    {
+        if(Vehicle(Vehicles[0].Pawn) != None)
+        {
+            class'Util'.static.EjectAllDrivers(Vehicle(Vehicles[0].Pawn));
+            if(Vehicles[0].Pawn.Controller != None && PlayerController(Vehicles[0].Pawn.Controller) == None)
+                Vehicles[0].Pawn.Controller.Destroy();
+        }
+        if(Vehicles[0].Pawn != None)
+            Vehicles[0].Pawn.Destroy();
+        Vehicles.Remove(0, 1);
+    }
+    NumVehicles = 0;
+    VehiclePoints = MaxVehiclePoints;
+}
+
+final function ServerDestroyUtilities()
+{
+    while(Utilities.Length > 0)
+    {
+        if(Vehicle(Utilities[0].Pawn) != None)
+        {
+            class'Util'.static.EjectAllDrivers(Vehicle(Utilities[0].Pawn));
+            if(Utilities[0].Pawn.Controller != None && PlayerController(Utilities[0].Pawn.Controller) == None)
+                Utilities[0].Pawn.Controller.Destroy();
+        }
+        if(Utilities[0].Pawn != None)
+            Utilities[0].Pawn.Destroy();
+        Utilities.Remove(0, 1);
+    }
+    NumUtilities = 0;
+    UtilityPoints = MaxUtilityPoints;
+}
+
+final function AddConstruction(string ConstructionType, Pawn P, int Points)
+{
+    local int i;
+
+    switch(ConstructionType)
+    {
+        case "BUILDING":
+            i = Buildings.Length;
+            Buildings.Length = i + 1;
+            Buildings[i].Pawn = P;
+            Buildings[i].Points = Points;
+            BuildingPoints -= Points;
+            NumBuildings++;
+            break;
+        case "SENTINEL":
+            i = Sentinels.Length;
+            Sentinels.Length=i+1;
+            Sentinels[i].Pawn=P;
+            Sentinels[i].Points=Points;
+            SentinelPoints-=Points;
+            NumSentinels++;
+            break;
+        case "TURRET":
+            i = Turrets.Length;
+            Turrets.Length = i + 1;
+            Turrets[i].Pawn = P;
+            Turrets[i].Points = Points;
+            TurretPoints -= Points;
+            NumTurrets++;
+            break;
+        case "VEHICLE":
+            i = Vehicles.Length;
+            Vehicles.Length = i + 1;
+            Vehicles[i].Pawn = P;
+            Vehicles[i].Points = Points;
+            VehiclePoints -= Points;
+            NumVehicles++;
+            break;
+        case "UTILITY":
+            i = Utilities.Length;
+            Utilities.Length = i + 1;
+            Utilities[i].Pawn = P;
+            Utilities[i].Points = Points;
+            UtilityPoints -= Points;
+            NumUtilities++;
+            break;
+    }
+
+    // lets set the eject to be false. If you have the correct skill later, it can reset
+    if(Vehicle(P) != None)
+        Vehicle(P).bEjectDriver = false;
+    if (P.SuperHealthMax == 199)
+        P.SuperHealthMax = 200; // to show it is a summoned item
+
+    //let stats do their stuff first
+    for(i = 0; i < Abilities.Length; i++)
+    {
+        if(Abilities[i].bAllowed && Abilities[i].bIsStat)
+            Abilities[i].ModifyConstruction(P);
+    }
+
+    //then abilities
+    for(i = 0; i < Abilities.Length; i++)
+    {
+        if(Abilities[i].bAllowed && !Abilities[i].bIsStat)
+            Abilities[i].ModifyConstruction(P);
+    }
+}
+
+final function bool LockVehicle(Vehicle V)
+{
+    local int i;
+
+    if(class'Util'.static.InArray(V, LockedVehicles) != -1)
+        return false;
+
+    for(i = 0; i < Buildings.Length; i++)
+    {
+        if(Buildings[i].Pawn == V)
+        {
+            LockedVehicles[LockedVehicles.Length] = V;
+            V.SetOverlayMaterial(LockedVehicleOverlay, 50000.0, false);
+            return true;
+        }
+    }
+    for(i = 0; i < Sentinels.Length; i++)
+    {
+        if(Sentinels[i].Pawn == V)
+        {
+            LockedVehicles[LockedVehicles.Length] = V;
+            V.SetOverlayMaterial(LockedVehicleOverlay, 50000.0, false);
+            return true;
+        }
+    }
+    for(i = 0; i < Turrets.Length; i++)
+    {
+        if(Turrets[i].Pawn == V)
+        {
+            LockedVehicles[LockedVehicles.Length] = V;
+            V.SetOverlayMaterial(LockedVehicleOverlay, 50000.0, false);
+            return true;
+        }
+    }
+    for(i = 0; i < Vehicles.Length; i++)
+    {
+        if(Vehicles[i].Pawn == V)
+        {
+            LockedVehicles[LockedVehicles.Length] = V;
+            V.SetOverlayMaterial(LockedVehicleOverlay, 50000.0, false);
+            return true;
+        }
+    }
+    for(i = 0; i < Utilities.Length; i++)
+    {
+        if(Utilities[i].Pawn == V)
+        {
+            LockedVehicles[LockedVehicles.Length] = V;
+            V.SetOverlayMaterial(LockedVehicleOverlay, 50000.0, false);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+final function bool UnlockVehicle(Vehicle V)
+{
+    local int i;
+
+    i = class'Util'.static.InArray(V, LockedVehicles);
+    if(i > -1)
+    {
+        LockedVehicles.Remove(i, 1);
+        V.SetOverlayMaterial(LockedVehicleOverlay, 0.0, false);
+        return true;
+    }
 }
 
 simulated function ClientSetName(string NewName)
@@ -1310,17 +1638,25 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
         if(Abilities[i].bAllowed)
             Abilities[i].ModifyVehicle(V);
     }
+
+    VehicleHealers.Length = 0;
+    NumVehicleHealers = 0;
+    SetTimer(0.5, true); //for calculating number of healers
 }
 
 function DriverLeftVehicle(Vehicle V, Pawn P)
 {
     local int i;
-    
+
     for(i = 0; i < Abilities.Length; i++)
     {
         if(Abilities[i].bAllowed)
             Abilities[i].UnModifyVehicle(V);
     }
+
+    VehicleHealers.Length = 0;
+    NumVehicleHealers = 0;
+    SetTimer(0.0, true); //stop calculating number of healers
 }
 
 function ServerSwitchBuild(string NewBuild)
@@ -1945,7 +2281,14 @@ defaultproperties
 
     LevelUpSound=Sound'TURRPG2.SoundEffects.LevelUp'
 
+    LockedVehicleOverlay=Shader'PulseRedShader'
+
     MaxMonsters=3
+    MaxBuildings=15
+    MaxSentinels=3
+    MaxTurrets=3
+    MaxVehicles=3
+    MaxUtilities=3
 
     bAlwaysRelevant=False
     bOnlyRelevantToOwner=True

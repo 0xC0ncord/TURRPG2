@@ -27,6 +27,8 @@ var float LastLevelMessageTime;
 var Color EXPBarColor, DisabledOverlay, RedColor, WhiteColor, WhiteTrans;
 var Color HUDColorTeam[4];
 var localized string LevelText;
+var Sound VehicleLockSound, VehicleUnlockSound;
+var localized string VehicleLockedMessage, VehicleUnlockedMessage;
 
 var Material ArtifactBorderMaterial;
 var Rect ArtifactBorderMaterialRect;
@@ -1574,6 +1576,24 @@ exec function RPGFavoriteWeapon()
     }
 }
 
+exec function LockVehicle()
+{
+    if(Vehicle(ViewportOwner.Actor.Pawn) != None && RPRI.LockVehicle(Vehicle(ViewportOwner.Actor.Pawn)))
+    {
+        ViewportOwner.Actor.ClientPlaySound(VehicleLockSound,, 1);
+        ViewportOwner.Actor.ClientMessage(VehicleLockedMessage);
+    }
+}
+
+exec function UnlockVehicle()
+{
+    if(Vehicle(ViewportOwner.Actor.Pawn) != None && RPRI.UnlockVehicle(Vehicle(ViewportOwner.Actor.Pawn)))
+    {
+        ViewportOwner.Actor.ClientPlaySound(VehicleUnlockSound,, 1);
+        ViewportOwner.Actor.ClientMessage(VehicleUnlockedMessage);
+    }
+}
+
 event NotifyLevelChange()
 {
     FindRPRI();
@@ -1643,6 +1663,10 @@ defaultproperties
     LevelText="Level:"
     bVisible=True
     bRequiresTick=True
+    VehicleLockSound=Sound'ONSVehicleSounds-S.Hydraulics.Hydraulic03'
+    VehicleUnlockSound=Sound'ONSVehicleSounds-S.Hydraulics.Hydraulic04'
+    VehicleLockedMessage="Vehicle locked!"
+    VehicleUnlockedMessage="Vehicle unlocked!"
     ArtifactTutorialText="You have collected a magic artifact!|Press $1 to use it or press $2 and $3 to browse|if you have multiple artifacts."
     ArtifactMoreOptionsText="See more options..."
     ArtifactNAText="N/A"
