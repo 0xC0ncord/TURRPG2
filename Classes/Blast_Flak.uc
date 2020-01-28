@@ -5,6 +5,6 @@ defaultproperties {
     NumProjectiles=100
     SpeedMin=1000
     SpeedMax=1350
-    
+
     ChargeEmitterClass=class'FX_BlastCharger_Flak'
 }

@@ -46,7 +46,7 @@ simulated function Timer()
                 {
                     OverrideTarget = None;
                     HomingTarget.IncomingMissile(self);
-                    
+
                     if(RPGBot(HomingTarget.Controller) != None)
                         RPGBot(HomingTarget.Controller).IncomingMissile(Self);
 

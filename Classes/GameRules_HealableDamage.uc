@@ -22,14 +22,14 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     {
         DoHealableDamage(DamageRV, Injured);
     }
-    
+
     return DamageRV;
 }
 
 function DoHealableDamage(int Damage, Pawn Injured)
 {
     local Inv_HealableDamage Inv;
-    
+
     Inv = Inv_HealableDamage(injured.FindInventoryType(class'Inv_HealableDamage'));
     if(Inv == None)
     {
@@ -38,7 +38,7 @@ function DoHealableDamage(int Damage, Pawn Injured)
     }
 
     Inv.Damage += Damage;
-    
+
     if(Inv.Damage > Injured.HealthMax + MaxHealthBonus)
         Inv.Damage = Injured.HealthMax + MaxHealthBonus;
 }

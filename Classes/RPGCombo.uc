@@ -33,12 +33,12 @@ function Destroyed()
 
 function StartEffect(xPawn P)
 {
-	CreateEffects(P);
+    CreateEffects(P);
 }
 
 function StopEffect(xPawn P)
 {
-	DestroyEffects(P);
+    DestroyEffects(P);
 }
 
 defaultproperties

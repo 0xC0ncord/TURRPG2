@@ -21,7 +21,7 @@ simulated event Tick(float dt)
 
     if(Role < ROLE_Authority)
         return; //necessary? I dunno but it's making sure -pd
-        
+
     /*
         Since we cannot react on vehicle events (cba to create a wrapper like RPGWeapon),
         we'll check every AVRiLRocket that is in range and make it home it.
@@ -31,7 +31,7 @@ simulated event Tick(float dt)
         if(Rocket.OverrideTarget == None && FastTrace(Location, Rocket.Location))
             Rocket.OverrideTarget = Self;
     }
-    
+
     //Raptor missiles
     foreach VisibleCollidingActors(class'ONSAttackCraftMissle', RaptorMissile, DecoyRange, Location)
         RaptorMissile.SetHomingTarget(None);

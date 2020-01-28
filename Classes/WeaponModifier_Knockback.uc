@@ -7,20 +7,20 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     local Effect_Knockback Knockback;
 
     Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
-    
+
     if(Damage > 0)
     {
         Knockback = Effect_Knockback(
             class'Effect_Knockback'.static.Create(Injured, InstigatedBy.Controller, 1.00));
-        
+
         if(Knockback != None)
         {
             Identify();
-        
+
             if
             (
-                (Momentum.X == 0 && Momentum.Y == 0 && Momentum.Z == 0) || 
-                DamageType == class'DamTypeSniperShot' || 
+                (Momentum.X == 0 && Momentum.Y == 0 && Momentum.Z == 0) ||
+                DamageType == class'DamTypeSniperShot' ||
                 DamageType == class'DamTypeClassicSniper' ||
                 DamageType == class'DamTypeLinkShaft' ||
                 DamageType == class'DamTypeONSAVRiLRocket'
@@ -35,7 +35,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
             }
 
             Momentum *= FMax(2.0, FMax(float(Modifier) * BonusPerLevel, float(Damage) * 0.1)); //kawham!
-            
+
             /*
                 momentum will be applied by the weapon,
                 TakeDamage just doesn't work while in a NetDamge subcall

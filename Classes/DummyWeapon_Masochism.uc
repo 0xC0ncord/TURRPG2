@@ -2,7 +2,7 @@
 class DummyWeapon_Masochism extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Masochism"

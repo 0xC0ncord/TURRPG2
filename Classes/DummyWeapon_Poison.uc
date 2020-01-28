@@ -2,7 +2,7 @@
 class DummyWeapon_Poison extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Poison"

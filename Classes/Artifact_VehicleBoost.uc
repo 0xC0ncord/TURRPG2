@@ -15,7 +15,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_Restriction:
             return default.MsgRestriction;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -40,14 +40,14 @@ function bool CanActivate()
         Msg(MSG_Restriction);
         return false;
     }
-    
+
     return Super.CanActivate();
 }
 
 function bool DoEffect()
 {
-    local ONSVehicle OV; 
-    
+    local ONSVehicle OV;
+
     DestroyTrails();
 
     OV = ONSVehicle(Instigator);
@@ -110,7 +110,7 @@ function bool DoEffect()
 
         SetTimer(BoostTrailLifeTime, false);
     }
-    
+
     return true;
 }
 
@@ -133,7 +133,7 @@ function DestroyTrails()
 
     for(i = 0; i < Trails.Length; i++)
         Trails[i].Destroy();
-        
+
     Trails.Remove(0, Trails.Length);
 }
 

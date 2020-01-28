@@ -19,7 +19,7 @@ function int GetMaxHealthBonus() {
         if(LM != None)
             return LM.GetHealMax();
     }
-    
+
     return Super.GetMaxHealthBonus();
 }
 

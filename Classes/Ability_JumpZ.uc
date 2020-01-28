@@ -3,7 +3,7 @@ class Ability_JumpZ extends RPGAbility;
 function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
-    
+
     Other.JumpZ = Other.default.JumpZ * (1.0 + BonusPerLevel * float(AbilityLevel));
 }
 

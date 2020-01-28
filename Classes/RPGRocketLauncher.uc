@@ -26,7 +26,7 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
     if (bLockedOn && SeekTarget != None)
     {
         SeekingRocket = Spawn(SeekingRocketClass,,, Start, Dir);
-        
+
         SeekingRocket.Seeking = SeekTarget;
         if ( B != None )
         {
@@ -46,7 +46,7 @@ defaultproperties
 {
     RocketClass=class'RPGRocketProj';
     SeekingRocketClass=class'RPGSeekingRocketProj';
-    
+
     FireModeClass(0)=class'RocketFire'
     FireModeClass(1)=class'RPGRocketMultiFire';
 

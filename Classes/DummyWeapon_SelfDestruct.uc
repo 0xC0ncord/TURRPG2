@@ -2,7 +2,7 @@
 class DummyWeapon_SelfDestruct extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Self Destruction"

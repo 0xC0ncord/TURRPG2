@@ -12,13 +12,13 @@ function DoFireEffect()
     local int p,q, SpawnCount, i;
     local RocketProj FiredRockets[16];
     local bool bCurl;
-    
+
     if ( (SpreadStyle == SS_Line) || (Load < 2) )
     {
         Super(ProjectileFire).DoFireEffect();
         return;
     }
-    
+
     Instigator.MakeNoise(1.0);
     Weapon.GetViewAxes(X,Y,Z);
 
@@ -33,7 +33,7 @@ function DoFireEffect()
     {
         StartProj = HitLocation;
     }
-    
+
     Aim = AdjustAim(StartProj, AimError);
 
     SpawnCount = Max(1, int(Load));
@@ -43,14 +43,14 @@ function DoFireEffect()
          Firelocation = StartProj - 2*((Sin(p*2*PI/MaxLoad)*8 - 7)*Y - (Cos(p*2*PI/MaxLoad)*8 - 7)*Z) - X * 8 * FRand();
         FiredRockets[p] = RocketProj(SpawnProjectile(FireLocation, Aim));
     }
-    
+
     if ( SpawnCount < 2 )
         return;
-    
+
     FlockIndex++;
     if ( FlockIndex == 0 )
         FlockIndex = 1;
-        
+
     // To get crazy flying, we tell each projectile in the flock about the others.
     for ( p = 0; p < SpawnCount; p++ )
     {
@@ -64,7 +64,7 @@ function DoFireEffect()
                 {
                     FiredRockets[p].Flock[i % 2] = FiredRockets[q];
                     i++;
-                }    
+                }
             bCurl = !bCurl;
             if ( Level.NetMode != NM_DedicatedServer )
                 FiredRockets[p].SetTimer(0.1, true);
@@ -86,7 +86,7 @@ function ModeTick(float dt)
     }
 
     Super(ProjectileFire).ModeTick(dt);
-    
+
     if(Load == MaxLoad - 1 && HoldTime >= FireRate * (MaxLoad - 1)) {
         //final rocket
         Load += 1;
@@ -99,7 +99,7 @@ function ModeTick(float dt)
                 } else {
                     ServerPlayLoading();
                 }
-                    
+
                 Load += 1;
                 break;
             }

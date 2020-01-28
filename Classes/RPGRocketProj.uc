@@ -11,7 +11,7 @@ simulated function Timer()
 
     //This was the problem...
     //Velocity =  Default.Speed * Normal(Dir * 0.5 * Default.Speed + Velocity);
-    
+
     //This is the cure...
     Velocity = VSize(Velocity) * Normal(Dir * 0.5 * VSize(Velocity) + Velocity);
 

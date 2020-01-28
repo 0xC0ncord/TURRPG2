@@ -18,13 +18,13 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_OnlyInVehicle:
             return default.OnlyInVehicleText;
-            
+
         case MSG_AlreadyActive:
             return default.AlreadyActiveText;
-            
+
         case MSG_TeamMembers:
             return default.TeamMembersText;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -53,19 +53,19 @@ function bool CanActivate()
         Msg(MSG_OnlyInVehicle);
         return false;
     }
-    
+
     if(Instigator.FindInventoryType(class'Inv_SelfDestruct') != None)
     {
         Msg(MSG_AlreadyActive);
         return false;
     }
-    
+
     if(Vehicle(Instigator).NumPassengers() > 1)
     {
         Msg(MSG_TeamMembers);
         return false;
     }
-    
+
     return Super.CanActivate();
 }
 
@@ -84,7 +84,7 @@ function bool DoEffect()
         SDI.MomentumTransfer = MomentumTransfer;
         SDI.GiveTo(Instigator);
     }
-    
+
     return (SDI != None);
 }
 
@@ -104,6 +104,6 @@ defaultproperties
     Damage=1000
     DamageRadius=1024
     MomentumTransfer=50000
-    
+
     MaxUses=1
 }

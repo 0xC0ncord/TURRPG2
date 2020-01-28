@@ -7,18 +7,18 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     local RPGEffect Effect;
 
     Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
-    
+
     if(Damage > 0)
     {
         Effect = class'Effect_NullEntropy'.static.Create(
             Injured,
             InstigatedBy.Controller,
             FMax(1.0f, BonusPerLevel * float(Modifier)));
-        
+
         if(Effect != None)
         {
             Identify();
-            
+
             Momentum = vect(0, 0, 0);
             Effect.Start();
         }

@@ -3,7 +3,7 @@ class Ability_DodgeSpeed extends RPGAbility;
 function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
-    
+
     if(xPawn(Other) != None)
     {
         xPawn(Other).DodgeSpeedFactor = Other.default.DodgeSpeedFactor * (1.0 + BonusPerLevel * float(AbilityLevel));

@@ -8,7 +8,7 @@ replication {
 function ModifyWeapon(Weapon Weapon) {
     local int i;
     local RocketMultiFire RMF;
-    
+
     for(i = 0; i < Weapon.NUM_FIRE_MODES; i++) {
         RMF = RocketMultiFire(Weapon.GetFireMode(i));
         if(RMF != None) {
@@ -22,7 +22,7 @@ function ModifyWeapon(Weapon Weapon) {
 
 simulated function ClientModifyMaxLoad(Weapon Weapon, int Mode, int MaxLoad, float MaxHoldTime) {
     local RocketMultiFire RMF;
-    
+
     RMF = RocketMultiFire(Weapon.GetFireMode(Mode));
     if(RMF != None) {
         RMF.MaxLoad = MaxLoad;

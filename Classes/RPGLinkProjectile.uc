@@ -56,7 +56,7 @@ simulated event PostNetBeginPlay()
 {
     local float dist;
     local PlayerController PC;
-    
+
     if(bOLTeamGames)
     {
         Acceleration = Normal(Velocity) * 3000.0;

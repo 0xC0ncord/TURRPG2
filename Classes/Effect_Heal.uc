@@ -43,20 +43,20 @@ function DoEffect()
         HealPassengers(Vehicle(Instigator));
         return; //don't heal the vehicle itself
     }
-    
+
     if(EffectCauser != None) {
         Healer = EffectCauser.Pawn;
-        
+
         if(Vehicle(Healer) != None) {
             Healer = Vehicle(Healer).Driver;
         }
     }
-    
+
     if(Healer == Instigator && HealAmount > SelfHealingCap)
         HealAmount = Max(1, int(float(HealAmount) * SelfHealingMultiplier));
-    
+
     Instigator.GiveHealth(HealAmount, Instigator.HealthMax + Modifier);
-    
+
     //Possibly grant experience
     if(
         Healer != None &&
@@ -72,16 +72,16 @@ defaultproperties
 {
     HealAmount=10
     Modifier=0 //max bonus
-    
+
     SelfHealingCap=0
     SelfHealingMultiplier=0.25
-    
+
     bHarmful=False
     bAllowOnEnemies=False
 
     EffectOverlay=Shader'TURRPG2.Overlays.BlueShader'
     EffectSound=Sound'TURRPG2.SoundEffects.Heal'
     xEmitterClass=class'FX_Heal'
-    
+
     EffectMessageClass=class'EffectMessage_Heal'
 }

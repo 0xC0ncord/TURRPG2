@@ -20,7 +20,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         {
             localDamage = Instigator.Health - MinimumHealth;
         }
-        
+
         if(localDamage > 0 && (InstigatedBy.Controller == None || !InstigatedBy.Controller.bGodMode))
             Instigator.Health = Max(1, Instigator.Health - localDamage); //make sure you can never reach 0, as that causes evil bugs
     }

@@ -10,7 +10,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     if(Damage > 0 && Rand(99) <= (Modifier - MinModifier))
     {
         Identify();
-    
+
         Vorpal = class'Effect_Vorpal'.static.Create(Injured, InstigatedBy.Controller);
         if(Vorpal != None)
             Vorpal.Start();
@@ -19,7 +19,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
 simulated function BuildDescription() {
     Super.BuildDescription();
- 
+
     AddToDescription(Repl(VorpalText, "$1",
         class'Util'.static.FormatPercent(0.01f * float(Modifier + 1 - MinModifier))));
 }

@@ -11,9 +11,9 @@ var localized string WindowTitle, Text_Reset;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     OnClose=MyOnClose;
-    
+
     t_WindowTitle.SetCaption(WindowTitle);
 }
 
@@ -50,13 +50,13 @@ defaultproperties
 {
     Text_Reset="You about to reset $1.|This action CANNOT be undone.|YOUR LEVEL AND YOUR ABILITIES WILL BE LOST!|ARE YOU SURE?"
     WindowTitle="Character Reset"
-    
+
     bResizeWidthAllowed=False
     bResizeHeightAllowed=False
     bMoveAllowed=False
     bPersistent=True
     bAllowedAsLast=True
-    
+
     WinWidth=0.600000
     WinHeight=0.374723
     WinLeft=0.200000

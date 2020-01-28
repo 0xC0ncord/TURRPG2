@@ -76,7 +76,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
     local RPGWeaponModifier WM;
     local array<RPGArtifact> ActiveArtifacts;
     local bool bSelf, bSameTeam;
-    
+
     Game = Other.Level.Game;
 
     //Dead
@@ -99,13 +99,13 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
 
     //Self
     bSelf = (Causer != None && Causer == Other.Controller);
-    
+
     if(!default.bAllowOnSelf && bSelf) {
         return false;
     }
-    
+
     bSameTeam = class'Util'.static.SameTeamCP(Causer, Other);
-    
+
     //Enemies
     if(!bSameTeam) {
         if(!default.bAllowOnEnemies) {
@@ -118,7 +118,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
         if(!default.bAllowOnTeammates) {
             return false;
         }
-        
+
         if(default.bHarmful && TeamGame(Game) != None && TeamGame(Other.Level.Game).FriendlyFireScale == 0) {
             return false;
         }
@@ -127,18 +127,18 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
     //Invulnerability
     if(default.bHarmful && !default.bAllowOnGodMode && Other.Controller != None && Other.Controller.bGodMode)
         return false;
-    
+
     //Vehicles
     if(Vehicle(Other) != None) {
         if(!default.bAllowOnVehicles) {
             return false;
         }
-        
+
         if(!Vehicle(Other).bAutoTurret && Vehicle(Other).IsVehicleEmpty()) {
             return false;
         }
     }
-    
+
     //Monsters
     if(!default.bAllowOnMonsters && Monster(Other) != None) {
         return false;
@@ -191,7 +191,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
 static function RPGEffect Create(Pawn Other, optional Controller Causer, optional float OverrideDuration, optional float NewModifier)
 {
     local RPGEffect Effect;
-    
+
     if(CanBeApplied(Other, Causer, OverrideDuration, NewModifier))
     {
         Effect = GetFor(Other);
@@ -201,12 +201,12 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
 
             //Update
             Effect.Stop();
-            
+
             Effect.EffectCauser = Causer;
-            
+
             if(OverrideDuration > 0)
                 Effect.Duration = Max(Effect.Duration, OverrideDuration);
-            
+
             if(NewModifier > Effect.Modifier)
                 Effect.Modifier = NewModifier;
         }
@@ -215,14 +215,14 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
             //Create
             Effect = Other.Spawn(default.class, Other);
             Effect.GiveTo(Other);
-            
+
             if(Effect != None)
             {
                 Effect.EffectCauser = Causer;
-            
+
                 if(OverrideDuration > 0.0f)
                     Effect.Duration = OverrideDuration;
-                
+
                 if(NewModifier > Effect.Modifier)
                     Effect.Modifier = NewModifier;
 
@@ -230,7 +230,7 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
             }
         }
     }
-    
+
     return Effect;
 }
 
@@ -238,13 +238,13 @@ static function RemoveAll(Pawn Other)
 {
     local Inventory Inv;
     local RPGEffect Effect;
-    
+
     Inv = Other.Inventory;
     while(Inv != None)
     {
         Effect = RPGEffect(Inv);
         Inv = Inv.Inventory;
-        
+
         if(Effect != None)
             Effect.Destroy();
     }
@@ -253,7 +253,7 @@ static function RemoveAll(Pawn Other)
 static function Remove(Pawn Other)
 {
     local Inventory Inv;
-    
+
     Inv = Other.FindInventoryType(default.class);
     if(Inv != None)
         Inv.Destroy();
@@ -262,7 +262,7 @@ static function Remove(Pawn Other)
 static function RPGEffect GetFor(Pawn Other)
 {
     local RPGEffect Effect;
-    
+
     Effect = RPGEffect(Other.FindInventoryType(default.class));
     if(Effect != None && Effect.IsInState('Activated'))
         return Effect;
@@ -291,7 +291,7 @@ state Activated
     function DisplayEffect()
     {
         local PlayerReplicationInfo CauserPRI;
-        
+
         if(Level.TimeSeconds - LastEffectTime >= EffectLimitInterval)
         {
             if(EffectCauser != None)
@@ -303,43 +303,43 @@ state Activated
             if(xEmitterClass != None)
                 Instigator.Spawn(xEmitterClass, Instigator);
         }
-        
+
         LastEffectTime = Level.TimeSeconds;
     }
 
     function BeginState()
     {
         local RPGPlayerReplicationInfo RPRI;
-    
+
         if(ShouldDisplayEffect())
         {
             Instigator.PlaySound(EffectSound, SLOT_Misc, 1.0,, 768);
-            
+
             if(EffectOverlay != None)
                 class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, Duration, false);
-            
+
             DisplayEffect();
         }
-        
+
         if(StatusIconClass != None) {
             RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
             if(RPRI != None) {
                 RPRI.ClientCreateStatusIcon(StatusIconClass);
             }
         }
-        
+
         LastStartTime = Level.TimeSeconds;
-        
+
         if(Duration >= TimerInterval && TimerInterval > 0)
             SetTimer(TimerInterval, true);
     }
-    
+
     function Timer()
     {
         if(ShouldDisplayEffect())
             DisplayEffect();
     }
-    
+
     event Tick(float dt)
     {
         if(Instigator == None || Instigator.Health <= 0)
@@ -347,32 +347,32 @@ state Activated
             Destroy();
             return;
         }
-    
+
         if(!bPermanent)
         {
             Duration -= dt;
-            
+
             if(Duration <= 0)
                 Destroy();
         }
     }
-    
+
     function EndState()
     {
         local RPGPlayerReplicationInfo RPRI;
-    
+
         if(StatusIconClass != None) {
             RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
             if(RPRI != None) {
                 RPRI.ClientRemoveStatusIcon(StatusIconClass);
             }
         }
-    
+
         SetTimer(0, false);
     }
-    
+
     function Start();
-    
+
     function Stop()
     {
         GotoState('');
@@ -395,7 +395,7 @@ defaultproperties   {
     //by default, effects are harmful, can be stacked and allowed on anything
     bHarmful=True
     bAllowStacking=True
-    
+
     bAllowOnSelf=True
     bAllowOnTeammates=True //harmful effects are still not allowed if FriendlyFireScale is 0
     bAllowOnEnemies=True

@@ -34,9 +34,9 @@ simulated function ModifyVehicle(Vehicle V)
     local Sync_ONSWeaponRotSpeed Sync;
     local int i;
     local float Modifier;
-    
+
     Modifier = 1.0f + BonusPerLevel * float(AbilityLevel);
-    
+
     if(Role == ROLE_Authority)
     {
         if(ONSVehicle(V) != None)
@@ -46,31 +46,31 @@ simulated function ModifyVehicle(Vehicle V)
                 Sync = Spawn(class'Sync_ONSWeaponRotSpeed');
                 Sync.Target = ONSVehicle(V).Weapons[i];
                 Sync.RotationsPerSecond = ONSVehicle(V).Weapons[i].RotationsPerSecond * Modifier;
-                
+
                 ONSVehicle(V).Weapons[i].RotationsPerSecond *= Modifier;
             }
         }
-        
+
         if(ONSWeaponPawn(V) != None)
         {
             Sync = Spawn(class'Sync_ONSWeaponRotSpeed');
             Sync.Target = ONSWeaponPawn(V).Gun;
             Sync.RotationsPerSecond = ONSWeaponPawn(V).Gun.RotationsPerSecond * Modifier;
-            
+
             ONSWeaponPawn(V).Gun.RotationsPerSecond *= Modifier;
         }
-        
+
         if(ONSTreadCraft(V) != None)
             ONSTreadCraft(V).MaxSteerTorque *= Modifier;
     }
-    
+
     if(ONSHoverCraft(V) != None)
     {
         ONSHoverCraft(V).TurnTorqueFactor *= Modifier;
         ONSHoverCraft(V).TurnTorqueMax *= Modifier;
         ONSHoverCraft(V).MaxYawRate *= Modifier;
     }
-    
+
     if(ONSChopperCraft(V) != None)
     {
         ONSChopperCraft(V).TurnTorqueFactor *= Modifier;
@@ -95,17 +95,17 @@ simulated function UnModifyVehicle(Vehicle V)
             for(i = 0; i < ONSVehicle(V).Weapons.Length; i++)
             {
                 ONSVehicle(V).Weapons[i].RotationsPerSecond = ONSVehicle(V).Weapons[i].default.RotationsPerSecond;
-                
+
                 Sync = Spawn(class'Sync_ONSWeaponRotSpeed');
                 Sync.Target = ONSVehicle(V).Weapons[i];
                 Sync.RotationsPerSecond = ONSVehicle(V).Weapons[i].default.RotationsPerSecond;
             }
         }
-        
+
         if(ONSWeaponPawn(V) != None)
         {
             ONSWeaponPawn(V).Gun.RotationsPerSecond = ONSWeaponPawn(V).Gun.default.RotationsPerSecond;
-            
+
             Sync = Spawn(class'Sync_ONSWeaponRotSpeed');
             Sync.Target = ONSWeaponPawn(V).Gun;
             Sync.RotationsPerSecond = ONSWeaponPawn(V).Gun.default.RotationsPerSecond;
@@ -114,21 +114,21 @@ simulated function UnModifyVehicle(Vehicle V)
         if(ONSTreadCraft(V) != None)
             ONSTreadCraft(V).MaxSteerTorque = ONSTreadCraft(V).default.MaxSteerTorque;
     }
-    
+
     if(ONSHoverCraft(V) != None)
     {
         ONSHoverCraft(V).TurnTorqueFactor = ONSHoverCraft(V).default.TurnTorqueFactor;
         ONSHoverCraft(V).TurnTorqueMax = ONSHoverCraft(V).default.TurnTorqueMax;
         ONSHoverCraft(V).MaxYawRate = ONSHoverCraft(V).default.MaxYawRate;
     }
-    
+
     if(ONSChopperCraft(V) != None)
     {
         ONSChopperCraft(V).TurnTorqueFactor = ONSChopperCraft(V).default.TurnTorqueFactor;
         ONSChopperCraft(V).TurnTorqueMax = ONSChopperCraft(V).default.TurnTorqueMax;
         ONSChopperCraft(V).MaxYawRate = ONSChopperCraft(V).default.MaxYawRate;
     }
-    
+
     if(Level.NetMode == NM_DedicatedServer)
         ClientUnModifyVehicle(V);
 }

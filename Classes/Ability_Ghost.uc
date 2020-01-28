@@ -9,7 +9,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     //not on suicide / team switch
     if(DamageType == class'DamageType' || DamageType == class'Suicided')
         return false;
-    
+
     if(Killer == Killed && !bAllowSuicide)
         return false;
 
@@ -17,31 +17,31 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     //because our marker will get destroyed afterward
     if(ASVehicle_SpaceFighter(Killed) != None || (Killed.DrivenVehicle != None && ASVehicle_SpaceFighter(Killed.DrivenVehicle) != None))
         return false;
-        
+
     if(Monster(Killed) != None || (ASVehicle(Killed) != None && ASVehicle(Killed).bNonHumanControl))
         return false;
 
     if(Killed.bStationary || SVehicle(Killed) != None)
     {
         V = Vehicle(Killed);
-        
+
         //Possibly check for ejector seat before doing this... ~pd
         if(V != None && !V.bRemoteControlled && !V.bEjectDriver && V.Driver != None)
             V.Driver.Died(Killer, DamageType, HitLocation);
 
         return false;
     }
-    
+
     if(Killed.FindInventoryType(class'Inv_Ghost') != None)
         return false;
-        
+
     //ability won't work if pawn is still attached to the vehicle
     if(Killed.DrivenVehicle != None)
     {
         Killed.Health = 1; //so vehicle will properly kick pawn out
         Killed.DrivenVehicle.KDriverLeave(true);
     }
-    
+
     class'RPGEffect'.static.RemoveAll(Killed);
     class'Util'.static.GiveInventory(Killed, class'Inv_Ghost');
     return true;

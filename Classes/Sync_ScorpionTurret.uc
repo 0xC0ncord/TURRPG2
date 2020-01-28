@@ -14,7 +14,7 @@ replication {
 
 static function Sync_ScorpionTurret Sync(ONSRV Scorp, ONSWeapon NewWeapon) {
     local Sync_ScorpionTurret Sync;
-    
+
     Sync = Scorp.Spawn(class'Sync_ScorpionTurret');
     Sync.Scorp = Scorp;
     Sync.NewWeapon = NewWeapon;

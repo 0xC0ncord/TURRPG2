@@ -17,12 +17,12 @@ replication
 simulated event PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     if(Controller(Owner) != None)
         Team = Controller(Owner).GetTeamNum();
     else
         Team = 255;
-    
+
     SetSkin();
     DesiredRotation = Rotation + RotAdd;
 }
@@ -48,7 +48,7 @@ simulated event Tick(float dt)
 simulated event HitWall( vector HitNormal, actor Wall )
 {
     Super.HitWall(HitNormal, Wall);
-    
+
     if(!bPendingDelete)
     {
         RotAdd = rotator(-vector(RotAdd));
@@ -61,13 +61,13 @@ defaultproperties
 {
     StaticMesh=StaticMesh'TURRPG2.Pokeball.PokeballStatic' //oh my
     DrawScale=0.03125
-    
+
     RotationRate=(Pitch=-49152,Yaw=0,Roll=0)
-    
+
     RotAdd=(Pitch=-16384,Yaw=0,Roll=0);
-    
+
     bRotateToDesired=true
-    
+
     TeamSkin(0)=Combiner'TURRPG2.Pokeball.RedCombiner'
     TeamSkin(1)=Combiner'TURRPG2.Pokeball.BlueCombiner'
     TeamSkin(2)=Combiner'TURRPG2.Pokeball.GreenCombiner'

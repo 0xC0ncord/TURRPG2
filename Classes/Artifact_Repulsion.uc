@@ -20,13 +20,13 @@ function BotFightEnemy(Bot Bot)
         VSize(Bot.Enemy.Location - Instigator.Location) <= BlastRadius
     )
     {
-        Chance = 
-            Bot.Tactics * 1.25 * 
+        Chance =
+            Bot.Tactics * 1.25 *
             (1.0 - VSize(Bot.Enemy.Location - Instigator.Location) / BlastRadius);
-        
+
         if(Bot.PlayerReplicationInfo != None && Bot.PlayerReplicationInfo.HasFlag != None)
             Chance += 0.1; //+10% if carrying the flag
-        
+
         if(FRand() < Chance)
             Activate();
     }
@@ -42,14 +42,14 @@ function bool DoEffect()
     local Pawn P;
 
     Spawn(class'FX_Repulsion', Instigator.Controller,,Instigator.Location);
-    
+
     if(bDestroysMines)
     {
         //Destroy all nearby enemy mines
         foreach Instigator.CollidingActors(class'ONSMineProjectile', Mine, BlastRadius)
         {
             if(
-                Mine.TeamNum != Instigator.Controller.GetTeamNum() && 
+                Mine.TeamNum != Instigator.Controller.GetTeamNum() &&
                 FastTrace(Mine.Location, Instigator.Location)
             )
             {
@@ -57,7 +57,7 @@ function bool DoEffect()
             }
         }
     }
-    
+
     foreach Instigator.VisibleCollidingActors(class'Pawn', P, BlastRadius)
     {
         Repulsion = Effect_Repulsion(class'Effect_Repulsion'.static.Create(P, Instigator.Controller, MaxKnockbackTime));
@@ -72,7 +72,7 @@ function bool DoEffect()
             Repulsion.Start();
         }
     }
-    
+
     return true;
 }
 

@@ -9,10 +9,10 @@ static function bool AllowedFor(class<Weapon> Weapon, optional Pawn Other) {
     /*
     local int x;
     local class<ProjectileFire> ProjFire;
-    
+
     if(!Super.AllowedFor(Weapon, Other))
         return false;
-    
+
     //if it's a team game, always allowed
     if(Other.Level.Game.bTeamGame)
     {
@@ -42,21 +42,21 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     local int HealthGiven;
 
     Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
-    
+
     if(Injured.DrivenVehicle != None) {
         return; //open topped vehicle
     }
-    
+
     HealthGiven = Max(1, OriginalDamage * (BonusPerLevel * float(Modifier)));
 
     Heal = Effect_Heal(class'Effect_Heal'.static.Create(Injured, InstigatedBy.Controller,, GetMaxHealthBonus()));
     if(Heal != None) {
         Identify();
-    
+
         Heal.HealAmount = HealthGiven;
         Heal.Start();
     }
-    
+
     if(class'Util'.static.SameTeamP(InstigatedBy, Injured)) {
         Momentum = vect(0, 0, 0);
         Damage = 0;

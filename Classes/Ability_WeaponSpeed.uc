@@ -18,9 +18,9 @@ simulated function ClientModifyWeapon(Weapon Weapon, float Modifier)
 function ModifyWeapon(Weapon Weapon)
 {
     local float Modifier;
-    
+
     Modifier = GetModifier();
-    
+
     class'Util'.static.SetWeaponFireRate(Weapon, Modifier);
     ClientModifyWeapon(Weapon, Modifier);
 }
@@ -32,9 +32,9 @@ simulated function ClientModifyVehicle(Vehicle V, float Modifier) {
 function ModifyVehicle(Vehicle V)
 {
     local float Modifier;
-    
+
     Modifier = GetModifier();
-    
+
     class'Util'.static.SetVehicleFireRate(V, GetModifier());
     ClientModifyVehicle(V, Modifier);
 }
@@ -42,7 +42,7 @@ function ModifyVehicle(Vehicle V)
 function UnModifyVehicle(Vehicle V)
 {
     class'Util'.static.SetVehicleFireRate(V, 1.0);
-    ClientModifyVehicle(V, 1.0);    
+    ClientModifyVehicle(V, 1.0);
 }
 
 simulated function string DescriptionText()

@@ -15,12 +15,12 @@ static function RPGWeaponPickupModifier Modify(WeaponPickup WP, RPGWeaponModifie
     WPM.ModifierClass = WM.Class;
     WPM.ModifierLevel = WM.Modifier;
     WPM.bIdentified = WM.bIdentified;
-    
+
     if(WPM.bIdentified && WM.default.ModifierOverlay != None && class<WeaponAttachment>(WM.Weapon.AttachmentClass) != None) {
         WPM.AttachmentClass = class<WeaponAttachment>(WM.Weapon.AttachmentClass);
         WPM.Sync();
     }
-    
+
     return WPM;
 }
 
@@ -37,22 +37,22 @@ static function RPGWeaponPickupModifier GetFor(WeaponPickup WP) {
 
 static function SimulateWeaponPickup(WeaponPickup Pickup, Pawn Other, class<RPGWeaponModifier> ModifierClass, int ModifierLevel, bool bIdentify, optional bool bForceGive) {
     local Weapon Copy;
-    
+
     Pickup.TriggerEvent(Pickup.Event, Pickup, Other);
-    
+
     if(bForceGive) {
         //force give to using pickup only (weapon is created in the process
         Copy = class'Util'.static.ForceGiveTo(Other, None, Pickup);
     } else {
         Copy = Weapon(Pickup.SpawnCopy(Other));
     }
-    
+
     Pickup.AnnouncePickup(Other);
     Pickup.SetRespawn();
-    
+
     if(Copy != None) {
         Copy.PickupFunction(Other);
-        
+
         if(ModifierClass != None) {
             ModifierClass.static.Modify(Copy, ModifierLevel, bIdentify, true);
         }
@@ -62,7 +62,7 @@ static function bool SimulateWeaponLocker(WeaponLocker Locker, Pawn Other, class
     local Weapon Copy;
     local RPGWeaponModifier WM;
     local int i, x;
-    
+
     //Find entry
     x = -1;
     for(i = 0; i < Locker.Weapons.Length; i++) {
@@ -71,7 +71,7 @@ static function bool SimulateWeaponLocker(WeaponLocker Locker, Pawn Other, class
             break;
         }
     }
-    
+
     if(x >= 0) {
         //Simulate weapon locker
         Copy = Weapon(Locker.SpawnCopy(Other));

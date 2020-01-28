@@ -186,7 +186,7 @@ function bool DoEffect()
     local Pawn Target;
 
     Target = FindTarget();
-    
+
     //TODO maybe be a bit nice and don't drain adrenaline if the target is at least valid?
     if(!CanAffectTarget(Target))
     {

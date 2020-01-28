@@ -12,7 +12,7 @@ simulated event PostBeginPlay() {
     if(Role == ROLE_Authority) {
         Source = Owner;
     }
-    
+
     Super.PostBeginPlay();
 }
 
@@ -37,18 +37,18 @@ simulated function Tick(float dt)
 {
     local float LocDiff, RotDiff, WiggleMe;
     local Vector BeamDir;
-    
+
     if(Role == ROLE_Authority && (Source == None))
     {
         Destroy();
         return;
     }
-    
+
     // determine target location
     if(LinkedPawn != None) {
         LinkedLocation = LinkedPawn.Location;
     }
-    
+
     // set beam start location
     SetBeamLocation();
     BeamDir = SetBeamRotation();

@@ -15,10 +15,10 @@ var float InitialAdrenaline;
 event PostBeginPlay() {
     ActualCombo = Combo(Owner);
     ActualComboClass = ActualCombo.class;
-    
+
     Cost = ActualCombo.AdrenalineCost;
     ComboStarter = xPawn(ActualCombo.Owner).Controller;
-    
+
     InitialAdrenaline = ComboStarter.Adrenaline;
 }
 
@@ -32,7 +32,7 @@ event Destroyed() {
     if(ActualCombo != None) {
         ActualCombo.Destroy();
     }
-    
+
     //assume that the combo was successful if the controller's adrenaline was sufficiently drained
     if(ComboStarter.Adrenaline <= InitialAdrenaline - Cost * AdrenalineDrainThreshold) {
         class'RPGRules'.static.Instance(Level).ComboSuccess(ComboStarter, ActualComboClass);

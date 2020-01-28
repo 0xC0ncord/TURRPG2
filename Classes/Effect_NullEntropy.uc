@@ -22,7 +22,7 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         OriginalPhysics = Instigator.Physics;
         Instigator.SetPhysics(PHYS_None);
         if(PlayerController(Instigator.Controller) != None)
@@ -32,20 +32,20 @@ state Activated
     event Tick(float dt)
     {
         Super.Tick(dt);
-        
+
         if(!bPendingDelete)
         {
             if(Instigator.Physics != PHYS_NONE)
                 Instigator.SetPhysics(PHYS_NONE);
         }
     }
-    
+
     function Timer()
     {
         Super.Timer();
         ClientFixLocation(Instigator.Location);
     }
-    
+
     function EndState()
     {
         if(Instigator != None && Instigator.Physics == PHYS_None)
@@ -54,7 +54,7 @@ state Activated
             if(PlayerController(Instigator.Controller) != None && OriginalPhysics == PHYS_Flying)
                 Instigator.Controller.GotoState('PlayerFlying');
         }
-        
+
         Super.EndState();
     }
 }

@@ -13,7 +13,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_UnableToModify:
             return default.MsgUnableToModify;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -27,13 +27,13 @@ function bool CanActivate()
         Msg(MSG_UnableToModify);
         return false;
     }
-    
+
     WM = class'RPGWeaponModifier'.static.GetFor(Instigator.Weapon);
     if(WM == None || WM.MinModifier == WM.MaxModifier) {
         Msg(MSG_UnableToModify);
         return false;
     }
-    
+
     return Super.CanActivate();
 }
 
@@ -56,7 +56,7 @@ state Activated
     event Tick(float dt)
     {
         Super.Tick(dt);
-    
+
         if(Instigator.Weapon != WeaponModifier.Weapon)
             GotoState('');
     }

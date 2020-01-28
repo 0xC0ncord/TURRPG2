@@ -10,7 +10,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
     local RPGEffect Prot;
 
     Super.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
-    
+
     Damage = Max(Damage * (1 - BonusPerLevel * Modifier), 0);
     Identify();
 
@@ -18,7 +18,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
         Prot = class'Effect_Protection'.static.Create(Instigator, None, ProtectionDuration / float(Modifier));
         if(Prot != None) {
             Prot.Start();
-        
+
             Instigator.Health = 1;
             Damage = 0;
         }
@@ -27,7 +27,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
 
 simulated function BuildDescription() {
     Super.BuildDescription();
-    
+
     AddToDescription(DRText, BonusPerLevel);
     AddToDescription(ProtectionText);
 }

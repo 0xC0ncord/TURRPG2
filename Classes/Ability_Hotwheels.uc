@@ -3,7 +3,7 @@ class Ability_Hotwheels extends RPGAbility;
 function ModifyVehicle(Vehicle V)
 {
     local ONSWheeledCraft Car;
-    
+
     Car = ONSWheeledCraft(V);
     if(Car != None)
         class'Util'.static.SetVehicleSpeed(Car, 1.0 + BonusPerLevel * float(AbilityLevel));
@@ -12,7 +12,7 @@ function ModifyVehicle(Vehicle V)
 function UnModifyVehicle(Vehicle V)
 {
     local ONSWheeledCraft Car;
-    
+
     Car = ONSWheeledCraft(V);
     if(Car != None)
         class'Util'.static.SetVehicleSpeed(Car, 1.0);

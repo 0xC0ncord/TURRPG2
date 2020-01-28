@@ -11,7 +11,7 @@ var float xR, xG, xB;
 simulated event PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     R = Colors[0].R;
     G = Colors[0].G;
     B = Colors[0].B;
@@ -23,9 +23,9 @@ simulated function NextColor()
     CurrentColor++;
     if(CurrentColor >= Colors.Length)
         CurrentColor = 0;
-    
+
     Counter = Speed;
-    
+
     xR = (1 / Speed) * (float(Colors[CurrentColor].R) - R);
     xG = (1 / Speed) * (float(Colors[CurrentColor].G) - G);
     xB = (1 / Speed) * (float(Colors[CurrentColor].B) - B);
@@ -38,12 +38,12 @@ simulated event Tick(float dt)
     R = FMax(0.0, FMin(255.0, R + xR * dt));
     G = FMax(0.0, FMin(255.0, G + xG * dt));
     B = FMax(0.0, FMin(255.0, B + xB * dt));
-    
+
     mColorRange[0].R = byte(R);
     mColorRange[0].G = byte(G);
     mColorRange[0].B = byte(B);
     mColorRange[1] = mColorRange[0];
-    
+
     Counter -= dt;
     if(Counter <= 0)
         NextColor();

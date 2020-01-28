@@ -7,7 +7,7 @@ function OverrideGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out
     local float Factor;
     local class<WeaponFire> WFClass[2];
     local class<Ammunition> AmmoClass[2];
-    
+
     if(!bSuicided) {
         Factor = (1.0 + AbilityLevel * BonusPerLevel);
 
@@ -17,14 +17,14 @@ function OverrideGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out
                 AmmoClass[i] = WFClass[i].default.AmmoClass;
             }
         }
-        
+
         if(AmmoClass[0] != None) {
             StartingAmmo = int(float(AmmoClass[0].default.InitialAmount) * Factor);
             if(Ammo1 >= 0 && Ammo1 < StartingAmmo) {
                 Ammo1 = StartingAmmo;
             }
         }
-        
+
         if(AmmoClass[1] != None && AmmoClass[1] != AmmoClass[0]) {
             StartingAmmo = int(float(AmmoClass[1].default.InitialAmount) * Factor);
             if(Ammo2 >= 0 && Ammo2 < StartingAmmo) {
@@ -32,7 +32,7 @@ function OverrideGrantedWeaponAmmo(class<Weapon> WeaponClass, out int Ammo1, out
             }
         }
     }
-    
+
     Super.OverrideGrantedWeaponAmmo(WeaponClass, Ammo1, Ammo2);
 }
 

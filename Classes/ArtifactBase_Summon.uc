@@ -17,7 +17,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_FailedToSpawn:
             return default.MsgFailedToSpawn;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -43,7 +43,7 @@ function Failed()
         Instigator.Controller.Adrenaline =
             Min(Instigator.Controller.AdrenalineMax, Instigator.Controller.Adrenaline + RestoreAdrenaline);
     }
-    
+
     //reset cooldown
     if(NextUseTime > Level.TimeSeconds)
         ForceCooldown(0);
@@ -54,15 +54,15 @@ function BeaconLanded(RPGArtifactBeacon Beacon)
     local class<Actor> SummonClass;
     local Actor A;
     local vector SpawnLoc, SpawnDir;
-    
+
     if(Instigator != None)
     {
         SpawnLoc = Beacon.Location;
         SummonClass = BeaconBase_Summon(Beacon).SummonClass;
-        
+
         SpawnDir = VRand();
         SpawnDir.Z = 0;
-        
+
         A = SpawnActor(SummonClass, SpawnLoc, rotator(SpawnDir));
         if(A == None)
             Failed();
@@ -77,14 +77,14 @@ function BeaconDestroyed(RPGArtifactBeacon Beacon)
 function RPGArtifactBeacon SpawnBeacon()
 {
     local RPGArtifactBeacon Beacon;
-    
+
     Beacon = Super.SpawnBeacon();
     if(Beacon != None)
     {
         BeaconBase_Summon(Beacon).SummonClass = SpawnActorClass;
         RestoreAdrenaline = CostPerSec;
     }
-    
+
     return Beacon;
 }
 

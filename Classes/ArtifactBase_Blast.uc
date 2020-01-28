@@ -30,7 +30,7 @@ function bool DoEffect()
     local Blast Blast;
 
     Blast = SpawnBlast();
-    
+
     return (Blast != None);
 }
 
@@ -41,9 +41,9 @@ defaultproperties
     AIHealthMin=50
     AIMinTargets=2
     bFriendly=False
-    
+
     bAllowInVehicle=False
     bCanBeTossed=False
-    
+
     MaxUses=1
 }

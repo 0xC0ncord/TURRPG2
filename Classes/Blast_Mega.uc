@@ -9,7 +9,7 @@ defaultproperties
     bAllowDeadInstigator=False
 
     Radius=2500.000000
-    
+
     ChargeTime=5.000000
     Damage=360.000000
     DamageStages=5

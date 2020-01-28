@@ -8,7 +8,7 @@ var FX_HuntersMarkSight EyesEffect;
 simulated function Tick(float DeltaTime)
 {
     Super.Tick(DeltaTime);
-    
+
     if(!bPendingDelete && Level.TimeSeconds <= NextMarkTime)
         MarkPawns();
 }

@@ -11,16 +11,16 @@ var localized string WindowTitle, Text_Rebuild;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     OnClose=MyOnClose;
-    
+
     t_WindowTitle.SetCaption(WindowTitle);
 }
 
 function Init()
 {
     lblWarning.Caption = repl(
-        repl(repl(Text_Rebuild, "$3", RPGMenu.RPRI.RebuildMaxLevelLoss), "$2", RPGMenu.RPRI.RebuildCost), 
+        repl(repl(Text_Rebuild, "$3", RPGMenu.RPRI.RebuildMaxLevelLoss), "$2", RPGMenu.RPRI.RebuildCost),
         "$1",
         class'Util'.static.HighlightText(RPGMenu.RPRI.RPGName, class'Util'.default.HighlightColor, lblWarning.Style.FontColors[0]));
 }
@@ -54,13 +54,13 @@ defaultproperties
 {
     Text_Rebuild="You about to rebuild $1.|This will cost you $2 experience or maximally $3 level(s).|ARE YOU SURE?"
     WindowTitle="Character Rebuild"
-    
+
     bResizeWidthAllowed=False
     bResizeHeightAllowed=False
     bMoveAllowed=False
     bPersistent=True
     bAllowedAsLast=True
-    
+
     WinWidth=0.600000
     WinHeight=0.374723
     WinLeft=0.200000

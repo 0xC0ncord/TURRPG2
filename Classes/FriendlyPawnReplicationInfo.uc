@@ -17,7 +17,7 @@ simulated event PostNetBeginPlay()
     local PlayerController PC;
 
     Super.PostNetBeginPlay();
-    
+
     if(Level.NetMode != NM_DedicatedServer)
     {
         PC = Level.GetLocalPlayerController();
@@ -49,7 +49,7 @@ simulated event Tick(float dt)
 
 simulated event Destroyed()
 {
-    if(Interaction != None)    
+    if(Interaction != None)
         Interaction.RemoveFriendlyPawn(Self);
 
     Super.Destroyed();

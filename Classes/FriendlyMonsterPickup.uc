@@ -19,17 +19,17 @@ auto state Pickup {
         local class<Monster> Type;
         local int Tries;
         local RPGPlayerReplicationInfo RPRI;
-        
+
         if(ValidTouch(Other) && PossibleTypes.Length > 0) {
             P = Pawn(Other);
             Type = PossibleTypes[Rand(PossibleTypes.Length)];
-            
+
             while(M == None && Tries < 25) {
                 Tries++;
-                
+
                 Off = VRand() * 2.5 * (P.CollisionRadius * P.DrawScale + Type.default.CollisionRadius * Type.default.DrawScale);
                 Off.Z = 32;
-                
+
                 M = P.Spawn(Type, P.Controller,, P.Location + Off, rotator(Off));
                 if(M != None) {
                     if(M.Controller != None)
@@ -38,16 +38,16 @@ auto state Pickup {
                     C = Spawn(class'FriendlyMonsterController',,, M.Location, M.Rotation);
                     C.Possess(M);
                     C.SetMaster(P.Controller);
-                    
+
                     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
                     if(RPRI != None) {
                         RPRI.ModifyMonster(M);
                     }
-                    
+
                     break;
                 }
             }
-            
+
             AnnouncePickup(P);
             SetRespawn();
         }

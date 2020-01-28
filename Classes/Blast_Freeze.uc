@@ -27,7 +27,7 @@ function DoEffect()
                 Effect.Start();
         }
     }
-    
+
     Destroy();
 }
 

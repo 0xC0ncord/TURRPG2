@@ -67,7 +67,7 @@ replication
 {
     reliable if(Role == ROLE_Authority && bNetInitial)
         RPRI, AbilityLevel, Index, BuyOrderIndex, bAllowed;
-    
+
     reliable if(Role == ROLE_Authority)
         bIsStat;
 
@@ -92,7 +92,7 @@ simulated event PostNetBeginPlay()
 simulated event Tick(float dt)
 {
     Super.Tick(dt);
-    
+
     if(Role < ROLE_Authority && !bClientReceived && RPRI != None)
         ClientReceived();
 }
@@ -107,7 +107,7 @@ simulated event PostBeginPlay()
 
     if(Role == ROLE_Authority) {
         bAllowed = class'MutTURRPG'.static.Instance(Level).GameSettings.AllowAbility(Self.class);
-        
+
         for(i = 0; i < GrantItem.Length; i++) {
             InventoryClass = Level.Game.BaseMutator.GetInventoryClass(string(GrantItem[i].InventoryClass));
             if(InventoryClass != None) {
@@ -120,7 +120,7 @@ simulated event PostBeginPlay()
 simulated function bool Buy(optional int Amount)
 {
     local int NextCost;
-    
+
     Amount = Min(Amount, MaxLevel - AbilityLevel);
 
     if(bIsStat)
@@ -135,7 +135,7 @@ simulated function bool Buy(optional int Amount)
         RPRI.StatPointsAvailable -= NextCost;
     else
         RPRI.AbilityPointsAvailable -= NextCost;
-    
+
     if(class'Util'.static.InArray(Self, RPRI.Abilities) == -1)
     {
         BuyOrderIndex = RPRI.Abilities.Length;
@@ -153,7 +153,7 @@ simulated function bool Buy(optional int Amount)
     if(Role == ROLE_Authority && bAllowed && RPRI.Controller.Pawn != None)
     {
         RPRI.ModifyStats();
-    
+
         if(Vehicle(RPRI.Controller.Pawn) != None)
         {
             ModifyPawn(Vehicle(RPRI.Controller.Pawn).Driver);
@@ -169,9 +169,9 @@ simulated function bool Buy(optional int Amount)
             ReplaceCombos(xPlayer(RPRI.Controller));
             ClientReplaceCombos();
         }
-        
+
         RPRI.ProcessGrantQueue(); //give weapons
-        
+
         if(RPRI.Controller.Pawn.Weapon != None)
             ModifyWeapon(RPRI.Controller.Pawn.Weapon);
     }
@@ -198,9 +198,9 @@ simulated function string DescriptionText()
     local array<string> list;
     local string text;
     local RPGAbility tmpAbility;
-    
+
     text = Description;
-    
+
     for(lv = 0; lv < MaxLevel && lv < LevelDescription.Length; lv++)
     {
         if(LevelDescription[lv] != "")
@@ -215,14 +215,14 @@ simulated function string DescriptionText()
             if(GrantItem[x].InventoryClass != None && GrantItem[x].Level == lv)
                 list[list.Length] = GrantItem[x].InventoryClass.default.ItemName;
         }
-        
+
         if(list.Length > 0)
         {
             text $= "|" $ AtLevelText @ string(lv) $ GrantPreText;
             for(x = 0; x < list.Length; x++)
             {
                 text @= list[x];
-                
+
                 if(x + 2 < list.Length)
                     text $= ",";
                 else if(x + 1 < list.Length)
@@ -233,10 +233,10 @@ simulated function string DescriptionText()
     }
 
     list.Remove(0, list.Length);
-    
+
     /*
     TODO
-    
+
     if(RequiredLevel > 0)
         list[list.Length] = ReqLevelText @ string(RequiredLevel);
     */
@@ -249,7 +249,7 @@ simulated function string DescriptionText()
             continue;
 
         list[i] = tmpAbility.GetName();
-        
+
         if(RequiredAbilities[x].Level > 1)
             list[i] @= string(RequiredAbilities[x].Level);
     }
@@ -257,11 +257,11 @@ simulated function string DescriptionText()
     if(list.Length > 0)
     {
         text $= "||" $ ReqPreText;
-        
+
         for(x = 0; x < list.Length; x++)
         {
             text @= list[x];
-            
+
             if(x + 2 < list.Length) {
                 text $= ",";
             } else if(x + 1 < list.Length) {
@@ -272,10 +272,10 @@ simulated function string DescriptionText()
                 }
             }
         }
-        
+
         text @= ReqPostText;
     }
-    
+
     list.Remove(0, list.Length);
     for(x = 0; x < ForbiddenAbilities.Length && ForbiddenAbilities[x].AbilityClass != None; x++)
     {
@@ -285,7 +285,7 @@ simulated function string DescriptionText()
             continue;
 
         list[i] = tmpAbility.GetName();
-        
+
         if(ForbiddenAbilities[x].Level > 1)
             list[i] @= string(ForbiddenAbilities[x].Level);
     }
@@ -293,29 +293,29 @@ simulated function string DescriptionText()
     if(list.Length > 0)
     {
         text $= "||" $ ForbPreText;
-        
+
         for(x = 0; x < list.Length; x++)
         {
             text @= list[x];
-            
+
             if(x + 2 < list.Length)
                 text $= ",";
             else if(x + 1 < list.Length)
                 text @= OrText;
         }
-        
+
         text @= ForbPostText;
     }
-    
+
     text $= "||" $ MaxLevelText $ ":" @ string(MaxLevel) $ "|" $ CostPerLevelText;
     for(x = 0; x < MaxLevel; x++)
     {
         text @= string(CostForNextLevel(x));
-        
+
         if(x + 1 < MaxLevel)
             text $= ",";
     }
-    
+
     return text;
 }
 
@@ -366,12 +366,12 @@ simulated function int Cost()
         //check required levels
         if(AbilityLevel < RequiredLevels.Length && RPRI.RPGLevel < RequiredLevels[AbilityLevel])
             return 0;
-    
+
         //find forbidden abilities
         for(x = 0; x < ForbiddenAbilities.length; x++)
         {
             lv = RPRI.HasAbility(ForbiddenAbilities[x].AbilityClass, true);
-            
+
             if(lv >= ForbiddenAbilities[x].Level)
                 return 0;
         }
@@ -380,7 +380,7 @@ simulated function int Cost()
         for(x = 0; x < RequiredAbilities.length; x++)
         {
             lv = RPRI.HasAbility(RequiredAbilities[x].AbilityClass, true);
-            
+
             if(lv < RequiredAbilities[x].Level) {
                 return 0;
             } else if(bDisjunctiveRequirements) {
@@ -388,7 +388,7 @@ simulated function int Cost()
                 break;
             }
         }
-        
+
         if(bDisjunctiveRequirements && !bDisjunctiveResult) {
             return 0;
         }
@@ -405,12 +405,12 @@ function ModifyRPRI()
 function ModifyPawn(Pawn Other)
 {
     local int x;
-    
+
     Instigator = Other;
-    
+
     if(StatusIconClass != None)
         RPRI.ClientCreateStatusIcon(StatusIconClass);
-    
+
     for(x = 0; x < GrantItem.Length; x++)
     {
         if(AbilityLevel >= GrantItem[x].Level) {
@@ -581,9 +581,9 @@ defaultproperties
     StartingCost=0
     CostAddPerLevel=0
     bUseLevelCost=False
-    
+
     bDisjunctiveRequirements=False;
-    
+
     AndText="and"
     OrText="or"
     ReqLevelText="Level"
@@ -596,7 +596,7 @@ defaultproperties
     AtLevelText="At level"
     GrantPreText=", you are granted the"
     GrantPostText="when you spawn."
-    
+
     DrawType=DT_None
 
     bAlwaysRelevant=False

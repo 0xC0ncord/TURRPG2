@@ -51,7 +51,7 @@ function DoEffect()
             }
         }
     }
-    
+
     Destroy();
 }
 

@@ -12,9 +12,9 @@ var localized string WindowTitle, Text_Switch;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     OnClose=MyOnClose;
-    
+
     t_WindowTitle.SetCaption(WindowTitle);
 }
 
@@ -56,13 +56,13 @@ defaultproperties
 {
     WindowTitle="Switch Character"
     Text_Switch="Are you sure you want to switch to $1?|$2 will be saved automatically."
-    
+
     bResizeWidthAllowed=False
     bResizeHeightAllowed=False
     bMoveAllowed=False
     bPersistent=True
     bAllowedAsLast=True
-    
+
     WinWidth=0.600000
     WinHeight=0.374723
     WinLeft=0.200000

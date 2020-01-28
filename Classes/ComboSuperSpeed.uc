@@ -8,21 +8,21 @@ var float SpeedBonus, JumpZBonus;
 simulated function Tick(float DeltaTime)
 {
     local Pawn P;
-    
+
     P = Pawn(Owner);
 
     if (P == None || P.Controller == None)
-	{
+    {
         Destroy();
         return;
     }
 
     if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-		DeltaTime *= 2;
-	if(RPRI != None)
-		RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-	else
-		P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+        DeltaTime *= 2;
+    if(RPRI != None)
+        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+    else
+        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
     if (P.Controller.Adrenaline <= 0.0)
     {
         P.Controller.Adrenaline = 0.0;
@@ -41,36 +41,36 @@ function CreateEffects(Pawn P)
 
 function DestroyEffects(Pawn P)
 {
-	if (LeftTrail != None)
-		LeftTrail.Destroy();
+    if (LeftTrail != None)
+        LeftTrail.Destroy();
 
-	if (RightTrail != None)
-		RightTrail.Destroy();
+    if (RightTrail != None)
+        RightTrail.Destroy();
 }
 
 function StartEffect(xPawn P)
 {
-	Super.StartEffect(P);
+    Super.StartEffect(P);
 
-	RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
-	
-	P.AirControl  *= (1.0 + SpeedBonus);
-	P.GroundSpeed *= (1.0 + SpeedBonus);
-	P.WaterSpeed  *= (1.0 + SpeedBonus);
-	P.AirSpeed    *= (1.0 + SpeedBonus);
-	P.JumpZ       *= (1.0 + JumpZBonus);
+    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
+
+    P.AirControl  *= (1.0 + SpeedBonus);
+    P.GroundSpeed *= (1.0 + SpeedBonus);
+    P.WaterSpeed  *= (1.0 + SpeedBonus);
+    P.AirSpeed    *= (1.0 + SpeedBonus);
+    P.JumpZ       *= (1.0 + JumpZBonus);
 }
 
 function StopEffect(xPawn P)
 {
-	Super.StopEffect(P);
+    Super.StopEffect(P);
 
-	// Our replacement: the opposite of what happens in ComboSpeed.StartEffect().
-	P.AirControl  /= (1.0 + SpeedBonus);
-	P.GroundSpeed /= (1.0 + SpeedBonus);
-	P.WaterSpeed  /= (1.0 + SpeedBonus);
-	P.AirSpeed    /= (1.0 + SpeedBonus);
-	P.JumpZ       /= (1.0 + JumpZBonus);
+    // Our replacement: the opposite of what happens in ComboSpeed.StartEffect().
+    P.AirControl  /= (1.0 + SpeedBonus);
+    P.GroundSpeed /= (1.0 + SpeedBonus);
+    P.WaterSpeed  /= (1.0 + SpeedBonus);
+    P.AirSpeed    /= (1.0 + SpeedBonus);
+    P.JumpZ       /= (1.0 + JumpZBonus);
 }
 
 defaultproperties

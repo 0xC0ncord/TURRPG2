@@ -21,19 +21,19 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_AlreadyHacking:
             return default.AlreadyHackingText;
-            
+
         case MSG_NoVehicle:
             return default.NoVehicleText;
-            
+
         case MSG_Unlocking:
             return Repl(default.UnlockingText, "$1", Vehicle(Obj).VehicleNameString);
-            
+
         case MSG_Unlocked:
             return Repl(default.UnlockedText, "$1", Vehicle(Obj).VehicleNameString);
-            
+
         case MSG_Failed:
             return default.FailedText;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -52,9 +52,9 @@ function bool CanActivate()
 
     if(!Super.CanActivate())
         return false;
-    
+
     V = None;
-    
+
     foreach Instigator.CollidingActors(class'Vehicle', Found, MaxRadius)
     {
         if(Found.bTeamLocked && Found.Team != Instigator.GetTeamNum() && Found.IsVehicleEmpty() && FastTrace(Instigator.Location, Found.Location))
@@ -67,7 +67,7 @@ function bool CanActivate()
             }
         }
     }
-    
+
     if(V != None)
     {
         return true;
@@ -84,11 +84,11 @@ state Activated
     function BeginState()
     {
         local int Team;
-    
+
         Super.BeginState();
-        
+
         Msg(MSG_Unlocking,, V);
-        
+
         Instigator.PlaySound(HackSound, SLOT_None, 1.5 * Instigator.TransientSoundVolume,,1000,1.0);
 
         Team = Instigator.GetTeamNum();
@@ -97,22 +97,22 @@ state Activated
             case 0:
                 ApplySkin(V, RedOverlay);
                 break;
-            
+
             case 1:
                 ApplySkin(V, BlueOverlay);
                 break;
-            
+
             //OLTeamGames support
             case 2:
                 ApplySkin(V, GreenOverlay);
                 break;
-                
+
             case 3:
                 ApplySkin(V, GoldOverlay);
                 break;
         }
     }
-    
+
     event Tick(float dt)
     {
         if(VSize(Instigator.Location - V.Location) > MaxRunningRadius)
@@ -121,7 +121,7 @@ state Activated
             GotoState('');
             return;
         }
-    
+
         Super.Tick(dt);
     }
 
@@ -132,7 +132,7 @@ state Activated
         Msg(MSG_Unlocked,, V);
         return true;
     }
-    
+
     function EndState()
     {
         if(V != None)
@@ -140,7 +140,7 @@ state Activated
             ApplySkin(V, None);
             V = None;
         }
-        
+
         Super.EndState();
     }
 }
@@ -153,12 +153,12 @@ static function ApplySkin(Vehicle V, Material Mat)
         class'Sync_OverlayMaterial'.static.Sync(ONSWeaponPawn(V).Gun, Mat, -1, true);
     else
         class'Sync_OverlayMaterial'.static.Sync(V, Mat, -1, true);
-    
+
     if(ONSVehicle(V) != None)
     {
         for(x = 0; x < ONSVehicle(V).Weapons.Length; x++)
             class'Sync_OverlayMaterial'.static.Sync(ONSVehicle(V).Weapons[x], Mat, -1, true);
-    
+
         for(x = 0; x < ONSVehicle(V).WeaponPawns.Length; x++)
             class'Sync_OverlayMaterial'.static.Sync(ONSVehicle(V).WeaponPawns[x].Gun, Mat, -1, true);
     }

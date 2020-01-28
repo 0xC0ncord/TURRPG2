@@ -2,7 +2,7 @@
 class DummyWeapon_Monster extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Summoned Monster"

@@ -7,9 +7,9 @@ function ModifyPawn(Pawn Other)
     local float SpeedModifier;
 
     Super.ModifyPawn(Other);
-    
+
     SpeedModifier = 1.0 + BonusPerLevel * float(AbilityLevel);
-    
+
     Other.GroundSpeed = Other.default.GroundSpeed * SpeedModifier;
     Other.WaterSpeed = Other.default.WaterSpeed * SpeedModifier;
     Other.AirSpeed = Other.default.AirSpeed * SpeedModifier;

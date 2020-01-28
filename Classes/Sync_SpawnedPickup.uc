@@ -15,13 +15,13 @@ replication {
 
 static function Sync_SpawnedPickup Sync(Pickup Pickup, StaticMesh NewStatic, float NewDrawScale) {
     local Sync_SpawnedPickup Sync;
-    
+
     Sync = Pickup.Spawn(class'Sync_SpawnedPickup');
     Sync.Target = Pickup;
     Sync.NewStatic = NewStatic;
     Sync.NewDrawScale = NewDrawScale;
     Sync.ClientFunction();
-    
+
     return Sync;
 }
 

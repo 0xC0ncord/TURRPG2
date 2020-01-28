@@ -84,7 +84,7 @@ var bool bGameStarted;
 static final function MutTURRPG Instance(LevelInfo Level)
 {
     local Mutator Mut;
-    
+
     if(Level.Game != None)
     {
         for(Mut = Level.Game.BaseMutator; Mut != None; Mut = Mut.NextMutator)
@@ -112,7 +112,7 @@ final function class<RPGAbility> ResolveAbility(string Alias)
 {
     local class<RPGAbility> Loaded;
     local int i;
-    
+
     //Normal abilities
     Alias = Repl(Alias, "#", "Ability_");
     for(i = 0; i < Abilities.Length; i++)
@@ -120,7 +120,7 @@ final function class<RPGAbility> ResolveAbility(string Alias)
         if(string(Abilities[i].Name) ~= Alias)
             return Abilities[i];
     }
-    
+
     //Fallback, for seamless transitions from 1.5 or earlier
     Loaded = class<RPGAbility>(DynamicLoadObject("TURRPG2" $ ".Ability" $ Alias, class'Class'));
 
@@ -144,7 +144,7 @@ final function string ProcessPlayerName(RPGPlayerReplicationInfo RPRI)
 {
     local string PlayerName;
     local int x, i;
-    
+
     PlayerName = RPRI.PRI.PlayerName;
     for(x = 0; x < default.IgnoreNameTag.Length; x++)
     {
@@ -155,12 +155,12 @@ final function string ProcessPlayerName(RPGPlayerReplicationInfo RPRI)
         {
             if(i > 0)
                 PlayerName = Mid(PlayerName, i);
-                
+
             if(Len(PlayerName) > Len(default.IgnoreNameTag[x]))
                 PlayerName = Mid(PlayerName, Len(default.IgnoreNameTag[x]));
         }
     }
-    
+
     return PlayerName;
 }
 
@@ -176,14 +176,14 @@ event PreBeginPlay() {
     //Register stats as abilities internally, makes replication easier
     for(i = 0; i < Stats.Length; i++)
         Abilities[Abilities.Length] = Stats[i];
-    
+
     //Check abilities
     x = 0;
     i = 0;
     while(i < Abilities.Length)
     {
         x++;
-    
+
         if(Abilities[i] == None)
         {
             Log("WARNING: Entry #" @ x @ "in the Abilities list doesn't resolve to a valid ability class!", 'TURRPG2');
@@ -195,11 +195,11 @@ event PreBeginPlay() {
             i++;
         }
     }
-    
+
     Super.PreBeginPlay();
 
     class'XGame.xPawn'.default.ControllerClass = class'RPGBot';
-    
+
     if(Level.Game.PlayerControllerClassName ~= "XGame.xPlayer") //don't replace another mod's xPlayer replacement
         Level.Game.PlayerControllerClassName = "TURRPG2.TitanPlayerController";
 
@@ -208,7 +208,7 @@ event PreBeginPlay() {
 
     //Find specific settings for this gametype
     GameSettings = new(None, GetGameSettingsName(Level.Game)) class'RPGGameSettings';
-    
+
     DeathMatch(Level.Game).bAllowTrans = GameSettings.bAllowTrans;
     DeathMatch(Level.Game).bAllowVehicles = GameSettings.bAllowVehicles;
 }
@@ -220,7 +220,7 @@ event PostBeginPlay()
     local GameRules_HealableDamage HealRules;
     local RPGReplicationInfo RRI;
     local int x;
-    
+
     //Disable ONS mutator as it disables adrenaline pickups
     for(Mut = Level.Game.BaseMutator; Mut != None; Mut = Mut.NextMutator) {
         if(ONSDefaultMut(Mut) != None) {
@@ -228,15 +228,15 @@ event PostBeginPlay()
             break;
         }
     }
-    
+
     //RPG Rules
     Rules = Spawn(class'RPGRules');
     Rules.RPGMut = self;
     Rules.LevelDiffExpGainDiv = LevelDiffExpGainDiv;
-    
+
     Rules.NextGameRules = Level.Game.GameRulesModifiers;
     Level.Game.GameRulesModifiers = Rules;
-    
+
     //Game objective observers
     foreach AllActors(class'GameObjective', Objective) {
         if(CTFBase(Objective) != None) { //CTF flag base
@@ -249,7 +249,7 @@ event PostBeginPlay()
 
         //TODO: ONS, Assault, Domination
     }
-    
+
     //Healable damage rules
     HealRules = Spawn(class'GameRules_HealableDamage');
     HealRules.NextGameRules = Rules.NextGameRules;
@@ -263,7 +263,7 @@ event PostBeginPlay()
     if(GameSettings.bEnablePickupSpawner) {
         Spawn(class'RPGPickupSpawner', Self);
     }
-    
+
     //Save
     if(SaveDuringGameInterval > 0)
         NextSaveTime = Level.TimeSeconds + float(SaveDuringGameInterval);
@@ -284,7 +284,7 @@ event PostBeginPlay()
     //Artifacts
     if(Artifacts.Length > RRI.MAX_ARTIFACTS)
         Log("WARNING:" @ Artifacts.Length @ "artifact classes were configured, but only" @ RRI.MAX_ARTIFACTS @ "are supported!", 'TURRPG2');
-    
+
     for(x = 0; x < RRI.MAX_ARTIFACTS && x < Artifacts.Length; x++)
         RRI.Artifacts[x] = Artifacts[x];
 
@@ -295,7 +295,7 @@ event PostBeginPlay()
 function string GetInventoryClassOverride(string InventoryClassName)
 {
     InventoryClassName = Super.GetInventoryClassOverride(InventoryClassName);
-    
+
     //OLTeamGames doesn't do this, but I want explicit support for it, so here we go
     if(bOLTeamGames)
     {
@@ -334,20 +334,20 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 
     if(Other == None)
         return true;
-    
+
     //Disbale artifacts (game settings)
     if(RPGArtifact(Other) != None && !GameSettings.AllowArtifact(class<RPGArtifact>(Other.class)))
     {
         bSuperRelevant = 0;
         return false;
     }
-    
+
     if(RPGArtifactPickup(Other) != None && !GameSettings.AllowArtifact(class<RPGArtifact>(RPGArtifactPickup(Other).InventoryType)))
     {
         bSuperRelevant = 0;
         return false;
     }
-    
+
     if(UnrealPawn(Other) != None)
     {
         if(Monster(Other) != None)
@@ -360,25 +360,25 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
                 W.GiveTo(Pawn(Other));
             }
         }
-    
+
         //Required Equipment
         for(i = 0; i < 16; i++)
             UnrealPawn(Other).RequiredEquipment[i] = GetInventoryClassOverride(UnrealPawn(Other).RequiredEquipment[i]);
-        
+
         return true;
     }
-    
+
     //Ball Launcher
     if(xBombFlag(Other) != None)
     {
         xBombFlag(Other).BombLauncherClassName = "TURRPG2.RPGBallLauncher";
         return true;
     }
-    
+
     //Replace locker weapons
     if(WeaponLocker(Other) != None) {
         Locker = WeaponLocker(Other);
-    
+
         for(i = 0; i < Locker.Weapons.length; i++) {
             if(Locker.Weapons[i].WeaponClass != None) {
                 ClassName = String(Locker.Weapons[i].WeaponClass);
@@ -389,7 +389,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
             }
         }
     }
-    
+
     //Replace weapon base weapons
     if(xWeaponBase(Other) != None)
     {
@@ -398,14 +398,14 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 
         if(!(NewClassName ~= ClassName))
             xWeaponBase(Other).WeaponType = class<Weapon>(DynamicLoadObject(NewClassName, class'Class'));
-        
+
         return true;
     }
-    
+
     //Modified weapon pickup
     if(WeaponPickup(Other) != None) {
         WP = WeaponPickup(Other);
-    
+
         //Thrown weapon
         if(WP.Instigator != None && WP.Instigator.Weapon != None) {
             //Add to thrown weapons
@@ -413,7 +413,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
             if(RPRI != None) {
                 RPRI.AddThrownWeapon(WP.Instigator.Weapon.class);
             }
-        
+
             //Apply modifier
             WM = class'RPGWeaponModifier'.static.GetFor(WP.Instigator.Weapon);
             if(WM != None) {
@@ -421,12 +421,12 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
             }
         }
     }
-    
+
     //Weapon
     if(Weapon(Other) != None)
     {
         W = Weapon(Other);
-    
+
         //WeaponFire
         for(i = 0; i < W.NUM_FIRE_MODES; i++)
         {
@@ -438,7 +438,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
                     W.FireModeClass[i] = class'RPGTransFire';
             }
         }
-        
+
         //Assault rifle pickup fix
         if(W.PickupClass == class'AssaultRiflePickup') {
             W.PickupClass = class'RPGAssaultRiflePickup';
@@ -446,22 +446,22 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 
         return true;
     }
-    
+
     //Observe combos
     if(Combo(Other) != None) {
         Spawn(class'RPGComboObserver', Other);
     }
-    
+
     //Force adrenaline on
     if(Controller(Other) != None) {
         Controller(Other).bAdrenalineEnabled = true;
-        
+
         if(ONSOnslaughtGame(Level.Game) != None && MessagingSpectator(Other) == None) {
             //Mimic ONSDefaultMut, which has been removed
             Controller(Other).PlayerReplicationInfoClass = class'ONSPlayerReplicationInfo';
         }
     }
-    
+
     return true;
 }
 
@@ -522,7 +522,7 @@ function RPGPlayerReplicationInfo CheckRPRI(Controller C)
     {
         RPRI = class'RPGPlayerReplicationInfo'.static.CreateFor(C);
         ValidateData(RPRI);
-        
+
         //Combos
         if(xPlayer(C) != None)
         {
@@ -533,7 +533,7 @@ function RPGPlayerReplicationInfo CheckRPRI(Controller C)
                     if(xPlayer(C).ComboNameList[i] ~= string(Combos[x]))
                         i = 16; //break;
                 }
-                
+
                 if(i < 16)
                 {
                     xPlayer(C).ComboNameList[i] = string(Combos[x]);
@@ -541,7 +541,7 @@ function RPGPlayerReplicationInfo CheckRPRI(Controller C)
                 }
             }
         }
-        
+
         //Announcements
         RPRI.AnnounceBotRoles();
         RPRI.AnnounceMyRole();
@@ -555,12 +555,12 @@ function ModifyPlayer(Pawn Other)
     local int x;
     local Inventory Inv;
     local class<RPGWeaponModifier> ModifierClass;
-    
+
     Super.ModifyPlayer(Other);
 
     if(Other.Controller == None || !Other.Controller.bIsPlayer)
         return;
-        
+
     RPRI = CheckRPRI(Other.Controller);
     if(RPRI == None)
     {
@@ -574,7 +574,7 @@ function ModifyPlayer(Pawn Other)
             class<Inventory>(DynamicLoadObject(
                 Level.Game.BaseMutator.GetInventoryClassOverride("XWeapons.TransLauncher"), class'Class')));
     }
-    
+
     if(GameSettings.bAllowArtifacts)
     {
         for(x = 0; x < DefaultArtifacts.Length; x++)
@@ -591,7 +591,7 @@ function ModifyPlayer(Pawn Other)
                 }
             }
         }
-        
+
         Other.Controller.ClientSwitchToBestWeapon();
     }
 
@@ -603,7 +603,7 @@ function EndGame()
 {
     local Controller C;
     local RPGPlayerReplicationInfo RPRI;
-    
+
     for(C = Level.ControllerList; C != None; C = C.NextController)
     {
         if(C.bIsPlayer && C.PlayerReplicationInfo != None)
@@ -613,7 +613,7 @@ function EndGame()
                 RPRI.GameEnded();
         }
     }
-    
+
     /*
         Saving the player data causes a hangup if the server database is large,
         therefore put it back one second to avoid the "end game lag" effect  -pd
@@ -628,7 +628,7 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
     local int i;
     local array<RPGArtifact> MyArtifacts;
     local RPGPlayerReplicationInfo RPRI;
-    
+
     //if this player has a translocator and the beacon isn't broken, return it to the player!
     TL = TransLauncher(P.FindInventoryType(class'TransLauncher'));
     if(TL != None && TL.TransBeacon != None && !TL.TransBeacon.Disrupted())
@@ -636,7 +636,7 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
         TL.TransBeacon.Destroy();
         TL.TransBeacon = None;
     }
-    
+
     //disable spawn protection for the vehicle!!
     if(Level.TimeSeconds - V.SpawnTime < DeathMatch(Level.Game).SpawnProtectionTime)
         V.SpawnTime = Level.TimeSeconds - DeathMatch(Level.Game).SpawnProtectionTime - 1;
@@ -652,7 +652,7 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
         if(RPGArtifact(Inv) != None)
             MyArtifacts[MyArtifacts.length] = RPGArtifact(Inv);
     }
-    
+
     //hack - temporarily give the pawn its Controller back because RPGArtifact.Activate() needs it
     P.Controller = V.Controller;
     for (i = 0; i < MyArtifacts.length; i++)
@@ -663,10 +663,10 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
             MyArtifacts[i].ActivatedTime = 0.f; //force it to allow deactivation
             MyArtifacts[i].Activate();
         }
-        
+
         if(MyArtifacts[i] == P.SelectedItem)
             V.SelectedItem = MyArtifacts[i];
-            
+
         P.DeleteInventory(MyArtifacts[i]);
         MyArtifacts[i].GiveTo(V);
     }
@@ -685,7 +685,7 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
     local array<RPGArtifact> MyArtifacts;
     local int i;
     local RPGPlayerReplicationInfo RPRI;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
     if(RPRI != None)
         RPRI.DriverLeftVehicle(V, P);
@@ -707,7 +707,7 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
             MyArtifacts[i].Activate();
             V.Controller = None;
         }
-        
+
         if(MyArtifacts[i] == V.SelectedItem)
             P.SelectedItem = MyArtifacts[i];
 
@@ -726,7 +726,7 @@ function bool CanEnterVehicle(Vehicle V, Pawn P)
 {
     local RPGPlayerReplicationInfo RPRI;
     local int i;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
     if(RPRI != None)
     {
@@ -752,7 +752,7 @@ function bool CanEnterVehicle(Vehicle V, Pawn P)
             }
         }
     }
-    
+
     return Super.CanEnterVehicle(V, P);
 }
 
@@ -792,11 +792,11 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
             if(RPRI.Abilities[x].AbilityLevel > RPRI.Abilities[x].MaxLevel) {
                 Log(RPRI.RPGName @ "has level" @ RPRI.Abilities[x].AbilityLevel @ "of" @ RPRI.Abilities[x].AbilityName $
                     ", but max is" @ RPRI.Abilities[x].MaxLevel @ "- fixed.", 'TURRPG2');
-                
+
                 RPRI.Abilities[x].AbilityLevel = RPRI.Abilities[x].MaxLevel;
                 bSave = true;
             }
-        
+
             if(RPRI.Abilities[x].bIsStat)
                 for(y = 0; y < RPRI.Abilities[x].AbilityLevel; y++)
                     TotalStatPoints += RPRI.Abilities[x].CostForNextLevel(y);
@@ -823,10 +823,10 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
             x--;
         }
     }
-    
+
     TotalStatPoints += RPRI.StatPointsAvailable;
     TotalAbilityPoints += RPRI.AbilityPointsAvailable;
-    
+
     StatPointsShouldBe = StartingStatPoints + (Ceil(float(RPRI.RPGLevel + 1) / StatPointsIncrement) - 1) * StatPointsPerIncrement;
     if(TotalStatPoints != StatPointsShouldBe)
     {
@@ -843,17 +843,17 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
         }
         Log("= " $ TotalStatPoints, 'TURRPG2');
         Log("", 'TURRPG2');*/
-        
+
         RPRI.StatPointsAvailable += StatPointsShouldBe - TotalStatPoints;
-        
+
         if(RPRI.AIBuild != None) {
             //Update AI build
             RPRI.AIBuild.Build(RPRI);
         }
-        
+
         bSave = true;
     }
-    
+
     AbilityPointsShouldBe = StartingAbilityPoints + (Ceil(float(RPRI.RPGLevel + 1) / AbilityPointsIncrement) - 1) * AbilityPointsPerIncrement;
     if(TotalAbilityPoints != AbilityPointsShouldBe)
     {
@@ -870,17 +870,17 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
         }
         Log("= " $ TotalAbilityPoints, 'TURRPG2');
         Log("", 'TURRPG2');*/
-        
+
         RPRI.AbilityPointsAvailable += AbilityPointsShouldBe - TotalAbilityPoints;
-        
+
         if(RPRI.AIBuild != None) {
             //Update AI build
             RPRI.AIBuild.Build(RPRI);
         }
-        
+
         bSave = true;
     }
-    
+
     //Validate XP scale
     XPShouldBe = GetRequiredXpForLevel(RPRI.RPGLevel);
     if(RPRI.NeededExp != XPShouldBe) {
@@ -890,22 +890,22 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
         } else {
             XP = RPRI.Experience;
         }
-        
+
         Warn(RPRI.RPGName @ "needs" @ RPRI.NeededExp @ "XP to get to level" @ string(RPRI.RPGLevel + 1) $
             ", should be" @ XPShouldBe $ ", XP adjusted from" @ RPRI.Experience @ "to" @ XP @
             "to compensate.");
-        
+
         RPRI.NeededExp = XPShouldBe;
         RPRI.Experience = XP;
-        
+
         if(RPRI.PlayerLevel != None) {
             RPRI.PlayerLevel.Experience = XP;
             RPRI.PlayerLevel.ExpNeeded = XPShouldBe;
         }
-        
+
         bSave = true;
     }
-    
+
     if(bSave) {
         RPRI.SaveData();
     }
@@ -947,9 +947,9 @@ function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponTy
 function NotifyLogout(Controller Exiting)
 {
     local RPGPlayerReplicationInfo RPRI;
-    
+
     Super.NotifyLogout(Exiting);
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Exiting);
     if(RPRI != None)
     {
@@ -969,7 +969,7 @@ function Timer()
         SaveData();
         NextSaveTime = Level.TimeSeconds + float(SaveDuringGameInterval);
     }
-    
+
     //find level of lowest level player
     if(Invasion(Level.Game) != None && bAutoAdjustInvasionLevel)
     {
@@ -980,10 +980,10 @@ function Timer()
             if(RPRI != None && (LowestLevel == 0 || RPRI.RPGLevel < LowestLevel))
                 LowestLevel = RPRI.RPGLevel;
         }
-        
+
         if(LowestLevel > 0)
         {
-            InvasionDamageAdjustment = 
+            InvasionDamageAdjustment =
                 0.0025f * float(AbilityPointsPerIncrement) * (
                 2 * (Invasion(Level.Game).WaveNum + 1) +
                 float(LowestLevel) * InvasionAutoAdjustFactor);
@@ -1009,7 +1009,7 @@ function SaveData()
                 RPRI.SaveData();
         }
     }
-    
+
     Log("TURRPG player data has been saved!", 'TURRPG2');
 }
 
@@ -1038,7 +1038,7 @@ function SwitchBuild(RPGPlayerReplicationInfo RPRI, string NewBuild)
             Inv = Inv.Inventory;
             Inv.Destroy();
         }
-        
+
         C.Pawn.Suicide(); //DIE!!!
     }
 
@@ -1046,14 +1046,14 @@ function SwitchBuild(RPGPlayerReplicationInfo RPRI, string NewBuild)
 
     //Reset score
     RPRI.PRI.Score = 0.f;
-    
+
     //"reconnect"
     RPRI.Destroy();
 }
 
 function string NewRecommendCombo(string ComboName, AIController C) {
     local RPGPlayerReplicationInfo RPRI;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
     if(RPRI != None && RPRI.HasAbility(class'Ability_ComboTeamBooster') > 0) {
         //this bot is a medic, tell him to do the team booster combo!
@@ -1070,7 +1070,7 @@ function ServerTraveling(string URL, bool bItems)
 {
     //Save data again, as people might have bought something after the game ended
     SaveData();
-    
+
     Super.ServerTraveling(URL, bItems);
 }
 
@@ -1104,10 +1104,10 @@ function Mutate(string MutateString, PlayerController Sender)
     local class<RPGEffect> EffectClass;
     local RPGEffect Effect;
     local RPGArtifact A;
-    
+
     bIsAdmin = Sender.PlayerReplicationInfo.bAdmin;
     bIsSuperAdmin = false;
-    
+
     for(i = 0; i < AdminGUID.length; i++)
     {
         if(AdminGUID[i] ~= Sender.GetPlayerIdHash())
@@ -1117,9 +1117,9 @@ function Mutate(string MutateString, PlayerController Sender)
             break;
         }
     }
-    
+
     Split(MutateString, " ", Args);
-    
+
     if(Args.Length > 0)
     {
         if(Sender.Pawn != None)
@@ -1132,16 +1132,16 @@ function Mutate(string MutateString, PlayerController Sender)
             Cheat = Pawn(Sender.ViewTarget);
             CheatController = Cheat.Controller;
         }
-        
+
         RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(CheatController);
-    
+
         //admin tools
         if(bIsAdmin || bIsSuperAdmin)
         {
             if(Args[0] ~= "damagelog")
             {
                 Rules.bDamageLog = !Rules.bDamageLog;
-                
+
                 if(Rules.bDamageLog)
                     Sender.ClientMessage("Damage log is ON!");
                 else
@@ -1158,20 +1158,20 @@ function Mutate(string MutateString, PlayerController Sender)
                 if(Args.Length > 1)
                 {
                     bAll = (Args[1] ~= "all");
-                    
+
                     for(C = Level.ControllerList; C != None; C = C.NextController)
                     {
                         if(C.Pawn != None && (bAll || Args[1] ~= C.GetHumanReadableName()))
                         {
                             E = Spawn(class'RedeemerExplosion',,, C.Pawn.Location, Rot(0, 16384, 0));
-                            
+
                             if(Level.NetMode == NM_DedicatedServer)
                                 E.LifeSpan = 0.7;
-                            
+
                             C.Pawn.PlaySound(Sound'WeaponSounds.redeemer_explosionsound');
                             C.Pawn.MakeNoise(1.0);
                             C.Pawn.Died(None, class'DamTypeFatality', Location);
-                            
+
                             if(PlayerController(C) != None)
                                 PlayerController(C).ClientMessage("FATALITY!");
                         }
@@ -1180,20 +1180,20 @@ function Mutate(string MutateString, PlayerController Sender)
                 else if(Cheat != None)
                 {
                     E = Spawn(class'RedeemerExplosion',,, C.Pawn.Location, Rot(0, 16384, 0));
-                    
+
                     if(Level.NetMode == NM_DedicatedServer)
                         E.LifeSpan = 0.7;
-        
+
                     Cheat.PlaySound(Sound'WeaponSounds.redeemer_explosionsound');
                     Cheat.MakeNoise(1.0);
                     Cheat.Died(None, class'DamTypeFatality', Location);
-                    
+
                     if(PlayerController(CheatController) != None)
                         PlayerController(CheatController).ClientMessage("FATALITY!");
                 }
             }
         }
-        
+
         //only superadmin
         if(bIsSuperAdmin)
         {
@@ -1203,7 +1203,7 @@ function Mutate(string MutateString, PlayerController Sender)
                     Game = Args[2];
                 else
                     Game = string(Level.Game.class);
-                
+
                 Level.ServerTravel(Args[1] $ "?Game=" $ Game $ "?Mutator=TURRPG2.MutTURRPG", false);
                 return;
             }
@@ -1220,12 +1220,12 @@ function Mutate(string MutateString, PlayerController Sender)
                     if(Cheat != None)
                     {
                         Rotate = Cheat.Rotation;
-                    
-                        Loc = 
-                            Cheat.Location + 
-                            vector(Rotate) * 
+
+                        Loc =
+                            Cheat.Location +
+                            vector(Rotate) *
                             1.5f * (ActorClass.default.CollisionRadius + Cheat.CollisionRadius);
-                        
+
                         Loc.Z = Cheat.Location.Z + ActorClass.default.CollisionHeight;
                     }
                     else
@@ -1236,10 +1236,10 @@ function Mutate(string MutateString, PlayerController Sender)
                     }
 
                     Spawned = Spawn(ActorClass, None, '', Loc, Rotate);
-                    
+
                     if(Vehicle(Spawned) != None)
                         Vehicle(Spawned).bTeamLocked = false;
-                    
+
                     if(Spawned != None)
                         Sender.ClientMessage("Spawned a " $ ActorClass);
                     else
@@ -1276,12 +1276,12 @@ function Mutate(string MutateString, PlayerController Sender)
             else if(Args[0] ~= "god")
             {
                 CheatController.bGodMode = !CheatController.bGodMode;
-            
+
                 if(CheatController.bGodMode)
                     Sender.ClientMessage("God mode is ON!");
                 else
                     Sender.ClientMessage("God mode is OFF!");
-                
+
                 return;
             }
             else if(Cheat != None && Args[0] ~= "ruler")
@@ -1301,7 +1301,7 @@ function Mutate(string MutateString, PlayerController Sender)
                     if(FriendlyMonsterController(M.Controller) == None)
                         M.Suicide();
                 }
-                
+
                 //End wave
                 Invasion(Level.Game).NumMonsters = 0;
                 Invasion(Level.Game).WaveEndTime = Level.TimeSeconds;
@@ -1317,10 +1317,10 @@ function Mutate(string MutateString, PlayerController Sender)
                     WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG2.WeaponModifier_" $ Args[1], class'Class'));
                     if(WMClass != None) {
                         x = WMClass.static.GetRandomModifierLevel();
-                    
+
                         if(Args.Length > 2 && Args[2] != "")
                             x = int(Args[2]);
-                    
+
                         WM = WMClass.static.Modify(
                             Cheat.Weapon, x, true, true);
                     }
@@ -1380,7 +1380,7 @@ function Mutate(string MutateString, PlayerController Sender)
                     class'Util'.static.GiveInventory(Cheat, ArtifactClass);
                 else
                     Sender.ClientMessage("Artifact class '" $ Args[1] $ "' not found!");
-            
+
                 return;
             }
             else if(Cheat != None && Args[0] ~= "adren" && Args.Length > 1)
@@ -1394,20 +1394,20 @@ function Mutate(string MutateString, PlayerController Sender)
                 return;
             }
         }
-        
+
         //anyone
         if(Args[0] ~= "weaponinfo")
         {
             if(Sender.Pawn != None && Sender.Pawn.Weapon != None)
             {
                 W = Sender.Pawn.Weapon;
-                
+
                 Sender.ClientMessage("WeaponInfo:");
                 Sender.ClientMessage("Class = ");
-                
+
                 Sender.ClientMessage("InventoryGroup = ");
                 Sender.ClientMessage("");
-            
+
                 for(i = 0; i < 2; i++)
                 {
                     WF = W.GetFireMode(i);
@@ -1438,7 +1438,7 @@ function Mutate(string MutateString, PlayerController Sender)
                 Sender.ClientMessage("Class = ");
                 Sender.ClientMessage("HealthMax = ");
                 Sender.ClientMessage("");
-            
+
                 OV = ONSVehicle(V);
                 if(OV != None)
                 {
@@ -1446,18 +1446,18 @@ function Mutate(string MutateString, PlayerController Sender)
                     {
                         Sender.ClientMessage("DriverWeapons[" $ i $ "] = ");
                         Sender.ClientMessage("DamageType = ");
-                        
+
                         Sender.ClientMessage("ProjectileClass = ");
                         if(OV.DriverWeapons[i].WeaponClass.default.ProjectileClass != None)
                             Sender.ClientMessage("ProjectileClass - DamageType = ");
-                            
+
                         Sender.ClientMessage("AltFireProjectileClass = ");
                         if(OV.DriverWeapons[i].WeaponClass.default.AltFireProjectileClass != None)
                             Sender.ClientMessage("AltFireProjectileClass - DamageType = ");
-                            
+
                         Sender.ClientMessage("");
                     }
-                    
+
                     for(i = 0; i < OV.PassengerWeapons.length; i++)
                     {
                         OWP = OV.PassengerWeapons[i].WeaponPawnClass;
@@ -1465,15 +1465,15 @@ function Mutate(string MutateString, PlayerController Sender)
 
                         Sender.ClientMessage("GunClass = ");
                         Sender.ClientMessage("DamageType = ");
-                    
+
                         Sender.ClientMessage("ProjectileClass = ");
                         if(OWP.default.GunClass.default.ProjectileClass != None)
                             Sender.ClientMessage("ProjectileClass - DamageType = ");
-                        
+
                         Sender.ClientMessage("AltFireProjectileClass = ");
                         if(OWP.default.GunClass.default.AltFireProjectileClass != None)
                             Sender.ClientMessage("AltFireProjectileClass - DamageType = ");
-                        
+
                         Sender.ClientMessage("");
                     }
                 }

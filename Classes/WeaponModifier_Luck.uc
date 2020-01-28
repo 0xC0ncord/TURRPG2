@@ -25,7 +25,7 @@ function RPGTick(float dt) {
     if(NextEffectTime <= 0)
     {
         Identify();
-    
+
         if(Modifier < 0)
         {
             foreach Instigator.CollidingActors(class'Pickup', P, 300)
@@ -61,7 +61,7 @@ function RPGTick(float dt) {
 
                 if(P == None)
                     return;
-                
+
                 P.RespawnTime = 0.0;
                 P.bDropped = true;
                 P.GotoState('Sleeping');
@@ -90,7 +90,7 @@ function class<Pickup> ChoosePickupClass()
     {
         if(Instigator.Health < Instigator.SuperHealthMax)
             Potentials[Potentials.Length] = class'MiniHealthPack';
-        
+
         if(xPawn(Instigator) != None && xPawn(Instigator).CanUseShield(class'ShieldPack'.default.ShieldAmount) > 0)
             Potentials[Potentials.Length] = class'ShieldPack';
     }
@@ -100,7 +100,7 @@ function class<Pickup> ChoosePickupClass()
 
     if(FRand() < UDamageChanceBonus * float(Modifier))
         Potentials[Potentials.Length] = class'UDamagePack';
-    
+
     Count = 0;
     for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)
     {
@@ -134,7 +134,7 @@ function class<Pickup> ChoosePickupClass()
 simulated function BuildDescription()
 {
     Super.BuildDescription();
-    
+
     if(Modifier >= 0) {
         AddToDescription(LuckText);
     } else {

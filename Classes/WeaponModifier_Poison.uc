@@ -40,7 +40,7 @@ simulated function BuildDescription()
 {
     Super.BuildDescription();
     AddToDescription(PoisonText);
-    
+
     if(EPoisonMode(PoisonMode) == PM_Absolute) {
         AddToDescription(Repl(PoisonAbsText, "$1", Modifier * AbsDrainPerLevel));
     }
@@ -69,7 +69,7 @@ defaultproperties
     ModifierOverlay=Shader'XGameShaders.PlayerShaders.LinkHit'
     PatternPos="Poisonous $W"
     PoisonMode=PM_Curve
-    
+
     BasePercentage=0.05
     Curve=1.25
     AbsDrainPerLevel=2

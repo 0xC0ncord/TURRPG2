@@ -5,7 +5,7 @@ var int DamagePerHit;
 var float DamageFraction;
 
 var int MaxGap;
-var int MinGap;     // minimum gap for the Wall, including posts. 
+var int MinGap;     // minimum gap for the Wall, including posts.
 var int Height;
 
 var vector P1Loc, P2Loc;
@@ -19,7 +19,7 @@ var int TotalDamage;
 var int TakenDamage;
 var int MinDamage, MaxDamage;
 
-var float DamageAdjust;     // set by AbilityLoadedEngineer 
+var float DamageAdjust;     // set by AbilityLoadedEngineer
 
 replication
 {
@@ -30,13 +30,13 @@ replication
 simulated event PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
-    if(Role == ROLE_Authority) 
+
+    if(Role == ROLE_Authority)
     {
         if(AssignPosts())
             DrawWall();
     }
-            
+
     // now ASVehicle calls SetCollision(true,true) which sets bCollideActors and bBlockActors. We just want to collide actors and block nothing
     SetCollision(true,false,false);
 }
@@ -45,15 +45,15 @@ simulated function PostNetBeginPlay()
 {
     Super.PostNetBeginPlay();
 
-    // ok lets draw the Wall. 
-    if(Role < ROLE_Authority)  
+    // ok lets draw the Wall.
+    if(Role < ROLE_Authority)
         ClientDrawWall();
 }
 
 function bool AssignPosts()
 {
     local RPGEnergyWallPost P;
-    
+
     foreach DynamicActors(class'RPGEnergyWallPost', P)
     {
         if( P.Wall == None && VSize(P.Location - Location) < default.MaxGap && P.Owner == Owner)
@@ -104,7 +104,7 @@ simulated function ClientDrawWall()
         cScale.Y = vScaleY;
         cScale.Z = default.Height / 25.0;
         SetDrawScale3D(cScale);
-    }   
+    }
 }
 
 function AddDefaultInventory()
@@ -129,31 +129,31 @@ simulated event Touch (Actor Other)
     local Controller C;
     local Controller PC;
     local int DamageToDo;
-    
+
     Super.Touch(Other);
-    
+
     if(Role < ROLE_Authority)
         return; // dont try to do anything clientside
-        
+
     P = Pawn(Other);
     if(P == None || P.Health <= 0)
         return; // not pawn so no use hurting, or is already dead
-        
+
     // let's hit them for damage
     if(Controller == None || RPGEnergyWallController(Controller) == None || RPGEnergyWallController(Controller).PlayerSpawner == None || RPGEnergyWallController(Controller).PlayerSpawner.Pawn == None)
-        return; 
+        return;
     PC = RPGEnergyWallController(Controller).PlayerSpawner;
-    
+
     if(P == PC.Pawn)
         return;     // is spawner
-        
+
     C = P.Controller;
     if(C == None)
         return;     // not controlled so no use hurting
-        
+
     if(TeamGame(Level.Game) != None && C.SameTeamAs(PC))   // on same team
         return;
-        
+
     // now scale the damage as to how big the touched item is. The bigger it is, the more of the field it will disrupt. Clamp betwenn 20 and 200.
     DamageToDo = DamagePerHit * DamageAdjust * (1.0 + (P.HealthMax - 100.0) / 200.0);
     DamageToDo = Min(Max(DamageToDo, MinDamage * DamageAdjust), MaxDamage * DamageAdjust);
@@ -161,18 +161,18 @@ simulated event Touch (Actor Other)
 
 }
 
-function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector momentum, class<DamageType> damageType) 
+function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector momentum, class<DamageType> damageType)
 {
     local int ReducedDamage;
 
     ReducedDamage = float(Damage) * DamageFraction; // reduce damage by DamageFraction as it isn't really hitting anything
-    
+
     // taking some damage
     if(ReducedDamage <= 0 && Damage > 0)
         ReducedDamage = 1;
     momentum = vect(0, 0, 0); // and we don't really want to move
-    
-    Super.TakeDamage(ReducedDamage, instigatedBy, hitlocation, momentum, damageType) ;  
+
+    Super.TakeDamage(ReducedDamage, instigatedBy, hitlocation, momentum, damageType) ;
 
 }
 

@@ -14,7 +14,7 @@ replication
 simulated event PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     RPGMut = class'MutTURRPG'.static.Instance(Level);
 }
 
@@ -40,8 +40,8 @@ function Timer()
     {
         SetTimer(0.0f, false);
         return;
-    }    
-    
+    }
+
     for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         W = Weapon(Inv);
@@ -77,7 +77,7 @@ defaultproperties
     BonusPerLevel=0.010000
     RegenInterval=3.000000
     MinRegenPerLevel=1
-    
+
     AbilityName="Resupply"
     Description="Adds $1 of the max ammo (or at least $2) per level to each ammo type you own every $3 seconds.|Does not give ammo to superweapons or the translocator."
     StartingCost=5

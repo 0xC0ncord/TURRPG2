@@ -21,19 +21,19 @@ function ModifyPawn(Pawn Other)
     local Artifact_SummonMonster.MonsterTypeStruct ArtifactMonster;
     local Artifact_SummonMonster Artifact;
     local bool bSelect;
-    
+
     Super.ModifyPawn(Other);
-    
+
     Artifact = Artifact_SummonMonster(Other.FindInventoryType(class'Artifact_SummonMonster'));
     if(Artifact != None)
     {
         bSelect = (Artifact == Other.SelectedItem);
         Artifact.Destroy();
     }
-    
+
     if(!bSelect)
         bSelect = (Other.SelectedItem == None);
-    
+
     Artifact = Other.Spawn(class'Artifact_SummonMonster');
     if(Artifact != None)
     {
@@ -47,12 +47,12 @@ function ModifyPawn(Pawn Other)
                 ArtifactMonster.DisplayName = MonsterTypes[i].DisplayName;
                 ArtifactMonster.Cost = MonsterTypes[i].Cost;
                 ArtifactMonster.Cooldown = MonsterTypes[i].Cooldown;
-                
+
                 Artifact.MonsterTypes[Artifact.MonsterTypes.Length] = ArtifactMonster;
             }
         }
         Artifact.GiveTo(Other);
-        
+
         if(bSelect)
             Other.SelectedItem = Artifact;
     }
@@ -68,9 +68,9 @@ simulated function string DescriptionText()
     local int lv, x;
     local string text;
     local array<string> list;
-    
+
     text = Super.DescriptionText();
-    
+
     for(lv = 1; lv <= MaxLevel; lv++)
     {
         list.Remove(0, list.Length);
@@ -79,14 +79,14 @@ simulated function string DescriptionText()
             if(MonsterTypes[x].MonsterClass != None && MonsterTypes[x].Level == lv)
                 list[list.Length] = MonsterTypes[x].DisplayName;
         }
-        
+
         if(list.Length > 0)
         {
             text $= "|" $ AtLevelText @ string(lv) $ MonsterPreText;
             for(x = 0; x < list.Length; x++)
             {
                 text @= list[x];
-                
+
                 if(x + 2 < list.Length)
                     text $= ",";
                 else if(x + 1 < list.Length)

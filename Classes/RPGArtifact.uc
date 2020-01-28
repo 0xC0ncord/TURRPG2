@@ -70,7 +70,7 @@ replication
 
     reliable if(Role < ROLE_Authority)
         TossArtifact, ServerSelectOption, ServerCloseSelection;
-    
+
     reliable if(Role == ROLE_Authority)
         ClientNotifyCooldown, Msg;
 }
@@ -78,7 +78,7 @@ replication
 static function array<RPGArtifact> GetActiveArtifacts(Pawn Other) {
     local Inventory Inv;
     local array<RPGArtifact> List;
-    
+
     for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
@@ -90,7 +90,7 @@ static function array<RPGArtifact> GetActiveArtifacts(Pawn Other) {
 static function bool HasActiveArtifact(Pawn Other)
 {
     local Inventory Inv;
-    
+
     for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         if(RPGArtifact(Inv) != None && RPGArtifact(Inv).bActive)
@@ -110,7 +110,7 @@ static function bool IsActiveFor(Pawn Other)
 
     if(Other == None)
         return false;
-    
+
     for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         if(Inv.class == default.class && RPGArtifact(Inv).bActive)
@@ -131,12 +131,12 @@ function StripOut()
 
     //Remove me.
     for(Inv = Instigator.Inventory; Inv != None && Inv.Inventory != Self; Inv = Inv.Inventory);
-    
+
     if(Inv != None)
         Inv.Inventory = Self.Inventory;
     else
         Instigator.Inventory = Self.Inventory;
-    
+
     Self.Inventory = None;
 }
 
@@ -164,7 +164,7 @@ function SortIn()
                         {
                             Self.Inventory = Inv;
                             Self.NetUpdateTime = Level.TimeSeconds - 1;
-                            
+
                             if(Prev != None) {
                                 Prev.Inventory = Self;
                                 Prev.NetUpdateTime = Level.TimeSeconds - 1;
@@ -172,7 +172,7 @@ function SortIn()
                                 Instigator.Inventory = Self;
                                 Instigator.NetUpdateTime = Level.TimeSeconds - 1;
                             }
-                            
+
                             bAdded = true;
                             break;
                         }
@@ -201,25 +201,25 @@ function SortIn()
 function GiveTo(Pawn Other, optional Pickup Pickup)
 {
     Super.GiveTo(Other, Pickup);
-    
+
     InstigatorRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Instigator.Controller);
-    
+
     StripOut();
     SortIn();
-    
+
     if(InstigatorRPRI != None)
         InstigatorRPRI.ModifyArtifact(Self);
-        
+
     if(bChargeUp && !bHeld) {
         DoCooldown();
     }
-    
+
     bHeld = True;
 
     if(Level.TimeSeconds < NextUseTime) {
         ClientNotifyCooldown(NextUseTime - Level.TimeSeconds);
     }
-    
+
     GotoState('');
 }
 
@@ -260,7 +260,7 @@ function bool HandlePickupQuery(Pickup Item)
         Item.SetRespawn();
         return true;
     }
-    
+
     if(Inventory == None)
     {
         return false;
@@ -370,19 +370,19 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_Adrenaline:
             return Repl(default.MSG_Text_Adrenaline, "$1", string(Value));
-        
+
         case MSG_Cooldown:
             return Repl(default.MSG_Text_Cooldown, "$1", string(Value) @ class'MutTURRPG'.static.GetSecondsText(Value));
-            
+
         case MSG_Expired:
             return default.MSG_Text_Expired;
-            
+
         case MSG_NotInVehicle:
             return default.MSG_Text_NotInVehicle;
-        
+
         case MSG_Exclusive:
             return default.MSG_Text_Exclusive;
-        
+
         default:
             return "";
     }
@@ -418,7 +418,7 @@ function bool CanActivate()
         Msg(MSG_NotInVehicle);
         return false;
     }
-    
+
     if(Level.TimeSeconds < NextUseTime)
     {
         Countdown = int(NextUseTime - Level.TimeSeconds + 1);
@@ -436,7 +436,7 @@ function bool CanActivate()
         Msg(MSG_Adrenaline, Max(CostPerSec * AdrenalineUsage, MinAdrenaline * AdrenalineUsage));
         return false;
     }
-    
+
     return true;
 }
 
@@ -536,12 +536,12 @@ function Activate() //do NOT override, use CanActivate, CanDeactivate or BeginSt
         if(CheckSelection())
         {
             Instigator.PlaySound(ActivateSound, SLOT_Interact, 1.0, true, 768);
-            
+
             if(DoEffect())
             {
                 if(CostPerSec > 0)
                     InstigatorRPRI.DrainAdrenaline(CostPerSec * AdrenalineUsage, Self);
-            
+
                 DoAmmo();
                 DoCooldown();
             }
@@ -569,13 +569,13 @@ state Activated
         ActivatedTime = Level.TimeSeconds;
         bActive = true;
     }
-    
+
     function EndState()
     {
         RoundAdrenaline();
         bActive = false;
         SelectedOption = -1;
-        
+
         DoAmmo();
         DoCooldown();
     }
@@ -595,16 +595,16 @@ state Activated
             if(CostPerSec > 0)
             {
                 CurrentCostPerSec += CostPerSec * AdrenalineUsage;
-                
+
                 if(Instigator.PlayerReplicationInfo.HasFlag != None)
                     CurrentCostPerSec *= FlagMultiplier;
-            
+
                 Instigator.Controller.Adrenaline -= dt * CurrentCostPerSec;
                 if(Instigator.Controller.Adrenaline <= 0.0)
                 {
                     Instigator.Controller.Adrenaline = 0.0;
                     UsedUp();
-                }    
+                }
             }
             CurrentCostPerSec = 0.f; //reset
         }
@@ -628,7 +628,7 @@ simulated event Destroyed()
     {
         if(Instigator != None && Instigator.SelectedItem == Self)
             Instigator.NextItem();
-        
+
         if(Instigator != None && PlayerController(Instigator.Controller) != None)
             CloseSelection();
     }
@@ -672,7 +672,7 @@ final function ServerSelectOption(int i)
 {
     SelectedOption = i;
     bInSelection = false;
-    
+
     if(i >= 0)
     {
         OnSelection(i);

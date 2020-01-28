@@ -29,7 +29,7 @@ function Timer()
 
     if(VSize(Instigator.Velocity) ~= 0)
         return;
-    
+
     foreach Instigator.CollidingActors(class'Pawn', P, HealRadius)
     {
         if(
@@ -46,7 +46,7 @@ function Timer()
             {
                 Heal.HealAmount = AbilityLevel * int(BonusPerLevel);
                 Heal.Start();
-            
+
                 HealEmitter = Instigator.Spawn(class'FX_HealingBeam', Instigator);
                 HealEmitter.LinkedPawn = P;
             }
@@ -73,4 +73,4 @@ defaultproperties
     Category=class'AbilityCategory_Medic'
 }
 
-    
+

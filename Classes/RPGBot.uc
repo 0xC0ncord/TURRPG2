@@ -74,7 +74,7 @@ function IncomingMissile(Projectile P)
 
 event Tick(float dt) {
     Super.Tick(dt);
-    
+
     if(DenyPatient != None && Level.TimeSeconds > DenyPatientTime) {
         SendMessage(DenyPatient, 'Other', 7, 5, 'TEAM');
         DenyPatient = None;
@@ -83,7 +83,7 @@ event Tick(float dt) {
 
 function AnnounceRole(PlayerController PC) {
     local RPGPlayerReplicationInfo RPRI;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Self);
     if(RPRI != None && RPRI.HasAbility(class'Ability_LoadedMedic') > 0) {
         PC.ReceiveLocalizedMessage(class'LocalMessage_BotRole', 0, PlayerReplicationInfo);
@@ -95,7 +95,7 @@ function ExecuteWhatToDoNext()
     local Inventory Inv;
 
     Super.ExecuteWhatToDoNext();
-    
+
     if(Pawn != None)
     {
         for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
@@ -104,7 +104,7 @@ function ExecuteWhatToDoNext()
                 RPGArtifact(Inv).BotWhatNext(Self);
         }
     }
-    
+
     if(Patient != None) {
         if(GetOrders() != 'Follow') {
             SetTemporaryOrders('Follow', Patient.Controller);
@@ -122,7 +122,7 @@ function bool Medicare(Pawn P) {
     if(Vehicle(P) != None) {
         P = Vehicle(P).Driver;
     }
-    
+
     if(P == Patient) {
         return true;
     }
@@ -150,7 +150,7 @@ function bool Medicare(Pawn P) {
 function FightEnemy(bool bCanCharge, float EnemyStrength)
 {
     local Inventory Inv;
-    
+
     if(
         Monster(Enemy) != None &&
         FriendlyMonsterController(Enemy.Controller) != None &&
@@ -164,7 +164,7 @@ function FightEnemy(bool bCanCharge, float EnemyStrength)
     }
 
     Super.FightEnemy(bCanCharge, EnemyStrength);
-    
+
     for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         if(RPGArtifact(Inv) != None && RPGArtifact(Inv).CanActivate())
@@ -199,11 +199,11 @@ function Possess(Pawn aPawn)
 function NotifyTakeHit(pawn InstigatedBy, vector HitLocation, int Damage, class<DamageType> damageType, vector Momentum)
 {
     Super.NotifyTakeHit(InstigatedBy, HitLocation, Damage, damageType, Momentum);
-    
+
     if(InstigatedBy != None)
     {
         LastDamageTypeSuffered = damageType;
-        
+
         if(class<WeaponDamageType>(damageType) != None)
             LastModifierSuffered = class'RPGWeaponModifier'.static.GetFor(InstigatedBy.Weapon);
     }

@@ -35,7 +35,7 @@ event PostBeginPlay() {
     local int x;
 
     Super.PostBeginPlay();
-    
+
     RPGMut = MutTURRPG(Owner);
 
     //Validate pickups
@@ -109,7 +109,7 @@ function Timer() {
                 x--;
             }
         }
-        
+
         for(x = 0; CurrentAdrenPickups.length < MaxAdrenalinePickups && x < AdreanlineSpawnAmount; x++) {
             SpawnAdrenaline();
         }
@@ -159,7 +159,7 @@ function SpawnAdrenaline() {
     PathNode = FindSpawnLocation(class'XPickups.AdrenalinePickup');
     if(PathNode != None) {
         APickup = spawn(class'XPickups.AdrenalinePickup', , , PathNode.Location);
-        
+
         if (APickup == None) {
             return;
         }
@@ -200,13 +200,13 @@ function SpawnRandomPickup() {
                 Sync = class'Sync_SpawnedPickup'.static.Sync(APickup, PickupStatic, PickupDrawScale);
                 Sync.LifeSpan = PickupLifetime * 2.0;
             }
-            
+
             APickup.RespawnEffect();
             APickup.RespawnTime = 0.0;
             APickup.AddToNavigation();
             APickup.bDropped = True;
             APickup.SetTimer(PickupLifetime, false);
-            
+
             CurrentPickups[CurrentPickups.length] = APickup;
         }
     }
@@ -217,7 +217,7 @@ defaultproperties {
     MaxPickups=25
     AdreanlineSpawnAmount=5
     MaxAdrenalinePickups=25
-    
+
     PickupLifetime=30
     PickupStatic=None
     PickupDrawScale=1

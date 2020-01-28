@@ -12,7 +12,6 @@ function PostRender(Canvas C) {
     local FriendlyPawnReplicationInfo FPRI;
     local Color BarColor;
     local string Text;
-    
 #ifdef __DEBUG__
     local float XT, YT;
 #endif
@@ -21,7 +20,7 @@ function PostRender(Canvas C) {
 
     for(i = 0; i < FriendlyPawns.Length; i++) {
         FPRI = FriendlyPawns[i];
-        
+
         if(FPRI.Pawn != None && IsPawnVisible(C, FPRI.Pawn, ScreenPos, Dist)) {
             ScaledDist = TeamBeaconMaxDist * FClamp(0.04f * FPRI.Pawn.CollisionRadius, 1.0f, 2.0f);
 
@@ -41,7 +40,7 @@ function PostRender(Canvas C) {
 
             //Draw height
             Height = FPRI.Pawn.CollisionHeight * FClamp(0.85f + Dist * 0.85f * FarAwayInv, 1.1f, 1.75f);
-            
+
             //Actual beacon position
             ScreenPos = C.WorldToScreen(FPRI.Pawn.Location + Height * vect(0, 0, 1));
             ScreenPos.X -= 0.5f * TeamBeacon.USize * Scale;
@@ -51,10 +50,10 @@ function PostRender(Canvas C) {
             if(Dist < TeamBeaconMaxDist && C.ClipX > 600) {
                 Text = FPRI.Master.PlayerName;
             }
-            
+
             //Draw beacon
             DrawTeamBeacon(C, ScreenPos.X, ScreenPos.Y, GetTeamBeaconColor(FPRI.Master), Scale, Text);
-            
+
             //Health bar
             if(
                 Dist < TeamBeaconMaxDist &&
@@ -64,7 +63,7 @@ function PostRender(Canvas C) {
             {
                 Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
                 Pct = float(FPRI.Pawn.Health) / FPRI.Pawn.HealthMax;
-                
+
                 if(Pct > 0.5) {
                     BarColor.R = byte(255.0 * FClamp(1.0 - (FPRI.Pawn.HealthMax - (FPRI.Pawn.HealthMax - FPRI.Pawn.Health) * 2) / FPRI.Pawn.HealthMax, 0, 1));
                     BarColor.G = 255;
@@ -74,7 +73,7 @@ function PostRender(Canvas C) {
                     BarColor.G = byte(255.0 * FClamp(2.0 * FPRI.Pawn.Health / FPRI.Pawn.HealthMax, 0, 1));
                     BarColor.B = 0;
                 }
-                
+
                 BarColor.A = 255;
                 DrawBar(C,
                     ScreenPos.X,

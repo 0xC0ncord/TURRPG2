@@ -2,7 +2,7 @@
 class DummyWeapon_Repulsion extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Repulsion"

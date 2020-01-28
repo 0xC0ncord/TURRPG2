@@ -9,19 +9,19 @@ delegate OnMatrix(RPGMatrixField Field, Projectile Proj, float Multiplier);
 
 event PostBeginPlay() {
     Super.PostBeginPlay();
-    
+
     Creator = Controller(Owner);
 }
 
 function bool IgnoreProjectile(Projectile Proj) {
     local int i;
-    
+
     for(i = 0; i < Ignore.Length; i++) {
         if(Proj.IsA(Ignore[i])) {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -29,24 +29,24 @@ event Tick(float dt) {
     local Projectile Proj;
 
     Super.Tick(dt);
-    
+
     foreach CollidingActors(class'Projectile', Proj, Radius) {
         if(Proj.Tag == 'Matrix' || Proj.Tag == 'Force') {
             continue;
         }
-        
+
         if(IgnoreProjectile(Proj)) {
             continue;
         }
-        
+
         if(Proj.Instigator != None) {
             if(!class'DevoidEffect_Matrix'.static.CanBeApplied(Proj.Instigator, Creator)) {
                 continue;
             }
         }
-        
+
         OnMatrix(Self, Proj, Multiplier);
-        
+
         Proj.Tag = 'Matrix';
         class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, 'Matrix', class'FX_MatrixTrail');
     }

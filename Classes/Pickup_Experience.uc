@@ -9,7 +9,7 @@ function float DetourWeight(Pawn Other,float PathWeight)
 {
     if ( (Other.Controller.Enemy != None) && (Level.TimeSeconds - Other.Controller.LastSeenTime < 1) )
         return 0;
-    
+
     return 0.15/PathWeight;
 }
 
@@ -28,7 +28,7 @@ auto state Pickup
         local Pawn P;
         local RPGPlayerReplicationInfo RPRI;
 
-        if ( ValidTouch(Other) ) 
+        if ( ValidTouch(Other) )
         {
             P = Pawn(Other);
             RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);

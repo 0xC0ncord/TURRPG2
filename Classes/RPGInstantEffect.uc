@@ -10,10 +10,10 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         DoEffect();
     }
-    
+
     function Timer()
     {
         Destroy();

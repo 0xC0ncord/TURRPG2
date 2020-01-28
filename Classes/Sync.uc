@@ -1,10 +1,10 @@
 /*
     I'm sick of adding functions to the RPGPlayerReplicationInfo for things like
     projectile speeds (Force).
-    
+
     This is a new solution attempt, an Actor that will be spawned on all clients,
     just to transmit certain information to them.
-    
+
     ClientFunction is to do whatever is supposed to do on the client, all information
     required can simply be replicated.
 */
@@ -14,7 +14,7 @@ var bool bTryEachTick; //attempt to execute the client function each tick
 
 simulated event Tick(float dt) {
     Super.Tick(dt);
-    
+
     if(Role == ROLE_Authority) {
         if(ShouldDestroy()) {
             Destroy();
@@ -28,7 +28,7 @@ simulated event Tick(float dt) {
 
 simulated event PostNetReceive() {
     Super.PostNetReceive();
-    
+
     if(Role < ROLE_Authority) {
         if(ClientFunction()) {
             Destroy();

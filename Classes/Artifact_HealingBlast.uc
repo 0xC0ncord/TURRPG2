@@ -15,7 +15,7 @@ function Blast SpawnBlast()
             LM = Ability_LoadedMedic(RPRI.GetOwnedAbility(class'Ability_LoadedMedic'));
             if(LM != None)
                 Blast.MaxHealth = LM.GetHealMax();
-            
+
             Blast.EXPMultiplier = RPRI.HealingExpMultiplier;
         }
     }

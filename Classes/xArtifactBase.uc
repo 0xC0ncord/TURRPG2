@@ -9,13 +9,13 @@ simulated event PostBeginPlay()
         PowerUp = ArtifactType.default.PickupClass;
 
     Super.PostBeginPlay();
-    
+
     SetLocation(Location + vect(0, 0, -1));
 }
 
 function SpawnPickup() {
     Super.SpawnPickup();
-    
+
     if(myPickup != None) {
         //Artifact pickups don't have a respawn time by default
         myPickup.RespawnTime = RespawnTime;

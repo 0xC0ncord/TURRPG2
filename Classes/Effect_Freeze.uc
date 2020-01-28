@@ -14,20 +14,20 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         //store values
         JumpZ = Instigator.JumpZ;
         DodgeSpeedZ = Instigator.DodgeSpeedZ;
         DodgeSpeedFactor = Instigator.DodgeSpeedFactor;
         bCanDoubleJump = Instigator.bCanDoubleJump;
         bCanWallDodge = Instigator.bCanWallDodge;
-        
+
         if(xPawn(Instigator) != None)
         {
             bCanDodgeDoubleJump = xPawn(Instigator).bCanDodgeDoubleJump;
             MaxMultiJump = xPawn(Instigator).MaxMultiJump;
         }
-        
+
         //apply
         if(Modifier != 0)
             class'Util'.static.PawnScaleSpeed(Instigator, Modifier);
@@ -57,14 +57,14 @@ state Activated
         Instigator.DodgeSpeedFactor = DodgeSpeedFactor;
         Instigator.bCanDoubleJump = bCanDoubleJump;
         Instigator.bCanWallDodge = bCanWallDodge;
-            
+
         if(xPawn(Instigator) != None)
         {
             xPawn(Instigator).bCanDodgeDoubleJump = bCanDodgeDoubleJump;
             xPawn(Instigator).MultiJumpRemaining = MaxMultiJump;
             xPawn(Instigator).MaxMultiJump = MaxMultiJump;
         }
-        
+
         Super.EndState();
     }
 }
@@ -77,6 +77,6 @@ defaultproperties
     EffectOverlay=Shader'TURRPG2.Overlays.GreyShader'
     EffectSound=Sound'Slaughtersounds.Machinery.Heavy_End'
     xEmitterClass=class'FX_IceSmoke'
-    
+
     EffectMessageClass=class'EffectMessage_Freeze'
 }

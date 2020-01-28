@@ -13,23 +13,23 @@ var localized string WindowTitle;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     local int i;
-    
+
     MyController.RegisterStyle(class'STY_RPGListSection');
-    
+
     Super.InitComponent(MyController, MyOwner);
 
     if(bStats)
         Panels[1].ClassName = "RPGMenu_AbilitiesMaster";
-    
+
     for(i = 0; i < Panels.Length; i++)
     {
         //Prepend package name to class name
         Panels[i].ClassName = "TURRPG2." $ Panels[i].ClassName;
-        
+
         //Log("Adding tab:" @ Panels[i].ClassName, 'DEBUG');
         Tabs.AddTabItem(Panels[i]);
     }
-    
+
     t_WindowTitle.SetCaption(WindowTitle);
     t_WindowTitle.DockedTabs = Tabs;
 }
@@ -39,12 +39,12 @@ function InitFor(RPGPlayerReplicationInfo Whom)
     local int i;
 
     RPRI = Whom;
-    
+
     if(RPRI.Level.NetMode == NM_Standalone)
-        RPRI.Level.Game.SetPause(true, PlayerController(RPRI.Controller));    
-    
+        RPRI.Level.Game.SetPause(true, PlayerController(RPRI.Controller));
+
     RPRI.Menu = Self;
-    
+
     for(i = 0; i < Tabs.TabStack.Length; i++)
     {
         RPGMenu_TabPage(Tabs.TabStack[i].MyPanel).RPGMenu = Self;
@@ -65,7 +65,7 @@ event Closed(GUIComponent Sender, bool bCancelled)
         RPRI.Interaction.CharSettings.SaveConfig();
         RPRI.Menu = None;
     }
-    
+
     if(RPRI.Level.NetMode == NM_Standalone)
         RPRI.Level.Game.SetPause(false, PlayerController(RPRI.Controller));
 
@@ -101,13 +101,13 @@ defaultproperties
         OnActivate=RPGMenuTC.InternalOnActivate
     End Object
     Tabs=GUITabControl'RPGMenuTC'
-    
+
     bResizeWidthAllowed=False
     bResizeHeightAllowed=False
     bMoveAllowed=False
     bPersistent=True
     bAllowedAsLast=True
-    
+
     WinLeft=0.10
     WinTop=0.10
     WinWidth=0.80

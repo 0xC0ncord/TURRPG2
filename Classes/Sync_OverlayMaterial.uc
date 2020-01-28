@@ -20,12 +20,12 @@ replication
 
 static function Discard(Actor Target) {
     local Sync_OverlayMaterial Sync, X;
-    
+
     foreach Target.ChildActors(class'Sync_OverlayMaterial', Sync) {
         X = Sync;
         break;
     }
-    
+
     if(X != None) {
         X.Destroy();
     }
@@ -36,28 +36,28 @@ static function Sync_OverlayMaterial Sync(Actor Target, Material Mat, float Dura
     local Sync_OverlayMaterial Sync;
 
     Discard(Target); //Discard any existing
-    
+
     Sync = Target.Spawn(class'Sync_OverlayMaterial', Target);
-    
+
     Sync.Target = Target;
     Sync.Mat = Mat;
-    
+
     if(Duration < 0)
         Duration = 86400; //24 hours...
-    
+
     Sync.Duration = Duration;
     Sync.bOverride = bOverride;
-    
+
     //Net
     Sync.LifeSpan = 2.0 * Duration;
     if(Target.bOnlyRelevantToOwner) {
         Sync.bOnlyRelevantToOwner = true;
         Sync.bAlwaysRelevant = false;
     }
-    
+
     //server
     Target.SetOverlayMaterial(Mat, Duration, bOverride);
-    
+
     return Sync;
 }
 

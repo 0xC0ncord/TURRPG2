@@ -15,7 +15,7 @@ function RPGArtifactBeacon SpawnBeacon()
     Beacon = Instigator.Spawn(BeaconClass, Instigator.Controller,, Instigator.Location + Instigator.EyePosition(), Instigator.Controller.Rotation);
     if(Beacon != None)
         Beacon.Artifact = Self;
-    
+
     return Beacon;
 }
 

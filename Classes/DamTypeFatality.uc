@@ -15,7 +15,7 @@ defaultproperties
     bKUseOwnDeathVel=true
     KDeathVel=600
     KDeathUpKick=600
-    
+
     bFlaming=true
     bAlwaysGibs=true
     GibModifier=5.0

@@ -5,7 +5,7 @@ var array<class<RPGAbilityCategory> > Categories;
 struct AbilityInfo
 {
     var class<RPGAbilityCategory> Category; //if not None, this entry is a category header
-    
+
     var RPGAbility LinkedAbility;
     var string Name;
     var int NextLevel;
@@ -22,14 +22,14 @@ var automated GUIButton btBuy;
 
 var GUIStyles CategoryStyle;
 
-var localized string 
+var localized string
     Text_Buy, Text_BuyX, Text_Level, Text_Stats, Text_CantBuy, Text_Requirements, Text_AlreadyMax, Text_Max, Text_Forbidden, Text_DoNotHaveThisYet,
     Text_PointsAvailable, Text_Intro, Text_Description;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     Abilities = lstAbilities.List;
     Abilities.bMultiselect = false;
     Abilities.bInitializeList = false;
@@ -37,10 +37,10 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     Abilities.OnDrawItem = DrawAbilityInfo;
     Abilities.OnClick = OnAbilityClick;
     Abilities.OnKeyEvent = OnAbilityKeyEvent;
-    
+
     //sbAbilities.ManageComponent(lstAbilities);
     //sbDesc.ManageComponent(lblDesc);
-    
+
     lblDesc.MyScrollText.SetContent(Text_Intro);
 }
 
@@ -50,7 +50,7 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
     local string CostString, LevelString;
     local float CellLeft, CellWidth;
     local GUIStyles DStyle;
-    
+
     if(AbilityInfos[i].Category != None)
         DStyle = Abilities.SectionStyle;
     else if(bSelected)
@@ -74,14 +74,14 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
         else
         {
             LevelString = Text_Level @ string(Level);
-            
+
             if(Level >= MaxLevel)
                 LevelString @= Text_Max;
         }
 
         Abilities.GetCellLeftWidth(1, CellLeft, CellWidth);
         DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, LevelString, Abilities.FontScale);
-        
+
         if(Level < MaxLevel)
         {
             if(AbilityInfos[i].Cost > 0)
@@ -93,7 +93,7 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
         {
             CostString = Text_AlreadyMax;
         }
-            
+
         Abilities.GetCellLeftWidth(2, CellLeft, CellWidth);
         DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, CostString, Abilities.FontScale);
     }
@@ -108,37 +108,37 @@ function InitMenu()
 
     OldAbilityListIndex = Abilities.Index;
     OldAbilityListTop = Abilities.Top;
-    
+
     Abilities.Clear();
     AbilityInfos.Length = 0;
-    
+
     for(i = 0; i < Categories.Length; i++)
     {
         x = AbilityInfos.Length;
         n = 0;
-        
+
         for(k = 0; k < RPGMenu.RPRI.AllAbilities.Length; k++)
         {
             Ability = RPGMenu.RPRI.AllAbilities[k];
             if(!Ability.bIsStat && Ability.Category == Categories[i])
             {
                 n++;
-                
+
                 AInfo.LinkedAbility = Ability;
                 AInfo.Name = Ability.AbilityName;
-                
+
                 if(Ability.AbilityLevel < Ability.MaxLevel)
                     AInfo.NextLevel = Ability.AbilityLevel + 1;
                 else
                     AInfo.NextLevel = 0;
 
                 AInfo.Cost = Ability.Cost();
-    
+
                 AbilityInfos[AbilityInfos.Length] = AInfo;
                 Abilities.AddedItem();
             }
         }
-        
+
         if(n > 0)
         {
             AInfo.LinkedAbility = None;
@@ -146,20 +146,20 @@ function InitMenu()
             AInfo.Cost = 0;
             AInfo.NextLevel = 0;
             AInfo.Name = Categories[i].default.CategoryName;
-            
+
             AbilityInfos.Insert(x, 1);
             AbilityInfos[x] = AInfo;
             Abilities.AddedItem();
-            
+
             AInfo.Category = None;
         }
     }
-    
+
     Abilities.SetIndex(OldAbilityListIndex);
     Abilities.SetTopItem(OldAbilityListTop);
-    
+
     lblStats.Caption = Text_PointsAvailable @ string(RPGMenu.RPRI.AbilityPointsAvailable);
-    
+
     SelectAbility();
 }
 
@@ -171,13 +171,13 @@ function CloseMenu()
 function SelectAbility()
 {
     local AbilityInfo AInfo;
-    
+
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
-    
+
     if(Abilities.Index >= 0)
     {
         AInfo = AbilityInfos[Abilities.Index];
-        
+
         if(AInfo.Cost > 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.AbilityPointsAvailable >= AInfo.Cost)
         {
             btBuy.Caption = Repl(Text_BuyX, "$1", AInfo.Name @ string(AInfo.NextLevel));
@@ -187,10 +187,10 @@ function SelectAbility()
         {
             btBuy.Caption = Text_Buy;
             btBuy.MenuState = MSAT_Disabled;
-        }    
-        
+        }
+
         sbDesc.Caption = AInfo.Name;
-        
+
         if(AInfo.Category != None)
             lblDesc.MyScrollText.SetContent(AInfo.Category.default.Description);
         else if(AInfo.LinkedAbility != None)
@@ -200,7 +200,7 @@ function SelectAbility()
     {
         btBuy.Caption = Text_Buy;
         btBuy.MenuState = MSAT_Disabled;
-        
+
         sbDesc.Caption = Text_Description;
         lblDesc.MyScrollText.SetContent(Text_Intro);
     }
@@ -236,7 +236,7 @@ function bool BuyAbility(GUIComponent Sender)
     if(Abilities.Index >= 0)
     {
         AInfo = AbilityInfos[Abilities.Index];
-        
+
         if(AInfo.LinkedAbility != None)
         {
             if(AInfo.LinkedAbility.Buy() && RPGMenu.RPRI.Role < ROLE_Authority) //simulate for a pingless update if client
@@ -307,7 +307,7 @@ defaultproperties
         WinTop=0.082763
     End Object
     lstAbilities=GUIMultiColumnListBox'lstAbilities_'
-    
+
     Begin Object Class=AltSectionBackground Name=sbDesc_
         LeftPadding=0.000000
         RightPadding=0.000000
@@ -318,7 +318,7 @@ defaultproperties
         OnPreDraw=sbDesc_.InternalPreDraw
     End Object
     sbDesc=AltSectionBackground'sbDesc_'
-    
+
     Begin Object Class=GUIScrollTextBox Name=lblDesc_
         bNoTeletype=False
         CharDelay=0.001250
@@ -342,7 +342,7 @@ defaultproperties
         OnKeyEvent=btBuy_.InternalOnKeyEvent
     End Object
     btBuy=GUIButton'btBuy_'
-    
+
     Begin Object Class=GUILabel Name=lblStats_
         WinWidth=0.476529
         WinHeight=0.070657

@@ -8,7 +8,7 @@ simulated function SuperTimer() //copy from RPGRocketProj
 
     //This was the problem...
     //Velocity =  Default.Speed * Normal(Dir * 0.5 * Default.Speed + Velocity);
-    
+
     //This is the cure...
     Velocity = VSize(Velocity) * Normal(Dir * 0.5 * VSize(Velocity) + Velocity);
 
@@ -39,28 +39,28 @@ simulated function Timer()
 
     if ( InitialDir == vect(0,0,0) )
         InitialDir = Normal(Velocity);
-         
+
     Acceleration = vect(0,0,0);
-    
+
     //Super.Timer();
     SuperTimer();
-    
-    if ( (Seeking != None) && (Seeking != Instigator) ) 
+
+    if ( (Seeking != None) && (Seeking != Instigator) )
     {
         // Do normal guidance to target.
         ForceDir = Normal(Seeking.Location - Location);
-        
+
         if( (ForceDir Dot InitialDir) > 0 )
         {
             VelMag = VSize(Velocity);
-        
+
             // track vehicles better
             if ( Seeking.Physics == PHYS_Karma )
                 ForceDir = Normal(ForceDir * 0.8 * VelMag + Velocity);
             else
                 ForceDir = Normal(ForceDir * 0.5 * VelMag + Velocity);
-            Velocity =  VelMag * ForceDir;  
-            Acceleration += 5 * ForceDir; 
+            Velocity =  VelMag * ForceDir;
+            Acceleration += 5 * ForceDir;
         }
         // Update rocket so it faces in the direction its going.
         SetRotation(rotator(Velocity));

@@ -5,7 +5,7 @@ var bool bSuicided;
 function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
-    
+
     if(!bSuicided)
         Other.AddShieldStrength(AbilityLevel * int(BonusPerLevel));
 }
@@ -13,7 +13,7 @@ function ModifyPawn(Pawn Other)
 function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> DamageType, vector HitLocation, bool bAlreadyPrevented)
 {
     bSuicided = (Killed.Controller == Killer || Killed.Controller == None);
-    
+
     return Super.PreventDeath(Killed, Killer, DamageType, HitLocation, bAlreadyPrevented);
 }
 

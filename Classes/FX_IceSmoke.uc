@@ -3,13 +3,13 @@ class FX_IceSmoke extends RocketExplosion;
 simulated event PostBeginPlay()
 {
     local PlayerController PC;
-    
+
     PC = Level.GetLocalPlayerController();
     if
     (
-        PC != None && 
+        PC != None &&
         (
-            PC.ViewTarget == None || 
+            PC.ViewTarget == None ||
             VSize(PC.ViewTarget.Location - Location) > 5000
         )
     )
@@ -17,11 +17,11 @@ simulated event PostBeginPlay()
         LightType = LT_None;
         bDynamicLight = false;
     }
-    else 
+    else
     {
         Spawn(class'RocketSmokeRing');
         if (Level.bDropDetail)
-            LightRadius = 7;    
+            LightRadius = 7;
     }
     //dont call super. The Super classes's postbeginplay is messed up.
 }

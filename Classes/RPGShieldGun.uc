@@ -32,15 +32,15 @@ function AdjustPlayerDamage( out int Damage, Pawn InstigatedBy, Vector HitLocati
         TempDamage = Damage;
         if(InstigatedBy != None && InstigatedBy.HasUDamage())
             TempDamage = TempDamage * 2 * InstigatedBy.DamageScaling; //apply UDamage
-        
+
         Reflect = MirrorVectorByNormal( Normal(Location - HitLocation), Vector(Instigator.Rotation) );
         Momentum *= 1.25;
-        
+
         if(DamageType == class'DamTypeLightningRod') //special rod handling
         {
             Drain = Min(AmmoAmount(1), TempDamage);
             TempDamage -= Drain;
-            
+
             ConsumeAmmo(1,Drain);
             DoReflectEffect(Drain);
         }
@@ -48,7 +48,7 @@ function AdjustPlayerDamage( out int Damage, Pawn InstigatedBy, Vector HitLocati
         {
             Drain = Min( AmmoAmount(1)*2, TempDamage );
             Drain = Min(Drain, DamageMax);
-            
+
             TempDamage -= Drain;
             if ( (Instigator != None) && (Instigator.PlayerReplicationInfo != None) && (Instigator.PlayerReplicationInfo.HasFlag != None) )
             {
@@ -62,7 +62,7 @@ function AdjustPlayerDamage( out int Damage, Pawn InstigatedBy, Vector HitLocati
                 DoReflectEffect(Drain*0.5);
             }
         }
-        
+
         Damage = TempDamage;
         if(InstigatedBy != None && InstigatedBy.HasUDamage())
             Damage = Damage * 0.5 / InstigatedBy.DamageScaling; //unapply UDamage as later code will apply it again

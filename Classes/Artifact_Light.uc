@@ -7,7 +7,7 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         if(Light == None)
         {
             Light = Spawn(class'FX_PlayerLight', Instigator, , Instigator.Location);
@@ -18,12 +18,12 @@ state Activated
             Light.LightChanged();
         }
     }
-    
+
     function EndState()
     {
         if(Light != None)
             Light.Destroy();
-        
+
         Super.EndState();
     }
 }

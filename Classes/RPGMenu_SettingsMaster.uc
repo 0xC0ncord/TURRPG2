@@ -6,7 +6,7 @@ var automated GUITabControl Tabs;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     local int i;
-    
+
     Super.InitComponent(MyController, MyOwner);
 
     for(i = 0; i < Panels.Length; i++)
@@ -20,7 +20,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 function InitMenu()
 {
     local int i;
-    
+
     for(i = 0; i < Tabs.Controls.Length; i++)
     {
         RPGMenu_TabPage(Tabs.Controls[i]).RPGMenu = RPGMenu;

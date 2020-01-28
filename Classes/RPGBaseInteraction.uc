@@ -31,11 +31,11 @@ function Color GetTeamBeaconColor(PlayerReplicationInfo PRI) {
 function bool IsPawnVisible(Canvas C, Pawn P, out vector Pos, out float Dist) {
     local vector CamLoc, D;
     local rotator CamRot;
-    
+
     if(P == None || P.Health <= 0 || ViewportOwner.Actor == None) {
         return false;
     }
-    
+
     if(xPawn(P) != None && xPawn(P).bInvis) {
         return false;
     }
@@ -47,27 +47,27 @@ function bool IsPawnVisible(Canvas C, Pawn P, out vector Pos, out float Dist) {
 
     //get camera data
     C.GetCameraLocation(CamLoc, CamRot);
-    
+
     //check if behind
     D = P.Location - CamLoc;
     if(D dot vector(CamRot) < 0) {
         return false;
     }
-    
+
     //Calculate output and return true
     Pos = C.WorldToScreen(P.Location);
     Dist = ViewportOwner.Actor.FOVBias * VSize(D);
-    
+
     return true;
 }
 
 //Draws an Onslaught health bar styled bar
 function DrawBar(Canvas C, float X, float Y, Color Color, float Pct, float XSize, float YSize, optional bool bCenter) {
     local float ActualXSize;
-    
+
     Pct = FMin(Pct, 2); //Prevent overly large bars
     ActualXSize = FMax(XSize, XSize * Pct);
-    
+
     if(bCenter) {
         X -= 0.5 * ActualXSize;
         Y -= 0.5 * YSize;
@@ -75,12 +75,12 @@ function DrawBar(Canvas C, float X, float Y, Color Color, float Pct, float XSize
 
     C.SetPos(X, Y);
     C.Style = 9; //STY_AlphaZ
-        
+
     C.DrawColor = WhiteColor;
     C.DrawTileStretched(HealthBarBorder, ActualXSize, YSize);
 
     C.DrawTileStretched(HealthBar, ActualXSize, YSize);
-    
+
     if(Pct > 0) {
         C.DrawColor = Color;
         C.DrawTileStretched(HealthBar, XSize * Pct, YSize);
@@ -90,10 +90,10 @@ function DrawBar(Canvas C, float X, float Y, Color Color, float Pct, float XSize
 //Draws a classic DruidsRPG health bar styled bar
 function DrawCenterStyleBar(Canvas C, float X, float Y, Color Color, float Pct, float XSize, float YSize, optional bool bCenter) {
     local float ActualXSize;
-    
+
     Pct = FMin(Pct, 2); //Prevent overly large bars
     ActualXSize = FMax(XSize, XSize * Pct);
-    
+
     if(bCenter) {
         X -= 0.5 * ActualXSize;
         Y -= 0.5 * YSize;
@@ -101,7 +101,7 @@ function DrawCenterStyleBar(Canvas C, float X, float Y, Color Color, float Pct, 
 
     C.SetPos(X, Y);
     C.Style = 9; //STY_AlphaZ
-        
+
     C.DrawColor = WhiteColor;
     C.DrawTileStretched(HealthBarBorder, ActualXSize, YSize);
 
@@ -123,11 +123,11 @@ function DrawCenterStyleBar(Canvas C, float X, float Y, Color Color, float Pct, 
 //Draws a team beacon
 function DrawTeamBeacon(Canvas C, float X, float Y, Color Color, float Scale, optional string Text) {
     local float XL, YL;
-    
+
     C.Style = 9; //STY_AlphaZ
     C.DrawColor = Color;
     C.SetPos(X, Y);
-    
+
     C.DrawTile(
         TeamBeacon,
         TeamBeacon.USize * Scale, TeamBeacon.VSize * Scale,
@@ -144,16 +144,16 @@ function DrawTeamBeacon(Canvas C, float X, float Y, Color Color, float Scale, op
 //Initialize settings
 event Initialized() {
     local PlayerController PC;
-    
+
     Super.Initialized();
-    
+
     PC = ViewportOwner.Actor;
     if(PC.IsA('OLTeamPlayerController')) { //CTF4
         TeamBeaconMaxDist = float(PC.GetPropertyText("OLTeamBeaconPlayerInfoMaxDist"));
     } else {
         TeamBeaconMaxDist = PC.TeamBeaconPlayerInfoMaxDist;
     }
-    
+
     TeamBeacon = PC.TeamBeaconTexture;
 }
 
@@ -170,7 +170,7 @@ defaultproperties {
     TeamBeaconColor(3)=(R=255,G=224,B=64,A=255) //Gold
     TeamBeaconColor(4)=(B=255,G=255,R=255,A=255) //Neutral
     WhiteColor=(B=255,G=255,R=255,A=255)
-    
+
     HealthBar=Texture'ONSInterface-TX.HealthBar'
     HealthBarBorder=Texture'InterfaceContent.BorderBoxD'
 }

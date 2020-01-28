@@ -14,7 +14,7 @@ simulated event PostNetBeginPlay()
 simulated function Timer()
 {
     local Projectile P;
-    
+
     P = Projectile(Owner);
     if(P == None)
     {

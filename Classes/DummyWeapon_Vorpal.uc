@@ -2,7 +2,7 @@
 class DummyWeapon_Vorpal extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Vorpal Effect"

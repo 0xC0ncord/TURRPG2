@@ -9,21 +9,21 @@ var array<Pawn> Pawns;
 simulated function Tick(float DeltaTime)
 {
     local Pawn P;
-    
+
     P = Pawn(Owner);
 
     if (P == None || P.Controller == None)
-	{
+    {
         Destroy();
         return;
     }
 
     if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-		DeltaTime *= 2;
-	if(RPRI != None)
-		RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-	else
-		P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+        DeltaTime *= 2;
+    if(RPRI != None)
+        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+    else
+        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
     if (P.Controller.Adrenaline <= 0.0)
     {
         P.Controller.Adrenaline = 0.0;
@@ -36,9 +36,9 @@ function StartEffect(xPawn P)
     local int i;
     local Pawn Other;
     local Controller C;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
-    
+
     //Find teammates
     i = 0;
     for(C = Level.ControllerList; C != None; C = C.NextController)
@@ -50,10 +50,10 @@ function StartEffect(xPawn P)
             if(xPawn(Other) != None && ComboTeamBooster(xPawn(Other).CurrentCombo) != None)
             {
                 P.ReceiveLocalizedMessage(class'LocalMessage_TeamBooster', 1, Other.PlayerReplicationInfo, , Self.class);
-                
+
                 if(PlayerController(P.Controller) != None)
                     PlayerController(P.Controller).ClientPlaySound(Sound'WeaponSounds.BSeekLost1');
-                
+
                 Destroy();
                 return;
             }
@@ -63,20 +63,20 @@ function StartEffect(xPawn P)
             }
         }
     }
-    
+
     //Spawn effects
     for(i = 0; i < Controllers.Length; i++)
     {
         Other = Controllers[i].Pawn;
-        
+
         if(Vehicle(Other) != None)
             Other = Vehicle(Other).Driver;
 
         Pawns[i] = Other;
-        
+
         if(Other != None)
             Effects[i] = Spawn(class'FX_TeamBooster', Other,, Other.Location, Other.Rotation);
-    
+
         //Show the message for all team members
         if(Other != None && Other != P && P.PlayerReplicationInfo != None)
             Other.ReceiveLocalizedMessage(class'LocalMessage_TeamBooster', 0, P.PlayerReplicationInfo, , Self.class);
@@ -88,11 +88,11 @@ function StartEffect(xPawn P)
 }
 
 function Timer()
-{    
+{
     local Controller C;
     local Pawn Other;
     local int i, n;
-    
+
     n = -1; //not the instigator
     for(i = 0; i < Controllers.Length; i++)
     {
@@ -104,7 +104,7 @@ function Timer()
             {
                 if(Vehicle(Other) != None)
                     Other = Vehicle(Other).Driver;
-            
+
                 if(Other != Pawns[i]) //respawned or entered vehicle
                 {
                     if(Effects[i] != None)
@@ -112,22 +112,22 @@ function Timer()
                         Effects[i].Destroy();
                         Effects[i] = None;
                     }
-                    
+
                     Pawns[i] = Other;
                 }
-                
+
                 if(Other != None)
                 {
                     if(Effects[i] == None)
                         Effects[i] = Spawn(class'FX_TeamBooster', Other,, Other.Location, Other.Rotation);
-                
+
                     if(ProcessPawn(Other))
                         n++;
                 }
             }
         }
     }
-    
+
     if(n > 0 && RPRI != None)
         RPRI.AwardExperience(float(n) * class'RPGRules'.default.EXP_TeamBooster);
 }
@@ -144,24 +144,24 @@ function bool ProcessPawn(Pawn P)
         P.AddShieldStrength(5);
         return true;
     }
-    
+
     return false;
 }
 
 function StopEffect(xPawn P)
 {
     local int i;
-    
+
     for(i = 0; i < Effects.Length; i++)
     {
         if(Effects[i] != None)
             Effects[i].Destroy();
     }
-    
+
     Effects.Length = 0;
     Pawns.Length = 0;
     Controllers.Length = 0;
-    
+
     SetTimer(0, false);
 }
 

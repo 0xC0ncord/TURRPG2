@@ -12,12 +12,12 @@ function projectile SpawnProjectile(Vector Start, Rotator Dir)
         return None;
 
     p.Damage *= DamageAtten;
-    
+
     if (Instigator != None && Instigator.Controller != None && RPGSentinelController(Instigator.Controller) != None)
     {
         p.Damage *= RPGSentinelController(Instigator.Controller).DamageAdjust;        // set by LoadedEngineer
     }
-    
+
     return p;
 }
 

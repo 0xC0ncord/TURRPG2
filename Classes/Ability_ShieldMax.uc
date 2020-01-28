@@ -20,7 +20,7 @@ simulated event Tick(float dt)
     {
         if(LastPawn != RPRI.Controller.Pawn)
             LastPawn = xPawn(RPRI.Controller.Pawn);
-        
+
         if(LastPawn != None && LastPawn.ShieldStrengthMax != ShieldMax)
             LastPawn.ShieldStrengthMax = ShieldMax;
     }
@@ -29,7 +29,7 @@ simulated event Tick(float dt)
 function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
-    
+
     if(xPawn(Other) != None)
     {
         ShieldMax = xPawn(Other).default.ShieldStrengthMax + BonusPerLevel * AbilityLevel;

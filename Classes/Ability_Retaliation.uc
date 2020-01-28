@@ -12,7 +12,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
     RetalDamage = float(AbilityLevel) * BonusPerLevel * float(Damage);
     RetalDamage = Min(RetalDamage, Injured.Health);
-    
+
     if(RetalDamage > 0)
     {
         InstigatedBy.TakeDamage(

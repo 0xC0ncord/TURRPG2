@@ -33,12 +33,12 @@ function Timer()
 
     NewHealth = Instigator.Health;
     NewShield = Instigator.GetShieldStrength();
-    
+
     if(LastHealth > NewHealth || LastShield > NewShield)
         ElapsedNoDamage = 0;
     else
         ElapsedNoDamage++;
-    
+
     RegenPossible = MaxShieldPerLevel * AbilityLevel - NewShield;
     if(RegenPossible > 0 && ElapsedNoDamage > NoDamageDelay)
     {
@@ -46,7 +46,7 @@ function Timer()
 
         if(AmountToAdd >= 1)
             Instigator.AddShieldStrength(Min(AmountToAdd, RegenPossible));
-    } 
+    }
 
     LastHealth = NewHealth;
 }

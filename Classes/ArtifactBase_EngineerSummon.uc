@@ -291,7 +291,7 @@ simulated function array<OptionCostStruct> GetHUDOptionCosts(int i)
             OptionCost.bCanAfford = InstigatorRPRI.UtilityPoints - OptionCost.Cost >= 0;
             break;
     }
-    
+
     OptionCosts[0] = OptionCost;
     return OptionCosts;
 }

@@ -11,12 +11,12 @@ simulated function string DescriptionText()
 {
     local int i;
     local string Text;
-    
+
     Text = Super.DescriptionText();
-    
+
     for(i = 0; i < LevelCap.Length; i++)
         Text = repl(Text, "$" $ string(i + 1), string(LevelCap[i]));
-    
+
     return Text;
 }
 

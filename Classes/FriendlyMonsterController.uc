@@ -18,9 +18,9 @@ event PostBeginPlay()
 function Possess(Pawn aPawn)
 {
     Super(ScriptedController).Possess(aPawn);
-    
+
     InitializeSkill(DeathMatch(Level.Game).AdjustedDifficulty);
-    
+
     Pawn.MaxFallSpeed = 1.1 * Pawn.default.MaxFallSpeed;
     Pawn.SetMovementPhysics();
     Pawn.bAlwaysRelevant = true; //should stay relevant for global interaction
@@ -38,7 +38,7 @@ function SetMaster(Controller NewMaster)
     Master = NewMaster;
     MasterRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Master);
     FPRI.Master = Master.PlayerReplicationInfo;
-    
+
     if(Master.PlayerReplicationInfo != None && Master.PlayerReplicationInfo.Team != None) {
         TeamNum = Master.PlayerReplicationInfo.Team.TeamIndex;
     } else {
@@ -84,7 +84,7 @@ function bool FindNewEnemy()
         ChangeEnemy(BestEnemy, true);
         return true;
     }
-    
+
     return false;
 }
 
@@ -94,7 +94,7 @@ function bool SetEnemy(Pawn NewEnemy, optional bool bThisIsNeverUsed)
 
     if(NewEnemy == None || NewEnemy.Health <= 0 || NewEnemy.Controller == None || NewEnemy == Enemy)
         return false;
-    
+
     if(
         Master != None &&
         (
@@ -108,7 +108,7 @@ function bool SetEnemy(Pawn NewEnemy, optional bool bThisIsNeverUsed)
     {
         return false;
     }
-    
+
     if(NewEnemy.Controller.SameTeamAs(Master) || !CanSee(NewEnemy))
         return false;
 
@@ -170,7 +170,7 @@ event SeePlayer(Pawn SeenPlayer)
 
 event Tick(float dt) {
     Super.Tick(dt);
-    
+
     if(Pawn == None || Pawn.Controller != Self || Pawn.bPendingDelete) {
         Destroy();
         return;
@@ -209,7 +209,7 @@ function ExecuteWhatToDoNext()
         GotoState('WaitForAnim');
         return;
     }
-    
+
     if(Pawn.Physics == PHYS_None)
         Pawn.SetMovementPhysics();
 
@@ -246,7 +246,7 @@ function FollowMaster()
     )
     {
         GoalString = "Follow Master "$Master.PlayerReplicationInfo.PlayerName;
-        
+
         if(FindBestPathToward(Master.Pawn, false, Pawn.bCanPickupInventory))
         {
             GotoState('Roaming');
@@ -280,7 +280,7 @@ state RestFormation
         Pawn.bStopAtLedges = true;
         Pawn.SetWalking(true);
         MinHitWall += 0.15;
-        
+
         if(Master != None && Master.Pawn != None)
             StartMonitoring(Master.Pawn, 1000);
     }
@@ -301,10 +301,10 @@ Begin:
 Moving:
     if(InventorySpot(MoveTarget) != None)
         MoveTarget = InventorySpot(MoveTarget).GetMoveTargetFor(Self, 0);
-        
+
     MoveToward(MoveTarget, FaceActor(1),, ShouldStrafeTo(MoveTarget));
     WhatToDoNext(14);
-    
+
     if(bSoaking)
         SoakStop("STUCK IN FALLBACK!");
 

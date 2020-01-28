@@ -12,7 +12,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_UDamage:
             return default.MSG_Text_UDamage;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -29,36 +29,36 @@ function BotFightEnemy(Bot Bot)
     {
         if(HasActiveArtifact(Instigator))
             return;
-            
+
         if(Instigator.HasUDamage())
             return;
-    
+
         if(
             Bot.bEnemyIsVisible &&
             Bot.CombatStyle >= 0 &&
-            Bot.Skill >= 4 && 
+            Bot.Skill >= 4 &&
             Bot.Adrenaline >= 3 * CostPerSec * MinActivationTime &&
             Bot.Enemy.Health > 50 &&
             FRand() < FMin(0.666667, Bot.Aggressiveness))
         {
             Chance = FMin(0.3, Bot.Aggressiveness);
             Chance += FMin(0.3, (Bot.Accuracy + 1.f) * 0.25);
-            
+
             Chance += 0.05 * (Bot.Skill - 4); //max 0.75
-            
+
             if(Bot.Adrenaline >= 100)
                 Chance += 0.05; //max 0.8
-                
+
             if(class'WeaponModifier_Retaliation'.static.GetFor(Bot.Enemy.Weapon) != None)
                 Chance -= 0.25;
-                
+
             if(Bot.Enemy.Health >= 75)
                 Chance += 0.05; //max 0.85
-                
+
             if(Bot.Enemy.PlayerReplicationInfo != None &&
                 Bot.Enemy.PlayerReplicationInfo.HasFlag != None)
                 Chance += 0.15; //max 1.00
-            
+
             if(FRand() < Chance)
                 Activate();
         }
@@ -89,7 +89,7 @@ function bool CanActivate()
         Msg(MSG_UDamage);
         return false;
     }
-        
+
     return Super.CanActivate();
 }
 
@@ -98,27 +98,27 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-    
+
         Instigator.DamageScaling *= UDamageScale;
 
         Timer();
         SetTimer(0.5, true);
     }
-    
+
     function Timer()
     {
         local float EstimatedTimeLeft;
         local Pawn P;
-        
+
         if(Vehicle(Instigator) != None)
             P = Vehicle(Instigator).Driver;
         else
             P = Instigator;
-        
+
         if(P != None)
         {
             EstimatedTimeLeft = Instigator.Controller.Adrenaline / CostPerSec;
-            
+
             P.EnableUDamage(EstimatedTimeLeft);
             if(xPawn(P) != None)
             {
@@ -133,11 +133,11 @@ state Activated
             }
         }
     }
-    
+
     function EndState()
     {
         local Pawn P;
-        
+
         if(Vehicle(Instigator) != None)
             P = Vehicle(Instigator).Driver;
         else
@@ -149,11 +149,11 @@ state Activated
             Instigator.DamageScaling /= UDamageScale;
 
             P.DisableUDamage();
-            
+
             if(xPawn(P) != None && xPawn(P).UDamageTimer != None)
                 xPawn(P).UDamageTimer.Destroy();
         }
-        
+
         Super.EndState();
     }
 }

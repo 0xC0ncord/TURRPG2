@@ -2,7 +2,7 @@
 class DummyWeapon_LightningRod extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Lightning Rod"

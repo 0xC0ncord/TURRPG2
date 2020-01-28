@@ -11,7 +11,7 @@ static function bool AllowedFor(class<Weapon> Weapon, Pawn Other)
 {
     if(!Super.AllowedFor(Weapon, Other))
         return false;
-    
+
     if(
         ClassIsChildOf(Weapon, class'RPGRocketLauncher') ||
         ClassIsChildOf(Weapon, class'LinkGun') ||
@@ -21,7 +21,7 @@ static function bool AllowedFor(class<Weapon> Weapon, Pawn Other)
     {
         return true;
     }
-    
+
     return false;
 }
 
@@ -33,7 +33,7 @@ static function vector ReflectVector(vector v, vector normal)
 static function bool Bounce(Projectile P, vector HitNormal, Actor Wall)
 {
     local vector NewVel;
-    
+
     if(Wall == None || Volume(Wall) != None)
         return false;
 
@@ -41,21 +41,21 @@ static function bool Bounce(Projectile P, vector HitNormal, Actor Wall)
     {
         //abusing Actor.Buoyancy as bounciness - will never be used for projectiles anyway
         NewVel = P.Buoyancy * ReflectVector(P.Velocity, HitNormal);
-        
+
         if(VSize(NewVel) > default.ProjectileVelocityTreshold)
         {
             //if this is a rocket, reset its timer so rockets shot in a spiral will not cause weird effects
             if(RocketProj(P) != None)
                 P.SetTimer(0.0f, false);
-        
+
             P.Velocity = NewVel;
             P.Acceleration = vect(0, 0, 0);
             P.SetRotation(rotator(NewVel));
             P.SetPhysics(P.default.Physics);
-        
+
             if(default.BounceSound != None && !P.Level.bDropDetail)
                 P.PlaySound(default.BounceSound);
-        
+
             return true;
         }
         else
@@ -73,7 +73,7 @@ function StartEffect()
 {
     local WeaponFire WF;
     local int i;
-    
+
     if(RPGRocketLauncher(Weapon) != None)
     {
         //fuck damnit, Epic...
@@ -88,7 +88,7 @@ function StartEffect()
             if(WF != None)
             {
                 OldProjectileClasses[i] = WF.ProjectileClass;
-                
+
                 if(ClassIsChildOf(WF.ProjectileClass, class'FlakShell'))
                     WF.ProjectileClass = class'PROJ_FlakShellBouncy';
                 else if(ClassIsChildOf(WF.ProjectileClass, class'ShockProjectile'))
@@ -108,10 +108,10 @@ function StopEffect()
 {
     local WeaponFire WF;
     local int i;
-    
+
     if(Weapon == None)
         return;
-    
+
     if(OldProjectileClasses.Length > 0)
     {
         if(RPGRocketLauncher(Weapon) != None)

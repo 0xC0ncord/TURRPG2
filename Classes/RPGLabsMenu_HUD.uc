@@ -9,7 +9,7 @@ var automated moComboBox cbXPHudStyle;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     cbXPHudStyle = moComboBox(lbSettings.List.AddItem("XInterface.moComboBox",, "XP HUD Style", true));
     cbXPHudStyle.AddItem("Classic");
     cbXPHudStyle.AddItem("Sword Art Online");

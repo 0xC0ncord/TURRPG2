@@ -16,7 +16,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_InvisCombo:
             return default.MSG_Text_InvisCombo;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -26,10 +26,10 @@ function int NearbyEnemies()
 {
     local Controller C;
     local int n;
-    
+
     if(Instigator == None)
         return 0;
-    
+
     n = 0;
     for(C = Level.ControllerList; C != None; C= C.NextController)
     {
@@ -43,7 +43,7 @@ function int NearbyEnemies()
             n++;
         }
     }
-    
+
     return n;
 }
 
@@ -58,7 +58,7 @@ function bool CanActivate()
         Msg(MSG_InvisCombo);
         return false;
     }
-        
+
     return Super.CanActivate();
 }
 
@@ -71,7 +71,7 @@ state Activated
         bResetInvis = true;
         xInstigator.SetInvisibility(9999.0f);
     }
-    
+
     event Tick(float dt)
     {
         if(xInstigator != None && ComboInvis(xInstigator.CurrentCombo) != None)
@@ -80,7 +80,7 @@ state Activated
             bResetInvis = false;
             GotoState('');
         }
-    
+
         CurrentCostPerSec = CostPerSec + ExtraCostPerEnemy * NearbyEnemies();
         Super.Tick(dt);
     }
@@ -89,7 +89,7 @@ state Activated
     {
         if(bResetInvis)
             xInstigator.SetInvisibility(0);
-    
+
         Super.EndState();
     }
 }

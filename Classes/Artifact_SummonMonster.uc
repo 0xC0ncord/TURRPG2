@@ -26,7 +26,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_MaxMonsters:
             return default.MsgMaxMonsters;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -37,7 +37,7 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
     local int i;
 
     Super.GiveTo(Other, Pickup);
-    
+
     for(i = 0; i < MonsterTypes.Length; i++) {
         ClientReceiveMonsterType(i, MonsterTypes[i]);
     }
@@ -60,13 +60,13 @@ function bool CanActivate()
 
     if(!Super.CanActivate())
         return false;
-    
+
     if(InstigatorRPRI.Monsters.Length >= InstigatorRPRI.MaxMonsters)
     {
         Msg(MSG_MaxMonsters);
         return false;
     }
-    
+
     return true;
 }
 
@@ -74,7 +74,7 @@ function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator Spaw
 {
     local FriendlyMonsterController C;
     local Monster M;
-    
+
     M = Monster(Super.SpawnActor(SpawnClass, SpawnLoc, SpawnRot));
     if(M != None)
     {
@@ -84,7 +84,7 @@ function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator Spaw
         C = Spawn(class'FriendlyMonsterController',,, SpawnLoc, Instigator.Rotation);
         C.Possess(M);
         C.SetMaster(Instigator.Controller);
-        
+
         if(InstigatorRPRI != None)
             InstigatorRPRI.AddMonster(M);
     }
@@ -120,7 +120,7 @@ simulated function int GetOptionCost(int i) {
 function int SelectBestOption() {
     local Controller C;
     local int i;
-    
+
     C = Instigator.Controller;
     if(C != None) {
         //The AI assumes that the best options are listed last
@@ -129,7 +129,7 @@ function int SelectBestOption() {
                 return i;
             }
         }
-        
+
         //None
         return -1;
     } else {

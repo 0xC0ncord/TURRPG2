@@ -24,7 +24,7 @@ simulated function ClientCreateInteraction()
                 PC.Player.InteractionMaster.AddInteraction("TURRPG2.Interaction_MedicAwareness", PC.Player));
 
             Interaction.Ability = Self;
-            
+
             SetTimer(1.0, true);
         }
     }
@@ -33,25 +33,25 @@ simulated function ClientCreateInteraction()
 simulated function Timer() {
     local PlayerController PC;
     local Pawn P;
-    
+
     if(Interaction != None) {
         Teammates.Length = 0;
-        
+
         PC = Level.GetLocalPlayerController();
         if(PC != None && PC.Pawn != None && PC.Pawn.Health > 0) {
             foreach DynamicActors(class'Pawn', P) {
                 if(P == PC.Pawn) {
                     continue;
                 }
-            
+
                 if(P.PlayerReplicationInfo == None || P.PlayerReplicationInfo.Team == None) {
                     continue;
                 }
-            
+
                 if(P.GetTeamNum() == 255 || P.GetTeamNum() != PC.GetTeamNum()) {
                     continue;
                 }
-                
+
                 if(Monster(P) != None || Vehicle(P) != None || P.DrivenVehicle != None) {
                     continue;
                 }

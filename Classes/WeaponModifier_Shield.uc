@@ -21,14 +21,14 @@ function RPGTick(float dt) {
     if(x != None && Level.TimeSeconds >= RegenTime) {
         if(x.ShieldStrength < x.ShieldStrengthMax)
             x.ShieldStrength = FMin(x.ShieldStrength + float(Modifier) * BonusPerLevel, x.ShieldStrengthMax);
-        
+
         RestartRegenTimer();
     }
 }
 
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType) {
     Super.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
-    
+
     if(Damage > 0) {
         RestartRegenTimer(); //reset on damage
     }

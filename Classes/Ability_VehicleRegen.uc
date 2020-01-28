@@ -15,7 +15,7 @@ function Timer()
         SetTimer(0.0f, false);
         return;
     }
-    
+
     if(Instigator.DrivenVehicle != None)
     {
         Instigator.DrivenVehicle.GiveHealth(

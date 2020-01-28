@@ -11,10 +11,10 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_UnableToModify:
             return default.MsgUnableToModify;
-            
+
         case MSG_AlreadyMaxed:
             return default.MsgAlreadyMaxed;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -32,7 +32,7 @@ function bool CanActivate()
                 Msg(MSG_UnableToModify);
                 return false;
             }
-        
+
             if(WM.Modifier >= WM.MaxModifier) {
                 Msg(MSG_AlreadyMaxed);
                 return false;
@@ -42,7 +42,7 @@ function bool CanActivate()
             return false;
         }
     }
-    
+
     return Super.CanActivate();
 }
 
@@ -56,13 +56,13 @@ state Activated
             Msg(MSG_UnableToModify);
             return false;
         }
-        
+
         WM = class'RPGWeaponModifier'.static.GetFor(OldWeapon);
         if(WM == None) {
             Msg(MSG_UnableToModify);
             return false;
         }
-        
+
         WM.SetModifier(WM.MaxModifier, true);
         return true;
     }

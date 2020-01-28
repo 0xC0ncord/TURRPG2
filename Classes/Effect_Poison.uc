@@ -32,16 +32,16 @@ state Activated
             case PM_Absolute:
                 PoisonDamage = AbsDrainPerLevel * Modifier;
                 break;
-                
+
             case PM_Percentage:
                 PoisonDamage = Modifier * PercDrainPerLevel * Instigator.Health;
                 break;
-                
+
             case PM_Curve:
                 PoisonDamage = float(Instigator.Health) * (Curve ** (Modifier - 1.0f) * BasePercentage);
                 break;
         }
-    
+
         if(PoisonDamage > 0 && !(Instigator.Controller != None && Instigator.Controller.bGodMode))
         {
             if(MinHealth > 0)
@@ -57,7 +57,7 @@ state Activated
             {
                 Instigator.Health -= PoisonDamage;
             }
-            
+
             if(EffectCauser != None && EffectCauser != Instigator.Controller)
             {
                 CauserRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(EffectCauser);
@@ -75,6 +75,6 @@ defaultproperties
 {
     xEmitterClass=class'FX_PoisonSmoke'
     EffectMessageClass=class'EffectMessage_Poison'
-    
+
     PoisonMode=PM_Curve
 }

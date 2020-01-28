@@ -53,7 +53,7 @@ replication{
 
     reliable if(Role == ROLE_Authority && bNetDirty)
         Modifier, bIdentified;
-    
+
     reliable if(Role == ROLE_Authority)
         ClientSetFirstPersonOverlay, ClientSetActive, ClientRestore;
 }
@@ -82,18 +82,18 @@ static function bool AllowedFor(class<Weapon> WeaponType, optional Pawn Other) {
             return false;
         }
     }
-    
+
     return true;
 }
 
 static function RPGWeaponModifier Modify(Weapon W, int Modifier, optional bool bIdentify, optional bool bForce) {
     local RPGWeaponModifier WM;
-    
+
     if(!bForce && !AllowedFor(W.class, W.Instigator))
         return None;
-    
+
     RemoveModifier(W); //remove existing
-    
+
     WM = W.Instigator.Spawn(default.class, W);
     if(WM != None) {
         if(Modifier == -100) {
@@ -132,18 +132,18 @@ static function RPGWeaponModifier GetFor(Weapon W, optional bool bAny) {
 static function string ConstructItemName(class<Weapon> WeaponClass, int Modifier) {
     local string NewItemName;
     local string Pattern;
-    
+
     if(default.PatternNeg == "")
         default.PatternNeg = default.PatternPos;
-    
+
     if(Modifier >= 0) {
         Pattern = default.PatternPos;
     } else if(Modifier < 0) {
         Pattern = default.PatternNeg;
     }
-    
+
     NewItemName = repl(Pattern, "$W", WeaponClass.default.ItemName);
-    
+
     if(!default.bOmitModifierInName) {
         if(Modifier > 0)
             NewItemName @= "+" $ Modifier;
@@ -161,10 +161,10 @@ static function int GetRandomModifierLevel() {
         return 0;
 
     x = Rand(default.MaxModifier + 1 - default.MinModifier) + default.MinModifier;
-    
+
     if(x == 0 && !default.bCanHaveZeroModifier)
         x = 1;
-        
+
     return x;
 }
 
@@ -176,7 +176,7 @@ static function int GetRandomPositiveModifierLevel(optional int Minimum) {
     } else {
         Minimum = Max(1, Minimum);
     }
-    
+
     x = Max(Minimum, default.MinModifier);
 
     if(default.MaxModifier <= x) {
@@ -188,7 +188,7 @@ static function int GetRandomPositiveModifierLevel(optional int Minimum) {
 
 simulated event PostBeginPlay() {
     Super.PostBeginPlay();
-    
+
     if(Role == ROLE_Authority) {
         SetWeapon(Weapon(Owner));
         if(Weapon == None) {
@@ -203,7 +203,7 @@ simulated event PostBeginPlay() {
 function SetWeapon(Weapon W) {
     Weapon = W;
     Instigator = W.Instigator;
-    
+
     if(Instigator.PlayerReplicationInfo != None) {
         RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
     } else {
@@ -213,24 +213,24 @@ function SetWeapon(Weapon W) {
 
 function SetModifier(int x, optional bool bIdentify) {
     local bool bWasActive;
-    
+
     bWasActive = bActive;
     if(bActive) {
         SetActive(false);
     }
 
     Modifier = x;
-    
+
     if(Modifier < 0 || Modifier > MaxModifier) {
         Weapon.bCanThrow = false; //cannot throw negative or enhanced weapons
     } else {
         Weapon.bCanThrow = Weapon.default.bCanThrow && bCanThrow;
     }
-    
+
     if(bIdentify || bIdentified) {
         Identify(true);
     }
-    
+
     if(bWasActive) {
         SetActive(true);
     }
@@ -255,7 +255,7 @@ simulated event Tick(float dt) {
         } else if(bActive) {
             SetActive(false);
         }
-        
+
         if(bActive) {
             if(bIdentified && xPawn(Instigator) != None) {
                 X = xPawn(Instigator);
@@ -271,28 +271,28 @@ simulated event Tick(float dt) {
                     SetOverlay();
                 }
             }
-            
+
             RPGTick(dt);
         }
     }
-    
+
     if(Role < ROLE_Authority || Level.NetMode == NM_Standalone) {
         if(bResetPendingWeapon) {
             bResetPendingWeapon = false;
-            
+
             if(Instigator != None) {
                 Instigator.PendingWeapon = None;
             }
         }
-    
+
         if(Weapon != None) {
             if(bIdentified && (!bClientIdentified || Modifier != ClientModifier)) {
                 ClientModifier = Modifier;
                 bClientIdentified = true;
-            
+
                 ClientIdentify();
             }
-        
+
             if(bActive) {
                 if(Weapon != None) {
                     ClientRPGTick(dt);
@@ -313,7 +313,7 @@ simulated function ClientIdentify() {
     if(Role < ROLE_Authority) {
         Weapon.ItemName = ConstructItemName(Weapon.class, Modifier);
         Description = "";
-        
+
         if(Instigator.Weapon == Weapon) {
             //Hud hack - force display of weapon name as if it has just been selected
             Instigator.PendingWeapon = Weapon;
@@ -342,7 +342,7 @@ function SetActive(bool bActivate) {
     if(bActivate && !bActive) {
         StartEffect();
         ClientSetActive(true);
-        
+
         if(bIdentified)
             SetOverlay();
     }
@@ -357,7 +357,7 @@ function SetActive(bool bActivate) {
 simulated function ClientSetActive(bool bActivate) {
     if(Role < ROLE_Authority || Level.NetMode == NM_Standalone) {
         bActive = bActivate;
-        
+
         if(bActivate) {
             ClientStartEffect();
         } else {
@@ -377,11 +377,11 @@ function SetOverlay(optional Material Mat) {
 
     Weapon.SetOverlayMaterial(Mat, 9999, true);
     ClientSetFirstPersonOverlay(Mat);
-    
+
     if(SyncThirdPerson != None) {
         SyncThirdPerson.Destroy();
     }
-    
+
     if(Weapon.ThirdPersonActor != None) {
         SyncThirdPerson = class'Sync_OverlayMaterial'.static.Sync(Weapon.ThirdPersonActor, Mat, -1, true);
     }
@@ -452,33 +452,33 @@ function float GetAIRating() {
             }
         }
     }
-    
+
     return Rating;
 }
 
 simulated event Destroyed() {
     if(Role == ROLE_Authority) {
         SetActive(false);
-        
+
         if(Weapon != None) {
             ClientRestore();
             Weapon.bCanThrow = Weapon.default.bCanThrow;
-            
+
             if(Weapon.OverlayMaterial == ModifierOverlay) {
                 Weapon.SetOverlayMaterial(None, 9999, true);
                 ClientSetFirstPersonOverlay(None);
             }
         }
-        
+
         if(SyncThirdPerson != None) {
             SyncThirdPerson.Destroy();
-            
+
             if(Weapon != None) {
                 class'Sync_OverlayMaterial'.static.Sync(Weapon.ThirdPersonActor, None, 5, true);
             }
         }
     }
-    
+
     Super.Destroyed();
 }
 
@@ -510,21 +510,21 @@ simulated static final function string StaticGetBonusPercentageString(float Bonu
 
     if(default.MinModifier != 0 && default.MaxModifier != 0)
         Bonus *= float(Modifier);
-    
+
     if(Bonus > 0) {
         text = "+";
     }
-    
+
     Bonus *= 100.0f;
-    
+
     //~= to avoid evil floating point magic
     if(float(int(Bonus)) ~= Bonus)
         text $= int(Bonus);
     else
         text $= Bonus;
-    
+
     text $= "%";
-    
+
     return text;
 }
 
@@ -558,10 +558,10 @@ defaultproperties {
 
     bCanThrow=True
     bCanHaveZeroModifier=True
-    
+
     DrawType=DT_None
     bHidden=True
-    
+
     bAlwaysRelevant=False
     bOnlyRelevantToOwner=True
     bOnlyDirtyReplication=False
@@ -569,8 +569,8 @@ defaultproperties {
     bSkipActorPropertyReplication=False
     NetUpdateFrequency=4.000000
     RemoteRole=ROLE_SimulatedProxy
-    
+
     bAllowForSpecials=True
-    
+
     AIRatingBonus=0
 }

@@ -8,7 +8,7 @@ simulated function PostNetBeginPlay()
     Self.SetDrawScale3D(vect(0.8, 0.8, 1.3));
 }
 
-function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector momentum, class<DamageType> damageType) 
+function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector momentum, class<DamageType> damageType)
 {
     // Defer damage to Wall...
     if(Role == Role_Authority && InstigatedBy != Owner)

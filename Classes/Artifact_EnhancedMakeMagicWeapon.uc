@@ -8,12 +8,12 @@ function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponTy
     local bool bAlreadyPresent;
     local class<RPGWeaponModifier> WMClass;
     local int Tries;
-    
+
     //try to not generate a weapon the user already has
     for(Tries = 0; Tries < 50; Tries++)
     {
         WMClass = PossibleModifiers[Rand(PossibleModifiers.Length)];
-        
+
         bAlreadyPresent = false;
         for(Inv = Instigator.Inventory; Inv != None && !bAlreadyPresent; Inv = Inv.Inventory)
         {
@@ -22,11 +22,11 @@ function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponTy
                 //can't break here because yay UnrealScript
             }
         }
-        
+
         if(!bAlreadyPresent)
             break;
     }
-    
+
     return WMClass;
 }
 

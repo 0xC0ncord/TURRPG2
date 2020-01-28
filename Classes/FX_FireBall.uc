@@ -3,9 +3,9 @@ class FX_FireBall extends Emitter;
 simulated function PostBeginPlay()
 {
     local PlayerController PC;
-    
+
     Super.PostBeginPlay();
-        
+
     PC = Level.GetLocalPlayerController();
     if ( (PC.ViewTarget == None) || (VSize(PC.ViewTarget.Location - Location) > 4000) )
         Emitters[2].Disabled = true;

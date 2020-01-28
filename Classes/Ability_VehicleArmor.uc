@@ -40,14 +40,14 @@ function ModifyVehicle(Vehicle V)
 simulated function string DescriptionText()
 {
     local string Text;
-    
+
     Text = repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
-    
+
     if(MaxHealthBonus > 0)
         Text = repl(Text, "$2", repl(MaxBonusText, "$3", MaxHealthBonus));
     else
         Text = repl(Text, "$2", "");
-    
+
     return Text;
 }
 

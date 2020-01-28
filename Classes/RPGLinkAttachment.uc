@@ -3,7 +3,7 @@ class RPGLinkAttachment extends LinkAttachment;
 simulated function UpdateLinkColor()
 {
     local RPGLinkGun LinkGun;
-    
+
     LinkGun = RPGLinkGun(Instigator.Weapon);
 
     if(LinkGun != None && LinkGun.bOLTeamGames)
@@ -18,15 +18,15 @@ simulated function UpdateLinkColor()
                 case LC_Red:
                     MuzFlash.Skins[0] = FinalBlend(DynamicLoadObject("OLTeamGamesTex.LinkGun.LinkMuzProjRedFB", class'FinalBlend'));
                     break;
-                    
+
                 case LC_Blue:
                     MuzFlash.Skins[0] = FinalBlend(DynamicLoadObject("OLTeamGamesTex.LinkGun.LinkMuzProjBlueFB", class'FinalBlend'));
                     break;
-            
+
                 case LC_Gold:
                     MuzFlash.Skins[0] = FinalBlend'XEffectMat.LinkMuzProjYellowFB';
                     break;
-                    
+
                 case LC_Green:
                 default:
                     MuzFlash.Skins[0] = FinalBlend'XEffectMat.LinkMuzProjGreenFB';
@@ -45,7 +45,7 @@ simulated event ThirdPersonEffects()
 {
     local RPGLinkGun LinkGun;
     local rotator R;
-    
+
     LinkGun = RPGLinkGun(Instigator.Weapon);
     if(LinkGun != None && LinkGun.bOLTeamGames)
     {

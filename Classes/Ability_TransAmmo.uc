@@ -23,7 +23,7 @@ function ModifyWeapon(Weapon Weapon)
         TL.RepAmmo = TL.default.RepAmmo + AbilityLevel * int(BonusPerLevel);
         TL.AmmoChargeMax = float(TL.RepAmmo);
         TL.AmmoChargeF = float(TL.RepAmmo);
-        
+
         if(Role == ROLE_Authority && Level.NetMode != NM_Standalone)
             ClientSetMaxAmmo(TL, TL.RepAmmo);
     }

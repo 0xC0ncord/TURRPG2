@@ -46,7 +46,7 @@ function DoDamage(float LocalRadius)
                     continue;
             }
         }
-        
+
         if(!bIgnoreProtectionGun)
         {
             P = Pawn(victims);
@@ -60,7 +60,7 @@ function DoDamage(float LocalRadius)
                 }
             }
         }
-        
+
         // don't let blast damage affect fluid - VisibleCollisingActors doesn't really work for them - jag
         if(
             victims != Self &&
@@ -78,7 +78,7 @@ function DoDamage(float LocalRadius)
                 dir = dir/dist;
 
                 damageScale = 1 - FMax(0, (dist - victims.CollisionRadius) / LocalRadius);
-                
+
                 //set HitDamageType early so AbilityUltima.ScoreKill() can use it
                 if (Pawn(victims) != None)
                     Pawn(victims).HitDamageType = DamageType;
@@ -92,7 +92,7 @@ function DoDamage(float LocalRadius)
                     (damageScale * MomentumTransfer * dir),
                     DamageType
                 );
-            } 
+            }
             else if(xPawn(victims) != None && FastTrace(Location, victims.Location))
             {
                 xPawn(victims).SetOverlayMaterial(xPawn(victims).ShieldHitMat, xPawn(victims).ShieldHitMatTime, false);
@@ -136,7 +136,7 @@ defaultproperties
 
     bBotsBeAfraid=True
     Radius=1750.000000
-    
+
     Damage=250.000000
     DamageStages=6
     MomentumTransfer=200000.000000
@@ -145,7 +145,7 @@ defaultproperties
     DamageType=class'DamTypeTitanUltima'
     ChargeEmitterClass=class'FX_BlastCharger_TitanUltima'
     ExplosionClass=class'FX_BlastExplosion_TitanUltima'
-    
+
     //As a reference, the original DruidsRPG emitters (you can set them in the INIs):
     //DamageType=class'DamTypeUltima'
     //ChargeEmitterClass=class'FX_BlastCharger_Ultima'

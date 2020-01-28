@@ -1,5 +1,5 @@
 class DamTypeFireBall extends RPGAdrenalineDamageType
-	abstract;
+    abstract;
 
 static function GetHitEffects(out class<xEmitter> HitEffects[4], int VictemHealth )
 {

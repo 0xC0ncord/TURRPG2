@@ -18,7 +18,7 @@ simulated function ClientModifyWeapon(Weapon Weapon, float Modifier)
 function ModifyWeapon(Weapon Weapon)
 {
     local float Modifier;
-    
+
     Modifier = 1.0 + (BonusPerLevel * AbilityLevel);
 
     Weapon.BringUpTime = Weapon.default.BringUpTime / Modifier;
@@ -26,7 +26,7 @@ function ModifyWeapon(Weapon Weapon)
     Weapon.MinReloadPct = Weapon.default.MinReloadPct / Modifier;
     Weapon.PutDownAnimRate = Weapon.default.PutDownAnimRate * Modifier;
     Weapon.SelectAnimRate = Weapon.default.SelectAnimRate * Modifier;
-    
+
     if(Role == ROLE_Authority)
         ClientModifyWeapon(Weapon, Modifier);
 }

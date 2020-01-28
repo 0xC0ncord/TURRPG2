@@ -3,7 +3,7 @@ class Ability_AdrenalineRegen extends RPGAbility;
 function ModifyPawn(Pawn Other)
 {
     Super.ModifyPawn(Other);
-    
+
     SetTimer((MaxLevel - AbilityLevel) + 1, true);
 }
 

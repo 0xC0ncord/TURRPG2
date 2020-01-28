@@ -19,10 +19,10 @@ var localized string ActivationText;
 function GiveTo(Pawn Other, optional Pickup Pickup)
 {
     Super.GiveTo(Other, Pickup);
-    
+
     if(Vehicle(Other) == None)
         Destroy();
-        
+
     SetTimer(1.0, true);
 }
 
@@ -40,20 +40,20 @@ function Timer()
             E.LifeSpan = 0.7;
         }
         V.PlaySound(ExplosionSound,,1.5 * Instigator.TransientSoundVolume,,Instigator.TransientSoundRadius);
-        
+
         foreach V.CollidingActors(class'Actor', Victims, DamageRadius, Instigator.Location)
         {
             if(Victims != V && Victims.Role == ROLE_Authority)
             {
                 if(
                     (
-                        Pawn(Victims) != None && 
+                        Pawn(Victims) != None &&
                         Pawn(Victims).Controller != None &&
                         Pawn(Victims).Controller != Boesetaeter &&
                         Pawn(Victims).Controller.SameTeamAs(Boesetaeter)
                     ) || !FastTrace(Instigator.Location, Victims.Location)
                 )continue;
-                    
+
                 Victims.TakeDamage(
                     float(Damage) * (1.0 - VSize(Victims.Location - V.Location) / DamageRadius),
                     Boesetaeter.Pawn,
@@ -63,7 +63,7 @@ function Timer()
                 );
             }
         }
-        
+
         V.Health = 0; //"hack" to make the vehicle die even after you left it
         V.TakeDamage(
             V.HealthMax,
@@ -72,7 +72,7 @@ function Timer()
             MomentumTransfer * 0.25 * vect(0,0,1),
             class'DamTypeSelfDestruct'
         );
-        
+
         Destroy();
     }
     else

@@ -16,7 +16,7 @@ function ScoreKill(Controller Killed, class<DamageType> DamageType)
             {
                 if(UnrealPlayer(C) != None && UnrealPlayer(C).MultiKillLevel > 0)
                     C.AwardAdrenaline(Deathmatch(Level.Game).ADR_MajorKill * BonusPerLevel * AbilityLevel);
-                
+
                 if(UnrealPawn(Killed.Pawn) != None && UnrealPawn(Killed.Pawn).spree > 4)
                     C.AwardAdrenaline(Deathmatch(Level.Game).ADR_MajorKill * BonusPerLevel * AbilityLevel);
 
@@ -28,7 +28,7 @@ function ScoreKill(Controller Killed, class<DamageType> DamageType)
                 {
                     C.AwardAdrenaline(Deathmatch(Level.Game).ADR_MajorKill * BonusPerLevel * AbilityLevel);
                 }
-            
+
                 if(Killed.bIsPlayer)
                     C.AwardAdrenaline(Deathmatch(Level.Game).ADR_Kill * BonusPerLevel * AbilityLevel);
             }

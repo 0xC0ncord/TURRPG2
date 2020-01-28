@@ -24,7 +24,7 @@ replication
         MaxForce, ForceLevelMultiplier,
         MaxSpin, SpinLevelMultiplier,
         JumpChargeTime, ChargeLevelMultiplier;
-    
+
     reliable if(Role == ROLE_Authority)
         ClientModifyVehicle;
 }
@@ -43,7 +43,7 @@ simulated function ClientModifyVehicle(ONSWheeledCraft Wheels)
 function ModifyVehicle(Vehicle V)
 {
     local ONSWheeledCraft Wheels;
-    
+
     Wheels = ONSWheeledCraft(V);
     if (Wheels == None)
         return;
@@ -63,7 +63,7 @@ function ModifyVehicle(Vehicle V)
     Wheels.MaxJumpSpin = MaxSpin * (1.0f + float(AbilityLevel - 1) * SpinLevelMultiplier);
     Wheels.JumpChargeTime = JumpChargeTime * (1.0f + float(AbilityLevel - 1) * SpinLevelMultiplier);
     Wheels.bHasHandbrake = false;
-    
+
     if(Role == ROLE_Authority && Level.NetMode != NM_Standalone)
         ClientModifyVehicle(Wheels);
 }

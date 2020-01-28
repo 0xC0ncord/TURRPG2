@@ -22,14 +22,14 @@ simulated event HitWall( vector HitNormal, actor Wall )
     {
         if(Level.NetMode != NM_DedicatedServer)
             PlaySound(ImpactSound, SLOT_Misc);
-        
+
         bBounce = false;
         SetPhysics(PHYS_None);
 
         if(Role == ROLE_Authority)
         {
             bLanded = true;
-            
+
             Artifact.BeaconLanded(Self);
             Destroy();
         }
@@ -38,7 +38,7 @@ simulated event HitWall( vector HitNormal, actor Wall )
     {
         Velocity = 0.3 * ((Velocity dot HitNormal) * HitNormal * (-2.0) + Velocity);
         Speed = VSize(Velocity);
-        
+
         if(Role == ROLE_Authority)
         {
             WallHits++;
@@ -52,7 +52,7 @@ simulated event Destroyed()
 {
     if(Role == ROLE_Authority && !bLanded)
         Artifact.BeaconDestroyed(Self);
-    
+
     Super.Destroyed();
 }
 
@@ -83,6 +83,6 @@ defaultproperties
     SoundPitch=128
     bOnlyDirtyReplication=true
     bOwnerNoSee=true
-    
+
     bProjTarget=false
 }

@@ -16,14 +16,14 @@ var automated moComboBox cmbMyBuilds;
 var automated GUIButton btSwitch, btReset, btRemove;
 
 var localized string Rebuild_Caption, Rebuild_Hint;
-var localized string 
+var localized string
     Text_CharInfo, Text_Name, Text_Level, Text_Experience,
     Text_StatPoints, Text_AbilityPoints, Text_Stats, Text_Abilities, Text_Disabled;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     Abilities = lstAbilities.List;
     Abilities.bMultiselect = false;
     Abilities.bInitializeList = false;
@@ -36,14 +36,14 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
 {
     local float CellLeft, CellWidth;
     local GUIStyles DStyle;
-    
+
     if(AbilityInfos[i].bSection)
         DStyle = Abilities.SectionStyle;
     else if(bSelected)
         DStyle = Abilities.SelectedStyle;
     else
         DStyle = Abilities.Style;
-    
+
     DStyle.Draw(Canvas, Abilities.MenuState, X, Y, W, H + 1);
 
     Abilities.GetCellLeftWidth(0, CellLeft, CellWidth);
@@ -56,11 +56,11 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
 function Add(string Key, string Value, optional bool bSection)
 {
     local AbilityInfo AInfo;
-    
+
     AInfo.Key = Key;
     AInfo.Value = Value;
     AInfo.bSection = bSection;
-    
+
     AbilityInfos[AbilityInfos.Length] = AInfo;
     Abilities.AddedItem();
 }
@@ -68,21 +68,21 @@ function Add(string Key, string Value, optional bool bSection)
 function FillMyBuildsList()
 {
     local int i, x;
-    
+
     cmbMyBuilds.RemoveItem(0, cmbMyBuilds.ItemCount());
     if(RPGMenu.RPRI.Interaction != None)
     {
         x = -1;
-        
+
         for(i = 0; i < RPGMenu.RPRI.Interaction.Settings.MyBuilds.Length; i++)
         {
             cmbMyBuilds.AddItem(RPGMenu.RPRI.Interaction.Settings.MyBuilds[i]);
-            
+
             if(RPGMenu.RPRI.Interaction.Settings.MyBuilds[i] ~= RPGMenu.RPRI.RPGName)
                 x = i;
         }
     }
-    
+
     if(x >= 0)
         cmbMyBuilds.SilentSetIndex(x);
 }
@@ -95,36 +95,36 @@ function InitMenu()
 
     OldAbilityListIndex = Abilities.Index;
     OldAbilityListTop = Abilities.Top;
-    
+
     Abilities.Clear();
     AbilityInfos.Remove(0, AbilityInfos.Length);
 
     Add(Text_CharInfo, "", true);
     Add(Text_Name, RPGMenu.RPRI.RPGName);
     Add(Text_Level, string(RPGMenu.RPRI.RPGLevel));
-    Add(Text_Experience, 
+    Add(Text_Experience,
         string(int(RPGMenu.RPRI.Experience)) @ "/" @ string(RPGMenu.RPRI.NeededExp) @
         "(" $ class'Util'.static.FormatPercent(RPGMenu.RPRI.Experience / float(RPGMenu.RPRI.NeededExp)) $ ")");
 
     Add(Text_StatPoints, string(RPGMenu.RPRI.StatPointsAvailable));
     Add(Text_AbilityPoints, string(RPGMenu.RPRI.AbilityPointsAvailable));
-    
+
     for(i = 0; i < RPGMenu.RPRI.AllAbilities.Length; i++)
     {
         if(RPGMenu.RPRI.AllAbilities[i].bIsStat)
         {
             Stats[Stats.Length] = RPGMenu.RPRI.AllAbilities[i];
-            
+
             if(RPGMenu.RPRI.AllAbilities[i].AbilityLevel > 0)
                 NumStatsOwned++;
         }
     }
-    
+
     if(Stats.Length > 0)
     {
         Add("", "");
         Add(Text_Stats, "", true);
-        
+
         for(i = 0; i < Stats.Length; i++)
         {
             if(Stats[i].bAllowed)
@@ -133,12 +133,12 @@ function InitMenu()
                 Add(Stats[i].StatName, Text_Disabled);
         }
     }
-    
+
     if(RPGMenu.RPRI.Abilities.Length - NumStatsOwned > 0)
     {
         Add("", "");
         Add(Text_Abilities, "", true);
-        
+
         for(i = 0; i < RPGMenu.RPRI.Abilities.Length; i++)
         {
             if(!RPGMenu.RPRI.Abilities[i].bIsStat)
@@ -150,16 +150,16 @@ function InitMenu()
             }
         }
     }
-    
+
     Abilities.SetIndex(OldAbilityListIndex);
     Abilities.SetTopItem(OldAbilityListTop);
-    
+
     if(RPGMenu.RPRI.bAllowRebuild)
     {
         btReset.Hint = Rebuild_Hint;
         btReset.Caption = Rebuild_Caption;
     }
-    
+
     FillMyBuildsList();
 }
 
@@ -196,7 +196,7 @@ function bool RemoveClicked(GUIComponent Sender)
 {
     local RPGCharSettings CharSettings;
     local int i;
-    
+
     if(!(cmbMyBuilds.GetText() ~= RPGMenu.RPRI.RPGName))
     {
         for(i = 0; i < RPGMenu.RPRI.Interaction.Settings.MyBuilds.Length; i++)
@@ -206,7 +206,7 @@ function bool RemoveClicked(GUIComponent Sender)
                 CharSettings = new(None, RPGMenu.RPRI.Interaction.Settings.MyBuilds[i]) class'RPGCharSettings';
                 if(CharSettings != None)
                     CharSettings.ClearConfig();
-            
+
                 RPGMenu.RPRI.Interaction.Settings.MyBuilds.Remove(i, 1);
                 FillMyBuildsList();
                 break;
@@ -246,7 +246,7 @@ defaultproperties
     Text_Stats="Stats:"
     Text_Abilities="Abilities:"
     Text_Disabled="DISABLED"
-    
+
     Rebuild_Caption="Rebuild"
     Rebuild_Hint="Allows you to rebuild your character at a certain cost of experience.";
 
@@ -279,7 +279,7 @@ defaultproperties
         WinTop=0.082763
     End Object
     lstAbilities=GUIMultiColumnListBox'lstAbilities_'
-    
+
     Begin Object class=moComboBox Name=cmbMyBuilds_
         WinWidth=0.538844
         WinHeight=0.041458
@@ -291,7 +291,7 @@ defaultproperties
         OnChange=RPGMenu_Character.BuildSelected
     End Object
     cmbMyBuilds=cmbMyBuilds_
-    
+
     Begin Object Class=GUIButton Name=btRemove_
         Caption="-"
         Hint="Removes the selected character from the 'My Characters' list."
@@ -303,7 +303,7 @@ defaultproperties
         OnKeyEvent=btRemove_.InternalOnKeyEvent
     End Object
     btRemove=GUIButton'btRemove_'
-    
+
     Begin Object Class=GUIButton Name=btSwitch_
         Caption="Switch"
         Hint="Switches to the selected character without the need to reconnect."
@@ -313,7 +313,7 @@ defaultproperties
         WinTop=0.866042
         OnClick=RPGMenu_Character.SwitchClicked
         OnKeyEvent=btSwitch_.InternalOnKeyEvent
-    End Object        
+    End Object
     btSwitch=GUIButton'btSwitch_'
 
     Begin Object Class=GUIButton Name=btReset_

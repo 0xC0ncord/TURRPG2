@@ -8,7 +8,7 @@ var() int RequiredLevel;
 simulated event PostTouch(Actor Other)
 {
     local RPGPlayerReplicationInfo RPRI;
-    
+
     if(Pawn(Other) != None)
     {
         RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Pawn(Other).Controller);

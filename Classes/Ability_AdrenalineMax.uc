@@ -16,7 +16,7 @@ function ModifyPawn(Pawn P)
     Super.ModifyPawn(P);
 
     RPRI.Controller.AdrenalineMax = 100 + AbilityLevel * int(BonusPerLevel);
-    
+
     if(Level.NetMode == NM_DedicatedServer)
         ClientSetAdrenalineMax(RPRI.Controller, RPRI.Controller.AdrenalineMax);
 }

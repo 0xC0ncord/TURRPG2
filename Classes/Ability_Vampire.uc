@@ -23,32 +23,32 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     if(!class'DevoidEffect_Vampire'.static.CanBeApplied(Injured, InstigatedBy.Controller)) {
         return;
     }
-    
+
     if(Vehicle(InstigatedBy) != None) {
         Bonus = VehicleBonusPerLevel;
     } else {
         Bonus = BonusPerLevel;
     }
-    
+
     if(Bonus > 0) {
         Vampire = FMax(FMin(float(Injured.Health), float(Damage) * Bonus * float(AbilityLevel)), 0);
         if(Vampire > 0 && InstigatedBy.Controller != None) {
             RealHealthGain += Vampire;
-            
+
             if(RealHealthGain > 1) {
                 HealthGain = int(RealHealthGain);
                 RealHealthGain -= float(HealthGain); //keeps the fraction
-            
+
                 //now works in vehicle side turrets!
                 if(ONSWeaponPawn(InstigatedBy) != None) {
                     HealMe = ONSWeaponPawn(InstigatedBy).VehicleBase;
                 } else {
                     HealMe = InstigatedBy;
                 }
-            
+
                 if(HealMe != None) {
                     HealthBonus = HealMe.HealthMax * HealthBonusMax;
-                    
+
                     if(HealthBonusAbsoluteCap > 0) {
                         HealthBonus = Min(HealthBonus, HealthBonusAbsoluteCap);
                     }

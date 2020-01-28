@@ -31,7 +31,7 @@ simulated function BuildDescription()
     local float Multiplier;
 
     Super.BuildDescription();
-    
+
     Multiplier = FMin(1 - SLOWDOWN_CAP, BonusPerLevel * float(Modifier));
     AddToDescription(Repl(MatrixText, "$1", class'Util'.static.FormatPercent(Multiplier)));
 }
@@ -53,7 +53,7 @@ defaultproperties
 {
     MatrixText="$1 enemy projectile slowdown"
     DamageBonus=0.03
-    
+
     MatrixRadius=768
     BonusPerLevel=0.20
 

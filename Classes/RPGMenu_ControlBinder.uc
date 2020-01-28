@@ -10,7 +10,7 @@ var localized string ArtifactSelectionHeader, ArtifactActivationHeader;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(MyController.ViewportOwner.Actor);
-    Super.InitComponent(MyController, MyOwner);    
+    Super.InitComponent(MyController, MyOwner);
 }
 
 function LoadCommands()
@@ -19,36 +19,36 @@ function LoadCommands()
     local KeyBinding Binding;
 
     Super.LoadCommands();
-    
+
     x = Bindings.Length;
-    
+
     n = RPRI.AllArtifacts.Length;
     Bindings.Length = x + n * 2 + 2;
-    
+
     Binding.bIsSectionLabel = true;
     Binding.KeyLabel = ArtifactActivationHeader;
     Bindings[x] = Binding;
     BindingLabel[x] = ArtifactActivationHeader;
-    
+
     Binding.KeyLabel = ArtifactSelectionHeader;
     Bindings[x + n + 1] = Binding;
     BindingLabel[x + n + 1] = ArtifactSelectionHeader;
-    
+
     Binding.bIsSectionLabel = false;
     x++;
-    
+
     for(i = 0; i < RPRI.AllArtifacts.Length; i++)
     {
         Binding.KeyLabel = Repl(ActivateText, "$1", RPRI.AllArtifacts[i].default.ItemName);
         Binding.Alias = "RPGActivateArtifact" @ RPRI.AllArtifacts[i].default.ArtifactID;
         Bindings[x] = Binding;
         BindingLabel[x] = Binding.KeyLabel;
-        
+
         Binding.KeyLabel = Repl(SelectText, "$1", RPRI.AllArtifacts[i].default.ItemName);
         Binding.Alias = "RPGGetArtifact" @ RPRI.AllArtifacts[i].default.ArtifactID;
         Bindings[x + n + 1] = Binding;
         BindingLabel[x + n + 1] = Binding.KeyLabel;
-        
+
         x++;
     }
 
@@ -78,7 +78,7 @@ defaultproperties
 
     PageCaption="Configure RPG Keys"
     Headings(0)="Action"
-    
+
     Bindings(0)=(bIsSectionLabel=true,KeyLabel="General")
     BindingLabel(0)="General"
     Bindings(1)=(KeyLabel="Open RPG Menu",Alias="RPGStatsMenu")
@@ -101,7 +101,7 @@ defaultproperties
     BindingLabel(9)="Destroy Turrets"
     Bindings(10)=(KeyLabel="Destroy Totems",Alias="KillTotems")
     BindingLabel(10)="Destroy Totems"
-    
+
     ArtifactSelectionHeader="Artifact Selection"
     ArtifactActivationHeader="Artifact Activation"
 }

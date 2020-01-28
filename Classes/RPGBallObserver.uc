@@ -5,7 +5,7 @@ var float HolderScore;
 event Tick(float dt)
 {
     Super.Tick(dt);
-    
+
     if(CurrentState == 'Held')
         HolderScore = Holder.PlayerReplicationInfo.Score;
 }
@@ -14,7 +14,7 @@ function Scored(float Score)
 {
     local int i;
     local RPGPlayerReplicationInfo RPRI;
-    
+
     //XP for scorer
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Holder);
     if(RPRI != None)
@@ -24,7 +24,7 @@ function Scored(float Score)
         else //ball thrown into goal
             RPRI.AwardExperience(Rules.EXP_BallThrownFinal);
     }
-    
+
     //XP for assists
     for(i = 0; i < Assists.Length; i++)
     {

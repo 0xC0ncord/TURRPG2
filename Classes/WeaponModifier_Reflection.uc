@@ -17,7 +17,7 @@ var localized string ReflectionText;
 function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float Duration, float Modifier)
 {
     local RPGEffect Reflected;
-    
+
     if(class'Util'.static.InArray(EffectClass, ReflectEffects) >= 0) {
         if(Causer.Pawn != None && WeaponModifier_Reflection(class'RPGWeaponModifier'.static.GetFor(Causer.Pawn.Weapon)) == None) {
             Reflected = EffectClass.static.Create(Causer.Pawn, Instigator.Controller, Duration, Modifier);
@@ -33,7 +33,7 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
 function class<WeaponFire> MapDamageType(class<DamageType> DamageType)
 {
     local int i;
-    
+
     for(i = 0; i < ReflectMap.Length; i++)
     {
         if(ReflectMap[i].DamageType == DamageType)
@@ -47,7 +47,7 @@ function WeaponFire FindWeaponFire(Pawn Other, class<WeaponFire> WFClass)
     local Inventory Inv;
     local Weapon W;
     local int i;
-    
+
     for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         W = Weapon(Inv);
@@ -60,7 +60,7 @@ function WeaponFire FindWeaponFire(Pawn Other, class<WeaponFire> WFClass)
             }
         }
     }
-    
+
     return None;
 }
 
@@ -79,10 +79,10 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
                 Warn("Reflection: Recursion!!");
             } else {
                 bLock = true;
-            
+
                 Identify();
                 ReflectDir = rotator(HitLocation - Weapon.Location);
-                
+
                 WF = FindWeaponFire(InstigatedBy, WFClass);
                 if(WF != None)
                 {
@@ -98,10 +98,10 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
                 {
                     //Log("Couldn't find" @ WFClass @ "for" @ InstigatedBy, 'DEBUG');
                 }
-                
+
                 bLock = false;
             }
-            
+
             Damage = 0;
             Momentum = vect(0, 0, 0);
         }

@@ -15,13 +15,13 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     local float AdrenalineBonus;
 
     Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
-    
+
     if(Injured != InstigatedBy)
     {
         Identify();
-        
+
         AdrenalineBonus = FMin(Damage, Injured.Health) * float(Modifier) * BonusPerLevel;
-        
+
         //Adrenaline full
         if(
             UnrealPlayer(Instigator.Controller) != None &&
@@ -33,7 +33,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
             UnrealPlayer(Instigator.Controller).ClientDelayedAnnouncementNamed('Adrenalin', 15);
         }
 
-        Instigator.Controller.Adrenaline = 
+        Instigator.Controller.Adrenaline =
             FMin(Instigator.Controller.Adrenaline + AdrenalineBonus, Instigator.Controller.AdrenalineMax);
     }
 }
@@ -41,7 +41,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 simulated function BuildDescription()
 {
     Super.BuildDescription();
-    
+
     if(Modifier > 0) {
         AddToDescription(AdrenBonusText, BonusPerLevel);
     } else {

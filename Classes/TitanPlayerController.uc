@@ -14,7 +14,7 @@ ignores SeePlayer, HearNoise, Bump;
         GetAxes(Rotation, X, Y, Z);
 
         NewAccel = aForward * X + aStrafe * Y + aUp*vect(0,0,1);
-        
+
         if ( VSize(NewAccel) < 1.0 )
             NewAccel = vect(0,0,0);
 
@@ -86,7 +86,7 @@ ignores SeePlayer, HearNoise, Bump;
 
         //aTurn - Mouse X Axis difference
         //aLookUp - Mouse Y Axis difference
-        
+
         if ( (aTurn != 0) || (aLookUp != 0) )
         {
             // adjust Yaw based on aTurn
@@ -118,7 +118,7 @@ ignores SeePlayer, HearNoise, Bump;
             // calculate new Y axis
             ViewY = Normal(MyFloor Cross ViewX);
         }
-        
+
         ViewRotation =  OrthoRotation(ViewX,ViewY,ViewZ);
         SetRotation(ViewRotation);
         ViewShake(deltaTime);
@@ -133,7 +133,7 @@ function SendMessage(PlayerReplicationInfo Recipient, name MessageType, byte Mes
     {
         //Check if Recipient is currently holding a Healing gun.
         if(
-            Controller(Recipient.Owner).Pawn != None && 
+            Controller(Recipient.Owner).Pawn != None &&
             class'WeaponModifier_Heal'.static.GetFor(Controller(Recipient.Owner).Pawn.Weapon) != None)
         {
             return; //Shut up.
@@ -149,7 +149,7 @@ function ServerSpeech(name Type, int Index, string Callsign) {
     local Bot Medic;
 
     Super.ServerSpeech(Type, Index, Callsign);
-    
+
     if(Type == 'OTHER' && Index == 30 && Pawn != None && PlayerReplicationInfo != None && PlayerReplicationInfo.Team != None) {
         //Player is calling for a medic - find a medic bot of the same team
         for(C = Level.ControllerList; C != None; C = C.NextController) {
@@ -167,7 +167,7 @@ function ServerSpeech(name Type, int Index, string Callsign) {
             }
         }
     }
-    
+
     if(Medic != None) {
         if(RPGBot(Medic) != None) {
             //Check if this player is more important

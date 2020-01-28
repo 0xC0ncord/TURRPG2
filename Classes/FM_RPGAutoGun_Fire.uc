@@ -12,7 +12,7 @@ function projectile SpawnProjectile(Vector Start, Rotator Dir)
         return None;
 
     p.Damage *= DamageAtten;
-    
+
     return p;
 }
 

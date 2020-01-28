@@ -17,10 +17,10 @@ replication
 static function RPGReplicationInfo Get(LevelInfo Level)
 {
     local RPGReplicationInfo RRI;
-    
+
     foreach Level.DynamicActors(class'RPGReplicationInfo', RRI)
         return RRI;
-    
+
     return None;
 }
 
@@ -61,7 +61,7 @@ simulated event Destroyed()
 {
     if(Interaction != None)
         Interaction.Master.RemoveInteraction(Interaction);
-    
+
     Interaction = None;
     Super.Destroyed();
 }

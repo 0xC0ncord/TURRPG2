@@ -20,12 +20,12 @@ simulated function ClientAdjustFireRate(float Scale)
 function StartEffect()
 {
     Super.StartEffect();
-    
+
     FireRateModifier = 1.0f + BonusPerLevel * Abs(float(Modifier));
-    
+
     if(Modifier < 0)
         FireRateModifier = 1.0f / FireRateModifier;
-    
+
     class'Util'.static.AdjustWeaponFireRate(Weapon, FireRateModifier);
     ClientAdjustFireRate(FireRateModifier);
 }
@@ -40,7 +40,7 @@ function StopEffect()
         class'Util'.static.AdjustWeaponFireRate(Weapon, 1.0f / FireRateModifier);
         ClientAdjustFireRate(1.0f / FireRateModifier);
     }
-    
+
     FireRateModifier = 0;
 }
 

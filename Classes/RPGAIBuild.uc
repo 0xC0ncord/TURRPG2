@@ -23,25 +23,25 @@ function InitBot(Bot Bot)
 
     if(Aggressiveness != NO_CHANGE)
         Bot.BaseAggressiveness = Aggressiveness;
-        
+
     if(CombatStyle != NO_CHANGE)
         Bot.CombatStyle = CombatStyle;
-        
+
     if(Jumpiness != NO_CHANGE)
         Bot.Jumpiness = Jumpiness;
-        
+
     if(StrafingAbility != NO_CHANGE)
         Bot.StrafingAbility = StrafingAbility;
-        
+
     if(Accuracy != NO_CHANGE)
         Bot.Accuracy = Accuracy;
-    
+
     if(Tactics != NO_CHANGE)
         Bot.Tactics = Tactics;
-    
+
     if(ReactionTime != NO_CHANGE)
         Bot.ReactionTime = ReactionTime;
-        
+
     if(TranslocUse != NO_CHANGE)
         Bot.TranslocUse = TranslocUse;
 }
@@ -51,7 +51,7 @@ function Build(RPGPlayerReplicationInfo RPRI)
     local AIBuildAction Action;
     local RPGAbility BuyAbility;
     local int Cost;
-    
+
     //make totally sure it's a bot here...
     if(AIController(RPRI.Controller) == None)
         return;
@@ -63,13 +63,13 @@ function Build(RPGPlayerReplicationInfo RPRI)
             Log(RPRI.PRI.PlayerName @ "has finished his/her AIBuild!", 'TURRPG2');
             break;
         }
-    
+
         Action = BuildActions[RPRI.AIBuildAction];
         BuyAbility = RPRI.GetAbility(class'MutTURRPG'.static.Instance(RPRI.Level).ResolveAbility(Action.BuyAbility));
         if(BuyAbility != None)
         {
             Cost = BuyAbility.Cost();
-        
+
             if(BuyAbility.bIsStat && RPRI.StatPointsAvailable < Cost ||
                 (!BuyAbility.bIsStat && RPRI.AbilityPointsAvailable < Cost))
             {
@@ -80,9 +80,9 @@ function Build(RPGPlayerReplicationInfo RPRI)
                 Warn(RPRI.PRI.PlayerName @ "failed to buy ability" @ BuyAbility);
                 break;
             }
-            
+
             RPRI.ModifyStats();
-            
+
             if(RPRI.HasAbility(BuyAbility.class, true) >= Action.Level)
                 RPRI.AIBuildAction++;
         }

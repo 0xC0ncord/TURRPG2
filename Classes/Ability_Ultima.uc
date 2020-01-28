@@ -11,7 +11,7 @@ replication
 {
     reliable if(Role == ROLE_Authority)
         BaseDelay;
-    
+
     reliable if(Role == ROLE_Authority && bNetDirty)
         KillCount;
 }
@@ -37,9 +37,9 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
         return false;
 
     if(DamageType == class'Suicided')
-        return false;  
+        return false;
 
-    if(Vehicle(Killed) != None) 
+    if(Vehicle(Killed) != None)
     {
         EjectorSeat = Ability_VehicleEject(RPRI.GetOwnedAbility(class'Ability_VehicleEject'));
         if(EjectorSeat != None && EjectorSeat.CanEjectDriver(Vehicle(Killed)))
@@ -59,12 +59,12 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
             {
                 TryLocation = Killed.Location +
                     VRand() * (TryRadiusMin + FRand() * (TryRadiusMax - TryRadiusMin));
-                
+
                 UC = SpawnCharger(TryLocation);
                 if(UC != None)
                     break;
             }
-            
+
             if(UC == None)
                 Warn("Failed to spawn Ultima charger for" @ Killed.GetHumanReadableName());
         }
@@ -86,14 +86,14 @@ function Blast_Ultima SpawnCharger(vector ChargerLocation)
     UC = Spawn(class'Blast_Ultima', RPRI.Controller,, ChargerLocation);
     if(UC != None)
         UC.SetChargeTime(FMax(float(MaxLevel), BaseDelay) - float(AbilityLevel));
-    
+
     return UC;
 }
 
 defaultproperties
 {
     StatusIconClass=class'StatusIcon_Ultima'
-    
+
     AbilityName="Ultima"
     Description="When you die and you have at least scored one kill in that respective life, you will cause a huge explosion.|Level 1 waits 4 seconds after you died, each higher level wait 1 second less."
     MaxLevel=5
@@ -107,9 +107,9 @@ defaultproperties
     LevelCost(4)=20
     BaseDelay=5.0
     bAllowSuicide=False //true for TC06
-    
+
     TryRadiusMin=32
     TryRadiusMax=48
-    
+
     Category=class'AbilityCategory_Misc'
 }

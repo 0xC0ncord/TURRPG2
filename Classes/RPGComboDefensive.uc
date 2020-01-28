@@ -26,22 +26,22 @@ function StartEffect(xPawn P)
 simulated function Tick(float DeltaTime)
 {
     local Pawn P;
-    
+
     P = Pawn(Owner);
 
     if(P == None || P.Controller == None)
-	{
+    {
         Destroy();
         return;
     }
 
     if(P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-		DeltaTime *= 2;
+        DeltaTime *= 2;
 
-	if(RPRI!=None)
-		RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-	else
-		P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+    if(RPRI!=None)
+        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+    else
+        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
     if (P.Controller.Adrenaline <= 0.0)
     {
         P.Controller.Adrenaline = 0.0;
@@ -55,7 +55,7 @@ function Timer()
     {
         Pawn(Owner).GiveHealth(5, Pawn(Owner).SuperHealthMax);
         if (Pawn(Owner).Health >= Pawn(Owner).SuperHealthMax)
-			Pawn(Owner).AddShieldStrength(5);
+            Pawn(Owner).AddShieldStrength(5);
     }
 }
 

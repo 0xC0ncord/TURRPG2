@@ -28,7 +28,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     Abilities.OnDrawItem = DrawAbilityInfo;
     Abilities.OnClick = OnAbilityClick;
     Abilities.OnKeyEvent = OnAbilityKeyEvent;
-    
+
     ebAmount.OnKeyEvent = OnAmountKeyEvent;
 }
 
@@ -37,7 +37,7 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
     local string LevelString;
     local float CellLeft, CellWidth;
     local GUIStyles DStyle;
-    
+
     if(bSelected)
         DStyle = Abilities.SelectedStyle;
     else
@@ -62,13 +62,13 @@ function InitMenu()
     local RPGAbility Ability;
     local int OldAbilityListIndex, OldAbilityListTop;
     local int i;
-    
+
     OldAbilityListIndex = Abilities.Index;
     OldAbilityListTop = Abilities.Top;
-    
+
     Abilities.Clear();
     Stats.Length = 0;
-    
+
     for(i = 0; i < RPGMenu.RPRI.AllAbilities.Length; i++)
     {
         Ability = RPGMenu.RPRI.AllAbilities[i];
@@ -78,9 +78,9 @@ function InitMenu()
             Abilities.AddedItem();
         }
     }
-    
+
     ebAmount.SetText(string(LastAmount));
-    
+
     if(bLoseFocus)
     {
         ebAmount.LoseFocus(None);
@@ -89,9 +89,9 @@ function InitMenu()
 
     Abilities.SetIndex(OldAbilityListIndex);
     Abilities.SetTopItem(OldAbilityListTop);
-    
+
     lblStats.Caption = Text_StatsAvailable @ string(RPGMenu.RPRI.StatPointsAvailable);
-    
+
     SelectAbility();
 }
 
@@ -105,13 +105,13 @@ function CloseMenu()
 function SelectAbility()
 {
     local RPGAbility Stat;
-    
+
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
-    
+
     if(Abilities.Index >= 0)
     {
         Stat = Stats[Abilities.Index];
-        
+
         if(Stat.AbilityLevel < Stat.MaxLevel && RPGMenu.RPRI.StatPointsAvailable >= Stat.StartingCost)
             btBuy.MenuState = MSAT_Blurry;
         else
@@ -164,13 +164,13 @@ function bool BuyStat(GUIComponent Sender)
     local RPGAbility Stat;
 
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
-    
+
     LastAmount = int(ebAmount.GetText());
     Amount = Min(RPGMenu.RPRI.StatPointsAvailable, Max(1, int(ebAmount.GetText())));
     if(Abilities.Index >= 0 && Amount > 0)
     {
         Stat = Stats[Abilities.Index];
-        
+
         if(Stat.Buy(Amount) && RPGMenu.RPRI.Role < ROLE_Authority) //simulate for a pingless update if client
             RPGMenu.RPRI.ServerBuyAbility(Stat, Amount);
     }
@@ -182,7 +182,7 @@ defaultproperties
 {
     Text_StatsAvailable="Available Stat Points:"
     Text_Max="(MAX)"
-    
+
     LastAmount=5
 
     Begin Object Class=AltSectionBackground Name=sbAbilities_
@@ -226,7 +226,7 @@ defaultproperties
         OnKeyEvent=btBuy_.InternalOnKeyEvent
     End Object
     btBuy=GUIButton'btBuy_'
-    
+
     Begin Object Class=moEditBox Name=ebAmount_
         WinWidth=0.277163
         WinHeight=0.042105
@@ -236,7 +236,7 @@ defaultproperties
         Caption="Quantity"
     End Object
     ebAmount=moEditBox'ebAmount_'
-    
+
     Begin Object Class=GUILabel Name=lblStats_
         WinWidth=0.476529
         WinHeight=0.070657

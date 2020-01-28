@@ -11,7 +11,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
 
     if(DamageType == class'DamTypeCounterShove' || DamageType == class'DamTypeRetaliation')
         return;
-    
+
     //TODO effect system
     if(class'WeaponModifier_Nullification'.static.GetFor(InstigatedBy.Weapon) != None)
         return;
@@ -20,7 +20,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
     {
         RetalDamage = int(float(Modifier) * BonusPerLevel * float(Damage));
         RetalDamage = FMin(RetalDamage, float(Instigator.Health));
-        
+
         if(RetalDamage > 0)
         {
             InstigatedBy.TakeDamage(

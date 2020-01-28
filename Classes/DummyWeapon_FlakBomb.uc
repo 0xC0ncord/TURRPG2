@@ -2,7 +2,7 @@
 class DummyWeapon_FlakBomb extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Flak Bomb"

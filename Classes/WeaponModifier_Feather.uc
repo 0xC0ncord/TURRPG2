@@ -13,11 +13,11 @@ function StartEffect()
     JumpZModifier = 1.f + BonusPerLevel * Abs(float(Modifier));
     if(Modifier < 0 && JumpZModifier != 0)
         JumpZModifier = 1.0 / JumpZModifier;
-    
+
     MaxFallSpeedModifier = 1.f + MaxFallSpeedBonus * Abs(float(Modifier));
     if(Modifier < 0 && MaxFallSpeedModifier != 0)
         MaxFallSpeedModifier = 1.0 / MaxFallSpeedModifier;
-    
+
     Instigator.JumpZ *= JumpZModifier;
     Instigator.MaxFallSpeed *= MaxFallSpeedModifier;
 }
@@ -26,10 +26,10 @@ function StopEffect()
 {
     if(JumpZModifier != 0)
         Instigator.JumpZ /= JumpZModifier;
-        
+
     if(MaxFallSpeedModifier != 0)
         Instigator.MaxFallSpeed /= MaxFallSpeedModifier;
-    
+
     JumpZModifier = 0;
     MaxFallSpeedModifier = 0;
 }

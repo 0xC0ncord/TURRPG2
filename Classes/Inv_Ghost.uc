@@ -64,7 +64,7 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
     {
         Count++;
         RandNavPt = Instigator.Controller.FindRandomDest();
-        
+
         if (RandNavPt == None)
             break;
 
@@ -74,34 +74,34 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
             RandNavPt = None;
             continue;
         }
-        
+
         RevivePoint = RandNavPt.Location + vect(0,0,40);
         Dist = VSize(RevivePoint - Instigator.Location);
-    } 
+    }
     until(
         (Dist < 15000 && (Dist > 1000 || !FastTrace(RevivePoint, Instigator.Location)) &&
         !FastTrace(RevivePoint - vect(0, 0, 500), RevivePoint)) ||
         Count >= 1000
     )
 
-    if(RandNavPt == None || 
-        ( 
+    if(RandNavPt == None ||
+        (
             (
-                Dist < 15000 && 
+                Dist < 15000 &&
                 (
-                    Dist > 1000 || 
+                    Dist > 1000 ||
                     !FastTrace(RevivePoint, Instigator.Location)
-                ) && 
+                ) &&
                 !FastTrace(RevivePoint - vect(0,0,500), RevivePoint)
             )
-        ) || 
+        ) ||
         Count == 1000 ||
         (
-            Other.Physics != PHYS_Walking && 
-            Other.Physics != PHYS_Falling && 
+            Other.Physics != PHYS_Walking &&
+            Other.Physics != PHYS_Falling &&
             Other.Physics != PHYS_Swimming
         )
-        
+
     ) //Bad pathing - pick a start point
     {
         if(Instigator.getTeam() != None)
@@ -139,7 +139,7 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
         if(RPGArtifact(Inv) != None)
             RPGArtifact(Inv).GotoState('');
     }
-    
+
     if(Instigator.Weapon != None)
         Instigator.Weapon.ImmediateStopFire();
 
@@ -148,7 +148,7 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
     Instigator.bCollideWorld = false;
     Instigator.SetPhysics(PHYS_Flying);
     Instigator.Health = 9999; //heh...I wonder if anyone will get the joke?
-    
+
     if(Vehicle(Instigator) != None)
         Instigator.bNoTeamBeacon = true;
 
@@ -199,18 +199,18 @@ simulated function Timer()
     //client-side stuff
     if(Instigator == None)
         return;
-        
+
     if(bDisabled)
     {
         Deactivate();
         return;
     }
-    
+
     if(GhostSkins.length == 0)
         CreateGhostSkins();
-    
+
     Instigator.Skins = GhostSkins;
-    
+
     if(Instigator.Weapon != None && Instigator.Weapon.ThirdPersonActor != None)
         Instigator.Weapon.ThirdPersonActor.bHidden = true;
 
@@ -220,7 +220,7 @@ simulated function Timer()
 function Tick(float deltaTime)
 {
     TotalTime = TotalTime + deltaTime;
-    
+
     if(bDisabled)
         return;
 
@@ -273,10 +273,10 @@ function ReviveInstigator()
         Instigator.SetPhysics(PHYS_Falling);
         if(xPawn(Instigator) != None)
             xPawn(Instigator).PhysicsVolumeChange(Instigator.HeadVolume);
-        
+
         if(Vehicle(Instigator) != None)
             Instigator.bNoTeamBeacon = Instigator.default.bNoTeamBeacon;
-            
+
         switch(OwnerAbilityLevel)
         {
             case 1:
@@ -289,9 +289,9 @@ function ReviveInstigator()
                 Instigator.Health = Instigator.HealthMax;
                 break;
         }
-        
+
         Level.Game.SetPlayerDefaults(Instigator);
-        
+
         if(Instigator.Controller != None && (Instigator.Weapon == None || !Instigator.Weapon.HasAmmo()))
             Instigator.Controller.ClientSwitchToBestWeapon();
     }

@@ -21,7 +21,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_NotWithTrans:
             return default.NotWithTransMessage;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -35,30 +35,30 @@ function BotFightEnemy(Bot Bot)
     {
         if(HasActiveArtifact(Instigator))
             return;
-            
+
         if(class'WeaponModifier_LightningConduction'.static.GetFor(Bot.Enemy.Weapon) != None)
             return;
-    
+
         if(
             Bot.bEnemyIsVisible &&
             Bot.CombatStyle >= 0 &&
-            Bot.Skill >= 3 && 
+            Bot.Skill >= 3 &&
             Bot.Adrenaline >= 50 &&
             VSize(Bot.Enemy.Location - Instigator.Location) <= TargetRadius)
         {
             Chance = FMin(0.4, (Bot.StrafingAbility + 1.f) * 0.25);
             Chance += 0.05 * (Bot.Skill - 3); //max 0.6
-            
+
             if(Bot.Enemy.PlayerReplicationInfo != None &&
                 Bot.Enemy.PlayerReplicationInfo.HasFlag != None)
                 Chance += 0.15; //max 0.75
-                
+
             if(TransLauncher(Bot.Enemy.Weapon) != None)
                 Chance += 0.1; //max 0.85
-            
+
             if(Instigator.HasUDamage())
                 Chance += 0.75; //max 1.1
-        
+
             if(FRand() < Chance)
                 Activate();
         }
@@ -103,7 +103,7 @@ state Activated
         if(!bAllowWithTrans && TransLauncher(Instigator.Weapon) != None) {
                 Activate();    //Don't be confused, this deactivates it...
         }
-        
+
         //need to be moving for it to do anything... so can't just sit somewhere and camp
         if(bMustBeMoving && VSize(Instigator.Velocity) ~= 0)
         {
@@ -158,7 +158,7 @@ state Activated
 
         CostPerSec = default.CostPerSec + Targets * ExtraCostPerPlayer + MineTargets * ExtraCostPerMine;
     }
-    
+
     function BeginState()
     {
         Super.BeginState();

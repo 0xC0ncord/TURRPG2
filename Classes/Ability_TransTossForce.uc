@@ -1,5 +1,5 @@
 class Ability_TransTossForce extends RPGAbility;
-    
+
 var config array<float> LevelTossForceScale;
 
 function ModifyWeapon(Weapon Weapon)
@@ -12,7 +12,7 @@ function ModifyWeapon(Weapon Weapon)
         WF = Weapon.GetFireMode(i);
         if(RPGTransFire(WF) != None)
         {
-            if(AbilityLevel <= MaxLevel) 
+            if(AbilityLevel <= MaxLevel)
                 RPGTransFire(WF).TossForceScale = LevelTossForceScale[AbilityLevel - 1];
             else
                 Warn("Not enough LevelTossForceScales defined!");

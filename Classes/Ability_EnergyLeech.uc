@@ -18,7 +18,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
     if(Vehicle(Injured) != None && Vehicle(Injured).IsVehicleEmpty())
         return;
-    
+
     AdrenalineBonus = FMax(0, (FMin(Damage, Injured.Health)) * BonusPerLevel * AbilityLevel);
 
     if(AdrenalineBonus > 0)

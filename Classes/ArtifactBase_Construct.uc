@@ -22,7 +22,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
 function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator SpawnRot) {
     local Actor A;
     local int i, Blocker;
-    
+
     Blocker = -1;
     foreach RadiusActors(class'Actor', A, ClearRadius, SpawnLoc) {
         for(i = 0; i < BlockingTypes.Length; i++) {
@@ -33,7 +33,7 @@ function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator Spaw
             }
         }
     }
-    
+
     if(Blocker >= 0) {
         bShowFailureMessage = false;
         Msg(MSG_CantConstruct | Blocker);

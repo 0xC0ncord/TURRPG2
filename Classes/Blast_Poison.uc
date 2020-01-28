@@ -23,7 +23,7 @@ function DoEffect()
                 dir = C.Pawn.Location - Location;
                 dist = FMax(1, VSize(dir));
                 damageScale = 1 - FMax(0, dist / Radius);
-    
+
                 if(Vehicle(C.Pawn) == None)
                 {
                     Poison = Effect_Poison(class'Effect_Poison'.static.Create(C.Pawn, Instigator.Controller, DrainTime, 1));

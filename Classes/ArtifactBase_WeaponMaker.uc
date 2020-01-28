@@ -22,13 +22,13 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_UnableToGenerate:
             return default.MsgUnableToGenerate;
-            
+
         case MSG_AlreadyConstructing:
             return default.MsgAlreadyConstructing;
-            
+
         case MSG_Broken:
             return default.MsgBroken;
-    
+
         default:
             return Super.GetMessageString(Msg, Value);
     }
@@ -45,7 +45,7 @@ simulated event PostBeginPlay()
 function bool CanActivate()
 {
     local int i;
-    
+
     if(!Super.CanActivate())
         return false;
 
@@ -68,7 +68,7 @@ function bool CanActivate()
         Msg(MSG_UnableToGenerate);
         return false;
     }
-    
+
     return true;
 }
 
@@ -96,7 +96,7 @@ state Activated
                 //try to generate a weapon of different magic than the old one
                 for(tries = 0; tries < 50; tries++) {
                     NewModifier = GetRandomWeaponModifier(ModifiedWeapon.class, Instigator);
-                    
+
                     if(NewModifier == None || NewModifier != OldModifier) {
                         tries = 50; //break inner loop
                     }
@@ -104,12 +104,12 @@ state Activated
             } else {
                 NewModifier = GetRandomWeaponModifier(ModifiedWeapon.class, Instigator);
             }
-            
+
             if(NewModifier == None || NewModifier.static.AllowedFor(ModifiedWeapon.class, Instigator)) {
                 break;
             }
         }
-        
+
         if(x == 50) {
             Msg(MSG_UnableToGenerate);
             return false;
@@ -132,15 +132,15 @@ state Activated
             if(bCanBreak && Rand(3) == 0) //25% chance
             {
                 Msg(MSG_Broken);
-                
+
                 if(PlayerController(Instigator.Controller) != None)
                     PlayerController(Instigator.Controller).ClientPlaySound(BrokenSound);
-                
+
                 Destroy();
             }
         }
         */
-        
+
         return true;
     }
 }

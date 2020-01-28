@@ -18,7 +18,7 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         Countdown = MinActivationTime; //MinActivationTime serves as the delay
     }
 
@@ -31,7 +31,7 @@ state Activated
             GotoState('');
             bIgnoreUsedUp = true; //don't tell player that his adrenaline is used up
         }
-    
+
         Super.Tick(dt); //drain adrenaline
         bIgnoreUsedUp = false;
     }

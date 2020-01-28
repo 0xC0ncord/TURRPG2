@@ -7,7 +7,7 @@ var int Recursions;
 static function bool AllowedFor(class<Weapon> Weapon, Pawn Other)
 {
     local int x;
-    
+
     if(!Super.AllowedFor(Weapon, Other))
         return false;
 
@@ -27,7 +27,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
     Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
     Identify();
-    
+
     if(Recursions >= 10)
     {
         Log(Self @ "More than 10 recursions detected!");
@@ -44,7 +44,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
                 StartTrace = StartTrace + X * class'ShockProjFire'.Default.ProjSpawnOffset.X;
                 if (!Weapon.WeaponCentered())
                     StartTrace = StartTrace + Weapon.Hand * Y * class'ShockProjFire'.Default.ProjSpawnOffset.Y + Z * class'ShockProjFire'.Default.ProjSpawnOffset.Z;
-                
+
                 Recursions++;
                 InstantFire(FireMode).DoTrace(
                     HitLocation + Normal(HitLocation - StartTrace) * Injured.CollisionRadius * 2,

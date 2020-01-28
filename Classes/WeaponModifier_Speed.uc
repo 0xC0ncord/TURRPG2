@@ -9,9 +9,9 @@ function StartEffect()
     SpeedModifier = 1.0f + BonusPerLevel * Abs(float(Modifier));
     if(Modifier < 0 && SpeedModifier != 0)
         SpeedModifier = 1.0 / SpeedModifier;
-    
+
     class'Util'.static.PawnScaleSpeed(Instigator, SpeedModifier);
-    
+
     Identify();
 }
 

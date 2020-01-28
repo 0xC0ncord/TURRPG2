@@ -15,7 +15,7 @@ function Timer()
         SetTimer(0.0f, false);
         return;
     }
-    
+
     Instigator.GiveHealth(int(BonusPerLevel) * AbilityLevel, Instigator.HealthMax);
 }
 

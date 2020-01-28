@@ -17,7 +17,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
             InstigatedBy.Controller,
             Modifier * FreezeDuration,
             1.0f - FMin(BonusPerLevel * Modifier, FreezeMax));
-        
+
         if(Effect != None)
         {
             Identify();

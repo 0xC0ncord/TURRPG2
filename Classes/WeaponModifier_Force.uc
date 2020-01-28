@@ -7,7 +7,7 @@ var localized string ProjSpeedText;
 static function bool AllowedFor(class<Weapon> WeaponType, Pawn Other)
 {
     local int x;
-    
+
     if(!Super.AllowedFor(WeaponType, Other))
         return false;
 

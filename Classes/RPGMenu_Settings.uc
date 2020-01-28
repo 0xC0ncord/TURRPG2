@@ -93,7 +93,7 @@ function InitMenu()
     chkArtifactText.Checked(!RPGMenu.RPRI.Interaction.Settings.bHideArtifactName);
     chkExpBar.Checked(!RPGMenu.RPRI.Interaction.Settings.bHideExpBar);
     chkClassicArtifactSelection.Checked(RPGMenu.RPRI.Interaction.Settings.bClassicArtifactSelection);
-    
+
     slExpGain.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.ExpGainDuration), true);
     slExpBarX.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.ExpBarX), true);
     slExpBarY.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.ExpBarY), true);
@@ -109,7 +109,7 @@ function InitMenu()
         slExpBarX.MySlider.MenuState = MSAT_Disabled;
         slExpBarY.MySlider.MenuState = MSAT_Disabled;
     }
-    
+
     slIconsPerRow.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconsPerRow), true);
     if(chkClassicArtifactSelection.IsChecked())
         slIconsPerRow.MySlider.MenuState = MSAT_Disabled;
@@ -118,7 +118,7 @@ function InitMenu()
 
     slIconScale.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconScale), true);
     slIconsX.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconsX), true);
-    
+
     if(chkClassicArtifactSelection.IsChecked())
         slIconsY.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconClassicY), true);
     else
@@ -134,14 +134,14 @@ function InternalOnChange(GUIComponent Sender)
         case chkWeaponExtra:
             RPGMenu.RPRI.Interaction.Settings.bHideWeaponExtra = !chkWeaponExtra.IsChecked();
             break;
-            
+
         case chkArtifactText:
             RPGMenu.RPRI.Interaction.Settings.bHideArtifactName = !chkArtifactText.IsChecked();
             break;
-            
+
         case chkExpBar:
             RPGMenu.RPRI.Interaction.Settings.bHideExpBar = !chkExpBar.IsChecked();
-            
+
             if(chkExpBar.IsChecked())
             {
                 slExpGain.MySlider.MenuState = MSAT_Blurry;
@@ -156,19 +156,19 @@ function InternalOnChange(GUIComponent Sender)
             }
 
             break;
-            
+
         case slExpGain:
             RPGMenu.RPRI.Interaction.Settings.ExpGainDuration = float(slExpGain.GetComponentValue());
             break;
-            
+
         case slIconsPerRow:
             RPGMenu.RPRI.Interaction.Settings.IconsPerRow = int(slIconsPerRow.GetComponentValue());
             break;
-            
+
         case slIconScale:
             RPGMenu.RPRI.Interaction.Settings.IconScale = float(slIconScale.GetComponentValue());
             break;
-            
+
         case slExpBarX:
             RPGMenu.RPRI.Interaction.Settings.ExpBarX = float(slExpBarX.GetComponentValue());
             break;
@@ -176,43 +176,43 @@ function InternalOnChange(GUIComponent Sender)
         case slExpBarY:
             RPGMenu.RPRI.Interaction.Settings.ExpBarY = float(slExpBarY.GetComponentValue());
             break;
-            
+
         case slIconsX:
             RPGMenu.RPRI.Interaction.Settings.IconsX = float(slIconsX.GetComponentValue());
             break;
-            
+
         case slIconsY:
             if(chkClassicArtifactSelection.IsChecked())
                 RPGMenu.RPRI.Interaction.Settings.IconClassicY = float(slIconsY.GetComponentValue());
             else
                 RPGMenu.RPRI.Interaction.Settings.IconsY = float(slIconsY.GetComponentValue());
-                
+
             break;
-        
+
         case chkExpGain:
             RPGMenu.RPRI.Interaction.Settings.bHideExpGain = !chkExpGain.IsChecked();
             break;
 
         case chkClassicArtifactSelection:
             RPGMenu.RPRI.Interaction.Settings.bClassicArtifactSelection = chkClassicArtifactSelection.IsChecked();
-            
+
             if(chkClassicArtifactSelection.IsChecked())
                 slIconsPerRow.MySlider.MenuState = MSAT_Disabled;
             else
                 slIconsPerRow.MySlider.MenuState = MSAT_Blurry;
-            
+
             if(chkClassicArtifactSelection.IsChecked())
                 slIconsY.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconClassicY), true);
             else
                 slIconsY.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconsY), true);
-            
+
             break;
-        
+
         case chkHints:
             RPGMenu.RPRI.Interaction.Settings.bHideHints = !chkHints.IsChecked();
             break;
     }
-    
+
     RPGMenu.RPRI.Interaction.bUpdateCanvas = true;
 }
 

@@ -19,7 +19,7 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
             TransBeacon = Weapon.Spawn(class<Projectile>(DynamicLoadObject("OLTeamGames.OLTeamsGreenBeacon", class'Class')),,, Start, Dir);
         else if(Instigator.PlayerReplicationInfo.Team.TeamIndex == 3)
             TransBeacon = Weapon.Spawn(class<Projectile>(DynamicLoadObject("OLTeamGames.OLTeamsGoldBeacon", class'Class')),,, Start, Dir);
-        
+
         TransLauncher(Weapon).TransBeacon = TransBeacon(TransBeacon);
         Weapon.PlaySound(TransFireSound, SLOT_Interact,,,,, false);
     }
@@ -27,10 +27,10 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
     {
         TransBeacon = Super.SpawnProjectile(Start, Dir);
     }
-    
+
     if(TransBeacon != None)
         TransBeacon.Velocity *= class'MutTURRPG'.static.Instance(Level).GameSettings.TransTossForceScale * TossForceScale;
-    
+
     return TransBeacon;
 }
 
@@ -38,22 +38,22 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
 event ModeDoFire()
 {
     local xPawn xInstigator;
-    
+
     local bool bInstigatorSpawnDone;
     local bool bInstigatorSpawnIn;
     local float InstigatorSpawnTime;
-    
+
     if(Weapon.Role == ROLE_Authority && xPawn(Instigator) != None)
     {
         xInstigator = xPawn(Instigator);
-    
+
         bInstigatorSpawnDone = xInstigator.bSpawnDone;
         bInstigatorSpawnIn = xInstigator.bSpawnIn;
         InstigatorSpawnTime = xInstigator.SpawnTime;
     }
-    
+
     Super.ModeDoFire();
-    
+
     if(Weapon.Role == ROLE_Authority &&
         xInstigator != None &&
         !bInstigatorSpawnDone &&
@@ -62,7 +62,7 @@ event ModeDoFire()
         xInstigator.SpawnTime = InstigatorSpawnTime;
         xInstigator.bSpawnIn = bInstigatorSpawnIn;
         xInstigator.bSpawnDone = false;
-        
+
         xInstigator.SetOverlayMaterial(
             xInstigator.ShieldHitMat,
             DeathMatch(Level.Game).SpawnProtectionTime - (Level.TimeSeconds - xInstigator.SpawnTime),

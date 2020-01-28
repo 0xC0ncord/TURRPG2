@@ -3,9 +3,9 @@ class Ability_HealthBonus extends RPGAbility;
 function ModifyPawn(Pawn Other)
 {
     local int HealthBonus;
-    
+
     Super.ModifyPawn(Other);
-    
+
     HealthBonus = AbilityLevel * int(BonusPerLevel);
 
     Other.Health = Other.default.Health + HealthBonus;

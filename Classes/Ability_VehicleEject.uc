@@ -39,7 +39,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     local vector EjectVel;
 
     V = Vehicle(Killed);
-    
+
     if(V == None)
         return false; //to fix the weird survival / spectator bug
 
@@ -47,7 +47,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
 
     if(DamageType == class'DamTypeSelfDestruct' || Driver == None || !CanEjectDriver(V))
         return false;
-    
+
     if(HasJustEjected())
         return false;
 
@@ -59,15 +59,15 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
 
     Driver.Velocity = EjectVel;
     Driver.PlayTeleportEffect( false, false);
-    
+
     LastEjectionTime = Level.TimeSeconds;
-    
+
     if(VehicleCooldown > 0)
     {
         NextVehicleTime = Level.TimeSeconds + VehicleCooldown;
         ClientNotifyCooldown(VehicleCooldown);
     }
-    
+
     if(bResetTranslocatorCharge)
     {
         TL = TransLauncher(Driver.FindInventoryType(class'TransLauncher'));
@@ -80,7 +80,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
             TL.Enable('Tick'); //start recharging
         }
     }
-    
+
     return false; //NOT saving the vehicle
 }
 
@@ -90,7 +90,7 @@ function bool CanEnterVehicle(Vehicle V)
     {
         if(PlayerController(RPRI.Controller) != None)
             PlayerController(RPRI.Controller).ClientPlaySound(CantEnterSound,,, SLOT_Interface);
-        
+
         return false;
     }
 

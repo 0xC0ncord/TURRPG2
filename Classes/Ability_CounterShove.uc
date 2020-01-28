@@ -3,7 +3,7 @@ class Ability_CounterShove extends RPGAbility;
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     local float MomentumMod;
-    
+
     if(VSize(Momentum) <= 0)
         return;
 

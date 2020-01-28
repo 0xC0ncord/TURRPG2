@@ -17,7 +17,7 @@ function ModifyVehicle(Vehicle V)
 
     if(ONSVehicle(V) == None)
         return;
-    
+
     Bonus = 0;
     for(i = 0; i < SpeedBonus.Length; i++)
     {
@@ -27,11 +27,11 @@ function ModifyVehicle(Vehicle V)
             break;
         }
     }
-    
+
     if(Bonus <= 0)
         Bonus = FallbackSpeedBonus;
-        
-    Bonus = 1.0 + float(AbilityLevel) * Bonus;    
+
+    Bonus = 1.0 + float(AbilityLevel) * Bonus;
     class'Util'.static.SetVehicleSpeed(V, Bonus);
 }
 
@@ -39,19 +39,19 @@ simulated function string DescriptionText()
 {
     local int i;
     local float MinBonus, MaxBonus;
-    
+
     MinBonus = 1.0;
     MaxBonus = 0.0;
-    
+
     for(i = 0; i < SpeedBonus.Length; i++)
     {
         if(SpeedBonus[i].Bonus > MaxBonus)
             MaxBonus = SpeedBonus[i].Bonus;
-            
+
         if(SpeedBonus[i].Bonus < MinBonus)
             MinBonus = SpeedBonus[i].Bonus;
     }
-    
+
     if(MinBonus == MaxBonus)
     {
         return repl(
@@ -84,6 +84,6 @@ defaultproperties
     SpeedBonus(4)=(VehicleType=class'Onslaught.ONSHoverCraft',Bonus=0.05) //Manta
     SpeedBonus(5)=(VehicleType=class'Onslaught.ONSWheeledCraft',Bonus=0.10) //HellBender, SPMA, MAS, Toilet Car
     SpeedBonus(6)=(VehicleType=class'Onslaught.ONSTreadCraft',Bonus=0.10) //Tanks
-    
+
     Category=class'AbilityCategory_Vehicles'
 }

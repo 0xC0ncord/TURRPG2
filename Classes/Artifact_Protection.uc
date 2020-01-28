@@ -27,7 +27,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
                 return Repl(default.NotWithFlagMessage, "$1", default.BallText);
             else
                 return Repl(default.NotWithFlagMessage, "$1", default.FlagText);
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -36,7 +36,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
 simulated event PreBeginPlay()
 {
     Super.PreBeginPlay();
-    
+
     if(Role == ROLE_Authority)
         ClientDamageReduction = DamageReduction;
 }
@@ -65,11 +65,11 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, -1, true);
         SetTimer(0.5, true);
     }
-    
+
     function Timer()
     {
         //If the Instigator grabs the flag, turn it off!
@@ -89,7 +89,7 @@ state Activated
             class'Sync_OverlayMaterial'.static.Sync(Instigator, None, 0, true);
 
         SetTimer(0, false);
-        
+
         Super.EndState();
     }
 }

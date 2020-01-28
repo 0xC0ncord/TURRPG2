@@ -16,13 +16,13 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_UnableToModify:
             return default.MsgUnableToModify;
-            
+
         case MSG_AlreadyHigher:
             return default.MsgAlreadyHigher;
-            
+
         case MSG_MustBeMaxed:
             return default.MsgMustBeMaxed;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -31,14 +31,14 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
 function bool CanActivate()
 {
     local RPGWeaponModifier WM;
-    
+
     if(Instigator.Weapon != None) {
         WM = class'RPGWeaponModifier'.static.GetFor(Instigator.Weapon);
         if(WM == None || WM.MinModifier == WM.MaxModifier) {
             Msg(MSG_UnableToModify);
             return false;
         }
-    
+
         if(WM.Modifier < WM.MaxModifier) {
             Msg(MSG_MustBeMaxed);
             return false;
@@ -60,7 +60,7 @@ state Activated
     function bool DoEffect()
     {
         local RPGWeaponModifier WM;
-    
+
         if(OldWeapon != None) {
             WM = class'RPGWeaponModifier'.static.GetFor(Instigator.Weapon);
             if(WM != None) {

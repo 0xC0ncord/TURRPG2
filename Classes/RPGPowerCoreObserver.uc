@@ -26,7 +26,7 @@ var array<RPGScorerRecord> Scorers;
 
 event PostBeginPlay() {
     Super.PostBeginPlay();
-    
+
     ONSGame = ONSOnslaughtGame(Level.Game);
     Core = ONSPowerCore(Objective);
     Stage = Core.CoreStage;
@@ -37,7 +37,7 @@ event Tick(float dt) {
     local int LastStage;
 
     Super.Tick(dt);
-    
+
     if(!ONSGame.bGameEnded && ONSGame.ResetCountDown == 0 && (Stage == 0 || Stage == 2)) {
         for(i = 0; i < Core.Scorers.Length; i++)    {
             UpdateScore(Core.Scorers[i]);
@@ -53,7 +53,7 @@ event Tick(float dt) {
                 NodeConstructed();
             }
         }
-        
+
         Scorers.Length = 0;
     }
 }
@@ -62,26 +62,26 @@ function UpdateScore(GameObjective.ScorerRecord Score) {
     local int i;
     local float Diff, Exp;
     local RPGScorerRecord Record;
-    
+
     for(i = 0; i < Scorers.Length; i++) {
         if(Scorers[i].C == Score.C) {
             break;
         }
     }
-    
+
     if(i < Scorers.Length) {
         Record = Scorers[i];
         Diff = Score.Pct - Record.Pct;
-    
+
         Record.Pct = Score.Pct;
     } else {
         Diff = Score.Pct;
-    
+
         Record.C = Score.C;
         Record.RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Score.C);
         Record.Pct = Score.Pct;
     }
-    
+
     if(Diff > 0) {
         //Log("Score for" @ Score.C.GetHumanReadableName() $ ": " @ Diff);
         if(Record.RPRI != None) {
@@ -95,17 +95,17 @@ function UpdateScore(GameObjective.ScorerRecord Score) {
                 //power node
                 Exp = Diff * Rules.EXP_DestroyPowernode;
             }
-            
+
             Rules.ShareExperience(Record.RPRI, Exp);
         }
     }
-    
+
     Scorers[i] = Record;
 }
 
 function NodeConstructed() {
     local RPGPlayerReplicationInfo RPRI;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Core.Constructor);
     if(RPRI != None) {
         RPRI.AwardExperience(Rules.EXP_ConstructPowernode);
@@ -114,7 +114,7 @@ function NodeConstructed() {
 
 function Healed(Controller By, int Amount) {
     local RPGPlayerReplicationInfo RPRI;
-    
+
     if(Amount > 0) {
         RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(By);
         if(RPRI != None) {

@@ -1,5 +1,5 @@
 class WeaponModifier_Nullification extends RPGWeaponModifier;
-    
+
 var localized string MagicNullText;
 
 var config array<class<RPGEffect> > DenyEffects;

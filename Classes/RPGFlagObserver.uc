@@ -33,12 +33,12 @@ function Returned()
             }
         }
     }
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Closest);
     if(RPRI != None)
     {
         //Log(GO @ "was returned by" @ RPRI.RPGName);
-        
+
         //Find closest CTF base
         foreach AllActors(class'CTFBase', FlagBase)
         {
@@ -49,7 +49,7 @@ function Returned()
                 ClosestBase = FlagBase;
             }
         }
-        
+
         if(ClosestBase != None)
         {
             if(ClosestBase.DefenderTeamIndex == OwnerTeam)
@@ -79,7 +79,7 @@ function Scored(float ScoreDiff)
     local int i;
     local RPGPlayerReplicationInfo RPRI;
     local TransLauncher TL;
-    
+
     //Return translocator beacon to scorer
     TL = TransLauncher(Holder.Pawn.FindInventoryType(class'TransLauncher'));
     if(TL != None)
@@ -91,7 +91,7 @@ function Scored(float ScoreDiff)
             TL.TransBeacon = None;
         }
     }
-    
+
     //XP for scorer
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Holder);
     if(RPRI != None)
@@ -101,7 +101,7 @@ function Scored(float ScoreDiff)
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(FirstTouch);
     if(RPRI != None)
         RPRI.AwardExperience(Rules.EXP_FlagCapFirstTouch);
-    
+
     //XP for assists
     for(i = 0; i < Assists.Length; i++)
     {
@@ -127,7 +127,7 @@ function Scored(float ScoreDiff)
 function SetGameObject()
 {
     GO = CTFBase(Objective).myFlag;
-    
+
     if(GO != None)
         OwnerTeam = CTFFlag(GO).TeamNum;
 }

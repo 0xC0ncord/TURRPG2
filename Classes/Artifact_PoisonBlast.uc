@@ -3,7 +3,7 @@ class Artifact_PoisonBlast extends ArtifactBase_Blast;
 defaultproperties
 {
     BlastClass=class'Blast_Poison'
-    
+
     CostPerSec=150
     HudColor=(R=0)
     ArtifactID="PoisonBlast"

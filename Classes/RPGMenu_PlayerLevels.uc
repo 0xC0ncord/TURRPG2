@@ -19,7 +19,7 @@ var Color TeamTextColor[4];
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     Abilities = lstAbilities.List;
     Abilities.bMultiselect = false;
     Abilities.bInitializeList = false;
@@ -42,7 +42,7 @@ function ModifyStyle(GUIStyles DStyle, int Team)
 function ResetStyle(GUIStyles DStyle)
 {
     local int i;
-    
+
     for(i = 0; i < 5; i++)
         DStyle.FontColors[i] = DStyle.default.FontColors[i];
 }
@@ -52,7 +52,7 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
     local string LevelText;
     local float CellLeft, CellWidth;
     local GUIStyles DStyle;
-    
+
     if(bSelected)
     {
         Abilities.SelectedStyle.Draw(Canvas, Abilities.MenuState, X, Y, W, H + 1);
@@ -62,11 +62,11 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
     {
         DStyle = Abilities.Style;
     }
-    
+
     ModifyStyle(DStyle, AbilityInfos[i].Team);
-    
+
     Abilities.GetCellLeftWidth(0, CellLeft, CellWidth);
-    
+
     DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, AbilityInfos[i].PlayerName, Abilities.FontScale);
 
     LevelText =
@@ -76,7 +76,7 @@ function DrawAbilityInfo(Canvas Canvas, int i, float X, float Y, float W, float 
 
     Abilities.GetCellLeftWidth(1, CellLeft, CellWidth);
     DStyle.DrawText(Canvas, Abilities.MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, LevelText, Abilities.FontScale);
-    
+
     ResetStyle(DStyle);
 }
 
@@ -98,28 +98,28 @@ function Timer()
     local RPGPlayerLevelInfo PLI;
     local AbilityInfo AInfo;
     local int OldAbilityListIndex, OldAbilityListTop;
-    
+
     OldAbilityListIndex = Abilities.Index;
     OldAbilityListTop = Abilities.Top;
-    
+
     Abilities.Clear();
     AbilityInfos.Remove(0, AbilityInfos.Length);
-    
+
     foreach RPGMenu.RPRI.DynamicActors(class'RPGPlayerLevelInfo', PLI)
     {
         if(!PLI.PRI.bOnlySpectator)
         {
             AInfo.PlayerName = PLI.PRI.PlayerName;
-            
+
             if(PLI.PRI.Team != None)
                 AInfo.Team = PLI.PRI.Team.TeamIndex;
             else
                 AInfo.Team = 255;
-            
+
             AInfo.Level = PLI.RPGLevel;
             AInfo.Exp = PLI.Experience;
             AInfo.ExpNeeded = PLI.ExpNeeded;
-            
+
             for(i = 0; i < AbilityInfos.Length; i++)
             {
                 if(AbilityInfos[i].Level < AInfo.Level || (AbilityInfos[i].Level == AInfo.Level && AbilityInfos[i].Exp < AInfo.Exp))
@@ -127,11 +127,11 @@ function Timer()
             }
             AbilityInfos.Insert(i, 1);
             AbilityInfos[i] = AInfo;
-            
+
             Abilities.AddedItem();
         }
     }
-    
+
     Abilities.SetIndex(OldAbilityListIndex);
     Abilities.SetTopItem(OldAbilityListTop);
 }
@@ -178,6 +178,6 @@ defaultproperties
         WinTop=0.082350
     End Object
     lstAbilities=GUIMultiColumnListBox'lstAbilities_'
-    
+
     WinHeight=0.700000
 }

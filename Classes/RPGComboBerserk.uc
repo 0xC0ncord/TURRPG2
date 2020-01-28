@@ -6,21 +6,21 @@ var RPGPlayerReplicationInfo RPRI;
 simulated function Tick(float DeltaTime)
 {
     local Pawn P;
-    
+
     P = Pawn(Owner);
 
     if(P == None || P.Controller == None)
-	{
+    {
         Destroy();
         return;
     }
 
     if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-		DeltaTime *= 2;
-	if(RPRI != None)
-		RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-	else
-		P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+        DeltaTime *= 2;
+    if(RPRI != None)
+        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+    else
+        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
     if (P.Controller.Adrenaline <= 0.0)
     {
         P.Controller.Adrenaline = 0.0;
@@ -42,29 +42,29 @@ function DestroyEffects(Pawn P)
 
 function StartEffect(xPawn P)
 {
-	local int i;
+    local int i;
 
-	Super.StartEffect(P);
+    Super.StartEffect(P);
 
-	RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
+    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
 
     if(P.Weapon != None)
         P.Weapon.StartBerserk();
 
     P.bBerserk = true;
 
-	if(RPRI != None && P.Weapon!=None)
-		for(i = 0; i < RPRI.Abilities.Length; i++)
-			if(RPRI.Abilities[i].bAllowed)
-				RPRI.Abilities[i].ModifyWeapon(P.Weapon);
+    if(RPRI != None && P.Weapon!=None)
+        for(i = 0; i < RPRI.Abilities.Length; i++)
+            if(RPRI.Abilities[i].bAllowed)
+                RPRI.Abilities[i].ModifyWeapon(P.Weapon);
 }
 
 function StopEffect(xPawn P)
 {
-	local int i;
-	local Inventory Inv;
+    local int i;
+    local Inventory Inv;
 
-	Super.StopEffect(P);
+    Super.StopEffect(P);
 
     for(Inv = P.Inventory; Inv != None; Inv = Inv.Inventory)
         if(Weapon(Inv) != None)
@@ -72,10 +72,10 @@ function StopEffect(xPawn P)
 
     P.bBerserk = false;
 
-	if(RPRI != None && P.Weapon != None)
-		for(i = 0; i < RPRI.Abilities.Length; i++)
-			if(RPRI.Abilities[i].bAllowed)
-				RPRI.Abilities[i].ModifyWeapon(P.Weapon);
+    if(RPRI != None && P.Weapon != None)
+        for(i = 0; i < RPRI.Abilities.Length; i++)
+            if(RPRI.Abilities[i].bAllowed)
+                RPRI.Abilities[i].ModifyWeapon(P.Weapon);
 }
 
 defaultproperties

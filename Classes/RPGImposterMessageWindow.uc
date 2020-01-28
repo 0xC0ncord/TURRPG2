@@ -9,9 +9,9 @@ var localized string WindowTitle, ImposterText;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     OnClose=MyOnClose;
-    
+
     t_WindowTitle.SetCaption(WindowTitle);
     lblImposterMessage.Caption = ImposterText;
 }
@@ -29,15 +29,15 @@ function MyOnClose(optional bool bCanceled)
 
 defaultproperties
 {
-    WindowTitle="Name already taken"    
+    WindowTitle="Name already taken"
     ImposterText="Sorry, your name is already used on this server.|This is a roleplaying game server and every character must have a unique name.||Please choose a different name and reconnect, or stay with your randomly assigned name to try things out. Your progress will then not be saved."
-    
+
     bResizeWidthAllowed=False
     bResizeHeightAllowed=False
     bMoveAllowed=False
     bPersistent=True
     bAllowedAsLast=True
-    
+
     WinWidth=0.600000
     WinHeight=0.624722
     WinLeft=0.214063

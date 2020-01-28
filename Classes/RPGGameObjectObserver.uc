@@ -21,17 +21,17 @@ event Tick(float dt)
     local name LastState;
     local array<Controller> AssistPassengers;
     local int i;
-    
+
     Super.Tick(dt);
-    
+
     if(GO == None)
         SetGameObject();
-    
+
     if(GO != None)
     {
         LastState = CurrentState;
         CurrentState = GO.GetStateName();
-        
+
         if(CurrentState == 'Held')
         {
             if(GO.Holder.DrivenVehicle != None)
@@ -46,12 +46,12 @@ event Tick(float dt)
                 FirstTouch = None;
                 TotalTimeHeld = 0;
             }
-            
+
             HoldingTeam = NewTeam;
-            
+
             if(Level.Game.bTeamGame)
                 HoldingTeamScore = Teams[HoldingTeam].Score;
-            
+
             if(LastState == 'Home')
             {
                 //object was picked up from its base
@@ -60,7 +60,7 @@ event Tick(float dt)
             }
 
             TotalTimeHeld += dt;
-            
+
             //Holder assist
             IncreaseAssistTime(Holder, dt, true);
 
@@ -72,7 +72,7 @@ event Tick(float dt)
                 if(AssistVehicle == None && ONSWeaponPawn(GO.Holder.DrivenVehicle) != None)
                     AssistVehicle = ONSWeaponPawn(GO.Holder.DrivenVehicle).VehicleBase;
             }
-            
+
             //Assist for all assist vehicle passengers
             if(AssistVehicle != None)
             {
@@ -105,7 +105,7 @@ event Tick(float dt)
                 else if(Level.TimeSeconds - DropTime < GO.MaxDropTime)
                     Returned();
             }
-            
+
             if(CurrentState != LastState)
             {
                 FirstTouch = None;

@@ -15,7 +15,7 @@ var array<StoredWeapon> StoredWeapons;
     This isn't beautiful, but I can't think of any other way to describe this...
     ExtraSavingLevel determines the level from which on weapons are saved when
     you died in a vehicle or while carrying the ball launcher (in Bombing Run).
-    
+
     In TC06 that's all included in level 2,
     but in TitanRPG it's not featured before level 3.
 */
@@ -28,7 +28,7 @@ static function bool CanSaveWeapon(Weapon W)
 
     if(W == None)
         return false;
-        
+
     for(x = 0; x < default.ForbiddenWeaponTypes.Length; x++)
     {
         if(ClassIsChildof(W.class, default.ForbiddenWeaponTypes[x]))
@@ -51,7 +51,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
         if(EjectorSeat != None && EjectorSeat.CanEjectDriver(Vehicle(Killed)))
             return false;
     }
-    
+
     if(Vehicle(Killed) != None) {
         if(AbilityLevel >= ExtraSavingLevel) {
             Killed = Vehicle(Killed).Driver;
@@ -65,7 +65,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     } else if(Killed.Weapon != None) {
         RPRI.Controller.LastPawnWeapon = Killed.Weapon.Class;
     }
-    
+
     if(AbilityLevel > 1) {
         W = None;
         if(AbilityLevel >= StoreAllLevel)
@@ -103,11 +103,11 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
                 TryStoreWeapon(W);
         }
     }
-    
+
     //Make current weapon unthrowable so it doesn't get dropped
     if(Killed.Weapon != None)
         Killed.Weapon.bCanThrow = false;
-    
+
     return false;
 }
 
@@ -115,15 +115,15 @@ function TryStoreWeapon(Weapon W)
 {
     local RPGWeaponModifier WM;
     local StoredWeapon SW;
-    
+
     if(W == None || !CanSaveWeapon(W))
         return;
-    
+
     SW.WeaponClass = W.class;
 
     SW.Ammo[0] = W.AmmoAmount(0);
     SW.Ammo[1] = W.AmmoAmount(1);
-    
+
     WM = class'RPGWeaponModifier'.static.GetFor(W);
     if(WM != None) {
         SW.ModifierClass = WM.class;
@@ -132,7 +132,7 @@ function TryStoreWeapon(Weapon W)
         SW.ModifierClass = None;
         SW.Modifier = 0;
     }
-    
+
     StoredWeapons[StoredWeapons.Length] = SW;
 }
 
@@ -141,7 +141,7 @@ function ModifyPawn(Pawn Other)
     local int i;
 
     Super.ModifyPawn(Other);
-    
+
     if(AbilityLevel < 2)
         return;
 

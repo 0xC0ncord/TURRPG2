@@ -28,7 +28,7 @@ simulated event Destroyed()
 {
     if(Fear != None)
         Fear.Destroy();
-        
+
     if(ChargeEmitter != None)
         ChargeEmitter.Destroy();
 
@@ -39,19 +39,19 @@ simulated event PostBeginPlay()
 {
     if(Role == ROLE_Authority)
         InstigatorController = Controller(Owner);
-    
+
     Super.PostBeginPlay();
-    
+
     if(Role == ROLE_Authority)
         ChargeEmitter = Spawn(ChargeEmitterClass);
-    
+
     if(Role == ROLE_Authority && bBotsBeAfraid)
     {
         Fear = Spawn(class'AvoidMarker');
         Fear.SetCollisionSize(Radius, 200);
         Fear.StartleBots();
     }
-    
+
     SetTimer(ChargeTime, false);
 }
 
@@ -59,7 +59,7 @@ function SetChargeTime(float time)
 {
     ChargeTime = time;
     SetTimer(ChargeTime, false);
-    
+
     if(ChargeTime <= 0)
         Boom();
 }
@@ -68,20 +68,20 @@ function Boom()
 {
     MakeNoise(1.0);
     PlaySound(ExplosionSound);
-    
+
     bDoneCharging = True; //must be done BEFORE (!!!!!) calling DoEffect because that will initiate Timer again
-    
+
     if(Fear != None)
         Fear.Destroy();
-        
+
     if(ChargeEmitter != None)
         ChargeEmitter.Destroy();
-    
+
     if(Role == ROLE_Authority)
     {
         if(ExplosionClass != None)
             Spawn(ExplosionClass);
-        
+
         DoEffect();
     }
 }
@@ -92,14 +92,14 @@ simulated function Timer()
     {
         if(Role == ROLE_Authority)
         {
-            if(!bAllowDeadInstigator && (Instigator == None || Instigator.Health <= 0 || 
+            if(!bAllowDeadInstigator && (Instigator == None || Instigator.Health <= 0 ||
                 (Instigator.Controller == None && Instigator.DrivenVehicle == None)))
             {
                 Destroy();
                 return;
             }
         }
-        
+
         Boom();
     }
 }
@@ -112,12 +112,12 @@ defaultproperties
     bAllowDeadInstigator=False
 
     RemoteRole=ROLE_SimulatedProxy;
-    
+
     ExplosionSound=Sound'WeaponSounds.redeemer_explosionsound'
-    
+
     DrawType=DT_None
     TransientSoundVolume=1.000000
     TransientSoundRadius=5000.000000
-    
+
     ChargeTime=2.000000
 }

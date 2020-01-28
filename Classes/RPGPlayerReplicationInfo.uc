@@ -39,7 +39,7 @@ var Weapon SwitchToWeapon; //client
 
 /*
     Weapon granting queue
-    
+
     Abilities should no longer directly give weapons to the player, but queue them up
     using QueueWeapon. This allows for central handling of managing granted weapons, e.g.
     by the Favorite Weapon feature
@@ -108,11 +108,11 @@ const PROJ_SEARCH_RADIUS = 2048;
 
 struct ProjectileMod {
     var int NumTicks;
-    
+
     var vector Location;
     var class<Projectile> Type;
     var Pawn Instigator;
-    
+
     var float Vel;
     var name Flag;
     var class<Emitter> FXClass;
@@ -217,10 +217,10 @@ static function RPGPlayerReplicationInfo CreateFor(Controller C)
     local RPGPlayerReplicationInfo RPRI;
 
     PRI = C.PlayerReplicationInfo;
-    
+
     if(PRI == None)
         return None;
-    
+
     RPRI = GetForPRI(PRI);
     if(RPRI != None)
     {
@@ -238,7 +238,7 @@ static function RPGPlayerReplicationInfo CreateFor(Controller C)
 static function RPGPlayerReplicationInfo GetForPRI(PlayerReplicationInfo PRI)
 {
     local LinkedReplicationInfo LRI;
-    
+
     if(PRI != None)
     {
         for(LRI = PRI.CustomReplicationInfo; LRI != None; LRI = LRI.NextReplicationInfo)
@@ -254,7 +254,7 @@ static function RPGPlayerReplicationInfo GetFor(Controller C)
 {
     if(C == None)
         return None;
-    
+
     return GetForPRI(C.PlayerReplicationInfo);
 }
 
@@ -267,9 +267,9 @@ static function RPGPlayerReplicationInfo GetLocalRPRI(LevelInfo Level)
 function ModifyStats()
 {
     local int x;
-    
+
     HealingExpMultiplier = class'RPGRules'.default.EXP_Healing;
-    
+
     for(x = 0; x < Abilities.Length; x++)
     {
         if(Abilities[x].bAllowed)
@@ -284,12 +284,12 @@ simulated event BeginPlay()
     local RPGData data;
 
     Super.BeginPlay();
-    
+
     if(Role == ROLE_Authority)
     {
         Controller = Controller(Owner);
         PRI = Controller.PlayerReplicationInfo;
-        
+
         RPGMut = class'MutTURRPG'.static.Instance(Level);
         if(RPGMut == None)
         {
@@ -319,12 +319,12 @@ simulated event BeginPlay()
                 data.SPA = RPGMut.StartingStatPoints + (Ceil(float(data.LV - 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
                 data.APA = RPGMut.StartingAbilityPoints + (Ceil(float(data.LV - 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
                 data.XN = RPGMut.GetRequiredXpForLevel(data.LV);
-                    
+
                 if (PlayerController(Controller) != None)
                     data.ID = PlayerController(Controller).GetPlayerIDHash();
                 else
                     data.ID = "Bot";
-                    
+
                 break;
             }
             else //returning player
@@ -334,10 +334,10 @@ simulated event BeginPlay()
                 {
                     //imposter using somebody else's name
                     bImposter = true;
-                    
+
                     if(PlayerController(Controller) != None)
                         PlayerController(Controller).ClientOpenMenu("TURRPG2.RPGImposterMessageWindow");
-                        
+
                     //Level.Game.ChangeName(Controller, string(Rand(65535)), true); //That's gotta suck, having a number for a name
                     Level.Game.ChangeName(Controller, Controller.GetHumanReadableName() $ "_Imposter", true);
                 }
@@ -345,7 +345,7 @@ simulated event BeginPlay()
                     break;
             }
         }
-        
+
         //Instantiate abilities
         for(i = 0; i < RPGMut.Abilities.Length; i++)
         {
@@ -356,12 +356,12 @@ simulated event BeginPlay()
         }
 
         LoadData(data);
-        
+
         if(AIBuild != None)
         {
             if(Bot(Controller) != None)
                 AIBuild.InitBot(Bot(Controller));
-        
+
             AIBuild.Build(Self);
         }
 
@@ -383,7 +383,7 @@ simulated event Destroyed()
 {
     local LinkedReplicationInfo LRI;
     local int i;
-    
+
     if(PRI != None)
     {
         if(PRI.CustomReplicationInfo == Self)
@@ -402,21 +402,21 @@ simulated event Destroyed()
             }
         }
     }
-    
+
     if(Role == ROLE_Authority)
     {
         for(i = 0; i < AllAbilities.Length; i++)
             AllAbilities[i].Destroy();
-    
+
         PlayerLevel.Destroy();
     }
-    
+
     if(Interaction != None)
         Interaction.Remove();
-    
+
     Interaction = None;
     RPGMut = None;
-    
+
     Status.Length = 0;
 }
 
@@ -424,16 +424,16 @@ simulated function ClientCreateStatusIcon(class<RPGStatusIcon> IconType)
 {
     local RPGStatusIcon Icon;
     local int i;
-    
+
     if(PlayerController(Controller) == None)
         return; //not for bots
-    
+
     for(i = 0; i < Status.Length; i++)
     {
         if(Status[i].class == IconType)
             return; //already got this one
     }
-    
+
     Icon = new IconType;
     Icon.RPRI = Self;
     Icon.Initialize();
@@ -443,7 +443,7 @@ simulated function ClientCreateStatusIcon(class<RPGStatusIcon> IconType)
 simulated function ClientRemoveStatusIcon(class<RPGStatusIcon> IconType)
 {
     local int i;
-    
+
     for(i = 0; i < Status.Length; i++)
     {
         if(Status[i].class == IconType)
@@ -458,7 +458,7 @@ simulated function ClientRemoveStatusIcon(class<RPGStatusIcon> IconType)
 simulated function class<RPGArtifact> GetArtifactClass(string ID)
 {
     local int i;
-    
+
     for(i = 0; i < AllArtifacts.Length; i++)
     {
         if(AllArtifacts[i].default.ArtifactID ~= ID)
@@ -470,14 +470,14 @@ simulated function class<RPGArtifact> GetArtifactClass(string ID)
 simulated event PostNetBeginPlay()
 {
     Super.PostNetBeginPlay();
-    
+
     if(Controller != None && Role == ROLE_Authority)
     {
         Controller.AdrenalineMax = Controller.default.AdrenalineMax; //fix the build switching exploit
         if(xPlayer(Controller) != None)
             AdjustCombos();
     }
-    
+
     if(Level.NetMode != NM_DedicatedServer)
         ClientSetup(); //try setup. if it fails, it's tried again every tick
 }
@@ -496,19 +496,19 @@ simulated function ClientSetup()
     RRI = class'RPGReplicationInfo'.static.Get(Level);
     if(Level.NetMode != NM_Standalone && RRI == None)
         return; //wait
-    
+
     PRI = Controller.PlayerReplicationInfo;
-    
+
     NextReplicationInfo = PRI.CustomReplicationInfo;
     PRI.CustomReplicationInfo = Self;
-    
+
     if(xPlayer(Controller) != None)
         AdjustCombos();
 
     if(Role < ROLE_Authority) //not offline
     {
         AbilitiesTotal = RRI.NumAbilities;
-    
+
         for(x = 0; x < RRI.MAX_Artifacts && RRI.Artifacts[x] != None; x++)
             AllArtifacts[x] = RRI.Artifacts[x];
     }
@@ -517,7 +517,7 @@ simulated function ClientSetup()
         AbilitiesTotal = RPGMut.Abilities.Length;
         AllArtifacts = RPGMut.Artifacts;
     }
-    
+
     if(PlayerController(Controller) != None)
     {
         Interaction = RPGInteraction(
@@ -531,7 +531,7 @@ simulated function ClientSetup()
             //build artifact order
             ArtifactOrder.Remove(0, ArtifactOrder.Length);
             ServerClearArtifactOrder();
-            
+
             if(Interaction.CharSettings != None)
             {
                 //load order from settings
@@ -543,7 +543,7 @@ simulated function ClientSetup()
                     OrderEntry.ArtifactID = Interaction.CharSettings.ArtifactOrderConfig[x].ArtifactID;
                     OrderEntry.bShowAlways = Interaction.CharSettings.ArtifactOrderConfig[x].bShowAlways;
                     OrderEntry.bNeverShow = Interaction.CharSettings.ArtifactOrderConfig[x].bNeverShow;
-                    
+
                     ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
                     ServerAddArtifactOrderEntry(OrderEntry);
                 }
@@ -574,7 +574,7 @@ simulated function ClientSetup()
                     OrderEntry.ArtifactClass = AllArtifacts[x];
                     OrderEntry.ArtifactID = AllArtifacts[x].default.ArtifactID;
                     OrderEntry.bShowAlways = false;
-                    
+
                     ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
                     ServerAddArtifactOrderEntry(OrderEntry);
                 }
@@ -586,7 +586,7 @@ simulated function ClientSetup()
 
     if(AbilitiesReceived >= AbilitiesTotal || Role == ROLE_Authority)
         ClientEnableRPGMenu();
-    
+
     bClientSetup = true;
 }
 
@@ -623,7 +623,7 @@ simulated final function AdjustCombos()
 simulated function int FindOrderEntry(class<RPGArtifact> AClass)
 {
     local int i;
-    
+
     for(i = 0; i < ArtifactOrder.Length; i++)
     {
         if(ArtifactOrder[i].ArtifactClass == AClass)
@@ -649,9 +649,9 @@ function ServerSortArtifacts()
             {
                 A = RPGArtifact(Inv);
                 CurrentArtifacts[CurrentArtifacts.Length] = A;
-                
+
                 Inv = A.Inventory;
-                
+
                 A.StripOut();
             }
             else
@@ -659,7 +659,7 @@ function ServerSortArtifacts()
                 Inv = Inv.Inventory;
             }
         }
-        
+
         //sort them back in
         for(i = 0; i < CurrentArtifacts.Length; i++)
             CurrentArtifacts[i].SortIn();
@@ -675,7 +675,7 @@ function ServerAddArtifactOrderEntry(ArtifactOrderStruct OrderEntry)
 {
     local int i;
     local Inventory Inv;
-    
+
     //find if already in the list
     for(i = 0; i < ArtifactOrder.Length; i++)
     {
@@ -686,7 +686,7 @@ function ServerAddArtifactOrderEntry(ArtifactOrderStruct OrderEntry)
     if(Controller.Pawn != None)
     {
         Inv = Controller.Pawn.FindInventoryType(OrderEntry.ArtifactClass);
-        
+
         if(Inv != None)
             Powerups(Inv).bActivatable = !OrderEntry.bNeverShow;
     }
@@ -702,7 +702,7 @@ simulated function ResendArtifactOrder()
     ServerClearArtifactOrder();
     for(i = 0; i < ArtifactOrder.Length; i++)
         ServerAddArtifactOrderEntry(ArtifactOrder[i]);
-    
+
     ServerSortArtifacts();
 }
 
@@ -711,7 +711,7 @@ function SaveCooldown(RPGArtifact A)
     local float TimeLeft;
     local ArtifactCooldown Cooldown;
     local int i;
-    
+
     if(A.NextUseTime > Level.TimeSeconds)
     {
         TimeLeft = A.NextUseTime - Level.TimeSeconds;
@@ -724,7 +724,7 @@ function SaveCooldown(RPGArtifact A)
                 return;
             }
         }
-        
+
         Cooldown.AClass = A.class;
         Cooldown.TimeLeft = TimeLeft;
         SavedCooldown[SavedCooldown.Length] = Cooldown;
@@ -734,29 +734,29 @@ function SaveCooldown(RPGArtifact A)
 function int GetSavedCooldown(class<RPGArtifact> AClass)
 {
     local int i;
-    
+
     for(i = 0; i < SavedCooldown.Length; i++)
     {
         if(AClass == SavedCooldown[i].AClass)
             return i;
     }
-    
+
     return -1;
 }
 
 function ModifyArtifact(RPGArtifact A)
 {
     local int i;
-    
+
     ClientCheckArtifactClass(A.class);
-    
+
     //Allow abilities to modify
     for(i = 0; i < Abilities.Length; i++)
     {
         if(Abilities[i].bAllowed)
             Abilities[i].ModifyArtifact(A);
     }
-    
+
     //Apply saved cooldown
     i = GetSavedCooldown(A.class);
     if(i >= 0)
@@ -764,7 +764,7 @@ function ModifyArtifact(RPGArtifact A)
         A.ForceCooldown(SavedCooldown[i].TimeLeft);
         SavedCooldown.Remove(i, 1);
     }
-    
+
     /*
         If bNeverShow setting is used, make it non-selectable
         bActivatable is unused by the artifact itself, but Powerups / PlayerController
@@ -785,7 +785,7 @@ simulated function ClientCheckArtifactClass(class<RPGArtifact> AClass)
         OrderEntry.ArtifactID = AClass.default.ArtifactID;
         OrderEntry.bShowAlways = false;
         OrderEntry.bNeverShow = false;
-        
+
         ArtifactOrder[ArtifactOrder.Length] = OrderEntry;
         ServerAddArtifactOrderEntry(OrderEntry);
         ServerSortArtifacts();
@@ -818,7 +818,7 @@ simulated function ReceiveAbility(RPGAbility Ability)
     {
         Warn("Received ability" @ Ability @ "twice!");
     }
-    
+
     if(AbilitiesReceived == AbilitiesTotal)
         ClientEnableRPGMenu();
 }
@@ -851,7 +851,7 @@ simulated event Tick(float dt)
     {
         if(!bClientSetup)
             ClientSetup();
-        
+
         if(SwitchToWeapon != None) //wait until it arrived in the inventory?
         {
             if(Controller.Pawn != None)
@@ -867,26 +867,26 @@ simulated event Tick(float dt)
                 }
             }
         }
-        
+
         //Tick status icons
         for(x = 0; x < Status.Length; x++) {
             if(Status[x].bShouldTick)
                 Status[x].Tick(dt);
         }
     }
-    
+
     if(Controller == None)
     {
         Destroy();
         return;
     }
-    
+
     CheckPlayerViewShake();
-    
+
     if(Role < ROLE_Authority) {
         ProcessProjectileMods();
     }
-    
+
     if(Role == ROLE_Authority)
     {
         //Check weapon
@@ -901,7 +901,7 @@ simulated event Tick(float dt)
                         //Log("Force set old weapon on translocator:" @ LastPawnWeapon);
                         W.OldWeapon = LastPawnWeapon;
                     }
-                
+
                     //Maybe stop weapon modifier
                     WM = class'RPGWeaponModifier'.static.GetFor(W);
                     if(WM != None && WM.bActive) {
@@ -909,24 +909,24 @@ simulated event Tick(float dt)
                         bWasActive = true;
                         WM.StopEffect();
                     }
-                    
+
                     //Apply modifiers
                     for(x = 0; x < Abilities.Length; x++)
                     {
                         if(Abilities[x].bAllowed)
                             Abilities[x].ModifyWeapon(W);
                     }
-                    
+
                     //Restart weapon modifier
                     if(WM != None && bWasActive) {
                         WM.StartEffect();
                     }
                 }
-                
+
                 LastPawnWeapon = W;
                 if(LastPawnWeapon != None) {
                     LastSelectedWeapon.WeaponClass = LastPawnWeapon.class;
-                    
+
                     WM = class'RPGWeaponModifier'.static.GetFor(LastPawnWeapon);
                     if(WM != None) {
                         LastSelectedWeapon.ModifierClass = WM.class;
@@ -940,7 +940,7 @@ simulated event Tick(float dt)
         {
             LastPawnWeapon = None;
         }
-        
+
         //Clean monsters
         x = 0;
         while(x < Monsters.Length)
@@ -1102,28 +1102,28 @@ function AwardExperience(float exp)
 {
     local FX_LevelUp Effect;
     local int Count;
-    
+
     if(exp == 0)
         return;
-    
+
     if(bGameEnded)
         return;
-    
+
     if(PlayerController(Controller) != None && Level.Game.NumPlayers < class'MutTURRPG'.default.MinHumanPlayersForExp)
         return;
-    
+
     if(RPGMut.GameSettings.ExpScale > 0.0)
         exp *= RPGMut.GameSettings.ExpScale; //scale xp gain
-    
+
     Experience = FMax(0.0, Experience + exp);
     ClientNotifyExpGain(exp);
-    
+
     if(!RPGMut.bLevelCap || RPGLevel < RPGMut.Levels.Length) //don't allow levelup when max level was reached
     {
         while(Experience >= NeededExp && Count < 10000)
         {
             Count++;
-            
+
             RPGLevel++;
             if(RPGLevel % RPGMut.StatPointsIncrement == 0)
                 StatPointsAvailable += RPGMut.StatPointsPerIncrement;
@@ -1131,7 +1131,7 @@ function AwardExperience(float exp)
                 AbilityPointsAvailable += RPGMut.AbilityPointsPerIncrement;
             Experience -= float(NeededExp);
             NeededExp = RPGMut.GetRequiredXpForLevel(RPGLevel);
-            
+
             if(Count <= RPGMut.MaxLevelupEffectStacking && Controller != None && Controller.Pawn != None)
             {
                 Effect = Controller.Pawn.spawn(class'FX_LevelUp', Controller.Pawn);
@@ -1139,24 +1139,24 @@ function AwardExperience(float exp)
                 Effect.Initialize();
             }
         }
-        
+
         if(Count > 0)
         {
             if(Controller != None && Controller.Pawn != None) {
                 Controller.Pawn.PlaySound(LevelUpSound, SLOT_Interact, 1.0,, 1024);
             }
-        
+
             Level.Game.BroadCastLocalized(Self, class'LocalMessage_LevelUp', RPGLevel, PRI);
             ClientShowHint(LevelUpText);
-            
+
             if(AIBuild != None)
                 AIBuild.Build(Self);
-            
+
             PlayerLevel.RPGLevel = RPGLevel;
             PlayerLevel.ExpNeeded = NeededExp;
         }
     }
-    
+
     PlayerLevel.Experience = Experience;
 }
 
@@ -1184,7 +1184,7 @@ simulated function ClientEnableRPGMenu()
             break;
         }
     }
-    
+
     bClientSyncDone = true;
     if(Interaction != None)
     {
@@ -1196,7 +1196,7 @@ simulated function ClientEnableRPGMenu()
 simulated function int HasAbility(class<RPGAbility> AbilityClass, optional bool bIgnoreIfNotAllowed)
 {
     local int x;
-    
+
     for(x = 0; x < Abilities.Length; x++)
     {
         if(Abilities[x].class == AbilityClass) {
@@ -1213,7 +1213,7 @@ simulated function int HasAbility(class<RPGAbility> AbilityClass, optional bool 
 simulated function RPGAbility GetOwnedAbility(class<RPGAbility> AbilityClass)
 {
     local int x;
-    
+
     for(x = 0; x < Abilities.Length; x++)
     {
         if(Abilities[x].class == AbilityClass) {
@@ -1230,7 +1230,7 @@ simulated function RPGAbility GetOwnedAbility(class<RPGAbility> AbilityClass)
 simulated function RPGAbility GetAbility(class<RPGAbility> AbilityClass)
 {
     local int x;
-    
+
     for(x = 0; x < AllAbilities.Length; x++)
     {
         if(AllAbilities[x].class == AbilityClass)
@@ -1260,7 +1260,7 @@ function AddThrownWeapon(class<Weapon> WeaponClass) {
 
 function RemoveThrownWeapon(class<Weapon> WeaponClass) {
     local int i;
-    
+
     for(i = 0; i < ThrownWeapons.Length; i++) {
         if(ThrownWeapons[i] == WeaponClass) {
             ThrownWeapons.Remove(i, 1);
@@ -1271,7 +1271,7 @@ function RemoveThrownWeapon(class<Weapon> WeaponClass) {
 
 function bool HasThrownWeapon(class<Weapon> WeaponClass) {
     local int i;
-    
+
     for(i = 0; i < ThrownWeapons.Length; i++) {
         if(ThrownWeapons[i] == WeaponClass) {
             return true;
@@ -1282,7 +1282,7 @@ function bool HasThrownWeapon(class<Weapon> WeaponClass) {
 
 function AnnounceMyRole() {
     local Controller C;
-    
+
     if(RPGBot(Controller) != None) {
         for(C = Level.ControllerList; C != None; C = C.NextController) {
             if(C.SameTeamAs(Controller) && PlayerController(C) != None) {
@@ -1294,7 +1294,7 @@ function AnnounceMyRole() {
 
 function AnnounceBotRoles() {
     local Controller C;
-    
+
     if(PlayerController(Controller) != None) {
         for(C = Level.ControllerList; C != None; C = C.NextController) {
             if(C.SameTeamAs(Controller) && RPGBot(C) != None) {
@@ -1308,18 +1308,18 @@ function ModifyPlayer(Pawn Other)
 {
     local Inventory Inv;
     local int i;
-    
+
     if(Level.Game.bTeamGame)
         Team = PRI.Team.TeamIndex;
 
     //must be emptied to avoid lifetime PDP "protection"...
     ThrownWeapons.Length = 0;
-    
+
     if(Other != Controller.Pawn)
     {
-        Log("RPGReplicationInfo was told to modify a Pawn that doesn't belong to this RPRI's Controller! Pawn is " $ 
+        Log("RPGReplicationInfo was told to modify a Pawn that doesn't belong to this RPRI's Controller! Pawn is " $
             Other.GetHumanReadableName() $ ", RPRI belongs to " $ PRI.PlayerName, 'TURRPG');
-            
+
         return;
     }
 
@@ -1329,7 +1329,7 @@ function ModifyPlayer(Pawn Other)
         if(Abilities[i].bAllowed)
             Abilities[i].ModifyPawn(Other);
     }
-    
+
     ProcessGrantQueue(); //give weapons
 
     //Restore last selected weapon
@@ -1354,7 +1354,7 @@ function ModifyPlayer(Pawn Other)
         AnnounceBotRoles();
     }
     bTeamChanged = false;
-    
+
     //Restore last selected artifact
     if(LastSelectedPowerupType != None)
     {
@@ -1362,7 +1362,7 @@ function ModifyPlayer(Pawn Other)
         if(Inv != None)
             Other.SelectedItem = Powerups(Inv);
     }
-    
+
     if(Other.SelectedItem == None) //if not possible, do this
         Other.NextItem();
 }
@@ -1370,13 +1370,13 @@ function ModifyPlayer(Pawn Other)
 function AddMonster(Monster M) {
     Monsters[Monsters.Length] = M;
     NumMonsters++;
-    
+
     ModifyMonster(M);
 }
 
 function ModifyMonster(Monster M) {
     local int i;
-    
+
     for(i = 0; i < Abilities.Length; i++) {
         if(Abilities[i].bAllowed)
             Abilities[i].ModifyMonster(M, Controller.Pawn);
@@ -1389,7 +1389,7 @@ function ServerKillMonsters()
     {
         if(Monsters[0] != None)
             Monsters[0].Suicide();
-        
+
         Monsters.Remove(0, 1);
     }
     NumMonsters = 0;
@@ -1681,7 +1681,7 @@ function ServerResetData()
     local string OwnerID;
 
     Log(PRI.PlayerName $ " - RESET!", 'TURRPG2');
-    
+
     Reset();
 
     OwnerID = DataObject.ID;
@@ -1694,10 +1694,10 @@ function ServerResetData()
     DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
     DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
     DataObject.XN = RPGMut.GetRequiredXpForLevel(DataObject.LV);
-    
+
     DataObject.AA = 0;
     DataObject.AI = "";
-    
+
     DataObject.SaveConfig();
 
     Level.Game.BroadCastLocalized(Self, class'LocalMessage_Reset', 0, PRI);
@@ -1706,7 +1706,7 @@ function ServerResetData()
     Controller.Adrenaline = 0;
     if(Controller.Pawn != None)
         Controller.Pawn.Suicide();
-    
+
     Destroy();
 }
 
@@ -1718,38 +1718,38 @@ function ServerRebuildData()
     if(bAllowRebuild)
     {
         Log(PRI.PlayerName $ " - REBUILD!", 'TURRPG2');
-        
+
         Reset();
-        
+
         DataObject.AB.Length = 0;
         DataObject.AL.Length = 0;
-        
+
         CostLeft = float(RPGMut.RebuildCost);
         while(DataObject.XP < CostLeft && DataObject.LV > RPGMut.StartingLevel && LevelLoss < RPGMut.RebuildMaxLevelLoss)
         {
             CostLeft -= DataObject.XP;
-            
+
             DataObject.LV--;
             DataObject.XP = RPGMut.GetRequiredXpForLevel(DataObject.LV);
-            
+
             LevelLoss++;
         }
         DataObject.XP = FMax(0.0f, DataObject.XP - CostLeft);
-        
+
         DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
         DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
         DataObject.XN = RPGMut.GetRequiredXpForLevel(DataObject.LV);
-        
+
         DataObject.SaveConfig();
-        
+
         Level.Game.BroadCastLocalized(Self, class'LocalMessage_Rebuild', 0, PRI);
         if(LevelLoss > 0)
             Level.Game.BroadCastLocalized(Self, class'LocalMessage_LevelUp', DataObject.LV, PRI);
-        
+
         Controller.Adrenaline = 0;
         if(Controller.Pawn != None)
             Controller.Pawn.Suicide();
-        
+
         Destroy();
     }
 }
@@ -1757,7 +1757,7 @@ function ServerRebuildData()
 function SetLevel(int NewLevel)
 {
     Log(PRI.PlayerName $ " - SETLEVEL" @ NewLevel $ "!", 'TURRPG2');
-    
+
     DataObject.LV = NewLevel;
     DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
     DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
@@ -1766,13 +1766,13 @@ function SetLevel(int NewLevel)
     DataObject.AB.Length = 0;
     DataObject.AL.Length = 0;
     DataObject.SaveConfig();
-    
+
     Level.Game.BroadCastLocalized(Self, class'LocalMessage_LevelUp', NewLevel, PRI);
-    
+
     Controller.Adrenaline = 0;
     if(Controller.Pawn != None)
         Controller.Pawn.Suicide();
-    
+
     Destroy();
 }
 
@@ -1797,7 +1797,7 @@ function ServerActivateArtifact(string ArtifactID)
 function ServerGetArtifact(string ArtifactID)
 {
     local Inventory Inv;
-    
+
     if(Controller.Pawn != None)
     {
         if(
@@ -1806,7 +1806,7 @@ function ServerGetArtifact(string ArtifactID)
         {
             return;
         }
-        
+
         for(Inv = Controller.Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
         {
             if(RPGArtifact(Inv) != None &&
@@ -1822,7 +1822,7 @@ function ServerGetArtifact(string ArtifactID)
 simulated function PerformWeaponSwitch(Weapon W)
 {
     local Pawn Pawn;
-    
+
     Pawn = Controller.Pawn;
     if(Pawn != None && Vehicle(Pawn) == None)
     {
@@ -1863,7 +1863,7 @@ function PickAIBuild()
 
     if(AIBuild != None || AIController(Controller) == None)
         return;
-    
+
     if(DataObject.AI == "")
     {
         List = class'RPGData'.static.GetPerObjectNames("TURRPGAI", string(class'RPGAIBuild'.name));
@@ -1871,7 +1871,7 @@ function PickAIBuild()
         {
             DataObject.AI = List[Rand(List.Length)];
             DataObject.AA = 0;
-            
+
             Log(PRI.PlayerName @ "has picked the AIBuild \"" $ DataObject.AI $ "\".", 'TURRPG2');
         }
         else
@@ -1880,7 +1880,7 @@ function PickAIBuild()
             return;
         }
     }
-    
+
     if(DataObject.AI != "")
     {
         AIBuild = new(None, DataObject.AI) class'RPGAIBuild';
@@ -1901,9 +1901,9 @@ function LoadData(RPGData Data)
     AbilityPointsAvailable = DataObject.APA;
     Experience = DataObject.XP;
     NeededExp = DataObject.XN;
-    
+
     Abilities.Remove(0, Abilities.Length);
-    
+
     for(x = 0; x < DataObject.AB.Length; x++)
     {
         Ability = GetAbility(RPGMut.ResolveAbility(DataObject.AB[x]));
@@ -1918,7 +1918,7 @@ function LoadData(RPGData Data)
             Warn("Could not find ability \"" $ DataObject.AB[x] $ "\"");
         }
     }
-    
+
     ModifyStats();
     PickAIBuild();
 }
@@ -1926,10 +1926,10 @@ function LoadData(RPGData Data)
 function SaveData()
 {
     local int x;
-    
+
     if(bImposter)
         return;
-    
+
     Log(RPGName @ "SaveData");
 
     DataObject.LV = RPGLevel;
@@ -1940,7 +1940,7 @@ function SaveData()
 
     DataObject.AB.Remove(0, DataObject.AB.Length);
     DataObject.AL.Remove(0, DataObject.AL.Length);
-    
+
     for(x = 0; x < Abilities.Length; x++)
     {
         DataObject.AB[x] = RPGMut.GetAbilityAlias(Abilities[x].class);
@@ -1967,13 +1967,13 @@ function bool AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> Mo
 {
     local RPGCharSettings.FavoriteWeaponStruct FW;
     local int i;
-    
+
     for(i = 0; i < FavoriteWeapons.Length; i++) {
         if(FavoriteWeapons[i].WeaponClass == WeaponClass && FavoriteWeapons[i].ModifierClass == ModifierClass) {
             return false;
         }
     }
-    
+
     FW.WeaponClass = WeaponClass;
     FW.ModifierClass = ModifierClass;
 
@@ -1986,7 +1986,7 @@ function bool AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> Mo
 function bool RemoveFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
 {
     local int i;
-    
+
     for(i = 0; i < FavoriteWeapons.Length; i++) {
         if(FavoriteWeapons[i].WeaponClass == WeaponClass && FavoriteWeapons[i].ModifierClass == ModifierClass) {
             FavoriteWeapons.Remove(i, 1);
@@ -2009,22 +2009,22 @@ function GrantQueuedWeapon(GrantWeapon GW) {
         if(GW.ModifierClass == None && !GW.bForce) {
             GW.ModifierClass = RPGMut.GetRandomWeaponModifier(
                 GW.WeaponClass, Controller.Pawn);
-            
+
             GW.Modifier = -100;
         }
-    
+
         if(GW.ModifierClass != None) {
             WM = GW.ModifierClass.static.Modify(W, GW.Modifier, GW.bForce || RPGMut.GameSettings.bNoUnidentified);
         }
-    
+
         //W.GiveTo(Controller.Pawn);
         class'Util'.static.ForceGiveTo(Controller.Pawn, W);
         W.FillToInitialAmmo();
-        
+
         if(GW.Ammo[0] > 0) {
             class'Util'.static.SetWeaponAmmo(W, 0, GW.Ammo[0]);
         }
-        
+
         if(GW.Ammo[1] > 0 && W.GetAmmoClass(1) != W.GetAmmoClass(0)) {
             class'Util'.static.SetWeaponAmmo(W, 1, GW.Ammo[1]);
         }
@@ -2038,24 +2038,24 @@ function GrantQueuedWeapon(GrantWeapon GW) {
 function ProcessGrantQueue()
 {
     local int i;
-    
+
     if(Controller.Pawn == None)
         return;
-    
+
     if(GrantFavQueue.Length == 0 && GrantQueue.Length == 0)
         return;
 
     //grant favorite weapons first
     for(i = 0; i < GrantFavQueue.Length; i++)
         GrantQueuedWeapon(GrantFavQueue[i]);
-    
+
     GrantFavQueue.Length = 0;
-    
+
     //now try the others
     for(i = 0; i < GrantQueue.Length; i++) {
         GrantQueuedWeapon(GrantQueue[i]);
     }
-    
+
     GrantQueue.Length = 0;
 }
 
@@ -2064,10 +2064,10 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
 {
     local int i;
     local GrantWeapon GW;
-    
+
     WeaponClass = class<Weapon>(DynamicLoadObject(
         RPGMut.GetInventoryClassOverride(string(WeaponClass)), class'Class'));
-    
+
     for(i = 0; i < Abilities.Length; i++) {
         if(Abilities[i].bAllowed) {
             if(!bForce) {
@@ -2075,7 +2075,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
                     return; //not granted
                 }
             }
-            
+
             Abilities[i].OverrideGrantedWeaponAmmo(WeaponClass, Ammo1, Ammo2);
         }
     }
@@ -2086,7 +2086,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
     GW.Ammo[0] = Ammo1;
     GW.Ammo[1] = Ammo2;
     GW.bForce = bForce;
-    
+
     if(IsFavorite(WeaponClass, ModifierClass)) {
         if(!bForce) {
             for(i = 0; i < GrantFavQueue.Length; i++) {
@@ -2098,7 +2098,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
                     if(GW.Modifier > GrantFavQueue[i].Modifier) {
                         GrantFavQueue[i].Modifier = GW.Modifier;
                     }
-                    
+
                     if(GW.Ammo[0] == -1 || GW.Ammo[0] > GrantFavQueue[i].Ammo[0]) {
                         GrantFavQueue[i].Ammo[0] = GW.Ammo[0];
                     }
@@ -2106,12 +2106,12 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
                     if(GW.Ammo[1] == -1 || GW.Ammo[1] > GrantFavQueue[i].Ammo[1]) {
                         GrantFavQueue[i].Ammo[1] = GW.Ammo[1];
                     }
-                    
+
                     return;
                 }
             }
         }
-        
+
         GrantFavQueue[GrantFavQueue.Length] = GW;
     } else {
         if(!bForce) {
@@ -2124,7 +2124,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
                     if(GW.Modifier > GrantQueue[i].Modifier) {
                         GrantQueue[i].Modifier = GW.Modifier;
                     }
-                
+
                     if(GW.Ammo[0] == -1 || GW.Ammo[0] > GrantQueue[i].Ammo[0]) {
                         GrantQueue[i].Ammo[0] = GW.Ammo[0];
                     }
@@ -2137,7 +2137,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
                 }
             }
         }
-        
+
         GrantQueue[GrantQueue.Length] = GW;
     }
 }
@@ -2146,7 +2146,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
 simulated function bool IsFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass, optional bool bWeaponOnly)
 {
     local int i;
-    
+
     for(i = 0; i < FavoriteWeapons.Length; i++)
     {
         if(
@@ -2184,13 +2184,13 @@ simulated function ProcessProjectileMods() {
                 }
             }
         }
-        
+
         if(Closest != None) {
             ModifyProjectiles.Remove(i, 1);
-            
+
             Multiplier = Mod.Vel / VSize(Closest.Velocity);
             //Log("Match (" $ (Mod.NumTicks + 1) $ ", " $ ClosestDist $ "):" @ Closest @ "*" @ Multiplier);
-            
+
             Closest.Tag = Mod.Flag;
             Closest.SetLocation(Mod.Location); //TODO: interpolate?
             class'Util'.static.ModifyProjectileSpeed(Closest, Multiplier, Mod.Flag, Mod.FXClass);
@@ -2206,19 +2206,19 @@ simulated function ProcessProjectileMods() {
 
 simulated function ClientSyncProjectile(vector Location, class<Projectile> Type, Pawn Instigator, float Vel, name Flag, class<Emitter> FXClass) {
     local ProjectileMod Mod;
-    
+
     //Log("ClientSyncProjectile" @ Location @ Type @ Instigator);
-    
+
     if(Role < ROLE_Authority) {
         Mod.NumTicks = 0;
         Mod.Location = Location;
         Mod.Type = Type;
         Mod.Instigator = Instigator;
-        
+
         Mod.Vel = Vel;
         Mod.Flag = Flag;
         Mod.FXClass = FXClass;
-        
+
         ModifyProjectiles[ModifyProjectiles.Length] = Mod;
     }
 }

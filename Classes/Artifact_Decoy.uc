@@ -19,10 +19,10 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_OnlyInVehicle:
             return default.OnlyInVehicleText;
-        
+
         case MSG_OnlyOneAtATime:
             return default.OnlyOneAtATimeText;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -41,11 +41,11 @@ function bool CanActivate()
         Msg(MSG_OnlyInVehicle);
         return false;
     }
-    
+
     return Super.CanActivate();
 }
 
-function bool DoEffect()    
+function bool DoEffect()
 {
     local rotator Dir;
 
@@ -56,11 +56,11 @@ function bool DoEffect()
 
     Decoy = Instigator.Spawn(
         class'RPGDecoy',
-        Instigator, , 
+        Instigator, ,
         Instigator.Location + Instigator.CollisionRadius * vector(Dir),
         Dir
     );
-    
+
     return (Decoy != None);
 }
 

@@ -21,10 +21,10 @@ var localized string MsgRestriction, SelectionTitle;
 replication {
     reliable if(Role == ROLE_Authority && bNetDirty)
         PendingWeapon;
-    
+
     reliable if(Role == ROLE_Authority)
         ClientPrepareWeaponSwitch, ClientReceiveTurret;
-    
+
     unreliable if(Role < ROLE_Authority)
         ServerNotify;
 }
@@ -35,7 +35,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_Restriction:
             return default.MsgRestriction;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -46,7 +46,7 @@ function GiveTo(Pawn Other, optional Pickup Pickup)
     local int i;
 
     Super.GiveTo(Other, Pickup);
-    
+
     for(i = 0; i < Turrets.Length; i++) {
         ClientReceiveTurret(i, Turrets[i]);
     }
@@ -75,7 +75,7 @@ function bool CanActivate()
 
     if(!Super.CanActivate())
         return false;
-    
+
     return true;
 }
 
@@ -85,29 +85,29 @@ function bool DoEffect() {
 
     Scorp = ONSRV(Instigator);
     PendingWeapon = Scorp.Spawn(SelectedType, Scorp,, Scorp.Location, rot(0,0,0));
-    
+
     if(PendingWeapon != None) {
         OldWeapon = Scorp.Weapons[0];
-    
+
         Scorp.Weapons[0] = PendingWeapon;
         Scorp.AttachToBone(PendingWeapon, 'ChainGunAttachment');
-        
+
         PendingWeapon.bActive = OldWeapon.bActive;
         PendingWeapon.Team = OldWeapon.Team;
         PendingWeapon.bForceCenterAim = OldWeapon.bForceCenterAim;
         PendingWeapon.bCallInstigatorPostRender = OldWeapon.bCallInstigatorPostRender;
         PendingWeapon.LastHitLocation = OldWeapon.LastHitLocation;
         PendingWeapon.HitCount = OldWeapon.HitCount;
-        
+
         ClientPrepareWeaponSwitch();
         OldWeapon.Destroy();
-        
+
         //Re-Modify vehicle (will only work server-side at this point)
         if(InstigatorRPRI != None) {
             InstigatorRPRI.DriverLeftVehicle(Scorp, Scorp.Driver);
             InstigatorRPRI.DriverEnteredVehicle(Scorp, Scorp.Driver);
         }
-        
+
         return true;
     } else {
         return false;
@@ -116,7 +116,7 @@ function bool DoEffect() {
 
 simulated function ClientPrepareWeaponSwitch() {
     local ONSRV Scorp;
-    
+
     Scorp = ONSRV(Instigator);
     if(Role < ROLE_Authority) {
         OldAim = Scorp.Weapons[0].CurrentAim;
@@ -126,17 +126,17 @@ simulated function ClientPrepareWeaponSwitch() {
 
 simulated event PostNetReceive() {
     local ONSRV Scorp;
-    
+
     Scorp = ONSRV(Instigator);
     if(Role < ROLE_Authority && Scorp != None && PendingWeapon != None && Scorp.Weapons.Length == 0) {
         Scorp.Weapons[0] = PendingWeapon;
-        
+
         Scorp.PitchUpLimit = PendingWeapon.PitchUpLimit;
         Scorp.PitchDownLimit = PendingWeapon.PitchDownLimit;
-        
+
         PendingWeapon.CurrentAim = OldAim;
         Scorp.bShowChargingBar = PendingWeapon.bShowChargingBar;
-        
+
         ServerNotify();
     }
 }
@@ -151,7 +151,7 @@ function ServerNotify() {
             InstigatorRPRI.DriverLeftVehicle(Scorp, Scorp.Driver);
             InstigatorRPRI.DriverEnteredVehicle(Scorp, Scorp.Driver);
         }
-        
+
         //Synchronize skin to all players
         class'Sync_ScorpionTurret'.static.Sync(Scorp, PendingWeapon);
     }
@@ -186,7 +186,7 @@ simulated function int GetOptionCost(int i) {
 function int SelectBestOption() {
     local Controller C;
     local int i;
-    
+
     C = Instigator.Controller;
     if(C != None) {
         //The AI assumes that the best options are listed last
@@ -195,7 +195,7 @@ function int SelectBestOption() {
                 return i;
             }
         }
-        
+
         //None
         return -1;
     } else {
@@ -209,7 +209,7 @@ defaultproperties
     MsgRestriction="You can only use this artifact inside a Scorpion."
 
     bNetNotify=true
-    
+
     bSelection=true
 
     ArtifactID="ScorpionTurret"

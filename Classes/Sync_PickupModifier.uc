@@ -27,13 +27,13 @@ static function Sync_PickupModifier Sync(WeaponPickup Pickup, class<RPGWeaponMod
     if(Pickup.DrawType != DT_Mesh) {
         Pickup.LinkMesh(AttachmentClass.default.Mesh);
         Pickup.SetDrawType(DT_Mesh);
-        
+
         if(ClassIsChildOf(AttachmentClass, class'xWeaponAttachment') &&
             AttachmentClass.default.DrawScale != class'xWeaponAttachment'.default.DrawScale) {
-        
+
             Pickup.SetDrawScale(AttachmentClass.default.DrawScale);
         }
-        
+
         Pickup.SetRotation(Pickup.Rotation + rot(0, 0, 32768) + AttachmentClass.default.RelativeRotation);
     }
     Sync.ClientFunction();

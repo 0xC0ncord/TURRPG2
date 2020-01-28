@@ -13,7 +13,7 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
     {
         case MSG_OnlySolidGround:
             return default.OnlySolidGroundText;
-    
+
         default:
             return Super.GetMessageString(Msg, Value, Obj);
     }
@@ -40,12 +40,12 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-    
+
         if (PlayerController(Instigator.Controller) != None)
             Instigator.Controller.GotoState('PlayerSpidering');
         else
             Instigator.SetPhysics(PHYS_Spider);
-    
+
         FlightTrail = Instigator.spawn(class'FX_Flight', Instigator);
         Retry = 0;
         SetTimer(0.15, true);
@@ -84,7 +84,7 @@ state Activated
     {
         SetTimer(0, true);
         Retry = 0;
-        
+
         if(Instigator != None && Instigator.DrivenVehicle == None)
         {
             Instigator.SetPhysics(PHYS_Falling);
@@ -93,7 +93,7 @@ state Activated
 
         if(FlightTrail != None)
             FlightTrail.Kill();
-            
+
         Super.EndState();
     }
 }

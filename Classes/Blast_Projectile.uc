@@ -13,14 +13,14 @@ function DoEffect() {
     local vector Dir;
     local Projectile Proj;
     local int i;
-    
+
     for(i = 0; i < NumProjectiles; i++) {
         Dir = VRand();
-        
+
         if(bOnlyUpwards && Dir.Z < 0) {
             Dir.Z = -Dir.Z;
         }
-        
+
         Proj = Instigator.Spawn(ProjectileClass,,, Location + Dir * SpawnRadius, rotator(Dir));
 
         if(Proj != None) {

@@ -2,7 +2,7 @@
 class DummyWeapon_CounterShove extends Weapon
     HideDropDown
     CacheExempt;
-    
+
 defaultproperties
 {
     ItemName="Counter Shove"

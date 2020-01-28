@@ -27,7 +27,7 @@ var localized string Text_Open;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
-    
+
     lbArtifacts.List.bDropSource = false;
     lbArtifacts.List.bDropTarget = false;
     lbArtifacts.List.bMultiSelect = false;
@@ -72,7 +72,7 @@ function InitMenu()
 
     lbArtifacts.List.bNotify = false;
     lbArtifacts.List.Clear();
-    
+
     bShowAll = true;
     for(i = 0; i < RPGMenu.RPRI.ArtifactOrder.Length; i++)
     {
@@ -85,7 +85,7 @@ function InitMenu()
         else
             lbArtifacts.List.Add(NotAvailableText @ RPGMenu.RPRI.ArtifactOrder[i].ArtifactID, None);
     }
-    
+
     bIgnoreNextChange = true;
     chShowAll.Checked(bShowAll);
     bIgnoreNextChange = false;
@@ -103,22 +103,22 @@ function CloseMenu()
     {
         Settings = RPGMenu.RPRI.Interaction.CharSettings;
         Settings.ArtifactOrderConfig.Length = 0;
-        
+
         for(i = 0; i < RPGMenu.RPRI.ArtifactOrder.Length; i++)
         {
             OrderConfigEntry.ArtifactID = RPGMenu.RPRI.ArtifactOrder[i].ArtifactID;
             OrderConfigEntry.bShowAlways = RPGMenu.RPRI.ArtifactOrder[i].bShowAlways;
             OrderConfigEntry.bNeverShow = RPGMenu.RPRI.ArtifactOrder[i].bNeverShow;
-            
+
             Settings.ArtifactOrderConfig[Settings.ArtifactOrderConfig.Length] = OrderConfigEntry;
         }
-        
+
         if(bOrderChanged && RPGMenu.RPRI != None)
         {
             RPGMenu.RPRI.ResendArtifactOrder();
             bOrderChanged = false;
         }
-        
+
         bDirty = false;
     }
 }
@@ -126,15 +126,15 @@ function CloseMenu()
 function SelectArtifact()
 {
     local class<RPGArtifact> AClass;
-    
+
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
-    
+
     AClass = class<RPGArtifact>(lbArtifacts.List.GetObjectAtIndex(lbArtifacts.List.Index));
     if(AClass != None)
     {
         sbArtifact.Caption = AClass.default.ItemName;
         lbDesc.setContent(AClass.static.GetArtifactNameExtra());
-        
+
         imIcon.Image = Texture(AClass.default.IconMaterial);
         imIcon.SetVisibility(true);
     }
@@ -146,7 +146,7 @@ function SelectArtifact()
     }
 
     SelectedOrderEntry = lbArtifacts.List.Index;
-    
+
     bIgnoreNextChange = true;
     chShowAlways.Checked(RPGMenu.RPRI.ArtifactOrder[SelectedOrderEntry].bShowAlways);
     chNeverShow.Checked(RPGMenu.RPRI.ArtifactOrder[SelectedOrderEntry].bNeverShow);
@@ -157,7 +157,7 @@ function InternalOnChange(GUIComponent Sender)
 {
     local int i;
     local bool bShowAll;
-    
+
     if(bIgnoreNextChange)
         return;
 
@@ -167,7 +167,7 @@ function InternalOnChange(GUIComponent Sender)
     {
         case chShowAlways:
             RPGMenu.RPRI.ArtifactOrder[SelectedOrderEntry].bShowAlways = chShowAlways.IsChecked();
-            
+
             bShowAll = true;
             for(i = 0; i < RPGMenu.RPRI.ArtifactOrder.Length; i++)
                 bShowAll = bShowAll && RPGMenu.RPRI.ArtifactOrder[i].bShowAlways;
@@ -175,24 +175,24 @@ function InternalOnChange(GUIComponent Sender)
             bIgnoreNextChange = true;
             chShowAll.Checked(bShowAll);
             bIgnoreNextChange = false;
-            
+
             bDirty = true;
             break;
-        
+
         case chNeverShow:
             RPGMenu.RPRI.ArtifactOrder[SelectedOrderEntry].bNeverShow = chNeverShow.IsChecked();
             bDirty = true;
             bOrderChanged = true; //will need to resend order data once applied
             break;
-        
+
         case chShowAll:
             for(i = 0; i < RPGMenu.RPRI.ArtifactOrder.Length; i++)
                 RPGMenu.RPRI.ArtifactOrder[i].bShowAlways = chShowAll.IsChecked();
-            
+
             bIgnoreNextChange = true;
             chShowAlways.Checked(chShowAll.IsChecked());
             bIgnoreNextChange = false;
-            
+
             bDirty = true;
             break;
 
@@ -225,14 +225,14 @@ function bool Clicked(GUIComponent Sender)
 function SwapArtifacts(int i, int x)
 {
     local RPGPlayerReplicationInfo.ArtifactOrderStruct OrderEntry;
-    
+
     OrderEntry = RPGMenu.RPRI.ArtifactOrder[i];
     RPGMenu.RPRI.ArtifactOrder[i] = RPGMenu.RPRI.ArtifactOrder[x];
     RPGMenu.RPRI.ArtifactOrder[x] = OrderEntry;
-    
+
     lbArtifacts.List.Swap(i, x);
     lbArtifacts.List.SetIndex(x);
-    
+
     SelectedOrderEntry = lbArtifacts.List.Index;
     bDirty = true;
     bOrderChanged = true;
@@ -268,7 +268,7 @@ defaultproperties
         OnPreDraw=sbArtifactOrder_.InternalPreDraw
     End Object
     sbArtifactOrder=GUISectionBackground'sbArtifactOrder_'
-    
+
     Begin Object Class=AltSectionBackground Name=sbArtifact_
         Caption=""
         LeftPadding=0.000000
@@ -280,7 +280,7 @@ defaultproperties
         OnPreDraw=sbArtifact_.InternalPreDraw
     End Object
     sbArtifact=GUISectionBackground'sbArtifact_'
-    
+
     Begin Object Class=AltSectionBackground Name=sbGlobalSettings_
         Caption="Global Settings"
         LeftPadding=0.000000
@@ -305,7 +305,7 @@ defaultproperties
         TabOrder=1
     End Object
     lbArtifacts=WeaponPrefWeapList
-    
+
     Begin Object Class=GUIGFXButton Name=WeaponPrefWeapUp
         Hint="Move artifact up in the order."
         WinWidth=0.041017
@@ -345,7 +345,7 @@ defaultproperties
         ImageIndex=7
     End Object
     btDown=WeaponPrefWeapDown
-    
+
     Begin Object Class=GUIScrollTextBox Name=WeaponDescription
         WinWidth=0.388324
         WinHeight=0.120566
@@ -362,7 +362,7 @@ defaultproperties
         StyleName="NoBackground"
     End Object
     lbDesc=WeaponDescription
-    
+
     Begin Object class=moCheckBox Name=ShowAlwaysCheckbox
         WinWidth=0.242672
         WinHeight=0.042105
@@ -398,7 +398,7 @@ defaultproperties
         OnChange=RPGMenu_Artifacts.InternalOnChange
     End Object
     chNeverShow=NeverShowCheckbox
-    
+
     Begin Object class=GUIImage Name=GameCrossHairImage
         WinWidth=0.079098
         WinHeight=0.120794
@@ -427,7 +427,7 @@ defaultproperties
         bScaleToParent=True
     End Object
     lbGlobalSettings=GUIMultiOptionListBox'RPGMenu_Artifacts.lbGlobalSettings_'
-    
+
     Text_HintShowAll="Quickly toggles Show always for all artifacts."
     Text_HintRadialMenu="Edit artifact radial menu settings."
     Text_Open="Open"

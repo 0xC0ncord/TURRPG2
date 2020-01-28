@@ -17,10 +17,10 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     {
         //Prepend package name to class name
         Panels[i].ClassName = "TURRPG2." $ Panels[i].ClassName;
-        
+
         Tabs.AddTabItem(Panels[i]);
     }
-    
+
     t_WindowTitle.SetCaption(WindowTitle);
     t_WindowTitle.DockedTabs = Tabs;
 }
@@ -84,7 +84,7 @@ defaultproperties
     bMoveAllowed=False
     bPersistent=True
     bAllowedAsLast=True
-    
+
     WinLeft=0.10
     WinTop=0.10
     WinWidth=0.80

@@ -5,7 +5,7 @@ var Ability_MedicAwareness Ability;
 
 event Initialized() {
     local int i;
-    
+
     Super.Initialized();
 
     for(i = 0; i < ViewportOwner.LocalInteractions.Length; i++) {
@@ -29,15 +29,15 @@ function PostRender(Canvas C) {
     if(Ability == None || Ability.AbilityLevel <= 0) {
         return;
     }
-    
+
     if(ViewportOwner.Actor.Pawn == None || ViewportOwner.Actor.Pawn.Health <= 0) {
         return;
     }
 
     HealMax = class'Ability_LoadedMedic'.default.LevelCap[class'Ability_LoadedMedic'.default.MaxLevel - 1];
-    
+
     xPC = xPlayer(ViewportOwner.Actor);
-    
+
     FarAwayInv = 1.0f / TeamBeaconMaxDist;
 
     for(i = 0; i < Ability.Teammates.Length; i++) {
@@ -55,16 +55,16 @@ function PostRender(Canvas C) {
                     continue;
                 }
             }
-            
+
             //Beacon scale
             Scale = FClamp(0.28f * (ScaledDist - Dist) / ScaledDist, 0.1f, 0.25f);
-            
+
             //Draw height
             Height = P.CollisionHeight * FClamp(0.85f + Dist * 0.85f * FarAwayInv, 1.1f, 1.75f);
-            
+
             //Offset, including the team beacon and text!
             ScreenPos = C.WorldToScreen(P.Location + Height * vect(0, 0, 1));
-            
+
             //Check if speaking (see UnPawn.cpp)
             if(
                 xPC != None &&
@@ -82,33 +82,33 @@ function PostRender(Canvas C) {
                         }
                     }
                 }
-                
+
                 if(BeaconTexture == None) {
                     BeaconTexture = TeamBeacon;
                 }
             }
-            
+
             ScreenPos.X -= 0.5f * BeaconTexture.USize * Scale;
             ScreenPos.Y -= 0.5f * BeaconTexture.VSize * Scale;
-            
+
             //Text
             if(Dist < TeamBeaconMaxDist && C.ClipX > 600) {
                 ScreenPos.Y -= SmallFontHeight;
             }
-            
+
             //Bar height
             Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
-            
+
             if(Vehicle(P) != None) {
                 Height *= 1.75;
             }
-            
+
             BarColor.A = 255;
 
             //Health bar
             ScreenPos.Y -= Height + 4;
             Pct = FClamp(float(P.Health) / (P.HealthMax + HealMax), 0f, 1f);
-            
+
             if(P.Health >= P.HealthMax + HealMax)
                 BarColor = class'HUD'.default.BlueColor;
             else

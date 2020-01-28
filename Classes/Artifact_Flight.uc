@@ -8,15 +8,15 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-    
+
         if (PlayerController(Instigator.Controller) != None)
             Instigator.Controller.GotoState('PlayerFlying');
         else
             Instigator.SetPhysics(PHYS_Flying);
-            
+
         FlightTrail = Instigator.spawn(class'FX_Flight', Instigator);
     }
-    
+
     event Tick(float dt)
     {
         if(Instigator.Controller != None)
@@ -40,7 +40,7 @@ state Activated
             {
                 if(Instigator.HeadVolume.bWaterVolume)
                     Instigator.BreathTime = Instigator.UnderWaterTime;
-                
+
                 Instigator.SetPhysics(PHYS_Swimming);
                 Instigator.Controller.GotoState(Instigator.WaterMovementState);
             }
@@ -50,10 +50,10 @@ state Activated
                 Instigator.Controller.GotoState(Instigator.LandMovementState);
             }
         }
-        
+
         if(FlightTrail != None)
             FlightTrail.Kill();
-            
+
         Super.EndState();
     }
 }

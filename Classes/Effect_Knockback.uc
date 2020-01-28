@@ -14,7 +14,7 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
     //this causes way too funny bugs on turrets...
     if(ASTurret(Other) != None || ONSStationaryWeaponPawn(Other) != None)
         return false;
-    
+
     //Don't allow if Other is the driver of a vehicle
     if(Other.DrivenVehicle != None)
         return false;
@@ -27,16 +27,16 @@ state Activated
     function BeginState()
     {
         Super.BeginState();
-        
+
         if(
-            Instigator.Physics != PHYS_Walking && 
+            Instigator.Physics != PHYS_Walking &&
             Instigator.Physics != PHYS_Falling &&
             Instigator.Physics != PHYS_Hovering)
         {
             OriginalPhysics = Instigator.Physics;
             Instigator.SetPhysics(PHYS_Hovering);
         }
-        
+
         if(VSize(Momentum) > 0)
         {
             Instigator.TakeDamage(
@@ -51,7 +51,7 @@ state Activated
     event Tick(float dt)
     {
         Super.Tick(dt);
-        
+
         if(!bPendingDelete)
         {
             if(
@@ -66,12 +66,12 @@ state Activated
             }
         }
     }
-    
+
     function EndState()
     {
         if(Instigator != None && Instigator.Physics != PHYS_Walking && Instigator.Physics != PHYS_Falling)
             Instigator.SetPhysics(OriginalPhysics);
-        
+
         Super.EndState();
     }
 }
@@ -79,9 +79,9 @@ state Activated
 defaultproperties
 {
     bAllowOnFlagCarriers=False
-    
+
     DamageType=class'fell'
-    
+
     Modifier=1.00
 
     EffectSound=Sound'WeaponSounds.Misc.ballgun_launch'

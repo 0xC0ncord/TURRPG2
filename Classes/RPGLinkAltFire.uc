@@ -3,7 +3,7 @@ class RPGLinkAltFire extends LinkAltFire;
 function Projectile SpawnProjectile(Vector Start, Rotator Dir)
 {
     local RPGLinkProjectile Proj;
-    
+
     //TAM support
     if(Level.Game.IsA('Team_GameBase') && !LinkGun(Weapon).Linking)
         class'Util'.static.IncreaseTAMWeaponFireStats(Weapon.Instigator.PlayerReplicationInfo, "Link", "Primary");
@@ -14,9 +14,9 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
     {
         Proj.Links = LinkGun(Weapon).Links;
         Proj.LinkAdjust();
-        
+
         Proj.bOLTeamGames = RPGLinkGun(Weapon).bOLTeamGames;
-        
+
         if(Proj.bOLTeamGames)
         {
             Proj.TeamIndex = Weapon.Instigator.PlayerReplicationInfo.Team.TeamIndex;

@@ -251,7 +251,7 @@ simulated function ModeTick(float dt)
                         {
                             SetLinkTo(None);
                             bIsHealingObjective = true;
-                            
+
                             OldHealth = HealObjective.Health;
                             if(HealObjective.HealDamage(AdjustedDamage, Instigator.Controller, DamageType)) {
                                 if(HealObjective.Health > OldHealth) {
@@ -279,10 +279,10 @@ simulated function ModeTick(float dt)
         if ( LinkedVehicle != None && bDoHit )
         {
             AdjustedDamage = Damage * (1.5*Linkgun.Links+1) * Instigator.DamageScaling;
-            
+
             if(Instigator.HasUDamage())
                 AdjustedDamage *= 2;
-            
+
             if(LinkedVehicle.HealDamage(AdjustedDamage, Instigator.Controller, DamageType))
             {
                 if(!LinkedVehicle.IsVehicleEmpty()) //only if somebody's inside
@@ -316,8 +316,8 @@ simulated function ModeTick(float dt)
                 {
                     Beam = Weapon.Spawn(class'LinkBeamEffect', Instigator );
                 }
-                
-                
+
+
                 // vary link volume to make sure it gets replicated (in case owning player changed it client side)
                 if ( SentLinkVolume == Default.LinkVolume )
                     SentLinkVolume = Default.LinkVolume + 1;

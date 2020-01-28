@@ -41,7 +41,7 @@ var config float EXP_Win;
     EXP_FlagCapFirstTouch - EXP for whomever touched the flag first for the cap.
     EXP_FlagCapAssist - EXP for everyone who held the flag at a point during the cap.
     EXP_FlagCapFinal - EXP for whomever does the actual cap.
-    
+
     EXP_ReturnFriendlyFlag - Return flag which was close to the own base.
     EXP_ReturnEnemyFlag - Return flag which was far from the own base.
     EXP_FlagDenial - Return flag which was very close to the enemy base.
@@ -130,10 +130,10 @@ static function ShareExperience(RPGPlayerReplicationInfo InstigatorRPRI, float A
     local RPGPlayerReplicationInfo RPRI;
     local array<RPGPlayerReplicationInfo> Links;
     local int i;
-    
+
     if(Amount == 0)
         return;
-    
+
     if(InstigatorRPRI.Controller.Pawn == None || InstigatorRPRI.Controller.Pawn.Weapon == None)
     {
         //dead or has no weapon, so can't be linked up
@@ -164,7 +164,7 @@ static function ShareExperience(RPGPlayerReplicationInfo InstigatorRPRI, float A
                     }
                 }
             }
-            
+
             // share the experience among the linked players
             Amount /= float(Links.Length);
             for(i = 0; i < Links.Length; i++)
@@ -185,25 +185,25 @@ function float GetKillEXP(RPGPlayerReplicationInfo KillerRPRI, RPGPlayerReplicat
 {
     local float XP;
     local float Diff;
-    
+
     if(KilledRPRI != None)
     {
         Diff = FMax(0, KilledRPRI.RPGLevel - KillerRPRI.RPGLevel);
         //Log("Level difference is" @ Diff, 'GetKillEXP');
-        
+
         if(Diff > 0)
         {
             Diff = (Diff * Diff) / LevelDiffExpGainDiv;
             //Log("Post processed difference value is" @ Diff, 'GetKillEXP');
         }
-        
+
         //cap gained exp to enough to get to Killed's level
         if(KilledRPRI.RPGLevel - KillerRPRI.RPGLevel > 0 && Diff > (KilledRPRI.RPGLevel - KillerRPRI.RPGLevel) * KilledRPRI.NeededExp)
         {
             Diff = (KilledRPRI.RPGLevel - KillerRPRI.RPGLevel) * KilledRPRI.NeededExp;
             //Log("Capped difference value is" @ Diff, 'GetKillEXP');
         }
-        
+
         Diff = float(int(Diff)); //round
 
         if(Multiplier > 0)
@@ -212,9 +212,9 @@ function float GetKillEXP(RPGPlayerReplicationInfo KillerRPRI, RPGPlayerReplicat
             //Log("Difference value multiplied by" @ Multiplier @ "is" @ Diff, 'GetKillEXP');
         }
     }
-    
+
     XP = FMax(EXP_Frag, Diff); //at least EXP_Frag
-    
+
     //Log("Final XP:" @ XP, 'GetKillEXP');
     return XP;
 }
@@ -231,19 +231,19 @@ function ScoreKill(Controller Killer, Controller Killed)
     local RPGPlayerReplicationInfo KillerRPRI, KilledRPRI;
     local TeamPlayerReplicationInfo KillerPRI;
     local class<Weapon> KillWeaponType;
-    
+
     Super.ScoreKill(Killer, Killed);
-    
+
     //Nobody was killed...
     if(Killed == None)
         return;
-    
+
     //Get Pawns
     if(Killer != None)
         KillerPawn = Killer.Pawn;
 
     KilledPawn = Killed.Pawn;
-    
+
     //Drop artifacts
     if(KilledPawn != None)
     {
@@ -263,33 +263,33 @@ function ScoreKill(Controller Killer, Controller Killed)
             Inv = NextInv;
         }
     }
-    
+
     //Get RPRIs
     if(Killer != None) {
         KillerPRI = TeamPlayerReplicationInfo(Killer.PlayerReplicationInfo);
     }
-    
+
     KillerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killer);
     KilledRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killed);
-    
+
     //Suicide / Self Kill
     if(Killer == Killed)
     {
         if(KillerRPRI != None)
             KillerRPRI.AwardExperience(EXP_SelfFrag);
-        
+
         return;
     }
-    
+
     //Team kill
     if(Killed.SameTeamAs(Killer))
     {
         if(KillerRPRI != None)
             KillerRPRI.AwardExperience(EXP_TeamFrag);
-        
+
         return;
     }
-    
+
     if(Killer != None)
     {
         if(
@@ -306,7 +306,7 @@ function ScoreKill(Controller Killer, Controller Killed)
             {
                 Killer = FriendlyMonsterController(Killer).Master;
                 RegisterWeaponKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, class'DummyWeapon_Monster');
-                
+
                 if(PlayerController(Killer) != None && Killed.PlayerReplicationInfo != None)
                     PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_FriendlyMonsterKiller',, Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillerPawn);
             }
@@ -355,7 +355,7 @@ function ScoreKill(Controller Killer, Controller Killed)
             KillerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killer);
             if(KillerRPRI != None)
                 KillerRPRI.AwardExperience(GetKillEXP(KillerRPRI, KilledRPRI, EXPMul_SummonKill));
-            
+
             //Add legitimate score
             if(Killer.PlayerReplicationInfo != None)
             {
@@ -363,7 +363,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 if(Invasion(Level.Game) == None)
                 {
                     Killer.PlayerReplicationInfo.Score += 1.0f;
-                    
+
                     //If this is TDM, give the team a point too
                     if(
                         TeamGame(Level.Game) != None &&
@@ -372,7 +372,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                     ) {
                         Killer.PlayerReplicationInfo.Team.Score += 1.0f;
                     }
-                    
+
                     if(Level.Game.MaxLives > 0)
                         Level.Game.CheckScore(Killer.PlayerReplicationInfo); //possibly win the match
                 }
@@ -382,7 +382,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                     KillerRPRI.AwardAdrenaline(Monster(KilledPawn).ScoringValue, Self);
                 }
             }
-            
+
             return;
         }
         else
@@ -392,7 +392,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 if(KillWeaponType != None)
                     RegisterWeaponKill(Killer.PlayerReplicationInfo, Killed.PlayerReplicationInfo, KillWeaponType);
             }
-        
+
             if(KillerRPRI != None)
             {
                 /*
@@ -400,58 +400,58 @@ function ScoreKill(Controller Killer, Controller Killed)
                 */
                 if(KillDamageType == class'DamTypeLightningRod') //TODO: make generic?
                     Killer.Adrenaline = KillerRPRI.AdrenalineBeforeKill;
-            
+
                 /*
                     EXPERIENCE
                 */
-                
+
                 //Kill
                 if(Bot(Killed) == None || RPGMut.GameSettings.bExpForKillingBots)
                     ShareExperience(KillerRPRI, GetKillEXP(KillerRPRI, KilledRPRI));
-                
+
                 //Type kill
                 if(PlayerController(Killed) != None && PlayerController(Killed).bIsTyping)
                 {
                     KillerRPRI.AwardExperience(EXP_TypeKill);
                 }
-                
+
                 //Translocator kill
                 if(KillDamageType == class'DamTypeTeleFrag')
                 {
                     KillerRPRI.AwardExperience(EXP_Telefrag);
                 }
-                
+
                 //Head shot
                 if(ClassIsChildOf(KillDamageType, class'DamTypeSniperHeadShot') || ClassIsChildOf(KillDamageType, class'DamTypeClassicHeadshot'))
                 {
                     KillerRPRI.AwardExperience(EXP_HeadShot);
-                    
+
                     if(KillerPRI.headcount == 15) {
                         KillerRPRI.AwardExperience(EXP_HeadHunter);
                     }
                 }
-                
+
                 //Flak Money
                 if(ClassIsChildOf(KillDamageType, class'DamTypeFlakChunk') && KillerPRI.flakcount == 15) {
                     KillerRPRI.AwardExperience(EXP_FlakMonkey);
                 }
-                
+
                 //Combo Whore
                 if(ClassIsChildOf(KillDamageType, class'DamTypeShockCombo') && KillerPRI.combocount == 15) {
                     KillerRPRI.AwardExperience(EXP_ComboWhore);
                 }
-                
+
                 //Road Rampage
                 if(ClassIsChildOf(KillDamageType, class'DamTypeRoadkill') && KillerPRI.ranovercount == 10) {
                     KillerRPRI.AwardExperience(EXP_RoadRampage);
                 }
-                
+
                 //Multi kill
                 if(UnrealPlayer(Killer) != None && UnrealPlayer(Killer).MultiKillLevel > 0)
                 {
                     KillerRPRI.AwardExperience(EXP_MultiKill[Min(UnrealPlayer(Killer).MultiKillLevel, ArrayCount(EXP_MultiKill) - 1)]);
                 }
-            
+
                 //Spree
                 if(
                     UnrealPawn(Killer.Pawn) != None &&
@@ -461,7 +461,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 {
                     KillerRPRI.AwardExperience(EXP_KillingSpree[Min(UnrealPawn(Killer.Pawn).spree * 0.2, ArrayCount(EXP_KillingSpree) - 1)]);
                 }
-                
+
                 //First blood
                 if(
                     Killer.PlayerReplicationInfo.Kills == 1 &&
@@ -470,7 +470,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 {
                     KillerRPRI.AwardExperience(EXP_FirstBlood);
                 }
-                
+
                 //End spree
                 if(
                     UnrealPawn(Killed.Pawn) != None &&
@@ -479,12 +479,12 @@ function ScoreKill(Controller Killer, Controller Killed)
                 {
                     KillerRPRI.AwardExperience(EXP_EndSpree);
                 }
-                
+
                 //Kill flag carrier
                 if(TeamGame(Level.Game) != None && TeamGame(Level.Game).CriticalPlayer(Killed)) {
                     KillerRPRI.AwardExperience(EXP_CriticalFrag);
                 }
-                
+
                 //Notify killer's abilities
                 for(x = 0; x < KillerRPRI.Abilities.length; x++)
                 {
@@ -519,10 +519,10 @@ function float GetDamageEXP(int Damage, Pawn InstigatedBy, Pawn Injured)
     {
         return 0;
     }
-    
+
     if(Monster(Injured) != None)
         return RPGMut.GameSettings.ExpForDamageScale * (float(Damage) / Injured.HealthMax) * float(Monster(Injured).ScoringValue);
-    
+
     return 0;
 }
 
@@ -531,26 +531,26 @@ function Weapon GetDamageWeapon(Pawn Other, class<DamageType> DamageType)
 {
     local class<Weapon> WClass;
     local Inventory Inv;
-    
+
     if(ClassIsChildOf(DamageType, class'WeaponDamageType'))
     {
         if(Vehicle(Other) != None) {
             //whoever fired this might have just entered a vehicle
             Other = Vehicle(Other).Driver;
         }
-    
+
         WClass = class<WeaponDamageType>(DamageType).default.WeaponClass;
-        
+
         //for most cases, checking the currently held weapon will suffice
         if(Other.Weapon != None && ClassIsChildOf(Other.Weapon.class, WClass))
             return Other.Weapon;
-        
+
         //if not, browse the inventory
         for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
         {
             if(Inv == Other.Weapon)
                 continue; //already checked
-            
+
             if(ClassIsChildOf(Inv.class, WClass))
                 return Weapon(Inv);
         }
@@ -589,7 +589,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         Log("DamageType =" @ DamageType, 'RPGDamage');
         Log("---", 'RPGDamage');
     }
-    
+
     //Filter UDamage
     if(
         class'Util'.static.InArray(DamageType, NoUDamageTypes) >= 0 &&
@@ -616,18 +616,18 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
             Log("This is a direct damage type and will not be processed further by RPG.", 'RPGDamage');
             Log("END", 'RPGDamage');
         }
-        
+
         return Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType); //pass-through
     }
-    
+
     //Let other rules modify damage
     Damage = Super.NetDamage(OriginalDamage, Damage, injured, instigatedBy, HitLocation, Momentum, DamageType);
-    
+
     if(bDamageLog)
         Log("After Super call: Damage =" @ Damage $ ", Momentum =" @ Momentum, 'RPGDamage');
-    
+
     //Get info
-    
+
     injuredController = injured.Controller;
 
     if(FriendlyMonsterController(injuredController) != None)
@@ -677,23 +677,23 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     if(bDamageLog)
     {
         Log("instigatorController =" @ instigatorController, 'RPGDamage');
-        
+
         if(instigatorRPRI != None)
             Log("instigatorRPRI =" @ instigatorRPRI.RPGName, 'RPGDamage');
         else
             Log("instigatorRPRI = None");
-    
+
         Log("injuredController =" @ injuredController, 'RPGDamage');
-        
+
         if(injuredRPRI != None)
             Log("injuredRPRI =" @ injuredRPRI.RPGName, 'RPGDamage');
         else
             Log("injuredRPRI = None");
     }
-    
+
     /*
         Invasion auto adjustment - with a big FIXME note...
-        
+
         UT2004RPG solved this by treating a monster as another RPG character who spent half of his stat points on
         damage bonus and the other half on damage reduction.
     */
@@ -704,24 +704,24 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     )
     {
         x = float(Damage) * RPGMut.InvasionDamageAdjustment;
-        
+
         if(Monster(instigatedBy) != None)
             Damage += x;
-        
+
         if(Monster(injured) != None)
             Damage -= x;
     }
-    
+
     /*
         ACTIVE DAMAGE MODIFICATION
     */
     if(instigatedBy != None)
     {
         W = GetDamageWeapon(instigatedBy, DamageType);
-        
+
         if(bDamageLog)
             Log("DamageWeapon =" @ W, 'RPGDamage');
-        
+
         if(W != None)
         {
             //Weapon modifier
@@ -729,7 +729,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
             if(WM != None)
                 WM.AdjustTargetDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
-        
+
         //Active artifacts and effects
         for(Inv = instigatedBy.Inventory; Inv != None; Inv = Inv.Inventory)
         {
@@ -738,7 +738,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
             else if(RPGEffect(Inv) != None && Inv.IsInState('Activated'))
                 RPGEffect(Inv).AdjustTargetDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
-        
+
         //Abilities
         if(instigatorRPRI != None)
         {
@@ -749,16 +749,16 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
             }
         }
     }
-    
+
     /*
         PASSIVE DAMAGE MODIFICATION
     */
-    
+
     //Weapon modifier
     WM = class'RPGWeaponModifier'.static.GetFor(injured.Weapon);
     if(WM != None)
         WM.AdjustPlayerDamage(Damage, OriginalDamage, instigatedBy, HitLocation, Momentum, DamageType);
-    
+
     //Active artifacts and effects
     for(Inv = injured.Inventory; Inv != None; Inv = Inv.Inventory)
     {
@@ -767,7 +767,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         else if(RPGEffect(Inv) != None && Inv.IsInState('Activated'))
             RPGEffect(Inv).AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
     }
-    
+
     //Abilities
     if(injuredRPRI != None)
     {
@@ -777,10 +777,10 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
                 injuredRPRI.Abilities[x].AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
     }
-    
+
     /*
     */
-    
+
     //Experience
     if(instigatorRPRI != None)
     {
@@ -817,7 +817,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
             }
         }
     }
-    
+
     //Done
     if(bDamageLog)
     {
@@ -838,9 +838,9 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
     local float AmmoAmount;
     local class<RPGWeaponModifier> ModifierClass;
     local int x, ModifierLevel;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Other.Controller);
-    
+
     //Modified weapon pickup
     if(WeaponPickup(item) != None) {
         WPM = class'RPGWeaponPickupModifier'.static.GetFor(WeaponPickup(item));
@@ -849,7 +849,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
             if(RPRI != None) {
                 RPRI.RemoveThrownWeapon(class<Weapon>(item.InventoryType));
             }
-        
+
             //Simulate using modifier
             class'RPGWeaponPickupModifier'.static.SimulateWeaponPickup(
                 WeaponPickup(item),
@@ -858,11 +858,11 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
                 WPM.ModifierLevel,
                 WPM.bIdentified,
                 true);
-            
+
             if(item == None || item.bDeleteMe || item.bPendingDelete) {
                 WPM.Destroy();
             }
-            
+
             bAllowPickup = 0;
             return true;
         } else if(RPGMut.CheckPDP(Other, class<Weapon>(item.InventoryType))) {
@@ -876,12 +876,12 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
                     }
                 }
             }
-            
+
             if(ModifierClass == None) {
                 ModifierClass = RPGMut.GetRandomWeaponModifier(class<Weapon>(item.InventoryType), Other);
                 ModifierLevel = -100;
             }
-            
+
             class'RPGWeaponPickupModifier'.static.SimulateWeaponPickup(
                 WeaponPickup(item), Other, ModifierClass, ModifierLevel, RPGMut.GameSettings.bNoUnidentified);
 
@@ -891,7 +891,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
             //do nothing / normal pickup
         }
     }
-    
+
     //Weapon Locker
     if(WeaponLocker(item) != None && RPGMut.CheckPDP(Other, class<Weapon>(item.InventoryType))) {
         if(RPRI != None) {
@@ -904,16 +904,16 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
                 }
             }
         }
-        
+
         if(ModifierClass == None) {
             ModifierClass = RPGMut.GetRandomWeaponModifier(class<Weapon>(item.InventoryType), Other);
             ModifierLevel = -100;
         }
-        
+
         if(class'RPGWeaponPickupModifier'.static.SimulateWeaponLocker(
             WeaponLocker(item), Other, ModifierClass, ModifierLevel, RPGMut.GameSettings.bNoUnidentified))
         {
-         
+
             bAllowPickup = 0;
             return true;
         }
@@ -931,12 +931,12 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
             }
         }
     }
-    
+
     if(Ammo(item) != None) {
         //Handle ammo
         AmmoAmount = Ammo(item).AmmoAmount;
         AmmoClass = class<Ammunition>(item.InventoryType);
-        
+
         //Find all weapons that can use this ammo type
         for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory) {
             W = Weapon(Inv);
@@ -944,11 +944,11 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
                 Weapons[Weapons.Length] = W;
             }
         }
-        
+
         if(Weapons.Length > 0) {
             //Equal share for everyone!
             AmmoAmount /= Weapons.Length;
-            
+
             //Give ammo
             for(x = 0; x < Weapons.Length; x++) {
                 if(Weapons[x].GetAmmoClass(0) == AmmoClass) {
@@ -957,11 +957,11 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
                     Weapons[x].AddAmmo(int(AmmoAmount), 1);
                 }
             }
-            
+
             //Simulate stuff
             item.AnnouncePickup(Other);
             item.SetRespawn();
-            
+
             bAllowPickup = 0;
             return true;
         } else {
@@ -975,7 +975,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
 function ComboSuccess(Controller Who, class<Combo> ComboClass) {
     local RPGPlayerReplicationInfo RPRI;
     local int i;
-    
+
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Who);
     if(RPRI != None) {
         for(i = 0; i < EXP_Combo.Length; i++) {
@@ -999,17 +999,17 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
     local RPGPlayerReplicationInfo KillerRPRI, KilledRPRI;
     local Ability_VehicleEject EjectorSeat;
     local Artifact_DoubleModifier DoubleMod;
-    
+
     KillDamageType = damageType;
-    
+
     if(bGameEnded)
         return Super.PreventDeath(Killed, Killer, damageType, HitLocation);
-    
+
     //FIXME hotfix, must find a better solution
     DoubleMod = Artifact_DoubleModifier(Killed.FindInventoryType(class'Artifact_DoubleModifier'));
     if(DoubleMod != None && DoubleMod.bActive)
         DoubleMod.GotoState('');
-    
+
     if((PlayerController(Killer) != None || Bot(Killer) != None) && damageType != None && Killer != Killed.Controller)
     {
         if(damageType == class'DamTypeTeleFrag' || damageType == class'DamTypeTeleFragged')
@@ -1046,17 +1046,17 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
             KilledRPRI.LastSelectedPowerupType = Killed.SelectedItem.class;
         else
             KilledRPRI.LastSelectedPowerupType = None;
-        
+
         //detect whether this player switched teams
         if(Level.Game.bTeamGame && KilledRPRI.PRI.Team.TeamIndex != KilledRPRI.Team)
         {
             KilledRPRI.bTeamChanged = true; //allow RPRI to react on spawn
-            
+
             if(KilledVehicleDriver != None)
                 Inv = KilledVehicleDriver.Inventory;
             else
                 Inv = Killed.Inventory;
-            
+
             while(Inv != None)
             {
                 W = Weapon(Inv);
@@ -1071,7 +1071,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 
                 Inv = Inv.Inventory;
             }
-            
+
             return false; //cannot save from a team switch
         }
         else
@@ -1108,7 +1108,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
                 Log("KilledRPRI not found for " $ Killed.GetHumanReadableName(), 'TURRPG2');
                 return true;
             }
-            
+
             EjectorSeat = Ability_VehicleEject(KilledRPRI.GetOwnedAbility(class'Ability_VehicleEject'));
             if(EjectorSeat != None && EjectorSeat.HasJustEjected())
             {
@@ -1124,7 +1124,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
                     GetKillEXP(KillerRPRI, KilledRPRI, EXPMul_DestroyVehicle));
 
                 KillerRPRI.PRI.Score += 1.f; //add a game point
-                
+
                 //reset killing spree for ejected player
                 if(KilledVehicleDriver.GetSpree() > 4)
                 {
@@ -1132,13 +1132,13 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
                     ShareExperience(KillerRPRI, EXP_EndSpree);
                     DeathMatch(Level.Game).EndSpree(Killer, KilledController);
                 }
-                
+
                 if(UnrealPawn(KilledVehicleDriver) != None)
                     UnrealPawn(KilledVehicleDriver).spree = 0;
             }
         }
     }
-    
+
     if((damageType.default.bCausedByWorld || damageType == class'DamTypeTeleFrag') && Killed.Health > 0)
     {
         //if this damagetype is an instant kill that bypasses Pawn.TakeDamage() and calls Pawn.Died() directly
@@ -1155,11 +1155,11 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 
         ScoreKill(Killer, KilledController);
     }
-    
+
     //unless another GameRules decides to prevent death, this is certain death
     if(KillerRPRI == None)
         KillerRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Killer);
-    
+
     if(KillerRPRI != None)
         KillerRPRI.AdrenalineBeforeKill = Killer.Adrenaline;
 
@@ -1224,7 +1224,7 @@ function Timer()
                     RPRI.AwardExperience(EXP_Win);
             }
         }
-        
+
         RPGMut.EndGame();
         SetTimer(0, false);
     }
@@ -1241,7 +1241,7 @@ static function RegisterWeaponKill(PlayerReplicationInfo Killer, PlayerReplicati
     local bool bFound;
     local TeamPlayerReplicationInfo TPRI;
     local TeamPlayerReplicationInfo.WeaponStats NewWeaponStats;
-    
+
     if(WeaponClass == None)
         return;
 
@@ -1267,7 +1267,7 @@ static function RegisterWeaponKill(PlayerReplicationInfo Killer, PlayerReplicati
             TPRI.WeaponStatsArray[TPRI.WeaponStatsArray.Length] = NewWeaponStats;
         }
     }
-    
+
     //death for the victim
     TPRI = TeamPlayerReplicationInfo(Victim);
     if(TPRI != None)
@@ -1360,16 +1360,16 @@ defaultproperties
     DirectDamageTypes(2)=class'DamTypeRetaliation'
     DirectDamageTypes(3)=class'DamTypeFatality'
     NoUDamageTypes(0)=class'DamTypeRetaliation'
-    
+
     //Kills
     EXP_Frag=1.00
     EXP_SelfFrag=0.00 //-1.00 really, but we don't want to lose exp here
     EXP_TeamFrag=0.00
     EXP_TypeKill=0.00
-    
+
     EXP_EndSpree=5.00
     EXP_CriticalFrag=3.00
-    
+
     EXP_FirstBlood=5.00
     EXP_KillingSpree(0)=5.00
     EXP_KillingSpree(1)=5.00
@@ -1384,11 +1384,11 @@ defaultproperties
     EXP_MultiKill(4)=5.00
     EXP_MultiKill(5)=5.00
     EXP_MultiKill(6)=5.00
-    
+
     //Special kills
     EXP_Telefrag=1.00
     EXP_Headshot=1.00
-    
+
     //Awards
     EXP_HeadHunter=15.00
     EXP_ComboWhore=15.00
@@ -1398,7 +1398,7 @@ defaultproperties
 
     //Game events
     EXP_Win=30
-    
+
     EXP_DestroyPowercore=50
     EXP_DestroyPowernode=5
     EXP_DestroyConstructingPowernode=2.50
@@ -1412,23 +1412,23 @@ defaultproperties
     EXP_FlagCapFirstTouch=5.00
     EXP_FlagCapAssist=5.00
     EXP_FlagCapFinal=5.00
-    
+
     EXP_ObjectiveCompleted=1.00
-    
+
     EXP_BallThrownFinal=5.00
     EXP_BallCapFinal=10.00
     EXP_BallScoreAssist=5.00
-    
+
     EXP_DOMScore=5.00
-    
+
     //TitanRPG
     EXP_Healing=0.01
     EXP_TeamBooster=0.10 //per second per healed player (excluding yourself)
-    
+
     //Misc
     EXP_VehicleRepair=0.005 //experience for repairing one "health point"
     EXP_Assist=15.00 //Score Assist
-    
+
     //Multipliers
     EXPMul_DestroyVehicle=0.67
     EXPMul_SummonKill=0.67
