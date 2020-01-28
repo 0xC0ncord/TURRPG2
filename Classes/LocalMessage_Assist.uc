@@ -7,7 +7,7 @@
 // generalized to "Score Assist" by pd
 // ============================================================================
 
-class RPGAssistLocalMessage extends CriticalEventPlus;
+class LocalMessage_Assist extends CriticalEventPlus;
 
 #EXEC OBJ LOAD FILE=AnnouncerClassic.uax
 

@@ -20,13 +20,13 @@ var array<AssistStruct> Assists;
 static function RPGGameObjectiveObserver GetFor(GameObjective Objective)
 {
     local RPGGameObjectiveObserver Observer;
-    
+
     foreach Objective.AllActors(class'RPGGameObjectiveObserver', Observer)
     {
         if(Observer.Objective == Objective)
             return Observer;
     }
-    
+
     return None;
 }
 
@@ -34,7 +34,7 @@ function IncreaseAssistTime(Controller Assist, float dt, optional bool bIsHolder
 {
     local AssistStruct NewAssist;
     local int i;
-    
+
     for(i = 0; i < Assists.Length; i++)
     {
         if(Assists[i].Assist == Assist)
@@ -44,18 +44,18 @@ function IncreaseAssistTime(Controller Assist, float dt, optional bool bIsHolder
             return;
         }
     }
-    
+
     NewAssist.Assist = Assist;
     NewAssist.Time = dt;
     NewAssist.bHeld = bIsHolder;
-    
+
     Assists[Assists.Length] = NewAssist;
 }
 
 event PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     Objective = GameObjective(Owner);
     if(Objective == None)
         Destroy();
@@ -78,7 +78,7 @@ event Tick(float dt)
 function AssistMessage(Controller C)
 {
     if(PlayerController(C) != None)
-        PlayerController(C).ReceiveLocalizedMessage(class'RPGAssistLocalMessage');
+        PlayerController(C).ReceiveLocalizedMessage(class'LocalMessage_Assist');
 }
 
 function Healed(Controller By, int Amount);
