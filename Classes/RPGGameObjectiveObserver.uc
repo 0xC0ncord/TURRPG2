@@ -21,7 +21,7 @@ static function RPGGameObjectiveObserver GetFor(GameObjective Objective)
 {
     local RPGGameObjectiveObserver Observer;
 
-    foreach Objective.AllActors(class'RPGGameObjectiveObserver', Observer)
+    foreach Objective.DynamicActors(class'RPGGameObjectiveObserver', Observer)
     {
         if(Observer.Objective == Objective)
             return Observer;

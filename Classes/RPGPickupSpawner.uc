@@ -60,7 +60,7 @@ event PostBeginPlay() {
     if(AdreanlineSpawnAmount > 0) {
         //Count how many adrenaline pickups are already on the map
         x = 0;
-        foreach AllActors(class'AdrenalinePickup', AdrenPickup) {
+        foreach DynamicActors(class'AdrenalinePickup', AdrenPickup) {
             x++;
         }
 

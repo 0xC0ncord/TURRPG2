@@ -1269,7 +1269,7 @@ function Mutate(string MutateString, PlayerController Sender)
             }
             else if(Cheat != None && Args[0] ~= "ruler")
             {
-                foreach AllActors(class'NavigationPoint', N)
+                for(N = Level.NavigationPointList; N != None; N = N.NextNavigationPoint)
                 {
                     if(ONSPowerCore(N) != None)
                         N.Bump(Cheat);

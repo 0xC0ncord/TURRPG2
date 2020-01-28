@@ -105,7 +105,7 @@ function Timer()
     Abilities.Clear();
     AbilityInfos.Remove(0, AbilityInfos.Length);
     
-    foreach RPGMenu.RPRI.AllActors(class'RPGPlayerLevelInfo', PLI)
+    foreach RPGMenu.RPRI.DynamicActors(class'RPGPlayerLevelInfo', PLI)
     {
         if(!PLI.PRI.bOnlySpectator)
         {
