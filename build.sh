@@ -10,6 +10,7 @@ BUILD_DATE="$(date +"%a %d %b %Y %H:%M:%S %Z")"
 
 NO_RESTORE=0
 NO_PREPROCESS=0
+RELEASE_BUILD=0
 
 PREPROCESSED=0
 EXIT_STATUS=0
@@ -28,6 +29,7 @@ for ARG in "$@"; do
             echo
             echo " -n, --no-restore      : don't restore original Classes source tree when finishing"
             echo " -s, --skip-preprocess : skip the preprocessing phase entirely"
+            echo " -r, --release         : compile with the __DEBUG__ macro undefined (for release builds)"
             exit 0
             ;;
         "-n" | "--no-restore")
@@ -35,6 +37,9 @@ for ARG in "$@"; do
             ;;
         "-s" | "--skip-preprocess")
             NO_PREPROCESS=1
+            ;;
+        "-r" | "--release")
+            RELEASE_BUILD=1
             ;;
         *)
             echo "Unrecognized option \'$ARG\'"
@@ -44,6 +49,11 @@ for ARG in "$@"; do
 done
 
 if [[ -n "$(lsof +D ${CURRENT_DIR}/Classes)" ]]; then echo 'Classes directory tree open in some program(s). Please close before continuing.' && exit 1; fi
+if [[ ${RELEASE_BUILD} -eq 0 ]]; then
+    echo -e "\e[92mBuild: DEBUG\e[0m"
+else
+    echo -e "\e[92mBuild: RELEASE\e[0m"
+fi
 echo Preparing...
 if [[ -d ${CURRENT_DIR}/.Classes  ]]; then
     echo -e "\e[91m(!) Original Classes source tree appears to have not been restored.\e[0m"
@@ -63,8 +73,11 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
         echo -e "\e[91m    If you think this is in error, run 'make clean' before invoking the build script again.\e[0m"
     else
         cp -r ${CURRENT_DIR}/Classes ${CURRENT_DIR}/.Classes
+        if [[ ${RELEASE_BUILD} -eq 0 ]]; then
+            CMDLINE="-D__DEBUG__"
+        fi
         for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
-            gpp -C -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+            gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
         done
         touch ${CURRENT_DIR}/Classes/.preprocessed
     fi

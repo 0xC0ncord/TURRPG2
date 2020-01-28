@@ -20,6 +20,10 @@ compile:
 	@echo -e $(PREFIX) $@ $(SUFFIX)
 	@$(CURRENT_DIR)/build.sh
 
+release:
+	@echo -e $(PREFIX) $@ $(SUFFIX)
+	@$(CURRENT_DIR)/build.sh -r
+
 clean:
 	@echo -e $(PREFIX) $@ $(SUFFIX)
 	@-rm -vrf $(SYSTEM_DIR)/$(BASENAME).u $(SYSTEM_DIR)/$(BASENAME).u.bak $(CURRENT_DIR)/Classes.sha1sum
