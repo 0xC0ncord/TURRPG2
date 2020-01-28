@@ -13,6 +13,10 @@ function PostRender(Canvas C) {
     local Color BarColor;
     local string Text;
     
+#ifdef __DEBUG__
+    local float XT, YT;
+#endif
+
     FarAwayInv = 1.0f / TeamBeaconMaxDist;
 
     for(i = 0; i < FriendlyPawns.Length; i++) {
@@ -79,6 +83,18 @@ function PostRender(Canvas C) {
             }
         }
     }
+
+#ifdef __DEBUG__
+    Text = "TURRPG2 / DEBUG / " $ class'MutTURRPG'.default.TURRPG2Version $ " / " $ class'MutTURRPG'.default.BuildDate;
+    if(HudBase(ViewportOwner.Actor.MyHud) != None)
+        C.Font = HudBase(ViewportOwner.Actor.MyHud).LoadInstructionFont();
+    else
+        C.Font = C.default.Font;
+    C.TextSize(Text, XT, YT);
+    C.SetPos(C.ClipX * 0.5 - XT * 0.5, 0);
+    C.DrawColor = C.MakeColor(255, 0, 0);
+    C.DrawText(Text);
+#endif
 
     //Reset canvas properties
     C.Font = C.default.Font;
