@@ -5,7 +5,11 @@ BASENAME="$(basename ${CURRENT_DIR})"
 SYSTEM_DIR="${CURRENT_DIR}/../System"
 UCC="${SYSTEM_DIR}/ucc.exe"
 
-BUILD_INFO=$(git rev-parse --short HEAD)$([ -z "$(git diff --shortstat 2>/dev/null | tail -n1)" ] || echo '-dirty')
+if [[ -d .git ]]; then
+    BUILD_INFO=$(git rev-parse --short HEAD)$([ -z "$(git diff --shortstat 2>/dev/null | tail -n1)" ] || echo '-dirty')
+else
+    BUILD_INFO=""
+fi
 BUILD_DATE="$(date +"%a %d %b %Y %H:%M:%S %Z")"
 
 NO_RESTORE=0
@@ -76,9 +80,15 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
         if [[ ${RELEASE_BUILD} -eq 0 ]]; then
             CMDLINE="-D__DEBUG__"
         fi
-        for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
-            gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
-        done
+        if [[ -f ${CURRENT_DIR}/${BASENAME}.inc ]]; then
+            for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
+                gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+            done
+        else
+            for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
+                gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+            done
+        fi
         touch ${CURRENT_DIR}/Classes/.preprocessed
     fi
 fi
