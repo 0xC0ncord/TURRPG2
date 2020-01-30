@@ -11,9 +11,6 @@ var const string TURRPG2Version;
 var const string TitanRPGVersion;
 var const string BuildDate;
 
-//Import resources
-#EXEC OBJ LOAD FILE=Resources/TitanRPG_rc.u PACKAGE=TURRPG2
-
 //Saving
 var config array<string> IgnoreNameTag;
 var config int SaveDuringGameInterval;

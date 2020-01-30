@@ -51,7 +51,7 @@ defaultproperties
     DamageBonus=0.05
     MinModifier=4
     MaxModifier=6
-    ModifierOverlay=Shader'TURRPG2.Overlays.GreyShader'
+    ModifierOverlay=Shader'TURRPG2.Overlays.PulseGreyShader'
     PatternPos="Freezing $W"
     //AI
     AIRatingBonus=0.05

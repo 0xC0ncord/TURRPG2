@@ -96,7 +96,7 @@ state Activated
 
 defaultproperties
 {
-    ActivateSound=Sound'TURRPG2.SoundEffects.ProtectionArtifact'
+    ActivateSound=Sound'TURRPG2.Artifacts.ProtectionArtifact'
     bAllowWithFlag=False
     EffectOverlay=Shader'TURRPG2.Overlays.GlobeOverlay'
     DamageReduction=0.666667

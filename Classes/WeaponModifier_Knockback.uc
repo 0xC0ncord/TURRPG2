@@ -69,7 +69,7 @@ defaultproperties
     KnockbackText="knocks targets away"
     MinModifier=2
     MaxModifier=6
-    ModifierOverlay=Shader'TURRPG2.Overlays.RedShader'
+    ModifierOverlay=Shader'TURRPG2.Overlays.PulseRedShader'
     PatternPos="$W of Knockback"
     //AI
     AIRatingBonus=0

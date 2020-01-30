@@ -2279,7 +2279,7 @@ defaultproperties
 {
     HealingExpMultiplier=0 //gotten from RPGRules
 
-    LevelUpSound=Sound'TURRPG2.SoundEffects.LevelUp'
+    LevelUpSound=Sound'TURRPG2.Effects.LevelUp'
 
     LockedVehicleOverlay=Shader'PulseRedShader'
 

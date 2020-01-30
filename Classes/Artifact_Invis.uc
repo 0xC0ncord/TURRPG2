@@ -96,7 +96,7 @@ state Activated
 
 defaultproperties
 {
-    ActivateSound=Sound'TURRPG2.SoundEffects.Invisible'
+    ActivateSound=Sound'TURRPG2.Artifacts.Invisible'
     MSG_Text_InvisCombo="You are already in the Invisible combo."
     EnemyRadius=1024.00
     ExtraCostPerEnemy=2

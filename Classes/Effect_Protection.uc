@@ -7,7 +7,7 @@ defaultproperties
 
     TimerInterval=0 //no message repeat
 
-    EffectSound=Sound'TURRPG2.SoundEffects.Protection'
+    EffectSound=Sound'TURRPG2.Artifacts.Protection'
     EffectMessageClass=class'EffectMessage_Protection'
     StatusIconClass=class'StatusIcon_Protection'
 }

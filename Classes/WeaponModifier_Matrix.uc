@@ -59,7 +59,7 @@ defaultproperties
 
     MinModifier=1
     MaxModifier=4
-    ModifierOverlay=ColorModifier'TURRPG2.Matrix.MatrixColorModifier'
+    ModifierOverlay=ColorModifier'TURRPG2.Shaders.MatrixColorModifier'
     PatternPos="Matrix $W"
     //AI
     AIRatingBonus=0.025000

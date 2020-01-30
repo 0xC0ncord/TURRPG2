@@ -85,6 +85,6 @@ defaultproperties
     Modifier=1.00
 
     EffectSound=Sound'WeaponSounds.Misc.ballgun_launch'
-    EffectOverlay=Shader'TURRPG2.Overlays.RedShader'
+    EffectOverlay=Shader'TURRPG2.Overlays.PulseRedShader'
     EffectMessageClass=class'EffectMessage_Knockback'
 }

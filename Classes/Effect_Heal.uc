@@ -79,8 +79,8 @@ defaultproperties
     bHarmful=False
     bAllowOnEnemies=False
 
-    EffectOverlay=Shader'TURRPG2.Overlays.BlueShader'
-    EffectSound=Sound'TURRPG2.SoundEffects.Heal'
+    EffectOverlay=Shader'TURRPG2.Overlays.PulseBlueShader'
+    EffectSound=Sound'TURRPG2.Effects.Heal'
     xEmitterClass=class'FX_Heal'
 
     EffectMessageClass=class'EffectMessage_Heal'

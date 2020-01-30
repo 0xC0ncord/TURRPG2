@@ -8,6 +8,6 @@ defaultproperties
     DamageType=class'DamTypeRepulsion'
 
     EffectSound=None
-    EffectOverlay=Shader'TURRPG2.Overlays.RedShader'
+    EffectOverlay=Shader'TURRPG2.Overlays.PulseRedShader'
     EffectMessageClass=class'EffectMessage_Repulsion'
 }

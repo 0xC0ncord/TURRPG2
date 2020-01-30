@@ -74,7 +74,7 @@ defaultproperties
     bAllowOnFlagCarriers=False
     bAllowOnVehicles=False
 
-    EffectOverlay=Shader'TURRPG2.Overlays.GreyShader'
+    EffectOverlay=Shader'TURRPG2.Overlays.PulseGreyShader'
     EffectSound=Sound'Slaughtersounds.Machinery.Heavy_End'
     xEmitterClass=class'FX_IceSmoke'
 

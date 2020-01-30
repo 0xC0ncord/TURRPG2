@@ -176,7 +176,7 @@ state Activated
 
 defaultproperties
 {
-    ActivateSound=Sound'TURRPG2.SoundEffects.Rod'
+    ActivateSound=Sound'TURRPG2.Artifacts.Rod'
     bAllowInVehicle=False
     bAllowWithTrans=True
     bMustBeMoving=False

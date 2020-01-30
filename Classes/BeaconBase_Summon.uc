@@ -59,7 +59,6 @@ simulated event HitWall( vector HitNormal, actor Wall )
 
 defaultproperties
 {
-    StaticMesh=StaticMesh'TURRPG2.Pokeball.PokeballStatic' //oh my
     DrawScale=0.03125
 
     RotationRate=(Pitch=-49152,Yaw=0,Roll=0)
@@ -67,9 +66,4 @@ defaultproperties
     RotAdd=(Pitch=-16384,Yaw=0,Roll=0);
 
     bRotateToDesired=true
-
-    TeamSkin(0)=Combiner'TURRPG2.Pokeball.RedCombiner'
-    TeamSkin(1)=Combiner'TURRPG2.Pokeball.BlueCombiner'
-    TeamSkin(2)=Combiner'TURRPG2.Pokeball.GreenCombiner'
-    TeamSkin(3)=Combiner'TURRPG2.Pokeball.GoldCombiner'
 }

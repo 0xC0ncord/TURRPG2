@@ -1021,7 +1021,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
             }
             if(PlayerController(Killed.Controller) != None)
             {
-                PlayerController(Killed.Controller).PlayAnnouncement(DisgraceAnnouncement, 1, true);
+                //PlayerController(Killed.Controller).PlayAnnouncement(DisgraceAnnouncement, 1, true);
                 PlayerController(Killed.Controller).ReceiveLocalizedMessage(class'LocalMessage_Disgrace');
             }
         }
@@ -1353,8 +1353,8 @@ defaultproperties
 {
     bDamageLog=False
 
-    DisgraceAnnouncement=Sound'TURRPG2.TranslocSounds.Disgrace'
-    EagleEyeAnnouncement=Sound'TURRPG2.TranslocSounds.EagleEye'
+    DisgraceAnnouncement=None
+    EagleEyeAnnouncement=Sound'AnnouncerMale2K4.Generic.EagleEye'
     DirectDamageTypes(0)=class'DamTypeMasochism'
     DirectDamageTypes(1)=class'DamTypePoison'
     DirectDamageTypes(2)=class'DamTypeRetaliation'

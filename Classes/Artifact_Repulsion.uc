@@ -84,7 +84,7 @@ defaultproperties
     MaxKnockbackMomentum=1500
     MinKnockbackMomentum=250
     KnockbackSound=Sound'WeaponSounds.Misc.ballgun_launch'
-    KnockbackOverlay=Shader'TURRPG2.Overlays.RedShader'
+    KnockbackOverlay=Shader'TURRPG2.Overlays.PulseRedShader'
     Cooldown=5
     CostPerSec=25
     HudColor=(B=255,G=128,R=128)

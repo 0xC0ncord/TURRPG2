@@ -30,7 +30,7 @@ simulated event PostBeginPlay()
 
 defaultproperties
 {
-    MisfortuneSound=Sound'TURRPG2.SoundEffects.Explosion'
+    MisfortuneSound=Sound'TURRPG2.Effects.Explosion'
      Begin Object Class=SpriteEmitter Name=ExplosionParticles
          FadeOut=True
          RespawnDeadParticles=False
