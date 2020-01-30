@@ -75,7 +75,7 @@ var array<ConstructionStruct> Sentinels;
 var array<ConstructionStruct> Turrets;
 var array<ConstructionStruct> Vehicles;
 var array<ConstructionStruct> Utilities;
-var array<Monster> Monsters;
+var array<ConstructionStruct> Monsters;
 
 //engineer stuff
 var array<Vehicle> LockedVehicles;
@@ -92,6 +92,7 @@ var int NumVehicles, NumUtilities;
 var int MaxMonsters;
 var int MaxBuildings, MaxSentinels, MaxTurrets;
 var int MaxVehicles, MaxUtilities;
+var int MonsterPoints, MaxMonsterPoints;
 var int BuildingPoints, MaxBuildingPoints;
 var int SentinelPoints, MaxSentinelPoints;
 var int TurretPoints, MaxTurretPoints;
@@ -945,9 +946,10 @@ simulated event Tick(float dt)
         x = 0;
         while(x < Monsters.Length)
         {
-            if(Monsters[x] == None)
+            if(Monsters[x].Pawn == None || Monsters[x].Pawn.Health <= 0)
             {
                 NumMonsters--;
+                MonsterPoints += Monsters[x].Points;
                 Monsters.Remove(x, 1);
             }
             else
@@ -1367,9 +1369,13 @@ function ModifyPlayer(Pawn Other)
         Other.NextItem();
 }
 
-function AddMonster(Monster M) {
-    Monsters[Monsters.Length] = M;
-    NumMonsters++;
+function AddMonster(Monster M, optional int Points) {
+    local int i;
+
+    i = Monsters.Length;
+    Monsters.Length = i + 1;
+    Monsters[i].Pawn = M;
+    Monsters[i].Points = Points;
 
     ModifyMonster(M);
 }
@@ -1377,22 +1383,28 @@ function AddMonster(Monster M) {
 function ModifyMonster(Monster M) {
     local int i;
 
-    for(i = 0; i < Abilities.Length; i++) {
-        if(Abilities[i].bAllowed)
+    //let stats do their stuff first
+    for(i = 0; i < Abilities.Length; i++)
+        if(Abilities[i].bAllowed && Abilities[i].bIsStat)
             Abilities[i].ModifyMonster(M, Controller.Pawn);
-    }
+
+    //then abilities
+    for(i = 0; i < Abilities.Length; i++)
+        if(Abilities[i].bAllowed && !Abilities[i].bIsStat)
+            Abilities[i].ModifyMonster(M, Controller.Pawn);
 }
 
 function ServerKillMonsters()
 {
     while(Monsters.Length > 0)
     {
-        if(Monsters[0] != None)
-            Monsters[0].Suicide();
+        if(Monsters[0].Pawn != None)
+            Monsters[0].Pawn.Destroy();
 
         Monsters.Remove(0, 1);
     }
     NumMonsters = 0;
+    MonsterPoints = MaxMonsterPoints;
 }
 
 final function ServerDestroyBuildings()
