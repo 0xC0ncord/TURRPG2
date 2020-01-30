@@ -4,7 +4,7 @@ class RPGAbility extends Actor;
 
 var localized string
     AndText, OrText, ReqPreText, ReqPostText,
-    ForbPreText, ForbPostText, CostPerLevelText, MaxLevelText, ReqLevelText,
+    ForbPreText, ForbPostText, CostPerLevelText, MaxLevelText, ReqLevelText, ReqLevelPurchaseText,
     AtLevelText, GrantPreText, GrantPostText;
 
 //game-type specific disabling
@@ -23,6 +23,7 @@ struct AbilityStruct
 {
     var class<RPGAbility> AbilityClass;
     var int Level;
+    var int AllowedLevel;
 };
 var bool bDisjunctiveRequirements; //true = logical OR, false = logical AND
 var array<AbilityStruct> RequiredAbilities;
@@ -194,37 +195,37 @@ simulated function string GetName()
 */
 simulated function string DescriptionText()
 {
-    local int x, lv, i;
-    local array<string> list;
+    local int x, y, i;
+    local array<string> list, listtwo;
     local string text;
-    local RPGAbility tmpAbility;
 
-    text = Description;
-
-    for(lv = 0; lv < MaxLevel && lv < LevelDescription.Length; lv++)
+    for(y = 0; y < MaxLevel && y < LevelDescription.Length; y++)
     {
-        if(LevelDescription[lv] != "")
-            text $= "|" $ LevelDescription[lv];
+        if(LevelDescription[y] != "")
+            text $= "|" $ LevelDescription[y];
     }
-
-    for(lv = 1; lv <= MaxLevel; lv++)
+    for(y = 1; y <= MaxLevel; y++)
     {
         list.Remove(0, list.Length);
         for(x = 0; x < GrantItem.Length; x++)
         {
-            if(GrantItem[x].InventoryClass != None && GrantItem[x].Level == lv)
+            if(GrantItem[x].InventoryClass != None && GrantItem[x].Level == y)
                 list[list.Length] = GrantItem[x].InventoryClass.default.ItemName;
         }
 
         if(list.Length > 0)
         {
-            text $= "|" $ AtLevelText @ string(lv) $ GrantPreText;
+            i = 0;
+            text $= "|" $ AtLevelText @ string(y) $ GrantPreText;
             for(x = 0; x < list.Length; x++)
             {
+                i++;
                 text @= list[x];
 
                 if(x + 2 < list.Length)
                     text $= ",";
+                else if(i >= 2 && x + 1 < list.Length)
+                    text $= "," @ AndText;
                 else if(x + 1 < list.Length)
                     text @= AndText;
             }
@@ -232,74 +233,97 @@ simulated function string DescriptionText()
         }
     }
 
-    list.Remove(0, list.Length);
+    list.Length = 0;
 
-    /*
-    TODO
+    for(x = 0; x < RequiredLevels.Length; x++)
+        list[list.Length] = string(RequiredLevels[x]);
 
-    if(RequiredLevel > 0)
-        list[list.Length] = ReqLevelText @ string(RequiredLevel);
-    */
+    if(list.Length > 0)
+    {
+        i = 0;
+        text $= "||" $ ReqLevelText;
+        for(x = 0; x < list.Length; x++)
+        {
+            if(int(list[x]) > 0)
+            {
+                i++;
+                text @= "level" @ list[x] @ ReqLevelPurchaseText @ x + 1;
+                if(x + 2 < list.Length)
+                    text $= ",";
+                else if(i >= 2 && x + 1 < list.Length)
+                    text $= "," @ AndText;
+                else if(x + 1 < list.Length)
+                    text @= AndText;
+            }
+        }
+        text $= ".";
+    }
+
+    list.Length = 0;
 
     for(x = 0; x < RequiredAbilities.Length && RequiredAbilities[x].AbilityClass != None; x++)
     {
         i = list.Length;
-        tmpAbility = RPRI.GetAbility(RequiredAbilities[x].AbilityClass);
-        if(tmpAbility == None)
-            continue;
-
-        list[i] = tmpAbility.GetName();
+        listtwo.Length = i + 1;
+        list[i] = RPRI.GetAbility(RequiredAbilities[x].AbilityClass).GetName();
 
         if(RequiredAbilities[x].Level > 1)
+        {
             list[i] @= string(RequiredAbilities[x].Level);
+            if(RequiredAbilities[x].AllowedLevel > 0)
+                listtwo[i] = string(RequiredAbilities[x].AllowedLevel);
+            else
+                listtwo[i] = "1";
+        }
     }
-
     if(list.Length > 0)
     {
+        i = 0;
         text $= "||" $ ReqPreText;
 
         for(x = 0; x < list.Length; x++)
         {
-            text @= list[x];
+            i++;
+            text @= list[x] @ ReqLevelPurchaseText @ listtwo[x];
 
-            if(x + 2 < list.Length) {
+            if(x + 2 < list.Length)
                 text $= ",";
-            } else if(x + 1 < list.Length) {
-                if(bDisjunctiveRequirements) {
-                    text @= OrText;
-                } else {
-                    text @= AndText;
-                }
+            else if(i >= 2 && x + 1 < list.Length)
+            {
+                if(bDisjunctiveRequirements)
+                    text $= "," @ OrText;
+                else
+                    text $= "," @ AndText;
             }
+            else if(x + 1 < list.Length)
+                text @= AndText;
         }
-
         text @= ReqPostText;
     }
 
-    list.Remove(0, list.Length);
+    list.Length = 0;
     for(x = 0; x < ForbiddenAbilities.Length && ForbiddenAbilities[x].AbilityClass != None; x++)
     {
         i = list.Length;
-        tmpAbility = RPRI.GetAbility(ForbiddenAbilities[x].AbilityClass);
-        if(tmpAbility == None)
-            continue;
-
-        list[i] = tmpAbility.GetName();
+        list[i] = RPRI.GetAbility(ForbiddenAbilities[x].AbilityClass).GetName();
 
         if(ForbiddenAbilities[x].Level > 1)
             list[i] @= string(ForbiddenAbilities[x].Level);
     }
-
     if(list.Length > 0)
     {
+        i = 0;
         text $= "||" $ ForbPreText;
 
         for(x = 0; x < list.Length; x++)
         {
+            i++;
             text @= list[x];
 
             if(x + 2 < list.Length)
                 text $= ",";
+            else if(i >= 2 && x + 1 < list.Length)
+                text $= "," @ OrText;
             else if(x + 1 < list.Length)
                 text @= OrText;
         }
@@ -307,9 +331,12 @@ simulated function string DescriptionText()
         text @= ForbPostText;
     }
 
-    text $= "||" $ MaxLevelText $ ":" @ string(MaxLevel) $ "|" $ CostPerLevelText;
+    if(CostForNextLevel(x) > 0)
+        text $= "||" $ MaxLevelText $ ":" @ string(MaxLevel) $ "|" $ CostPerLevelText;
     for(x = 0; x < MaxLevel; x++)
     {
+        if(CostForNextLevel(x) <= 0)
+            break;
         text @= string(CostForNextLevel(x));
 
         if(x + 1 < MaxLevel)
@@ -586,13 +613,14 @@ defaultproperties
 
     AndText="and"
     OrText="or"
-    ReqLevelText="Level"
     ReqPreText="You need at least"
-    ReqPostText="in order to purchase this ability."
+    ReqPostText="of this ability."
     ForbPreText="You cannot have this ability and"
     ForbPostText="at the same time."
     CostPerLevelText="Cost (per level):"
     MaxLevelText="Max Level"
+    ReqLevelText="You must be at least"
+    ReqLevelPurchaseText="to purchase level"
     AtLevelText="At level"
     GrantPreText=", you are granted the"
     GrantPostText="when you spawn."
