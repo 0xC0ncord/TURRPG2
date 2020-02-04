@@ -95,9 +95,7 @@ fi
 echo Compiling...
 if [[ -f ${SYSTEM_DIR}/${BASENAME}.u ]]; then mv -vf ${SYSTEM_DIR}/${BASENAME}.u ${SYSTEM_DIR}/.${BASENAME}.u.bak; fi
 {
-    wine ${UCC} MakeCommandletUtils.EditPackagesCommandlet 1 ${BASENAME} 2>/dev/null &&
-    wine ${UCC} make ini=..\\${BASENAME}\\make.ini 2>/dev/null && echo ${SHA1SUM} > ${CURRENT_DIR}/Classes.sha1sum &&
-    wine ${UCC} MakeCommandletUtils.EditPackagesCommandlet 0 ${BASENAME} 2>/dev/null
+    wine ${UCC} make ini=..\\${BASENAME}\\make.ini 2>/dev/null && echo ${SHA1SUM} > ${CURRENT_DIR}/Classes.sha1sum
 } || {
     mv -vf ${SYSTEM_DIR}/.${BASENAME}.u.bak ${SYSTEM_DIR}/${BASENAME}.u
     EXIT_STATUS=1
