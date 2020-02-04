@@ -9,6 +9,8 @@ var float MasterFollowDistance;
 
 var FriendlyPawnReplicationInfo FPRI;
 
+var FX_FriendlyMonster Effect;
+
 event PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -57,6 +59,18 @@ function SetMaster(Controller NewMaster)
     {
         TeamNum = 255;
     }
+
+    Effect = Pawn.Spawn(class'FX_FriendlyMonster', Pawn);
+    Effect.SetBase(Pawn);
+    Effect.MasterPRI = Master.PlayerReplicationInfo;
+    Effect.Initialize();
+}
+
+function Destroyed()
+{
+    if(Effect != None)
+        Effect.Destroy();
+    Super.Destroyed();
 }
 
 simulated function int GetTeamNum()
