@@ -125,6 +125,12 @@ simulated function PostBeginPlay()
     NumUses = MaxUses;
 }
 
+simulated function PostNetBeginPlay()
+{
+    if(Role < ROLE_Authority)
+        InstigatorRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Level.GetLocalPlayerController());
+}
+
 function StripOut()
 {
     local Inventory Inv;
