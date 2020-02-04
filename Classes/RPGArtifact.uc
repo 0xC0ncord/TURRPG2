@@ -38,6 +38,7 @@ var int SelectedOption;
 struct OptionCostStruct
 {
     var Material Icon;
+    var int X1, Y1, X2, Y2;
     var int Cost;
     var bool bCanAfford;
 };

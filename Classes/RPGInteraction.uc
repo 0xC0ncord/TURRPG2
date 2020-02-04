@@ -1301,12 +1301,15 @@ function PostRender(Canvas Canvas)
             {
                 for(k = 0; k < OptionCosts[j].Arr.Length; k++)
                 {
+                    Canvas.TextSize(OptionCosts[j].Arr[k].Cost, XL, YL);
+
                     if(k >= OptionCostWidths.Length)
                     {
                         l = OptionCostWidths.Length;
                         OptionCostWidths.Length = l + 1;
                     }
-                    Canvas.TextSize(OptionCosts[j].Arr[k].Cost, XL, YL);
+                    else
+                        l = k;
                     if(OptionCostWidths[l] < XL)
                         OptionCostWidths[l] = XL;
                 }
@@ -1314,16 +1317,20 @@ function PostRender(Canvas Canvas)
             else
             {
                 Canvas.TextSize(SelectionArtifact.GetOptionCost(i), XL, YL);
-                if(MaxOptionWidth < XL + YL)
-                    MaxOptionWidth = XL + YL;
+                if(MaxOptionWidth < XL)
+                    MaxOptionWidth = XL;
             }
         }
         if(MaxOptionWidth == 0)
         {
             if(OptionCostWidths.Length > 0)
             {
-                for(k = 0; k < OptionCostWidths.Length; k++)
-                    MaxOptionWidth += OptionCostWidths[k];
+                for(i = 0; i < OptionCostWidths.Length; i++)
+                {
+                    MaxOptionWidth += OptionCostWidths[i];
+                    for(j = i + 1; j < OptionCostWidths.Length; j++)
+                        OptionCostWidths[i] += OptionCostWidths[j];
+                }
             }
         }
 
@@ -1429,21 +1436,40 @@ function PostRender(Canvas Canvas)
             {
                 if(CurrentOption < SelectionArtifact.GetNumOptions() && OptionCosts[CurrentOption].Arr.Length > 0)
                 {
-                    for(j = OptionCosts[CurrentOption].Arr.Length - 1; j >= 0; j--)
+                    for(j = 0; j < OptionCosts[CurrentOption].Arr.Length; j++)
                     {
                         Canvas.DrawColor = WhiteColor;
 
-                        Canvas.SetPos(X - OptionCostWidths[j] - YL * (j + 1), Y);
-                        Canvas.DrawTileClipped(
-                            OptionCosts[CurrentOption].Arr[j].Icon,
-                            YL, YL,
-                            0, 0, OptionCosts[CurrentOption].Arr[j].Icon.MaterialUSize(), OptionCosts[CurrentOption].Arr[j].Icon.MaterialVSize());
+                        Canvas.SetPos(X - OptionCostWidths[j] - YL * (OptionCostWidths.Length - j), Y);
+                        if(OptionCosts[CurrentOption].Arr[j].X1 == 0
+                        && OptionCosts[CurrentOption].Arr[j].Y1 == 0
+                        && OptionCosts[CurrentOption].Arr[j].X2 == 0
+                        && OptionCosts[CurrentOption].Arr[j].Y2 == 0)
+                        {
+                            Canvas.DrawTileClipped(
+                                OptionCosts[CurrentOption].Arr[j].Icon,
+                                YL, YL,
+                                0,
+                                0,
+                                OptionCosts[CurrentOption].Arr[j].Icon.MaterialUSize(),
+                                OptionCosts[CurrentOption].Arr[j].Icon.MaterialVSize());
+                        }
+                        else
+                        {
+                            Canvas.DrawTileClipped(
+                                OptionCosts[CurrentOption].Arr[j].Icon,
+                                YL, YL,
+                                OptionCosts[CurrentOption].Arr[j].X1,
+                                OptionCosts[CurrentOption].Arr[j].Y1,
+                                OptionCosts[CurrentOption].Arr[j].X2,
+                                OptionCosts[CurrentOption].Arr[j].Y2);
+                        }
 
                         if(!OptionCosts[CurrentOption].Arr[j].bCanAfford) {
                             Canvas.DrawColor = RedColor;
                         }
 
-                        Canvas.SetPos(X - OptionCostWidths[j] - YL * j, Y);
+                        Canvas.SetPos(X - OptionCostWidths[j] - YL * (OptionCostWidths.Length - 1 - j), Y);
                         Canvas.DrawTextClipped(string(OptionCosts[CurrentOption].Arr[j].Cost));
                     }
                 }
