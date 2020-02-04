@@ -184,6 +184,32 @@ simulated function int GetOptionCost(int i) {
     return MonsterTypes[i].Cost;
 }
 
+simulated function array<OptionCostStruct> GetHUDOptionCosts(int i)
+{
+    local OptionCostStruct OptionCost;
+    local array<OptionCostStruct> OptionCosts;
+
+    OptionCost.Cost = MonsterTypes[i].Cost;
+    OptionCost.Icon = Texture'HUDContent.Generic.HUD';
+    OptionCost.X1 = 113;
+    OptionCost.Y1 = 38;
+    OptionCost.X2 = 52;
+    OptionCost.Y2 = 68;
+    OptionCost.bCanAfford = InstigatorRPRI.Controller.Adrenaline - OptionCost.Cost >= 0;
+    OptionCosts[0] = OptionCost;
+
+    OptionCost.Cost = MonsterTypes[i].Points;
+    OptionCost.Icon = Texture'MonsterPointsIcon';
+    OptionCost.X1 = 0;
+    OptionCost.Y1 = 0;
+    OptionCost.X2 = 0;
+    OptionCost.Y2 = 0;
+    OptionCost.bCanAfford = InstigatorRPRI.MonsterPoints - OptionCost.Cost >= 0;
+    OptionCosts[1] = OptionCost;
+
+    return OptionCosts;
+}
+
 function int SelectBestOption() {
     local Controller C;
     local int i;
