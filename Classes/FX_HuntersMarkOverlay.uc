@@ -7,7 +7,7 @@ var Pawn OwnerPawn;
 
 replication
 {
-    reliable if(Role == ROLE_Authority && bNetDirty)
+    reliable if(Role == ROLE_Authority && bNetInitial)
         OwnerPawn;
 }
 
@@ -35,12 +35,22 @@ simulated function PostBeginPlay()
 {
     if(Level.NetMode == NM_DedicatedServer)
         Disable('Tick');
-    else if(Level.NetMode != NM_Client)
+    if(Level.NetMode != NM_Client)
     {
         OwnerPawn = Pawn(Owner);
         SetOwner(OwnerPawn);
         Init();
     }
+}
+
+simulated function PostNetBeginPlay()
+{
+    if(Level.NetMode != NM_Client)
+        return;
+    if(OwnerPawn != None)
+        Init();
+    else
+        Destroy();
 }
 
 simulated function Tick(float DeltaTime)
@@ -81,7 +91,8 @@ simulated function Tick(float DeltaTime)
     }
     else
     {
-        bHidden = true;
+        if(!bHidden)
+            bHidden = true;
         if(OwnerPawn != None)
             SetOwner(OwnerPawn);
     }
