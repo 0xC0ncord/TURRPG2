@@ -16,6 +16,7 @@ var array<class<Weapon> > ThrownWeapons;
 var RPGAIBuild AIBuild;
 var int AIBuildAction;
 
+var RPGReplicationInfo RRI;
 var RPGPlayerLevelInfo PlayerLevel;
 
 //Status icons
@@ -498,7 +499,6 @@ simulated event PostNetBeginPlay()
 simulated function ClientSetup()
 {
     local int x, i;
-    local RPGReplicationInfo RRI;
     local class<RPGArtifact> AClass;
     local ArtifactOrderStruct OrderEntry;
     local RadialMenuArtifactStruct RadialEntry;

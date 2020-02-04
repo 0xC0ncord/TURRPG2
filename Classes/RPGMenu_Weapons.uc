@@ -34,8 +34,6 @@ var() vector SpinnyWeapOffset;
 var string ModifierDescription;
 var FX_WeaponMenuHearts HeartsEffect;
 
-var localized string NotAvailableText, NotAvailableTitle, NotAvailableDesc;
-
 var localized string Text_ModifierLevel;
 var localized string Text_ShowFavorites;
 var localized string Text_Favorite, Text_Unfavorite;
@@ -179,10 +177,10 @@ function bool SelectWeapon(GUIComponent Sender)
     {
         lbModifiers.List.bNotify = false;
         lbModifiers.List.Clear();
-        for(i = 0; i < class'MutTURRPG'.default.WeaponModifiers.Length; i++)
+        for(i = 0; i < RPGMenu.RPRI.RRI.MAX_WEAPONMODIFIERS; i++)
         {
-            if(class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass != None && RPGMenu.RPRI.IsFavorite(SelectedWeapon, class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass))
-                lbModifiers.List.Add(FormatModifierName(class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass), class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass, string(i));
+            if(RPGMenu.RPRI.RRI.WeaponModifiers[i] != None && RPGMenu.RPRI.IsFavorite(SelectedWeapon, RPGMenu.RPRI.RRI.WeaponModifiers[i]))
+                lbModifiers.List.Add(FormatModifierName(RPGMenu.RPRI.RRI.WeaponModifiers[i]), RPGMenu.RPRI.RRI.WeaponModifiers[i], string(i));
         }
         lbModifiers.List.bNotify = true;
     }
@@ -311,22 +309,18 @@ function PopulateLists()
             if(!chShowFavorites.IsChecked() || RPGMenu.RPRI.IsFavorite(WeaponClasses[i], None, true))
                 lbWeapons.List.Add(WeaponClasses[i].default.ItemName, WeaponClasses[i], string(i));
         }
-        else if(!chShowFavorites.IsChecked())
-            lbWeapons.List.Add(NotAvailableText @ WeaponClassNames[i], None, string(i));
     }
     lbWeapons.List.bNotify = true;
 
     lbModifiers.List.bNotify = false;
     lbModifiers.List.Clear();
-    for(i = 0; i < class'MutTURRPG'.default.WeaponModifiers.Length; i++)
+    for(i = 0; i < RPGMenu.RPRI.RRI.MAX_WEAPONMODIFIERS; i++)
     {
-        if(class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass != None)
+        if(RPGMenu.RPRI.RRI.WeaponModifiers[i] != None)
         {
-            if(!chShowFavorites.IsChecked() || RPGMenu.RPRI.IsFavorite(SelectedWeapon, class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass))
-                lbModifiers.List.Add(FormatModifierName(class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass), class'MutTURRPG'.default.WeaponModifiers[i].ModifierClass, string(i));
+            if(!chShowFavorites.IsChecked() || RPGMenu.RPRI.IsFavorite(SelectedWeapon, RPGMenu.RPRI.RRI.WeaponModifiers[i]))
+                lbModifiers.List.Add(FormatModifierName(RPGMenu.RPRI.RRI.WeaponModifiers[i]), RPGMenu.RPRI.RRI.WeaponModifiers[i], string(i));
         }
-        else if(!chShowFavorites.IsChecked())
-            lbModifiers.List.Add(NotAvailableTitle, None, string(i));
     }
     lbModifiers.List.bNotify = true;
 }
@@ -481,9 +475,6 @@ defaultproperties
     WeaponClassNames(13)="Onslaught.ONSAVRiL"
     WeaponClassNames(14)="OnslaughtFull.ONSPainter"
     WeaponClassNames(15)="UTClassic.ClassicSniperRifle"
-    NotAvailableText="N/A:"
-    NotAvailableTitle="N/A"
-    NotAvailableDesc="This weapon or weapon modifier is invalid."
     Text_ModifierLevel="Preview Modifier Level"
     Text_ShowFavorites="Favorites Only"
     Text_Favorite="Favorite"

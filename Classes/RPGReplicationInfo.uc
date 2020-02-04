@@ -1,9 +1,11 @@
 class RPGReplicationInfo extends ReplicationInfo;
 
 const MAX_ARTIFACTS = 63;
+const MAX_WEAPONMODIFIERS = 63;
 
 var int NumAbilities;
 var class<RPGArtifact> Artifacts[MAX_ARTIFACTS];
+var class<RPGWeaponModifier> WeaponModifiers[MAX_WEAPONMODIFIERS];
 
 //Client
 var Interaction Interaction;
@@ -11,7 +13,7 @@ var Interaction Interaction;
 replication
 {
     reliable if(Role == ROLE_Authority && bNetInitial)
-        Artifacts, NumAbilities;
+        Artifacts, NumAbilities, WeaponModifiers;
 }
 
 static function RPGReplicationInfo Get(LevelInfo Level)

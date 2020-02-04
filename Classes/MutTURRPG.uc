@@ -285,6 +285,13 @@ event PostBeginPlay()
     for(x = 0; x < RRI.MAX_ARTIFACTS && x < Artifacts.Length; x++)
         RRI.Artifacts[x] = Artifacts[x];
 
+    //Weapon modifiers
+    if(WeaponModifiers.Length > RRI.MAX_WEAPONMODIFIERS)
+        Log("WARNING:" @ WeaponModifiers.Length @ "weapon modifier classes were configured, but only" @ RRI.MAX_WEAPONMODIFIERS @ "are supported!", 'TURRPG2');
+
+    for(x = 0; x < RRI.MAX_WEAPONMODIFIERS && x < WeaponModifiers.Length; x++)
+        RRI.WeaponModifiers[x] = WeaponModifiers[x].ModifierClass;
+
     //Super
     Super.PostBeginPlay();
 }
