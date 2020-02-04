@@ -2351,6 +2351,6 @@ defaultproperties
     RemoteRole=ROLE_SimulatedProxy
     GameRestartingText="Sorry, you cannot perform the desired action once the endgame voting has begun."
     ImposterText="Sorry, your name is already used on this server.|This is a roleplaying game server and every character has a unique name.||Please choose a different name and come back."
-    LevelUpText="You have leveled up!|Head to the TURRPG menu (press L) to buy new abilities."
+    LevelUpText="You have leveled up!|Head to the RPG menu (press L) to buy new abilities."
     IntroText="Press L to open the TURRPG menu."
 }
