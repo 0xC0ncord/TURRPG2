@@ -101,6 +101,11 @@ var int UtilityPoints, MaxUtilityPoints;
 
 //determine if summons die on player death
 var bool bMonstersDie;
+var bool bBuildingsDie;
+var bool bSentinelsDie;
+var bool bTurretsDie;
+var bool bVehiclesDie;
+var bool bUtilitiesDie;
 
 var float HealingExpMultiplier;
 
@@ -193,6 +198,10 @@ replication
         MaxMonsters,
         NumBuildings, NumSentinels, NumTurrets, NumVehicles, NumUtilities,
         MaxBuildings, MaxSentinels, MaxTurrets, MaxVehicles, MaxUtilities,
+        MonsterPoints, MaxMonsterPoints,
+        BuildingPoints, MaxBuildingPoints, SentinelPoints, MaxSentinelPoints,
+        TurretPoints, MaxTurretPoints, VehiclePoints, MaxVehiclePoints,
+        UtilityPoints, MaxUtilityPoints,
         NumVehicleHealers;
     reliable if(Role == ROLE_Authority)
         ClientReInitMenu, ClientEnableRPGMenu,
@@ -377,7 +386,11 @@ simulated event BeginPlay()
 
 function Reset() {
     ServerKillMonsters();
+    ServerDestroyBuildings();
+    ServerDestroySentinels();
     ServerDestroyTurrets();
+    ServerDestroyVehicles();
+    ServerDestroyUtilities();
 }
 
 simulated event Destroyed()
@@ -940,6 +953,22 @@ simulated event Tick(float dt)
         else if(Controller.Pawn == None)
         {
             LastPawnWeapon = None;
+        }
+
+        if(Controller.Pawn != None && Controller.Pawn.Health <= 0)
+        {
+            if(Monsters.Length > 0 && bMonstersDie)
+                ServerKillMonsters();
+            if(Buildings.Length > 0 && bBuildingsDie)
+                ServerDestroyBuildings();
+            if(Sentinels.Length > 0 && bSentinelsDie)
+                ServerDestroySentinels();
+            if(Turrets.Length > 0 && bTurretsDie)
+                ServerDestroyTurrets();
+            if(Vehicles.Length > 0 && bVehiclesDie)
+                ServerDestroyVehicles();
+            if(Utilities.Length > 0 && bUtilitiesDie)
+                ServerDestroyUtilities();
         }
 
         //Clean monsters
@@ -1675,6 +1704,13 @@ function ServerSwitchBuild(string NewBuild)
 {
     Log(RPGName $ " switches build to " $ NewBuild, 'TURRPG2');
     RPGMut.SwitchBuild(Self, NewBuild);
+
+    ServerKillMonsters();
+    ServerDestroyBuildings();
+    ServerDestroySentinels();
+    ServerDestroyTurrets();
+    ServerDestroyVehicles();
+    ServerDestroyUtilities();
 }
 
 function GameEnded()
@@ -2301,6 +2337,13 @@ defaultproperties
     MaxTurrets=3
     MaxVehicles=3
     MaxUtilities=3
+
+    bMonstersDie=True
+    bBuildingsDie=True
+    bSentinelsDie=True
+    bTurretsDie=True
+    bVehiclesDie=True
+    bUtilitiesDie=True
 
     bAlwaysRelevant=False
     bOnlyRelevantToOwner=True
