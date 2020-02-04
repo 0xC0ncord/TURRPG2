@@ -29,7 +29,7 @@ defaultproperties
         StartSpinRange=(X=(Max=1.000000))
         StartSizeRange=(X=(Min=2.000000,Max=4.000000))
         InitialParticlesPerSecond=16.000000
-        Texture=Texture'TURRPG2_rc.Effects.loveHearts'
+        Texture=Texture'TURRPG2.Effects.loveHearts'
         TextureUSubdivisions=2
         TextureVSubdivisions=2
         LifetimeRange=(Min=2.000000,Max=3.000000)
