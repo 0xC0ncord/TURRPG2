@@ -10,5 +10,4 @@ simulated function PostBeginPlay()
 defaultproperties
 {
     DefaultWeaponClassName=""
-    bNoTeamBeacon=False
 }

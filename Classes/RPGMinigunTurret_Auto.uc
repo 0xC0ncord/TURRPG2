@@ -16,5 +16,4 @@ defaultproperties
 {
     bNonHumanControl=True
     bAutoTurret=True
-    bNoTeamBeacon=False
 }

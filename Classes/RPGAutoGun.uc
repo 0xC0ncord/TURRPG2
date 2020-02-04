@@ -55,5 +55,4 @@ defaultproperties
      TransientSoundRadius=512.000000
      CollisionRadius=0.000000
      CollisionHeight=0.000000
-     bNetNotify=True
 }

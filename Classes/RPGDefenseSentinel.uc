@@ -21,19 +21,19 @@ function AddDefaultInventory()
 
 defaultproperties
 {
-  HealthHealingAmount=1.000000
-  ShieldHealingAmount=1.000000
-  AdrenalineHealingAmount=1.000000
-  ResupplyAmount=1.000000
-  ArmorHealingAmount=1.000000
-  TurretBaseClass=Class'RPGDefenseSentinelBase'
-  DefaultWeaponClassName=""
-  VehicleNameString="Defense Sentinel"
-  bCanBeBaseForPawns=False
-  bNonHumanControl=True
-  Mesh=SkeletalMesh'AS_Vehicles_M.FloorTurretGun'
-  DrawScale=0.500000
-  AmbientGlow=10
-  CollisionRadius=0.000000
-  CollisionHeight=0.000000
+    HealthHealingAmount=1.000000
+    ShieldHealingAmount=1.000000
+    AdrenalineHealingAmount=1.000000
+    ResupplyAmount=1.000000
+    ArmorHealingAmount=1.000000
+    TurretBaseClass=Class'RPGDefenseSentinelBase'
+    DefaultWeaponClassName=""
+    VehicleNameString="Defense Sentinel"
+    bCanBeBaseForPawns=False
+    bNonHumanControl=True
+    Mesh=SkeletalMesh'AS_Vehicles_M.FloorTurretGun'
+    DrawScale=0.500000
+    AmbientGlow=10
+    CollisionRadius=0.000000
+    CollisionHeight=0.000000
 }

@@ -58,4 +58,5 @@ defaultproperties
     AmbientGlow=10
     HealthMax=1000.000000
     Health=1000
+    bNoTeamBeacon=True
 }

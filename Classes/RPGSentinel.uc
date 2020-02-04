@@ -11,5 +11,4 @@ simulated event PostBeginPlay()
 defaultproperties
 {
      DefaultWeaponClassName=""
-     bNoTeamBeacon=False
 }
