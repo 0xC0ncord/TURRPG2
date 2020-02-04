@@ -285,6 +285,9 @@ function ModifyStats()
         if(Abilities[x].bAllowed)
             Abilities[x].ModifyRPRI();
     }
+
+    if(xPlayer(Controller) != None)
+        ModifyCombos();
 }
 
 simulated event BeginPlay()
@@ -486,11 +489,7 @@ simulated event PostNetBeginPlay()
     Super.PostNetBeginPlay();
 
     if(Controller != None && Role == ROLE_Authority)
-    {
         Controller.AdrenalineMax = Controller.default.AdrenalineMax; //fix the build switching exploit
-        if(xPlayer(Controller) != None)
-            AdjustCombos();
-    }
 
     if(Level.NetMode != NM_DedicatedServer)
         ClientSetup(); //try setup. if it fails, it's tried again every tick
@@ -517,7 +516,7 @@ simulated function ClientSetup()
     PRI.CustomReplicationInfo = Self;
 
     if(xPlayer(Controller) != None)
-        AdjustCombos();
+        ResetCombos();
 
     if(Role < ROLE_Authority) //not offline
     {
@@ -604,7 +603,7 @@ simulated function ClientSetup()
     bClientSetup = true;
 }
 
-simulated final function AdjustCombos()
+simulated final function ResetCombos()
 {
     local int i;
 
@@ -628,6 +627,11 @@ simulated final function AdjustCombos()
     xPlayer(Controller).ComboList[2] = class'RPGComboDefensive';
     xPlayer(Controller).ComboNameList[3] = string(class'RPGComboInvis');
     xPlayer(Controller).ComboList[3] = class'RPGComboInvis';
+}
+
+simulated final function ModifyCombos()
+{
+    local int i;
 
     for(i = 0; i < Abilities.Length; i++)
         if(Abilities[i].ComboReplacements.Length > 0)
@@ -834,7 +838,10 @@ simulated function ReceiveAbility(RPGAbility Ability)
     }
 
     if(AbilitiesReceived == AbilitiesTotal)
+    {
         ClientEnableRPGMenu();
+        ModifyCombos();
+    }
 }
 
 simulated function CheckPlayerViewShake()
