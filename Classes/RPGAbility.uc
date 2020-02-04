@@ -199,6 +199,8 @@ simulated function string DescriptionText()
     local array<string> list, listtwo;
     local string text;
 
+    text = Description;
+
     for(y = 0; y < MaxLevel && y < LevelDescription.Length; y++)
     {
         if(LevelDescription[y] != "")
