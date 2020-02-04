@@ -77,8 +77,6 @@ simulated function UpdateEffects(class<Pawn> Other)
     Emitters[11].StartLocationOffset.Z = -64 * (Other.default.CollisionHeight / 44);
     Emitters[11].StartVelocityRange.Z.Min = 64 * (Other.default.CollisionHeight / 44);
     Emitters[11].StartVelocityRange.Z.Max = 64 * (Other.default.CollisionHeight / 44);
-    Emitters[11].MaxActiveParticles *= DrawScale;
-    Emitters[11].Particles.Length = Emitters[10].MaxActiveParticles;
 
     //teleport dust
     Emitters[10].MaxActiveParticles *= DrawScale;
@@ -386,7 +384,7 @@ defaultproperties
 
     AutoDestroy=True
     bNoDelete=False
-    RemoteRole=Role_DumbProxy
+    RemoteRole=Role_SimulatedProxy
     bNetTemporary=True
     bNotOnDedServer=False
     bAlwaysRelevant=True //to avoid desync
