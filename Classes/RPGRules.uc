@@ -665,6 +665,10 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         instigatorRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(instigatorController);
     }
 
+    //Hack friendly fire checks
+    if(TeamGame(Level.Game) != None && FriendlyMonsterController(injuredController) != None && class'Util'.static.SameTeamC(injuredController, instigatorController))
+        Damage *= TeamGame(Level.Game).FriendlyFireScale;
+
     if(Vehicle(instigatedBy) != None && instigatorRPRI != None && instigatorRPRI.NumVehicleHealers > 0)
     {
         OldXP = instigatorRPRI.Experience;
@@ -1135,6 +1139,26 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 
                 if(UnrealPawn(KilledVehicleDriver) != None)
                     UnrealPawn(KilledVehicleDriver).spree = 0;
+            }
+        }
+    }
+
+    //Give experience and game stats (but NOT points) for killing someone else's monster
+    if(FriendlyMonsterController(Killed.Controller) != None)
+    {
+        //don't count this monster as part of an Invasion wave
+        if(Invasion(Level.Game) != None)
+            Invasion(Level.Game).NumMonsters++;
+
+        if(Killer != None && Killer != Killed && Killer.bIsPlayer)
+        {
+            if(FriendlyMonsterController(Killed.Controller).Master != Killer)
+            {
+                Level.Game.GameRulesModifiers.ScoreKill(Killer, Killed.Controller);
+                if(ClassIsChildOf(DamageType, class'WeaponDamageType'))
+                    RegisterWeaponKill(Killer.PlayerReplicationInfo, None, class<WeaponDamageType>(DamageType).default.WeaponClass);
+                else if(ClassIsChildOf(DamageType, class'VehicleDamageType'))
+                    RegisterVehicleKill(Killer.PlayerReplicationInfo, None, class<VehicleDamageType>(DamageType).default.VehicleClass);
             }
         }
     }
