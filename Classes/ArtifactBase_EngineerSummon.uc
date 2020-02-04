@@ -8,7 +8,7 @@ var int NormalHealth;
 
 var string ConstructionType;
 
-var class<Pawn> SpawnActorClassCeiling;
+var class<Actor> SpawnActorClassCeiling;
 var class<Controller> SpawnControllerClass;
 
 struct PawnTypeStruct
@@ -238,6 +238,9 @@ function OnSelection(int i)
     SpawnActorClass = ConstructionTypes[i].PawnClass;
     SpawnActorClassCeiling = ConstructionTypes[i].CeilingPawnClass;
     SpawnControllerClass = ConstructionTypes[i].ControllerClass;
+
+    if(SpawnActorClassCeiling == None)
+        SpawnActorClassCeiling = SpawnActorClass;
 }
 
 simulated function string GetSelectionTitle()
@@ -493,8 +496,13 @@ final function bool SpawnIt(TranslocatorBeacon Beacon, Pawn P)
         {
             // its the ceiling one we want
             bOnCeiling = true;
-            SpawnClass = SpawnActorClassCeiling;
+            SpawnClass = class<Pawn>(SpawnActorClassCeiling);
             SpawnLoc = SpawnLocCeiling;
+            // flip over sentinels with no actual ceiling variant
+            if(ClassIsChildOf(SpawnClass, class'RPGLinkSentinel') || ClassIsChildOf(SpawnClass, class'RPGAutoGun'))
+            {
+                SpawnRot.Roll = 32768; // upside down
+            }
             bGotSpace = CheckSpace(SpawnLoc, SpawnClass.default.CollisionRadius, -SpawnClass.default.CollisionHeight);
         }
         else
