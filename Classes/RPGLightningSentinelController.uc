@@ -1,6 +1,8 @@
 class RPGLightningSentinelController extends Controller;
 
 var Controller PlayerSpawner;
+var FriendlyPawnReplicationInfo FPRI;
+
 var class<xEmitter> HitEmitterClass;
 
 var float MaxHealthMultiplier;
@@ -11,28 +13,31 @@ var float TargetRadius;
 
 var float DamageAdjust;     // set by AbilityLoadedEngineer
 
+event PostBeginPlay()
+{
+    Super.PostBeginPlay();
+    SetTimer(1.0, true);
+    FPRI = Spawn(class'FriendlyPawnReplicationInfo');
+}
+
+function Possess(Pawn aPawn)
+{
+    Super.Possess(aPawn);
+    FPRI.Pawn = aPawn;
+}
+
 function SetPlayerSpawner(Controller PlayerC)
 {
     PlayerSpawner = PlayerC;
+    FPRI.Master = PlayerC.PlayerReplicationInfo;
     if (PlayerSpawner.PlayerReplicationInfo != None && PlayerSpawner.PlayerReplicationInfo.Team != None )
     {
-        if (PlayerReplicationInfo == None)
-            PlayerReplicationInfo = spawn(class'RPGSentinelPlayerReplicationInfo', self);
+        PlayerReplicationInfo = spawn(class'FriendlyPawnPlayerReplicationInfo', self);
         PlayerReplicationInfo.PlayerName = PlayerSpawner.PlayerReplicationInfo.PlayerName$"'s Sentinel";
         PlayerReplicationInfo.Team = PlayerSpawner.PlayerReplicationInfo.Team;
-        RPGSentinelPlayerReplicationInfo(PlayerReplicationInfo).bNoTeamBeacon=true;
         if(Pawn!=None)
-        {
             Pawn.PlayerReplicationInfo = PlayerReplicationInfo;
-            Pawn.bNoTeamBeacon = true;
-        }
     }
-}
-
-function PostBeginPlay()
-{
-    SetTimer(1.0, true);
-    Super.PostBeginPlay();
 }
 
 function Timer()

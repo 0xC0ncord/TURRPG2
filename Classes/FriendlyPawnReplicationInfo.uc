@@ -34,6 +34,9 @@ simulated event PostNetBeginPlay()
             }
         }
     }
+
+    if(Role < ROLE_Authority && !Pawn.bNoTeamBeacon)
+        Pawn.bNoTeamBeacon = true;
 }
 
 simulated event Tick(float dt)
@@ -44,6 +47,8 @@ simulated event Tick(float dt)
     {
         if(Master == None || Pawn == None || Pawn.Health <= 0)
             Destroy();
+        else if(!Pawn.bNoTeamBeacon)
+            Pawn.bNoTeamBeacon = true;
     }
 }
 

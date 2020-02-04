@@ -2,18 +2,32 @@ class RPGBaseSentinelController extends TurretController;
 
 var Controller PlayerSpawner;
 var RPGPlayerReplicationInfo RPRI;
+var FriendlyPawnReplicationInfo FPRI;
+
 var float TimeSinceCheck;
 
 var int AttractRange;
 var int TargetRange;
 
+event PostBeginPlay()
+{
+    Super.PostBeginPlay();
+    FPRI = Spawn(class'FriendlyPawnReplicationInfo');
+}
+
+function Possess(Pawn aPawn)
+{
+    Super.Possess(aPawn);
+    FPRI.Pawn = aPawn;
+}
+
 function SetPlayerSpawner(Controller PlayerC)
 {
     PlayerSpawner = PlayerC;
+    FPRI.Master = PlayerC.PlayerReplicationInfo;
     if(PlayerSpawner.PlayerReplicationInfo != None && PlayerSpawner.PlayerReplicationInfo.Team != None)
     {
-        if (PlayerReplicationInfo == None)
-            PlayerReplicationInfo = Spawn(class'RPGSentinelPlayerReplicationInfo', self);
+        PlayerReplicationInfo = Spawn(class'FriendlyPawnPlayerReplicationInfo', self);
         PlayerReplicationInfo.PlayerName = PlayerSpawner.PlayerReplicationInfo.PlayerName $ "'s Sentinel";
         PlayerReplicationInfo.Team = PlayerSpawner.PlayerReplicationInfo.Team;
         if(Pawn != None)

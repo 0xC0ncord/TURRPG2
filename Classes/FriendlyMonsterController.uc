@@ -39,9 +39,22 @@ function SetMaster(Controller NewMaster)
     MasterRPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Master);
     FPRI.Master = Master.PlayerReplicationInfo;
 
-    if(Master.PlayerReplicationInfo != None && Master.PlayerReplicationInfo.Team != None) {
+    if(Master.PlayerReplicationInfo != None && Master.PlayerReplicationInfo.Team != None)
+    {
         TeamNum = Master.PlayerReplicationInfo.Team.TeamIndex;
-    } else {
+
+        PlayerReplicationInfo = Spawn(class'FriendlyPawnPlayerReplicationInfo', self);
+        PlayerReplicationInfo.PlayerName = Master.PlayerReplicationInfo.PlayerName $ "'s" @ Pawn.GetHumanReadableName();
+        PlayerReplicationInfo.Team = Master.PlayerReplicationInfo.Team;
+
+        if(Pawn != None)
+        {
+            Pawn.PlayerReplicationInfo = PlayerReplicationInfo;
+            Pawn.bNoTeamBeacon = true;
+        }
+    }
+    else
+    {
         TeamNum = 255;
     }
 }

@@ -2,6 +2,7 @@ class RPGLinkSentinelController extends Controller;
 
 var Controller PlayerSpawner;
 var RPGPlayerReplicationInfo RPRI;
+var FriendlyPawnReplicationInfo FPRI;
 
 var Vehicle HealingVehicle;
 
@@ -11,21 +12,29 @@ var float VehicleHealPerShot;
 var class<xEmitter> TurretLinkEmitterClass;        // for linking to turrets where we get xp
 var class<xEmitter> VehicleLinkEmitterClass;       // for linking to vehicles where we do not get xp
 
+event PostBeginPlay()
+{
+    Super.PostBeginPlay();
+    FPRI = Spawn(class'FriendlyPawnReplicationInfo');
+}
+
+function Possess(Pawn aPawn)
+{
+    Super.Possess(aPawn);
+    FPRI.Pawn = aPawn;
+}
+
 function SetPlayerSpawner(Controller PlayerC)
 {
     PlayerSpawner = PlayerC;
+    FPRI.Master = PlayerC.PlayerReplicationInfo;
     if (PlayerSpawner.PlayerReplicationInfo != None && PlayerSpawner.PlayerReplicationInfo.Team != None )
     {
-        if (PlayerReplicationInfo == None)
-            PlayerReplicationInfo = spawn(class'RPGSentinelPlayerReplicationInfo', self);
+        PlayerReplicationInfo = spawn(class'FriendlyPawnPlayerReplicationInfo', self);
         PlayerReplicationInfo.PlayerName = PlayerSpawner.PlayerReplicationInfo.PlayerName$"'s Sentinel";
         PlayerReplicationInfo.Team = PlayerSpawner.PlayerReplicationInfo.Team;
-        RPGSentinelPlayerReplicationInfo(PlayerReplicationInfo).bNoTeamBeacon=true;
         if(Pawn!=None)
-        {
             Pawn.PlayerReplicationInfo = PlayerReplicationInfo;
-            Pawn.bNoTeamBeacon = true;
-        }
         RPRI=class'RPGPlayerReplicationInfo'.static.GetFor(PlayerSpawner);
     }
     SetTimer(TimeBetweenShots, true);

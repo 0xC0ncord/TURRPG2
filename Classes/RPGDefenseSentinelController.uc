@@ -2,6 +2,7 @@ class RPGDefenseSentinelController extends Controller;
 
 var Controller PlayerSpawner;
 var RPGPlayerReplicationInfo RPRI;
+var FriendlyPawnReplicationInfo FPRI;
 
 var float TimeBetweenShots;
 var float TargetRadius;
@@ -23,23 +24,31 @@ var Material HealingOverlay;
 var bool bHealing;
 var int DoHealCount;
 
+event PostBeginPlay()
+{
+    Super.PostBeginPlay();
+    FPRI = Spawn(class'FriendlyPawnReplicationInfo');
+}
+
+function Possess(Pawn aPawn)
+{
+    Super.Possess(aPawn);
+    FPRI.Pawn = aPawn;
+}
+
 function SetPlayerSpawner(Controller PlayerC)
 {
     local Ability_WeaponSpeed Ability;
 
     PlayerSpawner = PlayerC;
+    FPRI.Master = PlayerSpawner.PlayerReplicationInfo;
     if (PlayerSpawner.PlayerReplicationInfo != None && PlayerSpawner.PlayerReplicationInfo.Team != None )
     {
-        if (PlayerReplicationInfo == None)
-            PlayerReplicationInfo = spawn(class'RPGSentinelPlayerReplicationInfo', self);
+        PlayerReplicationInfo = spawn(class'FriendlyPawnPlayerReplicationInfo', self);
         PlayerReplicationInfo.PlayerName = PlayerSpawner.PlayerReplicationInfo.PlayerName$"'s Sentinel";
         PlayerReplicationInfo.Team = PlayerSpawner.PlayerReplicationInfo.Team;
-        RPGSentinelPlayerReplicationInfo(PlayerReplicationInfo).bNoTeamBeacon=true;
         if(Pawn!=None)
-        {
             Pawn.PlayerReplicationInfo = PlayerReplicationInfo;
-            Pawn.bNoTeamBeacon = true;
-        }
 
         // adjust the fire rate according to weapon speed
         RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(PlayerSpawner);
