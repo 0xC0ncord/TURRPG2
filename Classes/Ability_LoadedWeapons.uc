@@ -1,5 +1,30 @@
 class Ability_LoadedWeapons extends RPGAbility;
 
+function ModifyPawn(Pawn Other)
+{
+    local Inventory Inv;
+    local Inventory SGInv, ARInv;
+
+    Super.ModifyPawn(Other);
+
+    // Delete starting Shield Gun and Assault Rifle if found
+    for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+    {
+        if(InStr(Caps(Inv.ItemName), "SHIELD GUN") != -1)
+            SGInv = Inv;
+        else if(InStr(Caps(Inv.ItemName), "ASSAULT RIFLE") != -1)
+            ARInv = Inv;
+
+        if(SGInv != None && ARInv != None)
+            break;
+    }
+
+    if(SGInv != None)
+        Other.DeleteInventory(SGInv);
+    if(ARInv != None)
+        Other.DeleteInventory(ARInv);
+}
+
 function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier)
 {
     if(AbilityLevel >= 4)
