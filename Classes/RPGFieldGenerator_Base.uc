@@ -46,8 +46,8 @@ defaultproperties
     bPathColliding=False
     Physics=PHYS_Falling
     DrawType=DT_StaticMesh
-    StaticMesh=StaticMesh'2k4ChargerMeshes.ChargerMeshes.HealthChargerMESH-DS'
-    DrawScale=0.35
+    StaticMesh=StaticMesh'TURRPG2.Misc.UCBombSpawnMesh'
+    DrawScale=5.0
     CollisionHeight=2.0
     CollisionRadius=4.0
     bCollideActors=True
