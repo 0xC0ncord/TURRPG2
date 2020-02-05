@@ -11,22 +11,11 @@ struct StoredWeapon
 };
 var array<StoredWeapon> StoredWeapons;
 
-/*
-    This isn't beautiful, but I can't think of any other way to describe this...
-    ExtraSavingLevel determines the level from which on weapons are saved when
-    you died in a vehicle or while carrying the ball launcher (in Bombing Run).
-
-    In TC06 that's all included in level 2,
-    but in TitanRPG it's not featured before level 3.
-*/
-var config int ExtraSavingLevel;
-var config int StoreAllLevel;
-
 static function bool CanSaveWeapon(Weapon W)
 {
     local int x;
 
-    if(W == None)
+    if(W == None || class'MutTURRPG'.static.Instance(W.Level).IsSuperWeapon(W.Class))
         return false;
 
     for(x = 0; x < default.ForbiddenWeaponTypes.Length; x++)
@@ -53,55 +42,37 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     }
 
     if(Vehicle(Killed) != None) {
-        if(AbilityLevel >= ExtraSavingLevel) {
-            Killed = Vehicle(Killed).Driver;
-        } else {
-            return false;
-        }
+        Killed = Vehicle(Killed).Driver;
     }
 
-    if(Painter(Killed.Weapon) != None || Redeemer(Killed.Weapon) != None) {
+    if(class'MutTURRPG'.static.Instance(Level).static.IsSuperWeapon(Killed.Weapon.Class)) {
         RPRI.Controller.LastPawnWeapon = None;
     } else if(Killed.Weapon != None) {
         RPRI.Controller.LastPawnWeapon = Killed.Weapon.Class;
     }
 
-    if(AbilityLevel > 1) {
-        W = None;
-        if(AbilityLevel >= StoreAllLevel)
+    if(AbilityLevel >= 2)
+    {
+        //store all weapons
+        for(Inv = Killed.Inventory; Inv != None; Inv = Inv.Inventory)
         {
-            //store all weapons
-            for(Inv = Killed.Inventory; Inv != None; Inv = Inv.Inventory)
-            {
-                W = Weapon(Inv);
-                if(W != None)
-                    TryStoreWeapon(W);
-            }
-        }
-        else
-        {
-            //store last held weapon
-            if(Vehicle(Killed) != None)
-            {
-                if(AbilityLevel >= ExtraSavingLevel)
-                    W = Vehicle(Killed).Driver.Weapon;
-            }
-            else
-            {
-                W = Killed.Weapon;
-            }
-
-            if(AbilityLevel >= ExtraSavingLevel)
-            {
-                //when carrying the ball launcher, save the old weapon
-                if(RPGBallLauncher(W) != None) {
-                    W = RPGBallLauncher(W).RestoreWeapon;
-                }
-            }
-
+            W = Weapon(Inv);
             if(W != None)
                 TryStoreWeapon(W);
         }
+    }
+    else
+    {
+        //store last held weapon
+        W = Killed.Weapon;
+
+        //when carrying the ball launcher, save the old weapon
+        if(RPGBallLauncher(W) != None) {
+            W = RPGBallLauncher(W).RestoreWeapon;
+        }
+
+        if(W != None)
+            TryStoreWeapon(W);
     }
 
     //Make current weapon unthrowable so it doesn't get dropped
@@ -116,7 +87,7 @@ function TryStoreWeapon(Weapon W)
     local RPGWeaponModifier WM;
     local StoredWeapon SW;
 
-    if(W == None || !CanSaveWeapon(W))
+    if(!CanSaveWeapon(W))
         return;
 
     SW.WeaponClass = W.class;
@@ -128,9 +99,6 @@ function TryStoreWeapon(Weapon W)
     if(WM != None) {
         SW.ModifierClass = WM.class;
         SW.Modifier = WM.Modifier;
-    } else {
-        SW.ModifierClass = None;
-        SW.Modifier = 0;
     }
 
     StoredWeapons[StoredWeapons.Length] = SW;
@@ -139,11 +107,9 @@ function TryStoreWeapon(Weapon W)
 function ModifyPawn(Pawn Other)
 {
     local int i;
+    local Inventory Inv;
 
     Super.ModifyPawn(Other);
-
-    if(AbilityLevel < 2)
-        return;
 
     for(i = 0; i < StoredWeapons.Length; i++)
     {
@@ -154,6 +120,30 @@ function ModifyPawn(Pawn Other)
             StoredWeapons[i].Ammo[0],
             StoredWeapons[i].Ammo[1]
         );
+
+        // Delete starting Shield Gun and Assault Rifle if needed
+        if(InStr(Caps(StoredWeapons[i].WeaponClass.default.ItemName), "SHIELD GUN") != -1)
+        {
+            for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+            {
+                if(InStr(Caps(Inv.ItemName), "SHIELD GUN") != -1)
+                {
+                    Other.DeleteInventory(Inv);
+                    break;
+                }
+            }
+        }
+        else if(InStr(Caps(StoredWeapons[i].WeaponClass.default.ItemName), "ASSAULT RIFLE") != -1)
+        {
+            for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+            {
+                if(InStr(Caps(Inv.ItemName), "ASSAULT RIFLE") != -1)
+                {
+                    Other.DeleteInventory(Inv);
+                    break;
+                }
+            }
+        }
     }
 
     StoredWeapons.Length = 0;
@@ -162,16 +152,13 @@ function ModifyPawn(Pawn Other)
 defaultproperties
 {
     AbilityName="Denial"
-    LevelDescription(0)="Level 1 of this ability prevents you from dropping your weapon when you die."
-    LevelDescription(1)="Level 2 allows you to respawn with the weapon and ammo you were using when you died (unless you died in a vehicle or if you were holding a super weapon or the Ball Launcher)."
-    LevelDescription(2)="Level 3 saves your last selected weapon even when you die in a vehicle. If you were holding the Ball Launcher, your previously selected weapon is saved."
-    LevelDescription(3)="Level 4 always saves all of your weapons (except for super weapons)."
-    MaxLevel=4
+    Description="With this ability, you will respawn with your previously held weapon(s) and ammo."
+    LevelDescription(0)="Level 1 of this ability allows you to respawn with the weapon and ammo you were using when you died, even if you died in a vehicle. If you were holding the Ball Launcher, your previously selected weapon will be saved."
+    LevelDescription(1)="Level 2 will save all of your weapons (except for super weapons)."
+    MaxLevel=2
     bUseLevelCost=true
-    LevelCost(0)=10
-    LevelCost(1)=20
-    LevelCost(2)=10
-    LevelCost(3)=15
+    LevelCost(0)=20
+    LevelCost(1)=15
     ForbiddenWeaponTypes(0)=class'XWeapons.BallLauncher'
     ForbiddenWeaponTypes(1)=class'XWeapons.Redeemer'
     ForbiddenWeaponTypes(2)=class'XWeapons.Painter'
@@ -179,7 +166,5 @@ defaultproperties
     ForbiddenWeaponTypes(4)=class'UT2k4AssaultFull.Weapon_SpaceFighter'
     ForbiddenWeaponTypes(5)=class'UT2k4AssaultFull.Weapon_SpaceFighter_Skaarj'
     ForbiddenWeaponTypes(6)=class'UT2k4Assault.Weapon_Turret_Minigun' //however this should happen...
-    ExtraSavingLevel=3
-    StoreAllLevel=4
     Category=class'AbilityCategory_Weapons'
 }
