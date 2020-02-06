@@ -323,9 +323,9 @@ simulated event BeginPlay()
         {
             PlayerName = RPGMut.ProcessPlayerName(Self);
 
-            data = RPGData(FindObject("Package." $ PlayerName, class'RPGData'));
+            data = RPGData(FindObject("Package." $ PlayerName, RPGMut.GameSettings.RPGDataClass));
             if (data == None)
-                data = new(None, PlayerName) class'RPGData';
+                data = new(None, PlayerName) RPGMut.GameSettings.RPGDataClass;
 
             if(data.LV == 0) //new player
             {
@@ -1752,7 +1752,7 @@ function ServerResetData()
     OwnerID = DataObject.ID;
 
     DataObject.ClearConfig();
-    DataObject = new(None, string(DataObject.Name)) class'RPGData';
+    DataObject = new(None, string(DataObject.Name)) RPGMut.GameSettings.RPGDataClass;
 
     DataObject.ID = OwnerID;
     DataObject.LV = RPGMut.StartingLevel;

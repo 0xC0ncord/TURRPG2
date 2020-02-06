@@ -3,6 +3,8 @@ class RPGGameSettings extends Object
     config(TURRPG2)
     PerObjectConfig;
 
+var config class<RPGData> RPGDataClass;
+
 var config bool bAllowTrans;
 var config float TransTossForceScale;
 
@@ -55,6 +57,8 @@ function bool AllowAbility(class<RPGAbility> AbilityClass)
 
 defaultproperties
 {
+    RPGDataClass=class'RPGData_00_t'
+
     bAllowTrans=True
     bAllowVehicles=True
 
