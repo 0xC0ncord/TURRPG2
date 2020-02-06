@@ -1365,7 +1365,17 @@ function ModifyPlayer(Pawn Other)
     for(i = 0; i < Abilities.Length; i++)
     {
         if(Abilities[i].bAllowed)
+            Abilities[i].PreModifyPawn(Other);
+    }
+    for(i = 0; i < Abilities.Length; i++)
+    {
+        if(Abilities[i].bAllowed)
             Abilities[i].ModifyPawn(Other);
+    }
+    for(i = 0; i < Abilities.Length; i++)
+    {
+        if(Abilities[i].bAllowed)
+            Abilities[i].PostModifyPawn(Other);
     }
 
     ProcessGrantQueue(); //give weapons

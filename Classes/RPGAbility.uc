@@ -157,12 +157,16 @@ simulated function bool Buy(optional int Amount)
 
         if(Vehicle(RPRI.Controller.Pawn) != None)
         {
+            PreModifyPawn(Vehicle(RPRI.Controller.Pawn).Driver);
             ModifyPawn(Vehicle(RPRI.Controller.Pawn).Driver);
             ModifyVehicle(Vehicle(RPRI.Controller.Pawn));
+            PostModifyPawn(Vehicle(RPRI.Controller.Pawn).Driver);
         }
         else
         {
+            PreModifyPawn(RPRI.Controller.Pawn);
             ModifyPawn(RPRI.Controller.Pawn);
+            PostModifyPawn(RPRI.Controller.Pawn);
         }
 
         if(xPlayer(RPRI.Controller) != None && ComboReplacements.Length > 0)
@@ -431,6 +435,8 @@ function ModifyRPRI()
 {
 }
 
+function PreModifyPawn(Pawn Other);
+
 function ModifyPawn(Pawn Other)
 {
     local int x;
@@ -451,6 +457,8 @@ function ModifyPawn(Pawn Other)
         }
     }
 }
+
+function PostModifyPawn(Pawn Other);
 
 simulated function ClientReplaceCombos()
 {
