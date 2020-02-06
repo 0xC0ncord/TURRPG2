@@ -16,11 +16,12 @@ var byte SelectByte;
 
 function ModifyPawn(Pawn Other)
 {
-    local bool bGotTrans;
+    local bool bGotIt;
     local EngineerLinkGun ELink;
     local int x;
     local Inventory Inv;
     local RPGArtifact A;
+    local Ability_Denial Denial;
 
     Instigator = Other;
 
@@ -112,23 +113,38 @@ function ModifyPawn(Pawn Other)
     // give them a limited translocator that will let them spawn items, but not translocate
 
     // while we're at it, see if they already have an Engineer Link Gun
-    bGotTrans = false;
     for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         if(InStr(Caps(Inv.ItemName), "TRANSLOCATOR") > -1 && ClassIsChildOf(Inv.Class, class'Weapon'))
-            bGotTrans = true;
+            bGotIt = true;
         else if(EngineerLinkGun(Inv) != None)
             ELink = EngineerLinkGun(Inv);
 
-        if(ELink != None && bGotTrans)
+        if(ELink != None && bGotIt)
             break;
     }
-    if (!bGotTrans)
+    if (!bGotIt)
         RPRI.QueueWeapon(class'EngineerTransLauncher', None, 0,,, true);
 
     // Now let's give the EngineerLinkGun
     if(ELink == None || class'WeaponModifier_EngineerLink'.static.GetFor(ELink) == None)
-        RPRI.QueueWeapon(class'EngineerLinkGun', class'WeaponModifier_EngineerLink', 0,,, true);
+    {
+        bGotIt = false;
+        Denial = Ability_Denial(RPRI.GetOwnedAbility(class'Ability_Denial'));
+        if(Denial != None)
+        {
+            for(x = 0; x < Denial.StoredWeapons.Length; x++)
+            {
+                if(Denial.StoredWeapons[x].WeaponClass == class'EngineerLinkGun' && Denial.StoredWeapons[x].ModifierClass == class'WeaponModifier_EngineerLink')
+                {
+                    bGotIt = true;
+                    break;
+                }
+            }
+        }
+        if(!bGotIt)
+            RPRI.QueueWeapon(class'EngineerLinkGun', class'WeaponModifier_EngineerLink', 0,,, true);
+    }
 }
 
 function ModifyArtifact(RPGArtifact A)

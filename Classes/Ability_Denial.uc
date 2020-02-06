@@ -104,12 +104,10 @@ function TryStoreWeapon(Weapon W)
     StoredWeapons[StoredWeapons.Length] = SW;
 }
 
-function ModifyPawn(Pawn Other)
+function PreModifyPawn(Pawn Other)
 {
     local int i;
     local Inventory Inv;
-
-    Super.ModifyPawn(Other);
 
     for(i = 0; i < StoredWeapons.Length; i++)
     {
@@ -145,7 +143,10 @@ function ModifyPawn(Pawn Other)
             }
         }
     }
+}
 
+function PostModifyPawn(Pawn Other)
+{
     StoredWeapons.Length = 0;
 }
 

@@ -439,21 +439,43 @@ function PreModifyPawn(Pawn Other);
 
 function ModifyPawn(Pawn Other)
 {
-    local int x;
+    local int x, i;
+    local Ability_Denial Denial;
+    local bool bGotIt;
 
     Instigator = Other;
 
     if(StatusIconClass != None)
         RPRI.ClientCreateStatusIcon(StatusIconClass);
 
+    if(GrantItem.Length > 0)
+        Denial = Ability_Denial(RPRI.GetOwnedAbility(class'Ability_Denial'));
+
     for(x = 0; x < GrantItem.Length; x++)
     {
-        if(AbilityLevel >= GrantItem[x].Level) {
-            if(ClassIsChildOf(GrantItem[x].InventoryClass, class'Weapon')) {
-                RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0);
-            } else {
-                class'Util'.static.GiveInventory(Other, GrantItem[x].InventoryClass);
+        if(AbilityLevel >= GrantItem[x].Level)
+        {
+            if(ClassIsChildOf(GrantItem[x].InventoryClass, class'Weapon'))
+            {
+                // If we have denial, don't grant the same weapon if it's already going to be restored
+                if(Denial != None)
+                {
+                    for(i = 0; i < Denial.StoredWeapons.Length; i++)
+                    {
+                        if(Denial.StoredWeapons[i].WeaponClass == GrantItem[x].InventoryClass)
+                        {
+                            bGotIt = true;
+                            break;
+                        }
+                    }
+                }
+                if(!bGotIt)
+                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0);
+                else
+                    bGotIt = false;
             }
+            else
+                class'Util'.static.GiveInventory(Other, GrantItem[x].InventoryClass);
         }
     }
 }
