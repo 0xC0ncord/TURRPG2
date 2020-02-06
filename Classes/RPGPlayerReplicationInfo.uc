@@ -634,7 +634,7 @@ simulated final function ModifyCombos()
     local int i;
 
     for(i = 0; i < Abilities.Length; i++)
-        if(Abilities[i].ComboReplacements.Length > 0)
+        if(Abilities[i].bAllowed && Abilities[i].ComboReplacements.Length > 0)
             Abilities[i].ReplaceCombos(xPlayer(Controller));
 }
 
