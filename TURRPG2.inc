@@ -4,7 +4,7 @@
 #mode push
 
 #ifdef __DEBUG__
-#define DEBUG_LOG(x) Log($$"(__LINE__)"$$ @ x, Self.Name);
+#define DEBUG_LOG(x) Log($$"(__LINE__)"$$ @ x, default.Name);
 #else
 #define DEBUG_LOG
 #endif
