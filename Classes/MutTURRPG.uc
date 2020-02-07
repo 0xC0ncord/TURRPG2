@@ -1,11 +1,9 @@
 class MutTURRPG extends Mutator
     config(TURRPG2);
 
-#mode string SSS "\"" "\"" "\\"
-#define TURRPG2_VERSION "0.01a-__BUILDINFO__"
+#defeval TURRPG2_VERSION $$"0.01a-__BUILDINFO__"$$
 #define TITANRPG_VERSION "1.71b"
-#define BUILD_DATE "__BUILDDATE__"
-#mode string sss "\"" "\"" "\\"
+#defeval BUILD_DATE $$"__BUILDDATE__"$$
 
 var const string TURRPG2Version;
 var const string TitanRPGVersion;
