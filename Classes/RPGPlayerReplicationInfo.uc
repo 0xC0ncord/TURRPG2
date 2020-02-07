@@ -515,7 +515,7 @@ simulated function ClientSetup()
     NextReplicationInfo = PRI.CustomReplicationInfo;
     PRI.CustomReplicationInfo = Self;
 
-    if(xPlayer(Controller) != None)
+    if(Role != ROLE_Authority && xPlayer(Controller) != None)
         ResetCombos();
 
     if(Role < ROLE_Authority) //not offline
@@ -1983,6 +1983,9 @@ function LoadData(RPGData Data)
             Warn("Could not find ability \"" $ DataObject.AB[x] $ "\"");
         }
     }
+
+    if(xPlayer(Controller) != None)
+        ResetCombos();
 
     ModifyStats();
     PickAIBuild();
