@@ -1,40 +1,37 @@
 class FX_HuntersMarkSight extends Emitter;
 
-var bool bKillMeNow;
+var Pawn PawnOwner;
+
+replication
+{
+    reliable if(Role == ROLE_Authority && bNetDirty)
+        PawnOwner;
+}
 
 simulated function PostNetBeginPlay()
 {
-    if(Pawn(Owner) == None)
+    if(Level.NetMode == NM_DedicatedServer)
     {
-        Destroy();
+        Disable('Tick');
         return;
     }
 
-    if(Level.NetMode == NM_DedicatedServer)
-        Disable('Tick');
-
-    Owner.AttachToBone(Self, Pawn(Owner).HeadBone);
+    if(PawnOwner != None)
+        PawnOwner.AttachToBone(Self, PawnOwner.HeadBone);
 }
 
 simulated function Tick(float DeltaTime)
 {
-    local coords C;
-
-    if(Pawn(Owner) == None)
-    {
-        Destroy();
+    if(PawnOwner == None)
         return;
-    }
 
-    C = Pawn(Owner).GetBoneCoords(Pawn(Owner).HeadBone);
-
-    Emitters[0].StartLocationOffset = Pawn(Owner).HeadScale * ((C.XAxis * 4) + (C.YAxis * -4));
+    Emitters[0].StartLocationOffset = PawnOwner.HeadScale * vect(1, 0, 1) * 4;
     Emitters[1].StartLocationOffset = Emitters[0].StartLocationOffset;
 }
 
 simulated function PostNetReceive()
 {
-    if(bKillMeNow)
+    if(PawnOwner == None)
         Kill();
 }
 
@@ -54,7 +51,8 @@ defaultproperties
         StartLocationRange=(Y=(Min=-3.000000,Max=3.000000))
         StartLocationShape=PTLS_All
         SphereRadiusRange=(Max=1.000000)
-        UseRotationFrom=PTRS_Actor
+        UseRotationFrom=PTRS_Offset
+        RotationOffset=(Roll=-16384)
         StartSpinRange=(X=(Max=1.000000))
         StartSizeRange=(X=(Min=2.000000,Max=3.000000))
         Texture=Texture'AW-2004Particles.Weapons.PlasmaFlare'
@@ -75,7 +73,8 @@ defaultproperties
         StartLocationRange=(Y=(Min=-2.000000,Max=2.000000))
         StartLocationShape=PTLS_All
         SphereRadiusRange=(Max=0.500000)
-        UseRotationFrom=PTRS_Actor
+        UseRotationFrom=PTRS_Offset
+        RotationOffset=(Roll=-16384)
         StartSizeRange=(X=(Min=8.000000,Max=12.000000))
         Texture=Texture'EpicParticles.Flares.BurnFlare1'
         LifetimeRange=(Min=0.600000,Max=0.600000)

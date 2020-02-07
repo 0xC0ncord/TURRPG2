@@ -22,10 +22,8 @@ function CreateEffects(Pawn P)
     C = P.GetBoneCoords(P.HeadBone);
 
     EyesEffect = Spawn(class'FX_HuntersMarkSight', P,, C.Origin, rotator(C.XAxis));
-    if(EyesEffect != None)
-    {
-        P.AttachToBone(EyesEffect, P.HeadBone);
-    }
+    EyesEffect.PawnOwner = P;
+    P.AttachToBone(EyesEffect, P.HeadBone);
 }
 
 function DestroyEffects(Pawn P)
@@ -35,7 +33,8 @@ function DestroyEffects(Pawn P)
     if(EyesEffect != None)
     {
         EyesEffect.Kill();
-        EyesEffect.bKillMeNow = true;
+        EyesEffect.PawnOwner = None;
+        EyesEffect.bTearOff = true;
     }
 }
 
