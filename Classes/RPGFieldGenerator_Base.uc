@@ -48,6 +48,7 @@ defaultproperties
     DrawType=DT_StaticMesh
     StaticMesh=StaticMesh'TURRPG2.Misc.UCBombSpawnMesh'
     DrawScale=5.0
+    PrePivot=(Z=0.3)
     CollisionHeight=2.0
     CollisionRadius=4.0
     bCollideActors=True
