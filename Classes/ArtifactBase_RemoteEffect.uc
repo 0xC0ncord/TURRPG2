@@ -32,12 +32,16 @@ function HitTarget(Pawn Other)
 {
     local RPGEffect Effect;
 
+    SpawnEffects(Other);
+
     Effect = ApplyEffect(Other);
     if(Effect != None)
     {
         ModifyEffect(Effect);
         Effect.Start();
     }
+
+    InstigatorRPRI.DrainAdrenaline(CostPerSec * AdrenalineUsage, Self);
 }
 
 function RPGEffect ApplyEffect(Pawn Other)
