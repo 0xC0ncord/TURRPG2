@@ -2,9 +2,7 @@ class Ability_ExpHealing extends RPGAbility;
 
 function ModifyRPRI()
 {
-    Super.ModifyRPRI();
-
-    RPRI.HealingExpMultiplier += (BonusPerLevel * float(AbilityLevel));
+    RPRI.HealingExpMultiplier = RPRI.default.HealingExpMultiplier + (BonusPerLevel * float(AbilityLevel));
 }
 
 simulated function string DescriptionText()

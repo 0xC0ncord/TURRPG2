@@ -2,9 +2,7 @@ class Ability_MonstersMax extends RPGAbility;
 
 function ModifyRPRI()
 {
-    Super.ModifyRPRI();
-
-    RPRI.MaxMonsters += AbilityLevel;
+    RPRI.MaxMonsters = RPRI.default.MaxMonsters + AbilityLevel;
 }
 
 defaultproperties
