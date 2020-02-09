@@ -64,6 +64,9 @@ var class<RPGAbilityCategory> Category;
 //Status icons
 var class<RPGStatusIcon> StatusIconClass;
 
+//Internal
+var bool bJustBought;
+
 replication
 {
     reliable if(Role == ROLE_Authority && bNetInitial)
@@ -148,6 +151,8 @@ simulated function bool Buy(optional int Amount)
     else
         AbilityLevel++;
 
+    bJustBought = true;
+
     if(Level.NetMode != NM_DedicatedServer)
         RPRI.ClientReInitMenu();
 
@@ -180,6 +185,9 @@ simulated function bool Buy(optional int Amount)
         if(RPRI.Controller.Pawn.Weapon != None)
             ModifyWeapon(RPRI.Controller.Pawn.Weapon);
     }
+
+    bJustBought = false;
+
     return true;
 }
 
