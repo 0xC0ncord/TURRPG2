@@ -2,27 +2,80 @@ class Ability_LoadedWeapons extends RPGAbility;
 
 function ModifyPawn(Pawn Other)
 {
+    local int x, i;
+    local Ability_Denial Denial;
+    local bool bGotIt;
     local Inventory Inv;
     local Inventory SGInv, ARInv;
 
-    Super.ModifyPawn(Other);
+    Instigator = Other;
 
-    // Delete starting Shield Gun and Assault Rifle if found
-    for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+    if(StatusIconClass != None)
+        RPRI.ClientCreateStatusIcon(StatusIconClass);
+
+    if(GrantItem.Length > 0)
+        Denial = Ability_Denial(RPRI.GetOwnedAbility(class'Ability_Denial'));
+
+    if(!bJustBought)
     {
-        if(InStr(Caps(Inv.ItemName), "SHIELD GUN") != -1)
-            SGInv = Inv;
-        else if(InStr(Caps(Inv.ItemName), "ASSAULT RIFLE") != -1)
-            ARInv = Inv;
+        // Delete starting Shield Gun and Assault Rifle if found
+        for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+        {
+            if(InStr(Caps(Inv.ItemName), "SHIELD GUN") != -1)
+                SGInv = Inv;
+            else if(InStr(Caps(Inv.ItemName), "ASSAULT RIFLE") != -1)
+                ARInv = Inv;
 
-        if(SGInv != None && ARInv != None)
-            break;
+            if(SGInv != None && ARInv != None)
+                break;
+        }
+
+        if(SGInv != None)
+            Other.DeleteInventory(SGInv);
+        if(ARInv != None)
+            Other.DeleteInventory(ARInv);
     }
 
-    if(SGInv != None)
-        Other.DeleteInventory(SGInv);
-    if(ARInv != None)
-        Other.DeleteInventory(ARInv);
+    for(x = 0; x < GrantItem.Length; x++)
+    {
+        if(AbilityLevel >= GrantItem[x].Level)
+        {
+            if(ClassIsChildOf(GrantItem[x].InventoryClass, class'Weapon'))
+            {
+                // If we have denial, don't grant the same weapon if it's already going to be restored
+                if(Denial != None)
+                {
+                    for(i = 0; i < Denial.StoredWeapons.Length; i++)
+                    {
+                        if(Denial.StoredWeapons[i].WeaponClass == GrantItem[x].InventoryClass)
+                        {
+                            bGotIt = true;
+                            break;
+                        }
+                    }
+                }
+                if(!bGotIt)
+                {
+                    if(bJustBought)
+                    {
+                        // Check if they already have this weapon
+                        for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+                            if(Inv.Class == class<Weapon>(GrantItem[x].InventoryClass))
+                                break;
+
+                        // Already have this weapon, don't give them another
+                        if(Inv != None)
+                            continue;
+                    }
+                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0);
+                }
+                else
+                    bGotIt = false;
+            }
+            else
+                class'Util'.static.GiveInventory(Other, GrantItem[x].InventoryClass);
+        }
+    }
 }
 
 function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier)
