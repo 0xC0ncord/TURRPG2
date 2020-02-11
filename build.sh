@@ -58,6 +58,8 @@ if [[ ${RELEASE_BUILD} -eq 0 ]]; then
 else
     echo -e "\e[92mBuild: RELEASE\e[0m"
 fi
+echo -e "\e[92mBuild Info: ${BUILD_INFO}\e[0m"
+echo -e "\e[92mBuild Date: ${BUILD_DATE}\e[0m"
 echo Preparing...
 if [[ -d ${CURRENT_DIR}/.Classes  ]]; then
     echo -e "\e[91m(!) Original Classes source tree appears to have not been restored.\e[0m"
