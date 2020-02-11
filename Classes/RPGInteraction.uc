@@ -1028,6 +1028,22 @@ function PostRender(Canvas Canvas)
         }
     }
 
+    //Draw linkers indicator for vehicles
+    if(Vehicle(ViewportOwner.Actor.Pawn) != None && RPRI.NumVehicleHealers > 0)
+    {
+        Canvas.TextSize("200", XL, YL);
+        Canvas.SetPos(Canvas.ClipX - XL * 1.5, Canvas.ClipY * 0.8);
+
+        Canvas.Style = 5; //STY_Alpha
+        Canvas.DrawColor = WhiteColor;
+        Canvas.DrawTile(Material'HUDContent.Generic.fbLinks', XL, XL * 0.5, 0, 0, 128, 64);
+
+        Text = string(RPRI.NumVehicleHealers);
+        Canvas.SetPos(Canvas.ClipX - XL * 1.125, (Canvas.ClipY * 0.8) + XL * 0.125);
+        Canvas.DrawColor = Canvas.MakeColor(159, 255, 159);
+        Canvas.DrawText(Text);
+    }
+
     //Draw hints
     if(Hint.Length > 0 && HintTimer > TimeSeconds && (HUD_Assault(HUD) == None || !HUD_Assault(HUD).ShouldShowObjectiveBoard()))
     {
