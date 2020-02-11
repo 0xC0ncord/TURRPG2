@@ -1,6 +1,12 @@
 class RPGBallTurret extends ASTurret_BallTurret
     cacheexempt;
 
+simulated event PostBeginPlay()
+{
+    Super.PostBeginPlay();
+    DefaultWeaponClassName = string(class'Weapon_RPGBallTurret');
+}
+
 function bool HasUDamage()
 {
     return (Driver != None && Driver.HasUDamage());
