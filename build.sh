@@ -6,7 +6,7 @@ SYSTEM_DIR="${CURRENT_DIR}/../System"
 UCC="${SYSTEM_DIR}/ucc.exe"
 
 if [[ -d .git ]]; then
-    BUILD_INFO=$(git rev-parse --short HEAD)$([ -z "$(git diff --shortstat 2>/dev/null | tail -n1)" ] || echo '-dirty')
+    BUILD_INFO=$(git rev-parse --short HEAD)$([ -z "$(git status --porcelain 2>/dev/null | tail -n1)" ] || echo '-dirty')
 else
     BUILD_INFO=""
 fi
