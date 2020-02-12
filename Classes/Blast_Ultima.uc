@@ -27,6 +27,8 @@ function DoDamage(float LocalRadius)
     bHurtEntry = true;
     foreach CollidingActors(class'Actor', victims, LocalRadius, Location)
     {
+        P = Pawn(victims);
+
         //protect TransBeacon
         if(!bIgnoreUltimaShield)
         {
@@ -38,7 +40,6 @@ function DoDamage(float LocalRadius)
                     continue;
             }
 
-            P = Pawn(victims);
             if (P != None && Vehicle(P) == None && P.PlayerReplicationInfo != None)
             {
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
@@ -49,7 +50,6 @@ function DoDamage(float LocalRadius)
 
         if(!bIgnoreProtectionGun)
         {
-            P = Pawn(victims);
             if(P != None)
             {
                 //TODO effect system
