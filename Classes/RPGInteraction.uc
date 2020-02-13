@@ -571,7 +571,7 @@ function Tick(float DeltaTime)
 
     if(bArtifactRadialActive)
     {
-        if(!bRadialExiting)
+        if(!bRadialExiting && ArtifactRadialItems.Length > 0)
         {
             //test to see if we have this artifact. don't selected it if we don't
             TrySelectedRadialSlot = GetArtifactRadialSelection(MousePosX - (ResX * 0.5), MousePosY - (ResY * 0.5), ArtifactRadialItems.Length);
