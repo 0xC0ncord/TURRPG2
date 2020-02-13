@@ -684,6 +684,7 @@ function PostRender(Canvas Canvas)
     local RPGWeaponModifier WM;
     local Pawn P;
     local Material Material;
+    local array<string> ExtraParts;
     local array<OptionCostArrayStruct> OptionCosts;
     local array<float> OptionCostWidths;
 
@@ -1214,9 +1215,23 @@ function PostRender(Canvas Canvas)
                     Canvas.FontScaleX = Canvas.default.FontScaleX * 0.6f;
                     Canvas.FontScaleY = Canvas.default.FontScaleY * 0.6f;
 
-                    Canvas.TextSize(LastSelExtra, XL, YL);
-                    Canvas.SetPos((Canvas.ClipX - XL) * 0.5f, Canvas.ClipY * 0.8f);
-                    Canvas.DrawText(LastSelExtra);
+                    Canvas.WrapStringToArray(LastSelExtra, ExtraParts, Canvas.ClipX, "|");
+
+                    if(ExtraParts.Length == 1)
+                    {
+                        Canvas.TextSize(LastSelExtra, XL, YL);
+                        Canvas.SetPos((Canvas.ClipX - XL) * 0.5f, Canvas.ClipY * 0.8f);
+                        Canvas.DrawText(LastSelExtra);
+                    }
+                    else
+                    {
+                        for(i = 0; i < ExtraParts.Length; i++)
+                        {
+                            Canvas.TextSize(ExtraParts[i], XL, YL);
+                            Canvas.SetPos((Canvas.ClipX - XL) * 0.5, (Canvas.ClipY * 0.8) + (YL * i));
+                            Canvas.DrawText(ExtraParts[i]);
+                        }
+                    }
                 }
             }
         }
@@ -1247,10 +1262,23 @@ function PostRender(Canvas Canvas)
                     if(Fade <= 1.0f)
                         Canvas.DrawColor.A = 255.0f * Fade;
 
-                    Canvas.TextSize(LastWeaponExtra, XL, YL);
+                    Canvas.WrapStringToArray(LastSelExtra, ExtraParts, Canvas.ClipX, "|");
 
-                    Canvas.SetPos((Canvas.ClipX - XL) * 0.5f, Canvas.ClipY * 0.8f);
-                    Canvas.DrawText(LastWeaponExtra);
+                    if(ExtraParts.Length == 1)
+                    {
+                        Canvas.TextSize(LastWeaponExtra, XL, YL);
+                        Canvas.SetPos((Canvas.ClipX - XL) * 0.5f, Canvas.ClipY * 0.8f);
+                        Canvas.DrawText(LastWeaponExtra);
+                    }
+                    else
+                    {
+                        for(i = 0; i < ExtraParts.Length; i++)
+                        {
+                            Canvas.TextSize(ExtraParts[i], XL, YL);
+                            Canvas.SetPos((Canvas.ClipX - XL) * 0.5, (Canvas.ClipY * 0.8) + (YL * i));
+                            Canvas.DrawText(ExtraParts[i]);
+                        }
+                    }
                 }
             }
         }
