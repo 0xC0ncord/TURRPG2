@@ -2262,7 +2262,8 @@ simulated function ProcessProjectileMods() {
 
             Closest.Tag = Mod.Flag;
             Closest.SetLocation(Mod.Location); //TODO: interpolate?
-            class'Util'.static.ModifyProjectileSpeed(Closest, Multiplier, Mod.Flag, Mod.FXClass);
+            if(Closest != None) // it's possible moving the projectile could destroy it
+                class'Util'.static.ModifyProjectileSpeed(Closest, Multiplier, Mod.Flag, Mod.FXClass);
         } else if(Mod.NumTicks >= 3) {
             ModifyProjectiles.Remove(i, 1);
             //Log("No match for:" @ Mod.Location @ Mod.Type @ Mod.Instigator);
