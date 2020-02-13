@@ -8,6 +8,6 @@ defaultproperties {
     ArtifactID="FlakBomb"
     Description="Causes a flak shell explosion."
     PickupClass=Class'ArtifactPickup_FlakBomb'
-    IconMaterial=Texture'TURRPG2.ArtifactIcons.biobomb' //TODO new artwork
+    IconMaterial=Texture'TURRPG2.ArtifactIcons.FlakBombIcon'
     ItemName="Flak Bomb"
 }
