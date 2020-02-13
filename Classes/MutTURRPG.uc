@@ -956,6 +956,7 @@ function NotifyLogout(Controller Exiting)
     if(RPRI != None)
     {
         RPRI.SaveData();
+        RPRI.PlayerDied(true);
         RPRI.Destroy();
     }
 }

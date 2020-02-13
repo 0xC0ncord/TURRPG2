@@ -962,22 +962,6 @@ simulated event Tick(float dt)
             LastPawnWeapon = None;
         }
 
-        if(Controller.Pawn != None && Controller.Pawn.Health <= 0)
-        {
-            if(Monsters.Length > 0 && bMonstersDie)
-                ServerKillMonsters();
-            if(Buildings.Length > 0 && bBuildingsDie)
-                ServerDestroyBuildings();
-            if(Sentinels.Length > 0 && bSentinelsDie)
-                ServerDestroySentinels();
-            if(Turrets.Length > 0 && bTurretsDie)
-                ServerDestroyTurrets();
-            if(Vehicles.Length > 0 && bVehiclesDie)
-                ServerDestroyVehicles();
-            if(Utilities.Length > 0 && bUtilitiesDie)
-                ServerDestroyUtilities();
-        }
-
         //Clean monsters
         x = 0;
         while(x < Monsters.Length)
@@ -1122,6 +1106,23 @@ function Timer()
     // now update the replicated value
     if(NumVehicleHealers != ValidHealers)
         NumVehicleHealers = ValidHealers;
+}
+
+// only called when the player *actually* dies, not if it's prevented (ghost, etc)
+final function PlayerDied(optional bool bLogout)
+{
+    if(Monsters.Length > 0 && (bMonstersDie || bLogout))
+        ServerKillMonsters();
+    if(Buildings.Length > 0 && (bBuildingsDie || bLogout))
+        ServerDestroyBuildings();
+    if(Sentinels.Length > 0 && (bSentinelsDie || bLogout))
+        ServerDestroySentinels();
+    if(Turrets.Length > 0 && (bTurretsDie || bLogout))
+        ServerDestroyTurrets();
+    if(Vehicles.Length > 0 && (bVehiclesDie || bLogout))
+        ServerDestroyVehicles();
+    if(Utilities.Length > 0 && (bUtilitiesDie || bLogout))
+        ServerDestroyUtilities();
 }
 
 function ServerNoteActivity()
