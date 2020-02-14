@@ -1,6 +1,6 @@
 class FX_FieldBase extends Emitter;
 
-var RPGFieldGenerator_Base FieldGenerator;
+var RPGFieldGenerator FieldGenerator;
 
 replication
 {
@@ -12,7 +12,7 @@ simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
     if(Role == ROLE_Authority)
-        FieldGenerator = RPGFieldGenerator_Base(Owner);
+        FieldGenerator = RPGFieldGenerator(Owner);
 }
 
 simulated function PostNetBeginPlay()

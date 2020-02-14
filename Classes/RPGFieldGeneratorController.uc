@@ -38,7 +38,7 @@ function StartFielding()
     if(bAlreadyFielding)
         return;
     bAlreadyFielding = True;
-    RPGFieldGenerator_Base(Pawn).SpawnEffects();
+    RPGFieldGenerator(Pawn).SpawnEffects();
 }
 
 function Tick(float dt)
@@ -46,7 +46,7 @@ function Tick(float dt)
     Super.Tick(dt);
     if(!bAlreadyFielding)
         return;
-    RPGFieldGenerator_Base(Pawn).DoScan();
+    RPGFieldGenerator(Pawn).DoScan();
 }
 
 function bool ProjInstigatorSameTeam(Projectile P) //for projectiles that don't call Super.PostBeginPlay() (i.e. Titan rocks)

@@ -1,4 +1,4 @@
-class RPGFieldGenerator_Base extends ASVehicle
+class RPGFieldGenerator extends ASVehicle
     cacheexempt;
 
 var FX_FieldBase FieldEffect;

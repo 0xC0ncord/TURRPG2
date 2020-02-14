@@ -1,4 +1,4 @@
-class RPGFieldGenerator_Matrix extends RPGFieldGenerator_Base
+class RPGFieldGenerator_Matrix extends RPGFieldGenerator
     cacheexempt
     config(TURRPG2);
 

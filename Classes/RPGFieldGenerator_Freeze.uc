@@ -1,4 +1,4 @@
-class RPGFieldGenerator_Freeze extends RPGFieldGenerator_Base
+class RPGFieldGenerator_Freeze extends RPGFieldGenerator
     cacheexempt;
 
 simulated function ModifyEffect(FX_FieldBase FX)

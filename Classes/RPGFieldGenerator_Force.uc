@@ -1,4 +1,4 @@
-class RPGFieldGenerator_Force extends RPGFieldGenerator_Base
+class RPGFieldGenerator_Force extends RPGFieldGenerator
     config(TURRPG2)
     cacheexempt;
 
