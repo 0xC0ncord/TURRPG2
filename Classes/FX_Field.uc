@@ -1,4 +1,4 @@
-class FX_FieldBase extends Emitter;
+class FX_Field extends Emitter;
 
 var RPGFieldGenerator FieldGenerator;
 
@@ -44,7 +44,7 @@ defaultproperties
         LifetimeRange=(Min=0.100000,Max=0.100000)
         InitialDelayRange=(Min=0.500000,Max=0.500000)
     End Object
-    Emitters(0)=MeshEmitter'FX_FieldBase.MeshEmitter0'
+    Emitters(0)=MeshEmitter'FX_Field.MeshEmitter0'
 
     Begin Object Class=MeshEmitter Name=MeshEmitter1
         StaticMesh=StaticMesh'PlasmaSphere'
@@ -62,7 +62,7 @@ defaultproperties
         InitialParticlesPerSecond=5000.000000
         LifetimeRange=(Min=0.500000,Max=0.500000)
     End Object
-    Emitters(1)=MeshEmitter'FX_FieldBase.MeshEmitter1'
+    Emitters(1)=MeshEmitter'FX_Field.MeshEmitter1'
 
     Begin Object Class=SpriteEmitter Name=SpriteEmitter0
         UseColorScale=True
@@ -84,7 +84,7 @@ defaultproperties
         LifetimeRange=(Min=1.000000,Max=1.000000)
         InitialDelayRange=(Min=0.500000,Max=0.500000)
     End Object
-    Emitters(2)=SpriteEmitter'FX_FieldBase.SpriteEmitter0'
+    Emitters(2)=SpriteEmitter'FX_Field.SpriteEmitter0'
 
     Begin Object Class=SpriteEmitter Name=SpriteEmitter1
         UseDirectionAs=PTDU_Normal
@@ -108,7 +108,7 @@ defaultproperties
         Texture=Texture'AW-2004Particles.Fire.BlastMark'
         LifetimeRange=(Min=1.000000,Max=1.000000)
     End Object
-    Emitters(3)=SpriteEmitter'FX_FieldBase.SpriteEmitter1'
+    Emitters(3)=SpriteEmitter'FX_Field.SpriteEmitter1'
 
     AutoDestroy=True
     bNoDelete=False

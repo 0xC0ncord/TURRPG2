@@ -5,7 +5,7 @@ class RPGFieldGenerator_Matrix extends RPGFieldGenerator
 var() config array<name> Ignore;
 var RPGMatrixField Field;
 
-simulated function ModifyEffect(FX_FieldBase FX)
+simulated function ModifyEffect(FX_Field FX)
 {
     local Color C;
 

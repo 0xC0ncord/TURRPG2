@@ -1,7 +1,7 @@
 class RPGFieldGenerator_Freeze extends RPGFieldGenerator
     cacheexempt;
 
-simulated function ModifyEffect(FX_FieldBase FX)
+simulated function ModifyEffect(FX_Field FX)
 {
     local Color C;
 

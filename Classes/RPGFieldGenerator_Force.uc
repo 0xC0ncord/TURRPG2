@@ -5,7 +5,7 @@ class RPGFieldGenerator_Force extends RPGFieldGenerator
 var() config array<name> Ignore;
 var RPGForceField Field;
 
-simulated function ModifyEffect(FX_FieldBase FX)
+simulated function ModifyEffect(FX_Field FX)
 {
     local Color C;
 

@@ -1,9 +1,9 @@
 class RPGFieldGenerator extends ASVehicle
     cacheexempt;
 
-var FX_FieldBase FieldEffect;
+var FX_Field FieldEffect;
 
-var() class<FX_FieldBase> FieldEffectClass;
+var() class<FX_Field> FieldEffectClass;
 var() float ScanRange;
 
 function AddDefaultInventory()
@@ -92,12 +92,12 @@ function TakeDamage(int Damage, Pawn instigatedBy, Vector hitlocation, Vector mo
         Velocity = vect(0, 0, 0);
 }
 
-function ModifyEffect(FX_FieldBase FX);
+function ModifyEffect(FX_Field FX);
 function DoScan();
 
 defaultproperties
 {
-    FieldEffectClass=Class'FX_FieldBase'
+    FieldEffectClass=Class'FX_Field'
     ScanRange=192.000000
     DefaultWeaponClassName=""
     VehicleNameString="Field Generator"
