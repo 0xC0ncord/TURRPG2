@@ -1,16 +1,19 @@
-class RPGLinkSentinelController extends Controller;
+class RPGLinkSentinelController extends Controller
+    config(TURRPG2);
 
 var Controller PlayerSpawner;
 var RPGPlayerReplicationInfo RPRI;
 var FriendlyPawnReplicationInfo FPRI;
 
-var Vehicle HealingVehicle;
+var array<Vehicle> LinkedVehicles;
 
 var float TimeBetweenShots;
 var float LinkRadius;
 var float VehicleHealPerShot;
 var class<xEmitter> TurretLinkEmitterClass;        // for linking to turrets where we get xp
 var class<xEmitter> VehicleLinkEmitterClass;       // for linking to vehicles where we do not get xp
+
+var() config array<class<Vehicle> > LinkableVehicles;
 
 event PostBeginPlay()
 {
@@ -43,14 +46,15 @@ function SetPlayerSpawner(Controller PlayerC)
 function Timer()
 {
     // lets see if we can link to anything
-    Local Pawn LoopP;
+    Local Pawn LoopP, HealTarget;
+    local array<Vehicle> HealedVehicles;
     Local Controller C;
     local xEmitter HitEmitter;
 
     if (Pawn == None || PlayerSpawner == None)
         return;
 
-    HealingVehicle = None;
+    LinkedVehicles.Length = 0;
 
     foreach DynamicActors(class'Pawn', LoopP)
     {
@@ -66,23 +70,39 @@ function Timer()
                 if (Vehicle(LoopP) != None)
                 {
                     // lets see what we can do to help. If a turret, then establish a link. If just a vehicle or sentinel, just heal if it needs it
-                    if (!Vehicle(LoopP).bNonHumanControl && (RPGMinigunTurret(LoopP) != None || RPGBallTurret(LoopP) != None || RPGEnergyTurret(LoopP) != None || RPGIonCannon(LoopP) != None))
+                    if (!Vehicle(LoopP).bNonHumanControl && class'Util'.static.InArray(LoopP.Class, LinkableVehicles) != -1)
                     {   // not a link turret :(
                         // estalish an xp link
-                        HealingVehicle = Vehicle(LoopP);
+                        LinkedVehicles[LinkedVehicles.Length] = Vehicle(LoopP);
                         LoopP.HealDamage(VehicleHealPerShot, self, class'DamTypeLinkShaft');
                         HitEmitter = spawn(TurretLinkEmitterClass,,, Pawn.Location, rotator(LoopP.Location - Pawn.Location));
                         if (HitEmitter != None)
                             HitEmitter.mSpawnVecA = LoopP.Location;
+
+                        HealedVehicles[HealedVehicles.Length] = Vehicle(LoopP);
                     }
-                    else if (LoopP.Health < LoopP.HealthMax)
+                    else
                     {
-                        // can at least add some health
-                        LoopP.GiveHealth(VehicleHealPerShot, LoopP.HealthMax);
-                        HitEmitter = spawn(VehicleLinkEmitterClass,,, Pawn.Location, rotator(LoopP.Location - Pawn.Location));
-                        if (HitEmitter != None)
-                            HitEmitter.mSpawnVecA = LoopP.Location;
-                        // and probably ought to get same xp as armor healing powerup on defsent. But sadly that is zero, so nothing.
+                        // if this is a weapon pawn, heal the base vehicle instead
+                        if(ONSWeaponPawn(LoopP) != None && !ONSWeaponPawn(LoopP).bHasOwnHealth && ONSWeaponPawn(LoopP).VehicleBase != None)
+                        {
+                            HealTarget = class'Util'.static.GetRootVehicle(Vehicle(LoopP));
+                            if(class'Util'.static.InArray(HealTarget, HealedVehicles) != -1)
+                                continue;
+                        }
+                        else
+                            HealTarget = LoopP;
+
+                        if (HealTarget.Health < HealTarget.HealthMax)
+                        {
+                            // can at least add some health
+                            HealedVehicles[HealedVehicles.Length] = Vehicle(HealTarget);
+                            HealTarget.GiveHealth(VehicleHealPerShot, HealTarget.HealthMax);
+                            HitEmitter = spawn(VehicleLinkEmitterClass,,, Pawn.Location, rotator(LoopP.Location - Pawn.Location));
+                            if (HitEmitter != None)
+                                HitEmitter.mSpawnVecA = LoopP.Location;
+                            // and probably ought to get same xp as armor healing powerup on defsent. But sadly that is zero, so nothing.
+                        }
                     }
                 }
             }
@@ -100,9 +120,13 @@ function Destroyed()
 
 defaultproperties
 {
-     TimeBetweenShots=0.250000
-     LinkRadius=700.000000
-     VehicleHealPerShot=20.000000
-     TurretLinkEmitterClass=Class'FX_RPGLinkSentinelBeam'
-     VehicleLinkEmitterClass=Class'FX_Bolt_Bronze'
+    LinkableVehicles(0)=Class'RPGMinigunTurret'
+    LinkableVehicles(1)=Class'RPGBallTurret'
+    LinkableVehicles(2)=Class'RPGEnergyTurret'
+    LinkableVehicles(3)=Class'RPGIonCannon'
+    TimeBetweenShots=0.250000
+    LinkRadius=700.000000
+    VehicleHealPerShot=20.000000
+    TurretLinkEmitterClass=Class'FX_RPGLinkSentinelBeam'
+    VehicleLinkEmitterClass=Class'FX_Bolt_Bronze'
 }

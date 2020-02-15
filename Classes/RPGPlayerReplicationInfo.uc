@@ -1091,7 +1091,7 @@ function Timer()
         if((C.Pawn != None && C.Pawn.Weapon != None && LinkFire(C.Pawn.Weapon.GetFireMode(1)) != None
         && LinkFire(C.Pawn.Weapon.GetFireMode(1)).LockedPawn == class'Util'.static.GetRootVehicle(Vehicle(Controller.Pawn))
         && WeaponModifier_EngineerLink(class'WeaponModifier_EngineerLink'.static.GetFor(C.Pawn.Weapon)) != None)
-        || (RPGLinkSentinelController(C) != None && RPGLinkSentinelController(C).HealingVehicle == class'Util'.static.GetRootVehicle(Vehicle(Controller.Pawn))))
+        || (RPGLinkSentinelController(C) != None && class'Util'.static.InArray(class'Util'.static.GetRootVehicle(Vehicle(Controller.Pawn)), RPGLinkSentinelController(C).LinkedVehicles) != -1))
         {
             VehicleHealers[VehicleHealers.Length] = C;
             ValidHealers++;
