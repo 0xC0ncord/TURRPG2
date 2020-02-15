@@ -84,11 +84,19 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
         fi
         if [[ -f ${CURRENT_DIR}/${BASENAME}.inc ]]; then
             for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
-                gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                if [[ -n "${CMDLINE}" ]]; then
+                    gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                else
+                    gpp -C -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                fi
             done
         else
             for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
-                gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                if [[ -n "${CMDLINE}" ]]; then
+                    gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                else
+                    gpp -C -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                fi
             done
         fi
         touch ${CURRENT_DIR}/Classes/.preprocessed
