@@ -1,11 +1,16 @@
 class ArtifactBase_Blast extends RPGArtifact
+    config(TURRPG2)
     abstract
     HideDropDown;
 
-var config class<Blast> BlastClass;
+var class<Blast> BlastClass;
+var class<RPGBlastProjectile> BlastProjectileClass;
+var bool bUseProjectile;
 
-var config int AIHealthMin, AIMinTargets;
-var config bool bFriendly;
+var int AIHealthMin, AIMinTargets;
+var bool bFriendly;
+
+var Projectile BlastProjectile;
 
 function BotWhatNext(Bot Bot)
 {
@@ -20,27 +25,36 @@ function BotWhatNext(Bot Bot)
     }
 }
 
-function Blast SpawnBlast()
+function Actor SpawnBlast()
 {
-    return Spawn(BlastClass, Instigator.Controller,,Instigator.Location);
+    local rotator R;
+
+    if(PlayerController(Instigator.Controller).bBehindView)
+        R = PlayerController(Instigator.Controller).CalcViewRotation;
+    else
+        R = Instigator.Controller.GetViewRotation();
+
+    if(bUseProjectile)
+        return Instigator.Spawn(BlastProjectileClass, Instigator.Controller,, Instigator.Location, R);
+    return Instigator.Spawn(BlastClass, Instigator.Controller,,Instigator.Location);
 }
 
 function bool DoEffect()
 {
-    local Blast Blast;
-
-    Blast = SpawnBlast();
-
-    return (Blast != None);
+    return (SpawnBlast() != None);
 }
 
 defaultproperties
 {
+    bUseProjectile=True
+
     bChargeUp=True
 
     AIHealthMin=50
     AIMinTargets=2
     bFriendly=False
+
+    ActivateSound=Sound'ONSVehicleSounds-S.LaserSounds.Laser09'
 
     bAllowInVehicle=False
     bCanBeTossed=False

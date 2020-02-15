@@ -48,6 +48,6 @@ defaultproperties
     MinDrain=0.15
     DrainTime=15
     Radius=2000
-    ChargeEmitterClass=class'FX_BlastCharger_Poison'
-    ExplosionClass=class'FX_BlastExplosion_Poison'
+    ChargeEmitterClass=class'FX_BlastCharger_Poison_NEW'
+    ExplosionClass=class'FX_BlastExplosion_Poison_NEW'
 }

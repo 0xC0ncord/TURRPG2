@@ -38,6 +38,6 @@ defaultproperties
     ChargeTime=2.000000
     MaxFreezeTime=15.000000
     Radius=2000.000000
-    ChargeEmitterClass=class'FX_BlastCharger_Freeze'
-    ExplosionClass=class'FX_BlastExplosion_Freeze'
+    ChargeEmitterClass=class'FX_BlastCharger_Freeze_NEW'
+    ExplosionClass=class'FX_BlastExplosion_Freeze_NEW'
 }

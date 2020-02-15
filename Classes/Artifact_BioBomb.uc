@@ -3,6 +3,7 @@ class Artifact_BioBomb extends ArtifactBase_Blast;
 defaultproperties
 {
     BlastClass=class'Blast_Bio'
+    BlastProjectileClass=class'BlastProjectile_Bio'
 
     CostPerSec=75
     HudColor=(R=0)

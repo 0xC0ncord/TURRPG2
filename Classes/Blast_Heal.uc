@@ -1,7 +1,6 @@
 class Blast_Heal extends Blast;
 
 var config float MinHealing, MaxHealing;
-var int MaxHealth;
 var float EXPMultiplier;
 
 function DoEffect()
@@ -10,11 +9,14 @@ function DoEffect()
     local vector dir;
     local Controller C;
     local Pawn P;
+    local int MaxHealth;
     local int HealthGiven;
     local Effect_Heal Heal;
 
     if (Instigator == None && InstigatorController != None)
         Instigator = InstigatorController.Pawn;
+
+    MaxHealth = GetMaxHealthBonus();
 
     if(Instigator != None)
     {
@@ -55,15 +57,32 @@ function DoEffect()
     Destroy();
 }
 
+function int GetMaxHealthBonus()
+{
+    local Ability_LoadedMedic Ability;
+    local RPGPlayerReplicationInfo RPRI;
+
+    if(Instigator != None)
+    {
+        RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Instigator.Controller);
+        if(RPRI != None)
+        {
+            Ability = Ability_LoadedMedic(RPRI.GetOwnedAbility(class'Ability_LoadedMedic'));
+            if(Ability != None)
+                return Ability.GetHealMax();
+        }
+    }
+    return 50;
+}
+
 defaultproperties
 {
     bAffectInstigator=True
     bBotsBeAfraid=False
     ChargeTime=2.000000
-    MaxHealth=100
-    MaxHealing=400.000000
+    MaxHealing=250.000000
     MinHealing=50.000000
     Radius=2200.000000
-    ChargeEmitterClass=class'FX_BlastCharger_Heal'
-    ExplosionClass=class'FX_BlastExplosion_Heal'
+    ChargeEmitterClass=class'FX_BlastCharger_Heal_NEW'
+    ExplosionClass=class'FX_BlastExplosion_Heal_NEW'
 }

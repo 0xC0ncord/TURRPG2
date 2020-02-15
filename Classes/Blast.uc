@@ -5,8 +5,8 @@ class Blast extends Actor
     config(TURRPG2)
     abstract;
 
-var class<xEmitter> ChargeEmitterClass;
-var class<Emitter> ExplosionClass; //wtf?? xEmitter and Emitter are two separate class chains and this fact cost me an hour >.< ~pd
+var class<Actor> ChargeEmitterClass;
+var class<Actor> ExplosionClass;
 var Sound ExplosionSound;
 
 var config float Radius;
@@ -17,7 +17,7 @@ var config bool bAllowDeadInstigator;
 
 var config float ChargeTime;
 
-var xEmitter ChargeEmitter;
+var Actor ChargeEmitter;
 var bool bDoneCharging;
 
 var AvoidMarker Fear;
@@ -43,7 +43,7 @@ simulated event PostBeginPlay()
     Super.PostBeginPlay();
 
     if(Role == ROLE_Authority)
-        ChargeEmitter = Spawn(ChargeEmitterClass);
+        ChargeEmitter = Spawn(ChargeEmitterClass, self);
 
     if(Role == ROLE_Authority && bBotsBeAfraid)
     {

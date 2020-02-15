@@ -3,6 +3,8 @@ class Artifact_FreezeBomb extends ArtifactBase_Blast;
 defaultproperties
 {
     BlastClass=class'Blast_Freeze'
+    BlastProjectileClass=class'BlastProjectile_Freeze'
+    MaxUses=0 //infinite
 
     CostPerSec=100
     HudColor=(B=255,G=224,R=224)
@@ -11,4 +13,5 @@ defaultproperties
     PickupClass=Class'ArtifactPickup_FreezeBomb'
     IconMaterial=Texture'TURRPG2.ArtifactIcons.FreezeBomb'
     ItemName="Freeze Bomb"
+    bCanBeTossed=False
 }

@@ -2,6 +2,7 @@ class Artifact_FlakBomb extends ArtifactBase_Blast;
 
 defaultproperties {
     BlastClass=class'Blast_Flak'
+    BlastProjectileClass=class'BlastProjectile_Flak'
 
     CostPerSec=75
     HudColor=(R=255,G=128,B=0)
