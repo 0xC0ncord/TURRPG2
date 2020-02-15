@@ -212,6 +212,7 @@ replication
         ClientSwitchToWeapon, //moved from TitanPlayerController for better compatibility
         ClientCreateStatusIcon, ClientRemoveStatusIcon,
         ClientShowSelection, ClientCloseSelection, //artifact selection menu
+        ClientEnteredONSWeaponPawn, ClientLeftONSWeaponPawn,
         ClientSyncProjectile;
     reliable if(Role < ROLE_Authority)
         ServerBuyAbility, ServerNoteActivity,
@@ -1701,6 +1702,9 @@ function DriverEnteredVehicle(Vehicle V, Pawn P)
     VehicleHealers.Length = 0;
     NumVehicleHealers = 0;
     SetTimer(0.5, true); //for calculating number of healers
+
+    if(ONSWeaponPawn(V) != None && PlayerController(Controller) != None)
+        ClientEnteredONSWeaponPawn(ONSWeaponPawn(V));
 }
 
 function DriverLeftVehicle(Vehicle V, Pawn P)
@@ -1716,6 +1720,32 @@ function DriverLeftVehicle(Vehicle V, Pawn P)
     VehicleHealers.Length = 0;
     NumVehicleHealers = 0;
     SetTimer(0.0, true); //stop calculating number of healers
+
+    if(ONSWeaponPawn(V) != None && PlayerController(Controller) != None)
+        ClientLeftONSWeaponPawn(ONSWeaponPawn(V));
+}
+
+// Total hack to fix buggy ONSWeapon native Tick code for controlling rotation
+simulated function ClientLeftONSWeaponPawn(ONSWeaponPawn P)
+{
+    if(Role == ROLE_Authority)
+        return;
+
+    // forcibly set weapon's owner to NULL to get it aiming again if another player enters
+    // pretty sure the check for Owner on ONSWeapon.cpp:295 should be !bNetOwner
+    if(P != None && P.Gun != None)
+        P.Gun.SetOwner(None);
+}
+
+simulated function ClientEnteredONSWeaponPawn(ONSWeaponPawn P)
+{
+    if(Role == ROLE_Authority)
+        return;
+
+    // and now forcibly set weapon's owner back now that we are controlling it
+    // otherwise we get weird instances where the gun is muted when holding down fire
+    if(P != None && P.Gun != None)
+        P.Gun.SetOwner(P);
 }
 
 function ServerSwitchBuild(string NewBuild)
