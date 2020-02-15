@@ -1,6 +1,8 @@
 class RPGEnergyTurret extends ONSManualGunPawn
     cacheexempt;
 
+var Controller DestroyPrevController;
+
 // Zooming
 var bool bZooming;
 var float MinPlayerFOV, OldFOV, ZoomSpeed;
@@ -119,14 +121,151 @@ function Died(Controller Killer, class<DamageType> damageType, vector HitLocatio
     if ( IsHumanControlled() )
         PlayerController(Controller).ForceDeathUpdate();
 
-    Explode(HitLocation);
+    NetUpdateFrequency = default.NetUpdateFrequency;
+    PlayDying(DamageType, HitLocation);
+    if(Level.Game.bGameEnded)
+        return;
+    if(!bPhysicsAnimUpdate && !IsLocallyControlled())
+        ClientDying(DamageType, HitLocation);
 }
 
-simulated function Explode( vector HitLocation )
+// copied from ASVehicle
+simulated event PlayDying(class<DamageType> DamageType, vector HitLoc)
+{
+    Explode( Location, vect(0,0,1) );
+
+    if ( Level.Game != None )
+        Level.Game.DiscardInventory( Self );
+
+    // Make sure player controller is actually possessing the vehicle.. (since we forced it in ClientKDriverEnter)
+    if ( PlayerController(Controller) != None && PlayerController(Controller).Pawn != Self )
+        Controller = None;
+
+    if ( PlayerController(Controller) != None )
+    {
+        if ( bDrawDriverInTP && Driver != None )    // view driver dying
+            PlayerController(Controller).SetViewTarget( Driver );
+        else
+            PlayerController(Controller).SetViewTarget( Self );
+    }
+
+    bCanTeleport = false;
+    bReplicateMovement = false;
+    bTearOff = true;
+    bPlayedDeath = true;
+
+    GotoState('Dying');
+}
+
+// explode
+state Dying
+{
+ignores Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer;
+
+    //simulated function PlayDying(class<DamageType> DamageType, vector HitLoc) {}
+    event ChangeAnimation() {}
+    event StopPlayFiring() {}
+    function PlayFiring(float Rate, name FiringMode) {}
+    function PlayWeaponSwitch(Weapon NewWeapon) {}
+    function PlayTakeHit(vector HitLoc, int Damage, class<DamageType> damageType) {}
+    simulated function PlayNextAnimation() {}
+    event FellOutOfWorld(eKillZType KillType) { }
+    function Landed(vector HitNormal) { }
+    function ReduceCylinder() { }
+    function LandThump() {  }
+    event AnimEnd(int Channel) {    }
+    function LieStill() {}
+    singular function BaseChange() {    }
+    function Died(Controller Killer, class<DamageType> damageType, vector HitLocation) {}
+    function TakeDamage( int Damage, Pawn instigatedBy, Vector hitlocation,
+                            Vector momentum, class<DamageType> damageType) {}
+
+    function UpdateRocketAcceleration(float DeltaTime, float YawChange, float PitchChange)  { }
+    function VehicleSwitchView(bool bUpdating) {}
+    function ProcessMove(float DeltaTime, vector NewAccel, eDoubleClickDir DoubleClickMove, rotator DeltaRot);
+    function DriverDied();
+
+    simulated function Timer()
+    {
+        if ( !bDeleteMe )
+            Destroy();
+    }
+
+    function BeginState()
+    {
+        local PlayerController  PC, LocalPlayer;
+
+        LocalPlayer     = Level.GetLocalPlayerController();
+        AmbientSound    = None;
+        Velocity        = vect(0,0,0);
+        Acceleration    = Velocity;
+        bHidden         = true;
+        if(Gun != None)
+            Gun.bHidden = true;
+
+        SetPhysics( PHYS_None );
+        SetCollision(false, false, false);
+
+        // Make sure player controller is actually possessing the vehicle.. (since we forced it in ClientKDriverEnter)
+        if ( PlayerController(Controller) != None && PlayerController(Controller).Pawn != Self )
+            Controller = None;
+
+        // Clear previous controller if not currently viewing this vehicle.
+        if ( PlayerController(DestroyPrevController) != None && PlayerController(DestroyPrevController).ViewTarget != Self )
+            DestroyPrevController = None;
+
+        if ( PlayerController(Controller) != None )
+            PC = PlayerController(Controller);
+        else if ( PlayerController(DestroyPrevController) != None )
+            PC = PlayerController(DestroyPrevController);
+
+        // Force behind view
+        if ( PC != None && !PC.bBehindView )
+            PC.bBehindView = true;
+
+        if ( Driver != None && bDrawDriverInTP )
+            Destroyed_HandleDriver();
+
+        // If server, wait a second for replication
+        if ( Level.NetMode == NM_DedicatedServer || Level.NetMode == NM_ListenServer )
+            SetTimer(1.f, false);
+        else if ( (Driver == None || !bDrawDriverInTP) &&
+            ( (PC != None ) || (LocalPlayer != None && LocalPlayer.ViewTarget == Self) ) )
+        {
+            // If owned by player, or spectated wait a bit so explosion can be viewed
+            // (if there viewtarget is not already set on driver's dead body)
+            if ( Controller != None )
+            {
+                DestroyPrevController = Controller;
+                Controller.SetRotation( Rotation );
+                Controller.PawnDied( Self );
+                DestroyPrevController.SetRotation( Rotation );
+            }
+            else if ( DestroyPrevController != None )
+            {
+                DestroyPrevController.SetRotation( Rotation );
+                DestroyPrevController.SetLocation( Location );
+            }
+
+            SetTimer(5.f, false);
+        }
+        else
+        {
+            // if not owned and not spectated then destroy right away
+            if ( Controller != None )
+                Controller.PawnDied( Self );
+
+            Destroy();
+        }
+
+    }
+}
+
+// Spawn Explosion FX
+simulated function Explode( vector HitLocation, vector HitNormal )
 {
     if ( Level.NetMode != NM_DedicatedServer )
         Spawn(class'FX_SpaceFighter_Explosion', Self,, HitLocation, Rotation);
-    Destroy();
 }
 
 simulated event TeamChanged()
