@@ -599,15 +599,25 @@ final function bool SpawnIt(TranslocatorBeacon Beacon, Pawn P)
     Spawned = Pawn(SpawnActor(SpawnClass, SpawnLoc, SpawnRot));
     if(Spawned != None)
     {
-        if(RPGBlock(Spawned) != None)
-            RPGBlock(Spawned).PlayerSpawner = Instigator.Controller;
+        if(Vehicle(Spawned) != None)
+        {
+            Vehicle(Spawned).SetTeamNum(Instigator.GetTeamNum());
+            Spawned.SetOwner(None); //vehicles without a controller will report death of Controller(Owner) if they have one; causes major issues
+        }
 
         if(Spawned.Controller != None)
             Spawned.Controller.Destroy();
 
-        C = Spawn(SpawnControllerClass,,, SpawnLoc, Spawned.Rotation);
+        if(SpawnControllerClass != None)
+            C = Spawn(SpawnControllerClass,,, SpawnLoc, Spawned.Rotation);
         if(C != None)
         {
+            if(Vehicle(Spawned) != None)
+            {
+                Vehicle(Spawned).bAutoTurret = true;
+                Vehicle(Spawned).bNonHumanControl = true;
+            }
+
             if(RPGAutoGunController(C) != None)
                 RPGAutoGunController(C).SetPlayerSpawner(Instigator.Controller);
             else if(RPGDefenseSentinelController(C) != None)
@@ -624,16 +634,12 @@ final function bool SpawnIt(TranslocatorBeacon Beacon, Pawn P)
                 RPGFieldGeneratorController(C).SetPlayerSpawner(Instigator.Controller);
             C.Possess(Spawned);
         }
-        else
-        {
-            if(Vehicle(Spawned) != None)
-            {
-                Vehicle(Spawned).Team = Instigator.GetTeamNum();
-                Spawned.SetOwner(None); //vehicles without a controller will report death of Controller(Owner) if they have one; causes major issues
-            }
-            if(Spawned.PlayerReplicationInfo != None)
-                Spawned.PlayerReplicationInfo.Team = Instigator.GetTeam();
-        }
+
+        if(Spawned.PlayerReplicationInfo != None)
+            Spawned.PlayerReplicationInfo.Team = Instigator.GetTeam();
+
+        if(RPGBlock(Spawned) != None)
+            RPGBlock(Spawned).PlayerSpawner = Instigator.Controller;
 
         if(InstigatorRPRI != None)
             InstigatorRPRI.AddConstruction(ConstructionType, Spawned, Points);
