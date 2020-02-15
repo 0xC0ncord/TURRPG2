@@ -17,7 +17,6 @@ var float NextSaveTime;
 //General
 var RPGRules Rules;
 
-var config bool bAllowCheats;
 var config int StartingLevel, StartingStatPoints, StartingAbilityPoints;
 var config int StatPointsPerIncrement, AbilityPointsPerIncrement;
 var config int StatPointsIncrement, AbilityPointsIncrement;
@@ -1081,44 +1080,53 @@ function Mutate(string MutateString, PlayerController Sender)
 {
     local array<string> Args;
     local bool bIsAdmin, bIsSuperAdmin;
-    local int i, x;
+    local int i;
+    local Controller CheatController;
+    local Pawn Cheat;
+    local Controller C;
+    local string Game;
+    local RPGPlayerReplicationInfo RPRI;
+    local bool bAll;
+    local Emitter E;
+#ifdef __DEBUG__
+    local int x;
     local class<RPGArtifact> ArtifactClass;
     local RPGWeaponModifier WM;
     local class<RPGWeaponModifier> WMClass;
     local class<Actor> ActorClass;
     local vector Loc;
     local rotator Rotate;
-    local RPGPlayerReplicationInfo RPRI;
-    local NavigationPoint N;
     local Vehicle V;
     local ONSVehicle OV;
     local class<ONSWeaponPawn> OWP;
     local Weapon W;
     local WeaponFire WF;
-    local Controller C;
-    local Emitter E;
     local Actor Spawned;
     local Inventory Inv;
-    local bool bAll;
-    local string Game;
-    local Pawn Cheat;
-    local Controller CheatController;
     local Monster M;
     local class<RPGEffect> EffectClass;
     local RPGEffect Effect;
     local RPGArtifact A;
+#endif // __DEBUG__
 
-    bIsAdmin = Sender.PlayerReplicationInfo.bAdmin;
-    bIsSuperAdmin = false;
-
-    for(i = 0; i < AdminGUID.length; i++)
+    if(Level.NetMode != NM_Standalone)
     {
-        if(AdminGUID[i] ~= Sender.GetPlayerIdHash())
+        bIsAdmin = Sender.PlayerReplicationInfo.bAdmin;
+
+        for(i = 0; i < AdminGUID.length; i++)
         {
-            bIsAdmin = true;
-            bIsSuperAdmin = true;
-            break;
+            if(AdminGUID[i] ~= Sender.GetPlayerIdHash())
+            {
+                bIsAdmin = true;
+                bIsSuperAdmin = true;
+                break;
+            }
         }
+    }
+    else
+    {
+        bIsAdmin = true;
+        bIsSuperAdmin = true;
     }
 
     Split(MutateString, " ", Args);
@@ -1212,190 +1220,165 @@ function Mutate(string MutateString, PlayerController Sender)
             }
         }
 
+#ifdef __DEBUG__
         //cheats
-        if(bAllowCheats || bIsSuperAdmin || Level.NetMode == NM_Standalone)
+        if(Args[0] ~= "summon" && Args.Length > 1)
         {
-            if(Args[0] ~= "summon" && Args.Length > 1)
+            ActorClass = class<Actor>(DynamicLoadObject(Args[1], class'Class'));
+            if(ActorClass != None)
             {
-                ActorClass = class<Actor>(DynamicLoadObject(Args[1], class'Class'));
-                if(ActorClass != None)
+                if(Cheat != None)
                 {
-                    if(Cheat != None)
-                    {
-                        Rotate = Cheat.Rotation;
+                    Rotate = Cheat.Rotation;
 
-                        Loc =
-                            Cheat.Location +
-                            vector(Rotate) *
-                            1.5f * (ActorClass.default.CollisionRadius + Cheat.CollisionRadius);
+                    Loc =
+                        Cheat.Location +
+                        vector(Rotate) *
+                        1.5f * (ActorClass.default.CollisionRadius + Cheat.CollisionRadius);
 
-                        Loc.Z = Cheat.Location.Z + ActorClass.default.CollisionHeight;
-                    }
-                    else
-                    {
-                        //spectating freely
-                        Rotate = Sender.Rotation;
-                        Loc = Sender.Location;
-                    }
-
-                    Spawned = Spawn(ActorClass, None, '', Loc, Rotate);
-
-                    if(Vehicle(Spawned) != None)
-                        Vehicle(Spawned).bTeamLocked = false;
-
-                    if(Spawned != None)
-                        Sender.ClientMessage("Spawned a " $ ActorClass);
-                    else
-                        Sender.ClientMessage("Failed to spawn a " $ ActorClass);
+                    Loc.Z = Cheat.Location.Z + ActorClass.default.CollisionHeight;
                 }
                 else
                 {
-                    Sender.ClientMessage("Class " $ Args[1] $ " not found!");
+                    //spectating freely
+                    Rotate = Sender.Rotation;
+                    Loc = Sender.Location;
                 }
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "invis")
-            {
-                if(Cheat.DrawType == DT_None)
-                {
-                    Cheat.SetDrawType(DT_Mesh);
-                    Sender.ClientMessage("No longer invisible.");
-                }
+
+                Spawned = Spawn(ActorClass, None, '', Loc, Rotate);
+
+                if(Vehicle(Spawned) != None)
+                    Vehicle(Spawned).bTeamLocked = false;
+
+                if(Spawned != None)
+                    Sender.ClientMessage("Spawned a " $ ActorClass);
                 else
-                {
-                    Cheat.SetDrawType(DT_None);
-                    Sender.ClientMessage("You are now INVISIBLE");
-                }
-                return;
+                    Sender.ClientMessage("Failed to spawn a " $ ActorClass);
             }
-            else if(Args[0] ~= "xp" && Args.Length > 0 && RPRI != None)
+            else
             {
-                RPRI.Experience = float(Args[1]);
+                Sender.ClientMessage("Class " $ Args[1] $ " not found!");
             }
-            else if(Args[0] ~= "level" && Args.Length > 0 && RPRI != None)
-            {
-                RPRI.SetLevel(int(Args[1]));
-            }
-            else if(Args[0] ~= "god")
-            {
-                CheatController.bGodMode = !CheatController.bGodMode;
+            return;
+        }
+        else if(Args[0] ~= "xp" && Args.Length > 0 && RPRI != None)
+        {
+            RPRI.Experience = float(Args[1]);
+        }
+        else if(Args[0] ~= "level" && Args.Length > 0 && RPRI != None)
+        {
+            RPRI.SetLevel(int(Args[1]));
+        }
+        else if(Args[0] ~= "god")
+        {
+            CheatController.bGodMode = !CheatController.bGodMode;
 
-                if(CheatController.bGodMode)
-                    Sender.ClientMessage("God mode is ON!");
+            if(CheatController.bGodMode)
+                Sender.ClientMessage("God mode is ON!");
+            else
+                Sender.ClientMessage("God mode is OFF!");
+
+            return;
+        }
+        else if(Args[0] ~= "nextwave" && Invasion(Level.Game) != None)
+        {
+            //Kill all monsters
+            foreach DynamicActors(class'Monster', M)
+            {
+                if(FriendlyMonsterController(M.Controller) == None)
+                    M.Suicide();
+            }
+
+            //End wave
+            Invasion(Level.Game).NumMonsters = 0;
+            Invasion(Level.Game).WaveEndTime = Level.TimeSeconds;
+            Invasion(Level.Game).bWaveInProgress = false;
+            Invasion(Level.Game).WaveCountDown = 15;
+            Invasion(Level.Game).WaveNum++;
+        }
+        else if(Cheat != None && (Args[0] ~= "make" || Args[0] ~= "wm") && Args.Length > 1)
+        {
+            if(Args[1] ~= "None") {
+                class'RPGWeaponModifier'.static.RemoveModifier(Cheat.Weapon);
+            } else {
+                WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG2.WeaponModifier_" $ Args[1], class'Class'));
+                if(WMClass != None) {
+                    x = WMClass.static.GetRandomModifierLevel();
+
+                    if(Args.Length > 2 && Args[2] != "")
+                        x = int(Args[2]);
+
+                    WM = WMClass.static.Modify(
+                        Cheat.Weapon, x, true, true);
+                }
+                else {
+                    Sender.ClientMessage("WeaponModifier class '" $ Args[1] $ "' not found!");
+                }
+            }
+            return;
+        }
+        else if(Cheat != None && (Args[0] ~= "cd" || Args[0] == "cooldown"))
+        {
+            for(Inv = Cheat.Inventory; Inv != None; Inv = Inv.Inventory) {
+                A = RPGArtifact(Inv);
+                if(A != None) {
+                    A.NextUseTime = Level.TimeSeconds - 1;
+                    A.ClientNotifyCooldown(-1);
+                }
+            }
+        }
+        else if(Cheat != None && Args[0] ~= "effect" && Args.Length > 1)
+        {
+            EffectClass = class<RPGEffect>(DynamicLoadObject("TURRPG2.Effect_" $ Args[1], class'Class'));
+            if(EffectClass != None)
+            {
+                Effect = EffectClass.static.Create(Cheat, Sender);
+                if(Effect != None)
+                    Effect.Start();
                 else
-                    Sender.ClientMessage("God mode is OFF!");
+                    Sender.ClientMessage("Effect '" $ Args[1] $ "' not applicable.");
+            }
+            else
+            {
+                Sender.ClientMessage("Effect class '" $ Args[1] $ "' not found!");
+            }
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "ammo")
+        {
+            for(Inv = Cheat.Inventory; Inv != None; Inv = Inv.Inventory)
+            {
+                if(Weapon(Inv) != None)
+                    Weapon(Inv).SuperMaxOutAmmo();
+            }
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "artifacts")
+        {
+            for(x = 0; x < Artifacts.Length; x++)
+                class'Util'.static.GiveInventory(Cheat, Artifacts[x]);
 
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "ruler")
-            {
-                for(N = Level.NavigationPointList; N != None; N = N.NextNavigationPoint)
-                {
-                    if(ONSPowerCore(N) != None)
-                        N.Bump(Cheat);
-                }
-                return;
-            }
-            else if(Args[0] ~= "nextwave" && Invasion(Level.Game) != None)
-            {
-                //Kill all monsters
-                foreach DynamicActors(class'Monster', M)
-                {
-                    if(FriendlyMonsterController(M.Controller) == None)
-                        M.Suicide();
-                }
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "artifact" && Args.Length > 1)
+        {
+            ArtifactClass = class<RPGArtifact>(DynamicLoadObject("TURRPG2.Artifact_" $ Args[1], class'Class'));
+            if(ArtifactClass != None)
+                class'Util'.static.GiveInventory(Cheat, ArtifactClass);
+            else
+                Sender.ClientMessage("Artifact class '" $ Args[1] $ "' not found!");
 
-                //End wave
-                Invasion(Level.Game).NumMonsters = 0;
-                Invasion(Level.Game).WaveEndTime = Level.TimeSeconds;
-                Invasion(Level.Game).bWaveInProgress = false;
-                Invasion(Level.Game).WaveCountDown = 15;
-                Invasion(Level.Game).WaveNum++;
-            }
-            else if(Cheat != None && (Args[0] ~= "make" || Args[0] ~= "wm") && Args.Length > 1)
-            {
-                if(Args[1] ~= "None") {
-                    class'RPGWeaponModifier'.static.RemoveModifier(Cheat.Weapon);
-                } else {
-                    WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG2.WeaponModifier_" $ Args[1], class'Class'));
-                    if(WMClass != None) {
-                        x = WMClass.static.GetRandomModifierLevel();
-
-                        if(Args.Length > 2 && Args[2] != "")
-                            x = int(Args[2]);
-
-                        WM = WMClass.static.Modify(
-                            Cheat.Weapon, x, true, true);
-                    }
-                    else {
-                        Sender.ClientMessage("WeaponModifier class '" $ Args[1] $ "' not found!");
-                    }
-                }
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "cd")
-            {
-                for(Inv = Cheat.Inventory; Inv != None; Inv = Inv.Inventory) {
-                    A = RPGArtifact(Inv);
-                    if(A != None) {
-                        A.NextUseTime = Level.TimeSeconds - 1;
-                        A.ClientNotifyCooldown(-1);
-                    }
-                }
-            }
-            else if(Cheat != None && Args[0] ~= "effect" && Args.Length > 1)
-            {
-                EffectClass = class<RPGEffect>(DynamicLoadObject("TURRPG2.Effect_" $ Args[1], class'Class'));
-                if(EffectClass != None)
-                {
-                    Effect = EffectClass.static.Create(Cheat, Sender);
-                    if(Effect != None)
-                        Effect.Start();
-                    else
-                        Sender.ClientMessage("Effect '" $ Args[1] $ "' not applicable.");
-                }
-                else
-                {
-                    Sender.ClientMessage("Effect class '" $ Args[1] $ "' not found!");
-                }
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "ammo")
-            {
-                for(Inv = Cheat.Inventory; Inv != None; Inv = Inv.Inventory)
-                {
-                    if(Weapon(Inv) != None)
-                        Weapon(Inv).SuperMaxOutAmmo();
-                }
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "artifacts")
-            {
-                for(x = 0; x < Artifacts.Length; x++)
-                    class'Util'.static.GiveInventory(Cheat, Artifacts[x]);
-
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "artifact" && Args.Length > 1)
-            {
-                ArtifactClass = class<RPGArtifact>(DynamicLoadObject("TURRPG2.Artifact_" $ Args[1], class'Class'));
-                if(ArtifactClass != None)
-                    class'Util'.static.GiveInventory(Cheat, ArtifactClass);
-                else
-                    Sender.ClientMessage("Artifact class '" $ Args[1] $ "' not found!");
-
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "adren" && Args.Length > 1)
-            {
-                CheatController.Adrenaline = Max(0, int(Args[1]));
-                return;
-            }
-            else if(Cheat != None && Args[0] ~= "health" && Args.Length > 1)
-            {
-                Cheat.Health = Max(1, int(Args[1]));
-                return;
-            }
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "adren" && Args.Length > 1)
+        {
+            CheatController.Adrenaline = Max(0, int(Args[1]));
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "health" && Args.Length > 1)
+        {
+            Cheat.Health = Max(1, int(Args[1]));
+            return;
         }
 
         //anyone
@@ -1490,6 +1473,7 @@ function Mutate(string MutateString, PlayerController Sender)
 
             Sender.ClientMessage("");
         }
+#endif // __DEBUG__
     }
 
     Super.Mutate(MutateString, Sender);
@@ -1536,7 +1520,6 @@ defaultproperties
     MaxLevelReqExpPerLevel=0
 
     MinHumanPlayersForExp=0
-    bAllowCheats=False
     bAutoAdjustInvasionLevel=True
     InvasionAutoAdjustFactor=0.30
     SaveDuringGameInterval=0
