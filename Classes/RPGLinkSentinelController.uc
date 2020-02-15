@@ -63,7 +63,7 @@ function Timer()
             if (C == None || C.SameTeamAs(self) )
             {
                 //ok lets see if we can help.
-                if (Vehicle(LoopP) != None || RPGEnergyWall(LoopP) != None)
+                if (Vehicle(LoopP) != None)
                 {
                     // lets see what we can do to help. If a turret, then establish a link. If just a vehicle or sentinel, just heal if it needs it
                     if (!Vehicle(LoopP).bNonHumanControl && (RPGMinigunTurret(LoopP) != None || RPGBallTurret(LoopP) != None || RPGEnergyTurret(LoopP) != None || RPGIonCannon(LoopP) != None))
