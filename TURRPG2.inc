@@ -1,3 +1,5 @@
+#define __VERSION__ 0.01a
+
 #define __LINE__ #eval #line
 #define __FILE__ #eval #file
 #mode string QQQ "$$" "$$"

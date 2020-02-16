@@ -1,7 +1,7 @@
 class MutTURRPG extends Mutator
     config(TURRPG2);
 
-#defeval TURRPG2_VERSION $$"0.01a-__BUILDINFO__"$$
+#defeval TURRPG2_VERSION $$"__VERSION__-__BUILDINFO__"$$
 #define TITANRPG_VERSION "1.71b"
 #defeval BUILD_DATE $$"__BUILDDATE__"$$
 
