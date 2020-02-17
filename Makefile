@@ -10,7 +10,14 @@ BASENAME = $(shell basename $(CURRENT_DIR))
 SYSTEM_DIR = $(CURRENT_DIR)/../System
 UCC = "$(SYSTEM_DIR)/ucc.exe"
 
-BUILD_INFO = $(shell git rev-parse --short HEAD)$(shell [ -z "$(shell git diff --shortstat 2>/dev/null | tail -n1)" ] || echo '-dirty')
+VERSION = $(shell sed 's/^#define __VERSION__ \(.*\)$$/\1/p;d' $(BASENAME).inc)
+GIT_EXISTS = $(shell [ -d .git ] && echo 1 || echo 0)
+ifeq ($(GIT_EXISTS), 1)
+	BUILD_INFO = $(shell git rev-parse --short HEAD)$(shell [ -z "$(shell git diff --shortstat 2>/dev/null | tail -n1)" ] || echo '-dirty')
+	VERSION_STRING = $(VERSION)-$(BUILD_INFO)
+else
+	VERSION_STRING = $(VERSION)
+endif
 BUILD_DATE = $(shell date +"%a %d %b %Y %H:%M:%S %Z")
 
 default: compile

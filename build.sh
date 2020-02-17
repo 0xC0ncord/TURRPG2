@@ -5,10 +5,17 @@ BASENAME="$(basename ${CURRENT_DIR})"
 SYSTEM_DIR="${CURRENT_DIR}/../System"
 UCC="${SYSTEM_DIR}/ucc.exe"
 
+if [[ -f ${BASENAME}.inc ]]; then
+    VERSION=$(sed 's/^#define __VERSION__ \(.*\)$/\1/p;d' ${BASENAME}.inc)
+else
+    VERSION="UNKNOWN_VERSION"
+fi
 if [[ -d .git ]]; then
     BUILD_INFO=$(git rev-parse --short HEAD)$([ -z "$(git status --porcelain 2>/dev/null | tail -n1)" ] || echo '-dirty')
+    VERSION_STRING="${VERSION}-${BUILD_INFO}"
 else
     BUILD_INFO=""
+    VERSION_STRING="${VERSION}"
 fi
 BUILD_DATE="$(date +"%a %d %b %Y %H:%M:%S %Z")"
 
@@ -58,8 +65,10 @@ if [[ ${RELEASE_BUILD} -eq 0 ]]; then
 else
     echo -e "\e[92mBuild: RELEASE\e[0m"
 fi
-echo -e "\e[92mBuild Info: ${BUILD_INFO}\e[0m"
-echo -e "\e[92mBuild Date: ${BUILD_DATE}\e[0m"
+echo -e "\e[92mVersion.......: ${VERSION}\e[0m"
+echo -e "\e[92mBuild Info....: ${BUILD_INFO}\e[0m"
+echo -e "\e[92mVersion String: ${VERSION_STRING}\e[0m"
+echo -e "\e[92mBuild Date....: ${BUILD_DATE}\e[0m"
 echo Preparing...
 if [[ -d ${CURRENT_DIR}/.Classes  ]]; then
     echo -e "\e[91m(!) Original Classes source tree appears to have not been restored.\e[0m"
@@ -85,17 +94,17 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
         if [[ -f ${CURRENT_DIR}/${BASENAME}.inc ]]; then
             for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
                 if [[ -n "${CMDLINE}" ]]; then
-                    gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                    gpp -C "${CMDLINE}" -D__VERSION__="${VERSION}" -D__BUILDINFO__="${BUILD_INFO}" -D__VERSIONSTRING__="${VERSION_STRING}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
                 else
-                    gpp -C -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                    gpp -C -D__VERSION__="${VERSION}" -D__BUILDINFO__="${BUILD_INFO}" -D__VERSIONSTRING__="${VERSION_STRING}" -D__BUILDDATE__="${BUILD_DATE}" --include ${CURRENT_DIR}/${BASENAME}.inc ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
                 fi
             done
         else
             for FILE in ${CURRENT_DIR}/.Classes/*.uc; do
                 if [[ -n "${CMDLINE}" ]]; then
-                    gpp -C "${CMDLINE}" -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                    gpp -C "${CMDLINE}" -D__VERSION__="${VERSION}" -D__BUILDINFO__="${BUILD_INFO}" -D__VERSIONSTRING__="${VERSION_STRING}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
                 else
-                    gpp -C -D__BUILDINFO__="${BUILD_INFO}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
+                    gpp -C -D__VERSION__="${VERSION}" -D__BUILDINFO__="${BUILD_INFO}" -D__VERSIONSTRING__="${VERSION_STRING}" -D__BUILDDATE__="${BUILD_DATE}" ${FILE} -o ${CURRENT_DIR}/Classes/$(basename ${FILE})
                 fi
             done
         fi
