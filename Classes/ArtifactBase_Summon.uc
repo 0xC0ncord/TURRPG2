@@ -26,7 +26,9 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
 
 function Actor SpawnActor(class<Actor> SpawnClass, vector SpawnLoc, rotator SpawnRot)
 {
-    if(!ClassIsChildOf(SpawnClass, class'Vehicle'))
+    // don't spawn pawns without controllers that have another controller as their owner
+    // this causes pawns to report their Owner controller as dead when they die
+    if(!ClassIsChildOf(SpawnClass, class'Pawn') || class<Pawn>(SpawnClass).default.ControllerClass != None)
         return Instigator.Spawn(SpawnClass, Instigator.Controller,, SpawnLoc, SpawnRot);
     return Instigator.Spawn(SpawnClass,,, SpawnLoc, SpawnRot);
 }
