@@ -1138,7 +1138,7 @@ function Mutate(string MutateString, PlayerController Sender)
             Cheat = Sender.Pawn;
             CheatController = Sender;
         }
-        else if(Sender.ViewTarget != None && xPawn(Sender.ViewTarget) != None)
+        else if(Sender.ViewTarget != None && xPawn(Sender.ViewTarget) != None && (bIsAdmin || bIsSuperAdmin))
         {
             Cheat = Pawn(Sender.ViewTarget);
             CheatController = Cheat.Controller;
