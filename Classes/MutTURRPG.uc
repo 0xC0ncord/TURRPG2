@@ -1265,6 +1265,10 @@ function Mutate(string MutateString, PlayerController Sender)
         {
             RPRI.Experience = float(Args[1]);
         }
+        else if(Args[0] ~= "addxp" && Args.Length > 0 && RPRI != None)
+        {
+            RPRI.AwardExperience(float(Args[1]));
+        }
         else if(Args[0] ~= "level" && Args.Length > 0 && RPRI != None)
         {
             RPRI.SetLevel(int(Args[1]));
@@ -1344,7 +1348,39 @@ function Mutate(string MutateString, PlayerController Sender)
             }
             return;
         }
+        else if(Cheat != None && Args[0] ~= "give" && Args.Length > 1)
+        {
+            Cheat.CreateInventory(Args[1]);
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "loaded" || Args[0] ~= "allweapons")
+        {
+            Cheat.GiveWeapon("XWeapons.AssaultRifle");
+            Cheat.GiveWeapon("XWeapons.RocketLauncher");
+            Cheat.GiveWeapon("XWeapons.ShockRifle");
+            Cheat.GiveWeapon("XWeapons.ShieldGun");
+            Cheat.GiveWeapon("XWeapons.LinkGun");
+            Cheat.GiveWeapon("XWeapons.SniperRifle");
+            Cheat.GiveWeapon("XWeapons.FlakCannon");
+            Cheat.GiveWeapon("XWeapons.MiniGun");
+            Cheat.GiveWeapon("XWeapons.TransLauncher");
+            Cheat.GiveWeapon("XWeapons.Painter");
+            Cheat.GiveWeapon("XWeapons.BioRifle");
+            Cheat.GiveWeapon("XWeapons.Redeemer");
+            Cheat.GiveWeapon("UTClassic.ClassicSniperRifle");
+            Cheat.GiveWeapon("Onslaught.ONSGrenadeLauncher");
+            Cheat.GiveWeapon("Onslaught.ONSAVRiL");
+            Cheat.GiveWeapon("Onslaught.ONSMineLayer");
+            Cheat.GiveWeapon("OnslaughtFull.ONSPainter");
+            return;
+        }
         else if(Cheat != None && Args[0] ~= "ammo")
+        {
+            if(Cheat.Weapon != None)
+                Cheat.Weapon.MaxOutAmmo();
+            return;
+        }
+        else if(Cheat != None && Args[0] ~= "allammo")
         {
             for(Inv = Cheat.Inventory; Inv != None; Inv = Inv.Inventory)
             {
@@ -1353,7 +1389,7 @@ function Mutate(string MutateString, PlayerController Sender)
             }
             return;
         }
-        else if(Cheat != None && Args[0] ~= "artifacts")
+        else if(Cheat != None && Args[0] ~= "artifacts" || Args[0] ~= "allartifacts")
         {
             for(x = 0; x < Artifacts.Length; x++)
                 class'Util'.static.GiveInventory(Cheat, Artifacts[x]);
@@ -1370,9 +1406,12 @@ function Mutate(string MutateString, PlayerController Sender)
 
             return;
         }
-        else if(Cheat != None && Args[0] ~= "adren" && Args.Length > 1)
+        else if(Cheat != None && Args[0] ~= "adren" || Args[1] ~= "adrenaline")
         {
-            CheatController.Adrenaline = Max(0, int(Args[1]));
+            if(Args.Length > 1)
+                CheatController.Adrenaline = Max(0, int(Args[1]));
+            else
+                CheatController.Adrenaline = CheatController.AdrenalineMax;
             return;
         }
         else if(Cheat != None && Args[0] ~= "health" && Args.Length > 1)
