@@ -15,6 +15,7 @@ const SmallFontHeight = 12.0;
 var Texture HealthBar, HealthBarBorder;
 var Texture TeamBeacon;
 var float TeamBeaconMaxDist;
+var float TeamBeaconPlayerInfoMaxDist;
 
 //Gets the team color for a PlayerReplicationInfo
 function Color GetTeamBeaconColor(PlayerReplicationInfo PRI) {
@@ -149,9 +150,11 @@ event Initialized() {
 
     PC = ViewportOwner.Actor;
     if(PC.IsA('OLTeamPlayerController')) { //CTF4
-        TeamBeaconMaxDist = float(PC.GetPropertyText("OLTeamBeaconPlayerInfoMaxDist"));
+        TeamBeaconMaxDist = float(PC.GetPropertyText("OLTeamBeaconMaxDist"));
+        TeamBeaconPlayerInfoMaxDist = float(PC.GetPropertyText("OLTeamBeaconPlayerInfoMaxDist"));
     } else {
-        TeamBeaconMaxDist = PC.TeamBeaconPlayerInfoMaxDist;
+        TeamBeaconMaxDist = PC.TeamBeaconMaxDist;
+        TeamBeaconPlayerInfoMaxDist = PC.TeamBeaconPlayerInfoMaxDist;
     }
 
     TeamBeacon = PC.TeamBeaconTexture;

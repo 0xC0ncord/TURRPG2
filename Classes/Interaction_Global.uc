@@ -7,7 +7,7 @@ var array<FriendlyPawnReplicationInfo> FriendlyPawns;
 
 function PostRender(Canvas C) {
     local int i;
-    local float FarAwayInv, Dist, ScaledDist, Scale, Height, Pct;
+    local float Dist, Height, Pct;
     local vector ScreenPos;
     local FriendlyPawnReplicationInfo FPRI;
     local Color BarColor;
@@ -16,43 +16,29 @@ function PostRender(Canvas C) {
     local float XT, YT;
 #endif
 
-    FarAwayInv = 1.0f / TeamBeaconMaxDist;
-
     for(i = 0; i < FriendlyPawns.Length; i++) {
         FPRI = FriendlyPawns[i];
 
         if(FPRI.Pawn != None && IsPawnVisible(C, FPRI.Pawn, ScreenPos, Dist)) {
-            ScaledDist = TeamBeaconMaxDist * FClamp(0.04f * FPRI.Pawn.CollisionRadius, 1.0f, 2.0f);
-
-            if(Dist < 0.0f || Dist > 2.0f * ScaledDist) {
+            if(Dist < 0.0f || Dist > TeamBeaconMaxDist) {
                 continue;
             }
 
-            if(Dist > ScaledDist) {
-                ScreenPos.Z = 0;
-                if(VSize(ScreenPos) * VSize(ScreenPos) > 0.02f * Dist * Dist) {
-                    continue;
-                }
-            }
-
-            //Beacon scale
-            Scale = FClamp(0.28f * (ScaledDist - Dist) / ScaledDist, 0.1f, 0.25f);
-
             //Draw height
-            Height = FPRI.Pawn.CollisionHeight * FClamp(0.85f + Dist * 0.85f * FarAwayInv, 1.1f, 1.75f);
+            Height = FPRI.Pawn.CollisionHeight * FClamp(0.85f + Dist * (0.85f / TeamBeaconPlayerInfoMaxDist), 0.85f, 1.75f);
 
             //Actual beacon position
             ScreenPos = C.WorldToScreen(FPRI.Pawn.Location + Height * vect(0, 0, 1));
-            ScreenPos.X -= 0.5f * TeamBeacon.USize * Scale;
-            ScreenPos.Y -= 0.5f * TeamBeacon.VSize * Scale;
+            ScreenPos.X -= 0.5f * TeamBeacon.USize * 0.2f;
+            ScreenPos.Y -= 0.5f * TeamBeacon.VSize * 0.2f;
 
             //Player name
-            if(Dist < TeamBeaconMaxDist && C.ClipX > 600) {
+            if(Dist < TeamBeaconPlayerInfoMaxDist && C.ClipX > 600) {
                 Text = FPRI.Master.PlayerName;
             }
 
             //Draw beacon
-            DrawTeamBeacon(C, ScreenPos.X, ScreenPos.Y, GetTeamBeaconColor(FPRI.Master), Scale, Text);
+            DrawTeamBeacon(C, ScreenPos.X, ScreenPos.Y, GetTeamBeaconColor(FPRI.Master), 0.2f, Text);
 
             //Health bar
             if(
@@ -61,7 +47,7 @@ function PostRender(Canvas C) {
                 FPRI.Master.Team == ViewportOwner.Actor.PlayerReplicationInfo.Team
             )
             {
-                Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
+                Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconPlayerInfoMaxDist * 0.5), 0.5, 1);
                 Pct = float(FPRI.Pawn.Health) / FPRI.Pawn.HealthMax;
 
                 if(Pct > 0.5) {
