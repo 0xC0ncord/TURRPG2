@@ -1095,7 +1095,10 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
         }
     }
 
-    if(bAlreadyPrevented)
+    // pawns that call Suicide() use damagetype Suicided and report death with a killer of themselves
+    // PhysicsVolumes that deal damage report None for an instigator
+    // this check should (hopefully) be enough to ensure we are dying when we really need to
+    if(bAlreadyPrevented && DamageType != class'Suicided' && Killer != Killed)
     {
         return true;
     }
