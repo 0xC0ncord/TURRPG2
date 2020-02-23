@@ -28,4 +28,5 @@ static function RPGPlayerLevelInfo GetFor(PlayerReplicationInfo OwnerPRI)
 
 defaultproperties
 {
+    NetUpdateFrequency=1
 }
