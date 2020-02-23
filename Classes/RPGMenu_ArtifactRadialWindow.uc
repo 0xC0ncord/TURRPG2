@@ -170,9 +170,9 @@ function InitFor(RPGPlayerReplicationInfo Whom)
         AllElements[x].ArtifactID = AClass.default.ArtifactID;
 
         if(AClass != None)
-            lbArtifacts.List.Add(AClass.default.ItemName, AClass, string(i));
+            lbArtifacts.List.Add(AClass.default.ItemName, AClass, string(x));
         else
-            lbArtifacts.List.Add(NotAvailableText @ AClass.default.ArtifactID, None, string(i));
+            lbArtifacts.List.Add(NotAvailableText @ AClass.default.ArtifactID, None, string(x));
     }
     lbArtifacts.List.bNotify = true;
 
@@ -358,6 +358,8 @@ function bool AddArtifact(GUIComponent Sender)
 
     if(lbArtifacts.List.bSorted)
         lbArtifacts.List.Sort();
+
+    bDirty = true;
 
     return true;
 }
