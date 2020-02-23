@@ -2178,7 +2178,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
     for(i = 0; i < Abilities.Length; i++) {
         if(Abilities[i].bAllowed) {
             if(!bForce) {
-                if(!Abilities[i].OverrideGrantedWeapon(WeaponClass, ModifierClass, Modifier)) {
+                if(!Abilities[i].OverrideGrantedWeapon(WeaponClass, ModifierClass, Modifier, Source)) {
                     return; //not granted
                 }
             }

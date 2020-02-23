@@ -80,6 +80,14 @@ function ModifyPawn(Pawn Other)
 
 function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier, optional Object Source)
 {
+    //don't mess with any restored weapons from Denial
+    if(Ability_Denial(Source) != None)
+        return true;
+
+    //don't mess with the engineer link gun
+    if(WeaponClass == class'EngineerLinkGun' && ModifierClass == class'WeaponModifier_EngineerLink')
+        return true;
+
     if(AbilityLevel >= 4)
         ModifierClass = class'MutTURRPG'.static.Instance(Level).GetRandomWeaponModifier(WeaponClass, RPRI.Controller.Pawn, true);
     else
