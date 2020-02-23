@@ -993,9 +993,6 @@ function ComboSuccess(Controller Who, class<Combo> ComboClass) {
 
 function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> damageType, vector HitLocation)
 {
-    local Inventory Inv;
-    local Weapon W;
-    local RPGWeaponModifier WM;
     local bool bAlreadyPrevented;
     local int x;
     local Controller KilledController;
@@ -1055,27 +1052,6 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
         if(Level.Game.bTeamGame && KilledRPRI.PRI.Team.TeamIndex != KilledRPRI.Team)
         {
             KilledRPRI.bTeamChanged = true; //allow RPRI to react on spawn
-
-            if(KilledVehicleDriver != None)
-                Inv = KilledVehicleDriver.Inventory;
-            else
-                Inv = Killed.Inventory;
-
-            while(Inv != None)
-            {
-                W = Weapon(Inv);
-                if(W != None && class'Ability_Denial'.static.CanSaveWeapon(W))
-                {
-                    WM = class'RPGWeaponModifier'.static.GetFor(W);
-                    if(WM != None)
-                        KilledRPRI.QueueWeapon(W.class, WM.class, WM.Modifier);
-                    else
-                        KilledRPRI.QueueWeapon(W.class, None, 0);
-                }
-
-                Inv = Inv.Inventory;
-            }
-
             return false; //cannot save from a team switch
         }
         else
