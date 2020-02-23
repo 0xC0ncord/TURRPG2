@@ -504,7 +504,7 @@ simulated function ClientSetup()
     local ArtifactOrderStruct OrderEntry;
     local RadialMenuArtifactStruct RadialEntry;
 
-    if(Controller == None || Controller.PlayerReplicationInfo == None)
+    if(Controller == None || Controller.PlayerReplicationInfo == None || (PlayerController(Controller) != None && PlayerController(Controller).GameReplicationInfo == None))
         return; //wait
 
     RRI = class'RPGReplicationInfo'.static.Get(Level);
