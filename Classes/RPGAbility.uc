@@ -599,6 +599,13 @@ function bool PreventSever(Pawn Killed, name boneName, int Damage, class<DamageT
     return false;
 }
 
+/* Called when the player actually dies, not if it's prevented
+ * bLogout is true if called as a result of logging out or quitting
+ * Killer will be RPRI.Controller.Pawn and DamageType will be class'Suicided' for instances when we really should be dying
+ * This primarily provides an interface to let abilities clean up any needed states when the player dies
+ */
+function PlayerDied(bool bLogout, optional Pawn Killer, optional class<DamageType> DamageType);
+
 /* Called by RPGRules.OverridePickupQuery() and works exactly like that function - if this returns true,
  * bAllowPickup determines if item can be picked up (1 is yes, any other value is no)
  * NOTE: The first function to return true prevents all further abilities in the player's ability list

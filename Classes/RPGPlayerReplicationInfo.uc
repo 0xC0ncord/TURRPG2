@@ -1110,8 +1110,15 @@ function Timer()
 }
 
 // only called when the player *actually* dies, not if it's prevented (ghost, etc)
-final function PlayerDied(optional bool bLogout)
+final function PlayerDied(optional bool bLogout, optional Pawn Killer, optional class<DamageType> DamageType)
 {
+    local int i;
+
+    // inform abilities
+    for(i = 0; i < Abilities.Length; i++)
+        if(Abilities[i].bAllowed)
+            Abilities[i].PlayerDied(bLogout, Killer, DamageType);
+
     if(Monsters.Length > 0 && (bMonstersDie || bLogout))
         ServerKillMonsters();
     if(Buildings.Length > 0 && (bBuildingsDie || bLogout))

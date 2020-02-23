@@ -1192,7 +1192,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
         Killed.DrivenVehicle.Weapon.SetOverlayMaterial(xPawn(Killed).UDamageWeaponMaterial, 0, false);
 
     if(KilledRPRI != None)
-        KilledRPRI.PlayerDied();
+        KilledRPRI.PlayerDied(false, Killer.Pawn, DamageType);
 
     return false;
 }
