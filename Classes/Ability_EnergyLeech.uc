@@ -1,8 +1,10 @@
 class Ability_EnergyLeech extends RPGAbility;
 
+var float AdrenalineFraction;
+
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-    local float AdrenalineBonus;
+    local int AdrenalineBonus;
 
     if(
         Damage <= 0 ||
@@ -19,7 +21,10 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     if(Vehicle(Injured) != None && Vehicle(Injured).IsVehicleEmpty())
         return;
 
-    AdrenalineBonus = FMax(0, (FMin(Damage, Injured.Health)) * BonusPerLevel * AbilityLevel);
+    AdrenalineFraction += FMax(0, (FMin(Damage, Injured.Health)) * BonusPerLevel * AbilityLevel);
+
+    AdrenalineBonus = int(AdrenalineFraction);
+    AdrenalineFraction -= AdrenalineBonus;
 
     if(AdrenalineBonus > 0)
     {
