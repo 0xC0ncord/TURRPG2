@@ -3,7 +3,7 @@ class Ability_WeaponSpeed extends RPGAbility;
 replication
 {
     reliable if(Role == ROLE_Authority)
-        ClientModifyWeapon, ClientModifyVehicle;
+        ClientModifyWeapon, ClientModifyVehicleWeaponFireRate;
 }
 
 function float GetModifier() {
@@ -25,24 +25,58 @@ function ModifyWeapon(Weapon Weapon)
     ClientModifyWeapon(Weapon, Modifier);
 }
 
-simulated function ClientModifyVehicle(Vehicle V, float Modifier) {
-    class'Util'.static.SetVehicleFireRate(V, Modifier);
+function ModifyVehicleFireRate(Vehicle V, float Modifier)
+{
+    local int i;
+    local ONSVehicle OV;
+    local ONSWeaponPawn WP;
+    local Inventory Inv;
+
+    OV = ONSVehicle(V);
+    if (OV != None)
+    {
+        for(i = 0; i < OV.Weapons.length; i++)
+        {
+            class'Util'.static.SetVehicleWeaponFireRate(OV.Weapons[i], Modifier);
+            ClientModifyVehicleWeaponFireRate(OV.Weapons[i], Modifier);
+        }
+    }
+    else
+    {
+        WP = ONSWeaponPawn(V);
+        if (WP != None)
+        {
+            class'Util'.static.SetVehicleWeaponFireRate(WP.Gun, Modifier);
+            ClientModifyVehicleWeaponFireRate(WP.Gun, Modifier);
+        }
+        else //some other type of vehicle (usually ASVehicle) using standard weapon system
+        {
+            //at this point, the vehicle's Weapon is not yet set, but it should be its only inventory
+            for(Inv = V.Inventory; Inv != None; Inv = Inv.Inventory)
+            {
+                if(Weapon(Inv)!=None)
+                {
+                    class'Util'.static.SetVehicleWeaponFireRate(Weapon(Inv), Modifier);
+                    ClientModifyVehicleWeaponFireRate(Weapon(Inv), Modifier);
+                }
+            }
+        }
+    }
+}
+
+simulated function ClientModifyVehicleWeaponFireRate(Actor W, float Modifier)
+{
+    class'Util'.static.SetVehicleWeaponFireRate(W, Modifier);
 }
 
 function ModifyVehicle(Vehicle V)
 {
-    local float Modifier;
-
-    Modifier = GetModifier();
-
-    class'Util'.static.SetVehicleFireRate(V, GetModifier());
-    ClientModifyVehicle(V, Modifier);
+    ModifyVehicleFireRate(V, GetModifier());
 }
 
 function UnModifyVehicle(Vehicle V)
 {
-    class'Util'.static.SetVehicleFireRate(V, 1.0);
-    ClientModifyVehicle(V, 1.0);
+    ModifyVehicleFireRate(V, 1.0);
 }
 
 simulated function string DescriptionText()
