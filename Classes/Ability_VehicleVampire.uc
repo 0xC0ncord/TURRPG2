@@ -1,5 +1,13 @@
 class Ability_VehicleVampire extends Ability_Vampire;
 
+function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
+{
+    if(Injured == InstigatedBy || Vehicle(InstigatedBy) == None || Vehicle(InstigatedBy).Driver == None)
+        return;
+
+    Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
+}
+
 defaultproperties
 {
     AbilityName="Vehicle Vampirism"
