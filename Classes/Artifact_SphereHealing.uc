@@ -2,11 +2,19 @@ class Artifact_SphereHealing extends ArtifactBase_EffectSphere;
 
 var int HealthPerSecond;
 
+function bool CanApplyEffectOn(Pawn Other)
+{
+    if(EffectClass != None)
+        return EffectClass.static.CanBeApplied(Other, Instigator.Controller,, GetMaxHealthBonus());
+    return false;
+}
+
 function ModifyEffect(RPGEffect Effect)
 {
     if(Effect_Heal(Effect) != None)
     {
         Effect_Heal(Effect).HealAmount = HealthPerSecond;
+        Effect.Modifier = GetMaxHealthBonus();
     }
 }
 

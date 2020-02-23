@@ -90,8 +90,10 @@ defaultproperties
 {
     MaxBoosting=500.000000
     MinBoosting=100.000000
+    ChargeTime=2.000000
+    Radius=2200.000000
     ChargeEmitterClass=class'FX_BlastCharger_Shield_NEW'
-    ExplosionClass=class'FX_BlastCharger_Shield_NEW'
-    Radius=200.000000
+    ExplosionClass=class'FX_BlastExplosion_Shield_NEW'
     bAffectInstigator=True
+    bBotsBeAfraid=False
 }

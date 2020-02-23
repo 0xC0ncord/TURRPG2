@@ -3,8 +3,7 @@ class WeaponModifier_EngineerLink extends RPGWeaponModifier;
 var array<float> DamageBonusFromLinks;
 var float ShieldBoostingXPPercent;
 
-var int BoostingLevel;
-var float ShieldBoostingPercent;
+var Ability_ShieldBoosting Ability;
 
 var localized string ProjectileDamageText, ShaftDamageText, ProjectileSpeedText, FireRateText, ShaftRangeText;
 
@@ -24,10 +23,18 @@ function BoostShield(Pawn P, int Amount)
     if(Boost != None)
     {
         Boost.ShieldAmount = Amount;
-        Boost.BoostingLevel = BoostingLevel;
-        Boost.ShieldBoostingPercent = ShieldBoostingPercent;
+        Boost.BoostingLevel = Ability.AbilityLevel;
+        Boost.ShieldBoostingPercent = Ability.ShieldBoostingPercent;
         Boost.Start();
     }
+}
+
+function Ability_ShieldBoosting GetBoostingAbility()
+{
+    if(RPRI == None)
+        return None;
+
+    return Ability_ShieldBoosting(RPRI.GetAbility(class'Ability_ShieldBoosting'));
 }
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
@@ -41,8 +48,15 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn Ins
         && P.GetTeam() == Instigator.GetTeam() && Instigator.GetTeam() != None)
         Momentum = vect(0,0,0);
 
+    if(Ability == None)
+    {
+        Ability = GetBoostingAbility();
+        if(Ability == None || Ability.AbilityLevel == 0 || !Ability.bAllowed)
+            return;
+    }
+
     // We should only regen shields with the linkfire mode
-    if ( !ClassIsChildOf(DamageType,class'DamTypeLinkShaft') || P == None || Vehicle(P)!=None || BoostingLevel == 0)
+    if ( !ClassIsChildOf(DamageType,class'DamTypeLinkShaft') || P == None || Vehicle(P)!=None)
         return;
 
     // ok, we have the linkshaft hitting someone
