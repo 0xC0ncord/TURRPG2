@@ -32,7 +32,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 defaultproperties
 {
     AbilityName="Counter Shove"
-    Description="Whenever you are damaged by another player, 75% of the momentum per level is also done to the player who hurt you (or 400% at level 5)|Will not counter counter shove or retaliation."
+    Description="Whenever you are damaged by an opponent, 75% of the momentum per level is also done to the opponent who hurt you (or 400% at level 5)|This ability will not counter Counter Shove or Retaliation."
     StartingCost=5
     CostAddPerLevel=5
     MaxLevel=5

@@ -85,7 +85,7 @@ simulated function string DescriptionText(){
 defaultproperties
 {
     AbilityName="Vampirism"
-    Description="Whenever you damage an opponent, you are healed for $1 of the damage per level (up to your maximum health amount + $2$3). $5You cannot gain health from self-damage."
+    Description="Whenever you damage an opponent, you are healed for $1 of the damage per level (up to your maximum health amount + $2$3). $5This ability is not triggered by artifact damage. You cannot gain health from self-damage."
     AbsoluteCapText=" or maximally +$4"
     VehicleText="When driving a vehicle, it will be repaired for $6 of the damage per level. "
     StartingCost=10

@@ -33,7 +33,7 @@ defaultproperties
 {
     BonusPerLevel=0.05
     AbilityName="Retaliation"
-    Description="Whenever you are damaged by another player, $1 of the damage per level is also done to the player who hurt you. Does not retaliate against retaliation or counter shove."
+    Description="Whenever you are damaged by an opponent, $1 of the damage per level is also done to the opponent who hurt you. This ability does not retaliate against Retaliation or Counter Shove."
     StartingCost=10
     CostAddPerLevel=5
     MaxLevel=10

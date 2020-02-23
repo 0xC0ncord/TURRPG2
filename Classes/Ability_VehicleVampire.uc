@@ -3,7 +3,7 @@ class Ability_VehicleVampire extends Ability_Vampire;
 defaultproperties
 {
     AbilityName="Vehicle Vampirism"
-    Description="Whenever you damage an opponent from a vehicle or turret, it gets repaired for $1 of the damage per level (up to its starting health amount + $2$3). You can't gain health from self-damage."
+    Description="Whenever you damage an opponent from a vehicle or turret, it gets repaired for $1 of the damage per level (up to its starting health amount + $2$3). Sentinels and other automated vehicles cannot gain health from this ability. This ability is not triggered by artifact damage. You cannot gain health from self-damage."
     BonusPerLevel=0 //none on foot
     VehicleBonusPerLevel=0.050000
     HealthBonusMax=0.500000

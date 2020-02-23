@@ -49,7 +49,7 @@ simulated function string DescriptionText()
 defaultproperties
 {
     AbilityName="Energy Leech"
-    Description="Whenever you deal damage to another player, you gain $1 of the damage per level as adrenaline."
+    Description="Whenever you deal damage to an opponent, you gain $1 of the damage per level as adrenaline."
     StartingCost=5
     CostAddPerLevel=5
     MaxLevel=5
