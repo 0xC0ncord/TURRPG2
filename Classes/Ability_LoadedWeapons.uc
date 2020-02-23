@@ -60,7 +60,7 @@ function ModifyPawn(Pawn Other)
                     {
                         // Check if they already have this weapon
                         for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
-                            if(Inv.Class == class<Weapon>(GrantItem[x].InventoryClass))
+                            if(Inv.Class == GrantItem[x].InventoryClass)
                                 break;
 
                         // Already have this weapon, don't give them another
