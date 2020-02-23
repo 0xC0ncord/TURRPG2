@@ -14,14 +14,9 @@ function ModifyPawn(Pawn Other)
     }
 }
 
-function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> DamageType, vector HitLocation, bool bAlreadyPrevented)
+function PlayerDied(bool bLogout, optional Pawn Killer, optional class<DamageType> DamageType)
 {
-    if(Super.PreventDeath(Killed, Killer, DamageType, HitLocation, bAlreadyPrevented))
-        return true;
-
     bAdrenalineGiven = false;
-
-    return false;
 }
 
 simulated function string DescriptionText()
