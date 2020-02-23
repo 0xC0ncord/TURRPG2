@@ -24,6 +24,9 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         return;
     }
 
+    if(ClassIsChildOf(DamageType, class'RPGAdrenalineDamageType'))
+        return;
+
     if(Vehicle(InstigatedBy) != None) {
         Bonus = VehicleBonusPerLevel;
     } else {
@@ -92,7 +95,7 @@ defaultproperties
     CostAddPerLevel=5
     MaxLevel=10
     BonusPerLevel=0.05
-    VehicleBonusPerLevel=0.05
+    VehicleBonusPerLevel=0.00
     HealthBonusMax=0.333333
     HealthBonusAbsoluteCap=0
     Category=class'AbilityCategory_Health'
