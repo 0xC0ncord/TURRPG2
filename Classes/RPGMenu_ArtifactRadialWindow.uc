@@ -69,6 +69,9 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     lbArtifacts.OnClick = Clicked;
     lbRadialArtifacts.OnClick = Clicked;
 
+    lbArtifacts.OnKeyEvent = ListKeyEvent;
+    lbRadialArtifacts.OnKeyEvent = RadialListKeyEvent;
+
     lbGlobalSettings.List.ColumnWidth = 0.45;
     lbGlobalSettings.List.ItemScaling = 0.035;
     lbGlobalSettings.List.bVerticalLayout = true;
@@ -431,6 +434,32 @@ function bool ChangePriority(GUIComponent Sender)
         bDirty = true;
     }
     return true;
+}
+
+function bool ListKeyEvent(out byte Key, out byte State, float delta)
+{
+    if((Key == 38 || Key == 40) && State == 3) //up / down key released
+    {
+        SelectArtifact(lbArtifacts.List);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+function bool RadialListKeyEvent(out byte Key, out byte State, float delta)
+{
+    if((Key == 38 || Key == 40) && State == 3) //up / down key released
+    {
+        SelectArtifact(lbRadialArtifacts.List);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 function bool Clicked(GUIComponent Sender)
