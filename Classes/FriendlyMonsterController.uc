@@ -297,6 +297,21 @@ function NotifyKilled(Controller Killer, Controller Killed, pawn KilledPawn)
     }
 }
 
+function Celebrate()
+{
+    if(
+        (Pawn.Physics == PHYS_Flying && Warlord(Pawn) != None)
+        || Pawn.Physics == PHYS_Falling
+        || Pawn.Physics == PHYS_Swimming
+        || Pawn.Physics == PHYS_Spider
+        || Pawn.Physics == PHYS_Ladder
+        || Pawn.Physics == PHYS_Hovering
+    )
+        return;
+
+    Super.Celebrate();
+}
+
 state RestFormation
 {
     function BeginState()
