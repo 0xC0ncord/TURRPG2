@@ -29,7 +29,7 @@ state Activated
     function EndState()
     {
         Super.EndState();
-        SetTimer(0, false);
+
         Instigator.DisableUDamage();
         if(EffectOverlay != None)
             class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, 0, true);
