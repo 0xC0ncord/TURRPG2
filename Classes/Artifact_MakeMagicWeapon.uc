@@ -15,11 +15,6 @@ function BotWhatNext(Bot Bot)
     }
 }
 
-function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other)
-{
-    return class'MutTURRPG'.static.Instance(Level).GetRandomWeaponModifier(WeaponType, Other, true);
-}
-
 defaultproperties
 {
     bAvoidRepetition=True

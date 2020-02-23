@@ -6,6 +6,8 @@ var config bool bAvoidRepetition;
 
 var config array<class<Weapon> > ForbiddenWeaponTypes;
 
+var class<RPGWeaponModifier> ModifierClass;
+
 const MSG_UnableToGenerate = 0x0100;
 const MSG_AlreadyConstructing = 0x0101;
 const MSG_Broken = 0x0102;
@@ -63,7 +65,10 @@ function bool CanActivate()
         }
     }
 
-    if(ModifiedWeapon == None)
+    if(ModifiedWeapon == None
+    || class'WeaponModifier_EngineerLink'.static.GetFor(ModifiedWeapon) != None
+    || (ModifierClass != None && ModifiedWeapon != None && (!ModifierClass.static.AllowedFor(ModifiedWeapon.Class, Instigator) || ModifierClass == class'RPGWeaponModifier'.static.GetFor(ModifiedWeapon).Class))
+    )
     {
         Msg(MSG_UnableToGenerate);
         return false;
@@ -154,7 +159,13 @@ function RPGWeaponModifier ModifyWeapon(Weapon Weapon, class<RPGWeaponModifier> 
     return WM;
 }
 
-function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other);
+function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other)
+{
+    if(ModifierClass != None)
+        return ModifierClass;
+    else
+        return class'MutTURRPG'.static.Instance(Level).GetRandomWeaponModifier(WeaponType, Other, true);
+}
 
 defaultproperties
 {

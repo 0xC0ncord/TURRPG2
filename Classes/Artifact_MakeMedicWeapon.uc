@@ -18,16 +18,9 @@ function RPGWeaponModifier ModifyWeapon(Weapon Weapon, class<RPGWeaponModifier> 
     return Super.ModifyWeapon(Weapon, NewModifier);
 }
 
-function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other)
-{
-    if(class'WeaponModifier_Medic'.static.GetFor(Other.Weapon) != None)
-        return None;
-    else
-        return class'WeaponModifier_Medic';
-}
-
 defaultproperties
 {
+    ModifierClass=Class'WeaponModifier_Medic'
     CostPerSec=10
     MinActivationTime=1.000000
     HudColor=(B=255,G=128,R=0)
