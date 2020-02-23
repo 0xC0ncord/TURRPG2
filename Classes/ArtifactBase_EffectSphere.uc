@@ -38,6 +38,9 @@ state Activated
 
         CreateEffects();
 
+        if(class<RPGInstantEffect>(EffectClass) != None)
+            return;
+
         for(i = 0; i < Pawns.Length; i++)
         {
             if(Pawns[i] == None || Pawns[i].Health <= 0 || VSize(Pawns[i].Location - CoreLocation) > Radius)
@@ -84,16 +87,19 @@ function CreateEffects()
         NextC = C.NextController;
         if(C.Pawn != None && VSize(C.Pawn.Location - CoreLocation) <= Radius)
         {
-            if(class'Util'.static.InArray(C.Pawn, Pawns) == -1 && CanApplyEffectOn(C.Pawn))
+            if(CanApplyEffectOn(C.Pawn))
             {
+                if(class<RPGInstantEffect>(EffectClass) == None && class'Util'.static.InArray(C.Pawn, Pawns) == -1)
+                    continue;
+                else
+                    Pawns[Pawns.Length] = C.Pawn;
+
                 Effect = EffectClass.static.Create(C.Pawn, Instigator.Controller, EstimatedRunTime, EstimatedRunTime);
                 if(Effect != None)
                 {
                     ModifyEffect(Effect);
                     Effect.Start();
                 }
-
-                Pawns[Pawns.Length] = C.Pawn;
             }
         }
         C = NextC;
