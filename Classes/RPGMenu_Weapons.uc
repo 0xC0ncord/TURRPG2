@@ -48,12 +48,14 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     lbWeapons.List.bMultiSelect = false;
     lbWeapons.List.bSorted = true;
     lbWeapons.OnClick = SelectWeapon;
+    lbWeapons.OnKeyEvent = WeaponListKeyEvent;
 
     lbModifiers.List.bDropSource = false;
     lbModifiers.List.bDropTarget = false;
     lbModifiers.List.bMultiSelect = false;
     lbModifiers.List.bSorted = true;
     lbModifiers.OnClick = SelectModifier;
+    lbModifiers.OnKeyEvent = ModifierListKeyEvent;
 
     lbWeapons.List.OnDrawItem = InternalDrawWeaponListItem;
     lbModifiers.List.OnDrawItem = InternalDrawModifierListItem;
@@ -155,6 +157,32 @@ function InternalDraw(Canvas C)
         HeartsEffect.SetLocation(CamPos);
         HeartsEffect.SetRotation(CamRot);
         C.DrawActorClipped(HeartsEffect, false, 0, 0, C.ClipX, C.ClipY, true, 90.0f);
+    }
+}
+
+function bool WeaponListKeyEvent(out byte Key, out byte State, float delta)
+{
+    if((Key == 38 || Key == 40) && State == 3) //up / down key released
+    {
+        SelectWeapon(lbWeapons.List);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+function bool ModifierListKeyEvent(out byte Key, out byte State, float delta)
+{
+    if((Key == 38 || Key == 40) && State == 3) //up / down key released
+    {
+        SelectModifier(lbModifiers.List);
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 
