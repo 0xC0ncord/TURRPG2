@@ -478,7 +478,7 @@ function ModifyPawn(Pawn Other)
                     }
                 }
                 if(!bGotIt)
-                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0);
+                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,, self);
                 else
                     bGotIt = false;
             }
@@ -622,7 +622,7 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
     owning player. If this function returns true, the weapon will be granted with the applied.
     modifications. If it returns false, it will not be granted at all.
 */
-function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier) {
+function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier, optional Object Source) {
     return true;
 }
 
@@ -630,7 +630,7 @@ function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeap
     Called by RPGPlayerReplicationInfo when a weapon has been granted to the owning
     player.
 */
-function ModifyGrantedWeapon(Weapon Weapon, RPGWeaponModifier WeaponModifier);
+function ModifyGrantedWeapon(Weapon Weapon, RPGWeaponModifier WeaponModifier, optional Object Source);
 
 /*
     Called by RPGPlayerReplicationInfo when a weapon is about to be granted to the

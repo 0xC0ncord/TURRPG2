@@ -67,7 +67,7 @@ function ModifyPawn(Pawn Other)
                         if(Inv != None)
                             continue;
                     }
-                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0);
+                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,, Self);
                 }
                 else
                     bGotIt = false;
@@ -78,7 +78,7 @@ function ModifyPawn(Pawn Other)
     }
 }
 
-function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier)
+function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeaponModifier> ModifierClass, out int Modifier, optional Object Source)
 {
     if(AbilityLevel >= 4)
         ModifierClass = class'MutTURRPG'.static.Instance(Level).GetRandomWeaponModifier(WeaponClass, RPRI.Controller.Pawn, true);
@@ -96,7 +96,7 @@ function bool OverrideGrantedWeapon(class<Weapon> WeaponClass, out class<RPGWeap
     return true;
 }
 
-function ModifyGrantedWeapon(Weapon W, RPGWeaponModifier Modifier)
+function ModifyGrantedWeapon(Weapon W, RPGWeaponModifier Modifier, optional Object Source)
 {
     if(AbilityLevel == 1)
         W.FillToInitialAmmo();

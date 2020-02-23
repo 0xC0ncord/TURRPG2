@@ -119,7 +119,9 @@ function PreModifyPawn(Pawn Other)
             StoredWeapons[i].ModifierClass,
             StoredWeapons[i].Modifier,
             StoredWeapons[i].Ammo[0],
-            StoredWeapons[i].Ammo[1]
+            StoredWeapons[i].Ammo[1],
+            ,
+            Self
         );
 
         // Delete starting Shield Gun and Assault Rifle if needed

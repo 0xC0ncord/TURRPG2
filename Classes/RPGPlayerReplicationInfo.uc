@@ -52,6 +52,7 @@ struct GrantWeapon
     var int Modifier;
     var int Ammo[2]; //extra ammo per fire mode. 0 = none, -1 = full
     var bool bForce;
+    var Object Source;
 };
 var array<GrantWeapon> GrantQueue, GrantFavQueue;
 
@@ -2137,7 +2138,7 @@ function GrantQueuedWeapon(GrantWeapon GW) {
 
         for(i = 0; i < Abilities.Length; i++)
             if(Abilities[i].bAllowed)
-                Abilities[i].ModifyGrantedWeapon(W, WM);
+                Abilities[i].ModifyGrantedWeapon(W, WM, GW.Source);
     }
 }
 
@@ -2166,7 +2167,7 @@ function ProcessGrantQueue()
 }
 
 //Add to weapon grant queue
-function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass, int Modifier, optional int Ammo1, optional int Ammo2, optional bool bForce)
+function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass, int Modifier, optional int Ammo1, optional int Ammo2, optional bool bForce, optional Object Source)
 {
     local int i;
     local GrantWeapon GW;
@@ -2192,6 +2193,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
     GW.Ammo[0] = Ammo1;
     GW.Ammo[1] = Ammo2;
     GW.bForce = bForce;
+    GW.Source = Source;
 
     if(IsFavorite(WeaponClass, ModifierClass)) {
         if(!bForce) {
