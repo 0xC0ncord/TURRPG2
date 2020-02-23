@@ -2069,7 +2069,7 @@ simulated function ClientCloseSelection()
         Interaction.CloseSelection();
 }
 
-function bool AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
+simulated function bool AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
 {
     local RPGCharSettings.FavoriteWeaponStruct FW;
     local int i;
@@ -2089,7 +2089,7 @@ function bool AddFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> Mo
     return true;
 }
 
-function bool RemoveFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
+simulated function bool RemoveFavorite(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass)
 {
     local int i;
 

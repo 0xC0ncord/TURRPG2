@@ -173,6 +173,7 @@ function bool SelectWeapon(GUIComponent Sender)
     else
         return true;
 
+    //if showing only favorites, rebuild the modifier list when we select a favorited weapon
     if(chShowFavorites.IsChecked())
     {
         lbModifiers.List.bNotify = false;
@@ -183,47 +184,63 @@ function bool SelectWeapon(GUIComponent Sender)
                 lbModifiers.List.Add(FormatModifierName(RPGMenu.RPRI.RRI.WeaponModifiers[i]), RPGMenu.RPRI.RRI.WeaponModifiers[i], string(i));
         }
         lbModifiers.List.bNotify = true;
+
+        //select the modifier again in case we need to change it
+        SelectModifier(None);
     }
 
     if(SpinnyWeap != None)
     {
-        PickupClass = SelectedWeapon.default.PickupClass;
-        AttachClass = SelectedWeapon.default.AttachmentClass;
-
-        if(PickupClass != None && PickupClass.default.StaticMesh != None)
+        if(SelectedWeapon != None)
         {
-            SpinnyWeap.LinkMesh(None);
-            SpinnyWeap.SetStaticMesh(PickupClass.default.StaticMesh);
-            SpinnyWeap.SetDrawScale(PickupClass.default.DrawScale);
-            SpinnyWeap.SetDrawScale3D(PickupClass.default.DrawScale3D);
+            PickupClass = SelectedWeapon.default.PickupClass;
+            AttachClass = SelectedWeapon.default.AttachmentClass;
 
-            SpinnyWeap.OriginalSkins = PickupClass.default.Skins;
+            if(PickupClass != None && PickupClass.default.StaticMesh != None)
+            {
+                SpinnyWeap.LinkMesh(None);
+                SpinnyWeap.SetStaticMesh(PickupClass.default.StaticMesh);
+                SpinnyWeap.SetDrawScale(PickupClass.default.DrawScale);
+                SpinnyWeap.SetDrawScale3D(PickupClass.default.DrawScale3D);
 
-            SpinnyWeap.SetDrawType(DT_StaticMesh);
+                SpinnyWeap.OriginalSkins = PickupClass.default.Skins;
+
+                SpinnyWeap.SetDrawType(DT_StaticMesh);
+            }
+            else if(AttachClass != None && AttachClass.default.Mesh != None)
+            {
+                SpinnyWeap.SetStaticMesh(None);
+                SpinnyWeap.LinkMesh(AttachClass.default.Mesh);
+                SpinnyWeap.SetDrawScale(1.5 * AttachClass.default.DrawScale);
+
+                SpinnyWeap.OriginalSkins = PickupClass.default.Skins;
+
+                SpinnyWeap.SetDrawScale3D(AttachClass.default.DrawScale3D * 1.5 * vect(0, 0, -1));
+
+                SpinnyWeap.SetDrawType(DT_Mesh);
+            }
+
+            if(SelectedModifier != None)
+            {
+                //re-apply modifier overlay
+                if(SelectedModifier.default.ModifierOverlay != None)
+                    SpinnyWeap.SetOverlayMaterial(SelectedModifier.default.ModifierOverlay, 9999, true);
+            }
+            else
+            {
+                //no modifier selected, so get rid of the overlay
+                if(SpinnyWeap.OverlayMaterial != None)
+                    SpinnyWeap.SetOverlayMaterial(None, 0, true);
+            }
         }
-        else if(AttachClass != None && AttachClass.default.Mesh != None)
+        else
         {
-            SpinnyWeap.SetStaticMesh(None);
-            SpinnyWeap.LinkMesh(AttachClass.default.Mesh);
-            SpinnyWeap.SetDrawScale(1.5 * AttachClass.default.DrawScale);
-
-            SpinnyWeap.OriginalSkins = PickupClass.default.Skins;
-
-            SpinnyWeap.SetDrawScale3D(AttachClass.default.DrawScale3D * 1.5 * vect(0, 0, -1));
-
-            SpinnyWeap.SetDrawType(DT_Mesh);
+            SpinnyWeap.SetDrawType(DT_None);
         }
 
-        if(SelectedModifier != None)
-        {
-            //re-apply modifier overlay
-            if(SelectedModifier.default.ModifierOverlay != None)
-                SpinnyWeap.SetOverlayMaterial(SelectedModifier.default.ModifierOverlay, 9999, true);
-
-            //update description text
-            lbDesc.MyScrollText.bNoTeletype = false;
-            lbDesc.SetContent(GetDescriptionText());
-        }
+        //update description text
+        lbDesc.MyScrollText.bNoTeletype = false;
+        lbDesc.SetContent(GetDescriptionText());
     }
 
     if(bInitialized)
@@ -247,9 +264,23 @@ function bool SelectModifier(GUIComponent Sender)
 
         neModifierLevel.Setup(SelectedModifier.default.MinModifier, SelectedModifier.default.MaxModifier, 1);
 
-        lbDesc.MyScrollText.bNoTeletype = false;
-        lbDesc.SetContent(GetDescriptionText());
+        if(neModifierLevel.MenuState == MSAT_Disabled)
+            neModifierLevel.EnableMe();
     }
+    else if(NewModifier == None)
+    {
+        SelectedModifier = None;
+        if(SpinnyWeap.OverlayMaterial != None)
+            SpinnyWeap.SetOverlayMaterial(None, 0, true);
+        neModifierLevel.Setup(0, 0, 1);
+
+        if(neModifierLevel.MenuState != MSAT_Disabled)
+            neModifierLevel.DisableMe();
+    }
+
+    //update description text
+    lbDesc.MyScrollText.bNoTeletype = false;
+    lbDesc.SetContent(GetDescriptionText());
 
     bIgnoreNextChange = true;
     neModifierLevel.SetValue(Clamp(SelectedModifierLevel, SelectedModifier.default.MinModifier, SelectedModifier.default.MaxModifier));
@@ -283,6 +314,9 @@ function CheckFavorite()
 function string GetDescriptionText()
 {
     local string Description;
+
+    if(SelectedWeapon == None || SelectedModifier == None)
+        return "";
 
     Description = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel) $ "|";
     Description $= "================||" $ SelectedModifier.static.StaticGetDescription(SelectedModifierLevel);
