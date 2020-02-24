@@ -6,7 +6,9 @@
 #mode push
 
 #ifdef __DEBUG__
-#define DEBUG_LOG(x) Log($$"(__LINE__)"$$ @ x, default.Name);
+#define LOGD(x) Log($$"(__LINE__)"$$ @ x, default.Name);
+#define WARND(x) Warn($$"(__LINE__)"$$ @ x);
 #else
-#define DEBUG_LOG
+#define LOGD
+#define WARND
 #endif
