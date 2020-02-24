@@ -748,6 +748,18 @@ static function Color InterpolateColor(Color C1, Color C2, float Fraction)
     return Result;
 }
 
+static final function vector SpreadVector(vector A, float Angle)
+{
+    local rotator R;
+
+    R = rotator(A);
+    R.Yaw = Angle * (FRand() - 0.5);
+    R.Pitch = Angle * (FRand() - 0.5);
+    R.Roll = Angle * (FRand() - 0.5);
+
+    return (A >> R);
+}
+
 defaultproperties {
     HighlightColor=(R=255,G=255,B=255,A=255);
 }

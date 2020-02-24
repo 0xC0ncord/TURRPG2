@@ -1,57 +1,34 @@
-class Ability_MedicAura extends RPGAbility;
+class Ability_MedicAura extends AbilityBase_Aura;
 
-var config float HealInterval;
-var config float HealRadius;
-
-replication
+function bool CanAffect(Pawn Other)
 {
-    reliable if(Role == ROLE_Authority)
-        HealInterval, HealRadius;
+    return Super.CanAffect(Other) && Other.Health < Other.HealthMax && Other.Health > 0;
 }
 
-function ModifyPawn(Pawn Other)
-{
-    Super.ModifyPawn(Other);
-    SetTimer(HealInterval, true);
-}
-
-function Timer()
+function bool ApplyEffectOn(Pawn Other)
 {
     local Effect_Heal Heal;
-    local FX_HealingBeam HealEmitter;
-    local Pawn P;
+    local FX_AuraOrb HealEmitter;
+    local int i;
 
-    if(Instigator == None || Instigator.Health <= 0)
-        return;
-
-    if(Instigator.DrivenVehicle != None)
-        return;
-
-    if(VSize(Instigator.Velocity) ~= 0)
-        return;
-
-    foreach Instigator.CollidingActors(class'Pawn', P, HealRadius)
+    Heal = Effect_Heal(class'Effect_Heal'.static.Create(Other, RPRI.Controller));
+    if(Heal != None)
     {
-        if(
-            P != Instigator &&
-            Monster(P) == None &&
-            Vehicle(P) == None &&
-            P.Health < P.HealthMax &&
-            P.Health > 0 &&
-            FastTrace(Instigator.Location, P.Location)
-        )
-        {
-            Heal = Effect_Heal(class'Effect_Heal'.static.Create(P, RPRI.Controller));
-            if(Heal != None)
-            {
-                Heal.HealAmount = AbilityLevel * int(BonusPerLevel);
-                Heal.Start();
+        Heal.HealAmount = AbilityLevel * int(BonusPerLevel);
+        Heal.Start();
 
-                HealEmitter = Instigator.Spawn(class'FX_HealingBeam', Instigator);
-                HealEmitter.LinkedPawn = P;
-            }
+        for(i = 0; i < Max(1, Heal.HealAmount / 2); i++)
+        {
+            HealEmitter = Instigator.Spawn(class'FX_AuraOrb_Heal', Instigator,, Instigator.Location, rotator(class'Util'.static.SpreadVector(Other.Location - Instigator.Location, 8000)));
+            HealEmitter.Target = Other;
         }
     }
+    return Heal != None;
+}
+
+function DoInstigatorEffects()
+{
+    Instigator.Spawn(class'FX_AuraPulse_Heal', Instigator,, Instigator.Location);
 }
 
 simulated function string DescriptionText()
@@ -62,8 +39,6 @@ simulated function string DescriptionText()
 defaultproperties
 {
     BonusPerLevel=1
-    HealRadius=1024.000000
-    HealInterval=1.000000
     AbilityName="Convalescing Aura"
     Description="Heals nearby teammates by $1 health per level per second."
     StartingCost=10
@@ -72,5 +47,3 @@ defaultproperties
     RequiredAbilities(0)=(AbilityClass=Class'Ability_LoadedMedic',Level=1)
     Category=class'AbilityCategory_Medic'
 }
-
-
