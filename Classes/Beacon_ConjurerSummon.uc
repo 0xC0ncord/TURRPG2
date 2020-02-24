@@ -15,7 +15,7 @@ replication
 
 simulated event PostBeginPlay()
 {
-    Super.PostBeginPlay();
+    Super(RPGArtifactBeacon).PostBeginPlay();
     if(Role == ROLE_Authority)
         SpawnLoc = Location;
 }
@@ -27,14 +27,18 @@ simulated event PostNetBeginPlay()
 
 simulated event HitWall(vector HitNormal, Actor Wall)
 {
+    local vector Extent;
+
+    SetPhysics(PHYS_None);
+
     if(Role == Role_Authority)
     {
-        if(!SetLocation(Location + (HitNormal * SummonClass.default.CollisionRadius)))
-        {
+        Extent = SummonClass.default.CollisionRadius * vect(1,1,0);
+        Extent.Z = SummonClass.default.CollisionHeight;
+        if(!SetLocation(Location + HitNormal * VSize(Extent)))
             Destroy();
-            return;
-        }
-        GotoState('Spawning');
+        else
+            GotoState('Spawning');
     }
     if(FX != None)
         FX.Kill();
@@ -42,10 +46,10 @@ simulated event HitWall(vector HitNormal, Actor Wall)
 
 simulated event Tick(float dt)
 {
-    Super(RPGArtifactBeacon).Tick(dt);
-
     if(VSize(SpawnLoc - Location) >= MaxDistance)
     {
+        SetPhysics(PHYS_None);
+
         if(Role == ROLE_Authority && !IsInState('Spawning'))
             GotoState('Spawning');
         if(FX != None)
@@ -69,12 +73,12 @@ final function vector FindSpawnLocation()
 
 final function bool CheckSpace(vector TestVect)
 {
-    if(!FastTrace(TestVect, Location + vect(1, 0, 0) * SummonClass.default.CollisionRadius) ||
-        !FastTrace(TestVect, Location + vect(-1, 0, 0) * SummonClass.default.CollisionRadius) ||
-        !FastTrace(TestVect, Location + vect(0, 1, 0) * SummonClass.default.CollisionRadius) ||
-        !FastTrace(TestVect, Location + vect(0, -1, 0) * SummonClass.default.CollisionRadius) ||
-        !FastTrace(TestVect, Location + vect(0, 0, 1) * SummonClass.default.CollisionHeight) ||
-        !FastTrace(TestVect, Location + vect(0, 0, -1) * SummonClass.default.CollisionHeight))
+    if(!FastTrace(TestVect, TestVect + vect(1, 0, 0) * SummonClass.default.CollisionRadius) ||
+        !FastTrace(TestVect, TestVect + vect(-1, 0, 0) * SummonClass.default.CollisionRadius) ||
+        !FastTrace(TestVect, TestVect + vect(0, 1, 0) * SummonClass.default.CollisionRadius) ||
+        !FastTrace(TestVect, TestVect + vect(0, -1, 0) * SummonClass.default.CollisionRadius) ||
+        !FastTrace(TestVect, TestVect + vect(0, 0, 1) * SummonClass.default.CollisionHeight) ||
+        !FastTrace(TestVect, TestVect + vect(0, 0, -1) * SummonClass.default.CollisionHeight))
         return false;
     return true;
 }
@@ -82,8 +86,8 @@ final function bool CheckSpace(vector TestVect)
 state Spawning
 {
 Begin:
+    Disable('Tick');
     SetCollision(false, false, false);
-    SetPhysics(PHYS_None);
     SummonSpawnLoc = FindSpawnLocation();
     if(SummonSpawnLoc != vect(0,0,0))
     {
