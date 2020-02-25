@@ -1262,7 +1262,7 @@ function PostRender(Canvas Canvas)
                     if(Fade <= 1.0f)
                         Canvas.DrawColor.A = 255.0f * Fade;
 
-                    Canvas.WrapStringToArray(LastSelExtra, ExtraParts, Canvas.ClipX, "|");
+                    Canvas.WrapStringToArray(LastWeaponExtra, ExtraParts, Canvas.ClipX, "|");
 
                     if(ExtraParts.Length == 1)
                     {
