@@ -120,11 +120,11 @@ defaultproperties
 {
     AbilityName="Loaded Weapons"
     Description="Grants you an arsenal of modified weapons when you spawn."
-    LevelDescription(0)="Level 1: You are granted all regular weapons with the default percentage chance for magic weapons."
-    LevelDescription(1)="Level 2: You are granted onslaught weapons and all weapons with max ammo."
-    LevelDescription(2)="Level 3: You are granted super weapons (Invasion gametypes only)."
-    LevelDescription(3)="Level 4: Magic weapons will be generated for all your weapons."
-    LevelDescription(4)="Level 5: You receive all positive magic weapons."
+    LevelDescription(0)="At level 1, you are granted all regular weapons with the default percentage chance for magic weapons."
+    LevelDescription(1)="At level 2, you are granted onslaught weapons and all weapons with max ammo."
+    LevelDescription(2)="At level 3, you are granted super weapons (Invasion gametypes only)."
+    LevelDescription(3)="At level 4, magic weapons will be generated for all your weapons."
+    LevelDescription(4)="At level 5, you receive all positive magic weapons."
     RequiredLevels(1)=40
     RequiredLevels(2)=55
     MaxLevel=5
