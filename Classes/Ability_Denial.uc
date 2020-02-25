@@ -90,7 +90,7 @@ function TryStoreWeapon(Weapon W)
     if(!CanSaveWeapon(W))
         return;
 
-    if(AbilityLevel < 3 && class'MutTURRPG'.static.Instance(W.Level).IsSuperWeapon(W.Class))
+    if(AbilityLevel < 3 && class'MutTURRPG'.static.Instance(Level).IsSuperWeapon(W.Class))
         return;
 
     SW.WeaponClass = W.class;
