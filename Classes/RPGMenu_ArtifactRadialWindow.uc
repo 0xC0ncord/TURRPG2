@@ -202,6 +202,7 @@ function DrawRadialPreview(Canvas C)
     RadialPos.X = sbRadial.ActualLeft() + sbRadial.ActualWidth() * 0.5;
     RadialPos.Y = sbRadial.ActualTop() + sbRadial.ActualHeight() * 0.5;
 
+    C.Style = 5; // STY_Alpha
     C.DrawColor = RPRI.Interaction.GetHUDTeamColor(HudCDeathmatch(Controller.ViewportOwner.Actor.myHUD));
     C.DrawColor.A = 150;
     C.SetPos(RadialPos.X - RadialSize, RadialPos.Y - RadialSize);
