@@ -13,8 +13,7 @@ defaultproperties
     LevelCost(0)=5
     LevelCost(1)=5
     LevelCost(2)=10
-    LevelCost(3)=10
-    MaxLevel=4
+    MaxLevel=3
     RequiredAbilities(0)=(AbilityClass=class'Ability_LoadedMonsters',Level=1)
     Category=class'AbilityCategory_Monsters'
 }
