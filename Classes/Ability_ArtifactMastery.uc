@@ -45,7 +45,7 @@ defaultproperties
     WeaponDamagePenaltyPerLevel=0.02
     VehicleDamagePenaltyPerLevel=0.02
     AbilityName="Artifact Mastery"
-    Description="For every level of this ability, your adrenaline usage from artifacts is reduced by $1 and your artifact damage is increased by $2. Consequently, every level of this ability will reduce your overall weapon damage by $3 and overall vehiclular damage by $4."
+    Description="For every level of this ability, your adrenaline usage from artifacts is reduced by $1 and your artifact damage is increased by $2. Consequently, every level of this ability will reduce your overall weapon damage by $3 and overall vehicular damage by $4."
     StartingCost=10
     CostAddPerLevel=2
     MaxLevel=10
