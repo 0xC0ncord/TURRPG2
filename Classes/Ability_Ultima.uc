@@ -99,7 +99,6 @@ defaultproperties
     MaxLevel=5
     bUseLevelCost=true
     ForbiddenAbilities(0)=(AbilityClass=class'Ability_UltimaShield',Level=1)
-    ForbiddenAbilities(1)=(AbilityClass=class'Ability_Ghost',Level=1)
     LevelCost(0)=60
     LevelCost(1)=40
     LevelCost(2)=20

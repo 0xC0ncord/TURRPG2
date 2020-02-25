@@ -59,7 +59,6 @@ defaultproperties
 {
     AbilityName="Ghost"
     Description="Once per spawn, when you get killed, instead of dying, you turn into a non-corporeal and get moved to a different location where you can continue your life."
-    ForbiddenAbilities(0)=(AbilityClass=class'Ability_Ultima',Level=1)
     StartingCost=25
     MaxLevel=1
     bAllowSuicide=True
