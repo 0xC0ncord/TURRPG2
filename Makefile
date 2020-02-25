@@ -38,3 +38,7 @@ clean:
 		rm -rf $(CURRENT_DIR)/Classes &&\
 		mv -vf $(CURRENT_DIR)/.Classes $(CURRENT_DIR)/Classes;\
 	fi
+
+server:
+	@echo -e $(PREFIX) $@ $(SUFFIX)
+	@$(CURRENT_DIR)/server.sh
