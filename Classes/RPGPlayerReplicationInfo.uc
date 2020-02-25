@@ -332,8 +332,8 @@ simulated event BeginPlay()
             if(data.LV == 0) //new player
             {
                 data.LV = RPGMut.StartingLevel;
-                data.SPA = RPGMut.StartingStatPoints + (Ceil(float(data.LV - 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
-                data.APA = RPGMut.StartingAbilityPoints + (Ceil(float(data.LV - 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
+                data.SPA = RPGMut.StartingStatPoints;
+                data.APA = RPGMut.StartingAbilityPoints;
                 data.XN = RPGMut.GetRequiredXpForLevel(data.LV);
 
                 if (PlayerController(Controller) != None)
@@ -1795,8 +1795,8 @@ function ServerResetData()
 
     DataObject.ID = OwnerID;
     DataObject.LV = RPGMut.StartingLevel;
-    DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
-    DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
+    DataObject.SPA = RPGMut.StartingStatPoints;
+    DataObject.APA = RPGMut.StartingAbilityPoints;
     DataObject.XN = RPGMut.GetRequiredXpForLevel(DataObject.LV);
 
     DataObject.AA = 0;
@@ -1840,8 +1840,8 @@ function ServerRebuildData()
         }
         DataObject.XP = FMax(0.0f, DataObject.XP - CostLeft);
 
-        DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
-        DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
+        DataObject.SPA = RPGMut.StartingStatPoints + (Ceil((DataObject.LV - RPGMut.StartingLevel) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
+        DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil((DataObject.LV - RPGMut.StartingLevel) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
         DataObject.XN = RPGMut.GetRequiredXpForLevel(DataObject.LV);
 
         DataObject.SaveConfig();
@@ -1863,8 +1863,8 @@ function SetLevel(int NewLevel)
     Log(PRI.PlayerName $ " - SETLEVEL" @ NewLevel $ "!", 'TURRPG2');
 
     DataObject.LV = NewLevel;
-    DataObject.SPA = RPGMut.StartingStatPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
-    DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil(float(DataObject.LV + 1) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
+    DataObject.SPA = RPGMut.StartingStatPoints + (Ceil((DataObject.LV - RPGMut.StartingLevel) / RPGMut.StatPointsIncrement) - 1) * RPGMut.StatPointsPerIncrement;
+    DataObject.APA = RPGMut.StartingAbilityPoints + (Ceil((DataObject.LV - RPGMut.StartingLevel) / RPGMut.AbilityPointsIncrement) - 1) * RPGMut.AbilityPointsPerIncrement;
     DataObject.XN = RPGMut.GetRequiredXpForLevel(NewLevel);
     DataObject.XP = 0;
     DataObject.AB.Length = 0;
