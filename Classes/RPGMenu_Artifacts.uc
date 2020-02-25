@@ -136,6 +136,8 @@ function SelectArtifact()
         lbDesc.setContent(AClass.static.GetArtifactNameExtra());
 
         imIcon.Image = Texture(AClass.default.IconMaterial);
+        imIcon.X2 = imIcon.Image.MaterialUSize();
+        imIcon.Y2 = imIcon.Image.MaterialVSize();
         imIcon.SetVisibility(true);
     }
     else
