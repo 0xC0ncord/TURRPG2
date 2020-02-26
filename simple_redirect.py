@@ -127,7 +127,8 @@ class UT2K4RedirectHandler(http.server.SimpleHTTPRequestHandler):
             # Check our temporary directory for the file in its compressed form if it exists
             if os.access(TEMP_COMPRESSED_DIR + os.sep + filepath, os.R_OK):
                 # Serve it up
-                http.server.SimpleHTTPRequestHandler.do_GET(self);
+                with open(TEMP_COMPRESSED_DIR + os.sep + filepath, 'rb') as fp:
+                    self.copyfile(fp, self.wfile)
             else:
                 # Need to find the uncompressed file first
                 uncomp_filepath = filepath[:-len('.uz2')]
