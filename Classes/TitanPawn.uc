@@ -2,6 +2,13 @@ class TitanPawn extends xPawn;
 
 var() bool bCanMultiCombo;
 var array<Combo> ActiveCombos;
+var() int MaxShieldAmount;
+
+replication
+{
+    reliable if(Role == ROLE_Authority && bNetDirty)
+        MaxShieldAmount;
+}
 
 function bool InCurrentCombo()
 {
@@ -80,4 +87,5 @@ function DoCombo( class<Combo> ComboClass )
 
 defaultproperties
 {
+    MaxShieldAmount=150
 }
