@@ -1,7 +1,7 @@
 class Interaction_MedicAwareness extends RPGBaseInteraction;
 
 var Interaction_Global GlobalInteraction;
-var Ability_MedicAwareness Ability;
+var Ability_LoadedMedic Ability;
 
 event Initialized() {
     local int i;
@@ -38,12 +38,12 @@ function PostRender(Canvas C) {
 
     xPC = xPlayer(ViewportOwner.Actor);
 
-    FarAwayInv = 1.0f / TeamBeaconMaxDist;
+    FarAwayInv = 1.0f / TeamBeaconPlayerInfoMaxDist;
 
     for(i = 0; i < Ability.Teammates.Length; i++) {
         P = Ability.Teammates[i];
         if(IsPawnVisible(C, P, ScreenPos, Dist)) {
-            ScaledDist = TeamBeaconMaxDist * FClamp(0.04f * P.CollisionRadius, 1.0f, 2.0f);
+            ScaledDist = TeamBeaconPlayerInfoMaxDist * FClamp(0.04f * P.CollisionRadius, 1.0f, 2.0f);
 
             if(Dist < 0.0f || Dist > 2.0f * ScaledDist) {
                 continue;
@@ -92,12 +92,12 @@ function PostRender(Canvas C) {
             ScreenPos.Y -= 0.5f * BeaconTexture.VSize * Scale;
 
             //Text
-            if(Dist < TeamBeaconMaxDist && C.ClipX > 600) {
+            if(Dist < TeamBeaconPlayerInfoMaxDist && C.ClipX > 600) {
                 ScreenPos.Y -= SmallFontHeight;
             }
 
             //Bar height
-            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
+            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconPlayerInfoMaxDist * 0.5), 0.5, 1);
 
             if(Vehicle(P) != None) {
                 Height *= 1.75;
