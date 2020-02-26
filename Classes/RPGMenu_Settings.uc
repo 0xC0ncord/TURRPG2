@@ -5,6 +5,9 @@ var automated GUISectionBackground sbCustomize;
 var automated GUIMultiOptionListBox lbSettings;
 var automated moCheckBox chkWeaponExtra, chkArtifactText, chkExpGain, chkExpBar, chkHints, chkClassicArtifactSelection;
 var automated moSlider slExpGain, slIconsPerRow, slIconScale, slIconsX, slIconsY, slExpBarX, slExpBarY;
+var automated moSlider slStatusScale;
+var automated moSlider slBarHeightScale, slBarWidthScale;
+var automated moComboBox cbHealthBarStyle, cbShieldBarStyle;
 
 var localized string Text_HintWeaponExtra;
 var localized string Text_HintArtifactExtra;
@@ -18,6 +21,11 @@ var localized string Text_HintIconsX;
 var localized string Text_HintIconsY;
 var localized string Text_HintExpBarX;
 var localized string Text_HintExpBarY;
+var localized string Text_HintStatusScale;
+var localized string Text_HintBarHeightScale;
+var localized string Text_HintBarWidthScale;
+var localized string Text_HintHealthBarStyle;
+var localized string Text_HintShieldBarStyle;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -39,6 +47,11 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     slIconsY = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Artifact icons Y", true));
     slExpBarX = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Experience bar X", true));
     slExpBarY = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Experience bar Y", true));
+    slStatusScale = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Status icon scale", true));
+    slBarHeightScale = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Bar height scale", true));
+    slBarWidthScale = moSlider(lbSettings.List.AddItem("XInterface.moSlider",, "Bar width scale", true));
+    cbHealthBarStyle = moComboBox(lbSettings.List.AddItem("XInterface.moComboBox",, "Health bar style", true));
+    cbShieldBarStyle = moComboBox(lbSettings.List.AddItem("XInterface.moComboBox",, "Shield bar style", true));
 
     chkWeaponExtra.ToolTip.SetTip(Text_HintWeaponExtra);
     chkArtifactText.ToolTip.SetTip(Text_HintArtifactExtra);
@@ -52,6 +65,11 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     slIconsY.ToolTip.SetTip(Text_HintIconsY);
     slExpBarX.ToolTip.SetTip(Text_HintExpBarX);
     slExpBarY.ToolTip.SetTip(Text_HintExpBarY);
+    slStatusScale.ToolTip.SetTip(Text_HintStatusScale);
+    slBarHeightScale.ToolTip.SetTip(Text_HintBarHeightScale);
+    slBarWidthScale.ToolTip.SetTip(Text_HintBarWidthScale);
+    cbHealthBarStyle.ToolTip.SetTip(Text_HintHealthBarStyle);
+    cbShieldBarStyle.ToolTip.SetTip(Text_HintShieldBarStyle);
 
     slExpGain.Setup(0, 21, true);
     slIconsPerRow.Setup(1, 25, true);
@@ -60,6 +78,17 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     slIconsY.Setup(0, 1, false);
     slExpBarX.Setup(0, 1, false);
     slExpBarY.Setup(0, 1, false);
+    slStatusScale.Setup(0.5, 1.5, false);
+    slBarHeightScale.Setup(0.5, 1.5, false);
+    slBarWidthScale.Setup(0.5, 1.5, false);
+
+    cbHealthBarStyle.ReadOnly(true);
+    cbHealthBarStyle.AddItem("Titan");
+    cbHealthBarStyle.AddItem("Druid's");
+
+    cbShieldBarStyle.ReadOnly(true);
+    cbShieldBarStyle.AddItem("Titan");
+    cbShieldBarStyle.AddItem("Druid's");
 
     SetDefaultComponent(chkWeaponExtra);
     SetDefaultComponent(chkArtifactText);
@@ -73,6 +102,11 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     SetDefaultComponent(slIconsY);
     SetDefaultComponent(slExpBarX);
     SetDefaultComponent(slExpBarY);
+    SetDefaultComponent(slStatusScale);
+    SetDefaultComponent(slBarHeightScale);
+    SetDefaultComponent(slBarWidthScale);
+    SetDefaultComponent(cbHealthBarStyle);
+    SetDefaultComponent(cbShieldBarStyle);
 }
 
 function SetDefaultComponent(GUIMenuOption PassedComponent)
@@ -123,6 +157,13 @@ function InitMenu()
         slIconsY.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconClassicY), true);
     else
         slIconsY.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.IconsY), true);
+
+    slStatusScale.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.StatusScale), true);
+    slBarHeightScale.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.BarHeightScale), true);
+    slBarWidthScale.SetComponentValue(string(RPGMenu.RPRI.Interaction.Settings.BarWidthScale), true);
+
+    cbHealthBarStyle.SetIndex(RPGMenu.RPRI.Interaction.Settings.HealthBarStyle);
+    cbShieldBarStyle.SetIndex(RPGMenu.RPRI.Interaction.Settings.ShieldBarStyle);
 }
 
 function InternalOnChange(GUIComponent Sender)
@@ -189,6 +230,18 @@ function InternalOnChange(GUIComponent Sender)
 
             break;
 
+        case slStatusScale:
+            RPGMenu.RPRI.Interaction.Settings.StatusScale = float(slStatusScale.GetComponentValue());
+            break;
+
+        case slBarHeightScale:
+            RPGMenu.RPRI.Interaction.Settings.BarHeightScale = float(slBarHeightScale.GetComponentValue());
+            break;
+
+        case slBarWidthScale:
+            RPGMenu.RPRI.Interaction.Settings.BarWidthScale = float(slBarWidthScale.GetComponentValue());
+            break;
+
         case chkExpGain:
             RPGMenu.RPRI.Interaction.Settings.bHideExpGain = !chkExpGain.IsChecked();
             break;
@@ -210,6 +263,14 @@ function InternalOnChange(GUIComponent Sender)
 
         case chkHints:
             RPGMenu.RPRI.Interaction.Settings.bHideHints = !chkHints.IsChecked();
+            break;
+
+        case cbHealthBarStyle:
+            RPGMenu.RPRI.Interaction.Settings.HealthBarStyle = cbHealthBarStyle.GetIndex();
+            break;
+
+        case cbShieldBarStyle:
+            RPGMenu.RPRI.Interaction.Settings.ShieldBarStyle = cbShieldBarStyle.GetIndex();
             break;
     }
 
@@ -253,6 +314,11 @@ defaultproperties
     Text_HintIconsY="Determine the Y position of the artifact icon(s)."
     Text_HintExpBarX="Determine the X position of the experience bar."
     Text_HintExpBarY="Determine the Y position of the experience bar."
+    Text_HintStatusScale="Determine the scale of the status icons."
+    Text_HintBarHeightScale="Determine the vertical scale of health and shield bars."
+    Text_HintBarWidthScale="Determine the horizontal scale of health and shield bars."
+    Text_HintHealthBarStyle="Determine the style of health bars."
+    Text_HintShieldBarStyle="Determine the style of shield bars."
 
     WinHeight=0.700000
 }

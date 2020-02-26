@@ -1074,8 +1074,8 @@ function PostRender(Canvas Canvas)
             (HUD_Assault(HUD) == None || !HUD_Assault(HUD).ShouldShowObjectiveBoard())
         )
         {
-            Canvas.FontScaleX *= 0.7f;
-            Canvas.FontScaleY *= 0.7f;
+            Canvas.FontScaleX *= 0.7f * Settings.StatusScale;
+            Canvas.FontScaleY *= 0.7f * Settings.StatusScale;
 
             X = StatusIconPos.X;
             Y = StatusIconPos.Y;
@@ -1084,8 +1084,8 @@ function PostRender(Canvas Canvas)
             {
                 if(RPRI.Status[i] != None && RPRI.Status[i].IsVisible())
                 {
-                    DrawStatusIcon(Canvas, RPRI.Status[i], X, Y, StatusIconSize.X, StatusIconSize.Y);
-                    X -= StatusIconSize.X;
+                    DrawStatusIcon(Canvas, RPRI.Status[i], X, Y, StatusIconSize.X * Settings.StatusScale, StatusIconSize.Y * Settings.StatusScale);
+                    X -= StatusIconSize.X * Settings.StatusScale;
                 }
             }
 

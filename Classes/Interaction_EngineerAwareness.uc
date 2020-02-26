@@ -104,12 +104,12 @@ function PostRender(Canvas C) {
 
             //If there's a health bar, go up some
             if(MedicAbility != None && MedicAbility.AbilityLevel > 0)
-                ScreenPos.Y -= Height + 2;
+                ScreenPos.Y -= (Height * RPGInteraction.Settings.BarHeightScale) + 2;
 
             BarColor.A = 255;
 
             //Health bar
-            ScreenPos.Y -= Height + 4;
+            ScreenPos.Y -= (Height * RPGInteraction.Settings.BarHeightScale) + 4;
             if(TitanPawn(P) != None)
                 ShieldMax = TitanPawn(P).MaxShieldAmount;
             else if(xPawn(P) != None)
@@ -122,7 +122,16 @@ function PostRender(Canvas C) {
             BarColor.G = byte(FMin(255, float(255) * 1.67 * FClamp(Pct, 0.33, 1.0)));
             BarColor.B = 0;
 
-            DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height, Height, true);
+            switch(RPGInteraction.Settings.ShieldBarStyle)
+            {
+                case 1:
+                    DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                    break;
+                case 0:
+                default:
+                    DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                    break;
+            }
         }
     }
 }

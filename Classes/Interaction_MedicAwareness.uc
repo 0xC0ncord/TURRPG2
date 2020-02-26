@@ -106,7 +106,7 @@ function PostRender(Canvas C) {
             BarColor.A = 255;
 
             //Health bar
-            ScreenPos.Y -= Height + 4;
+            ScreenPos.Y -= (Height * RPGInteraction.Settings.BarHeightScale) + 4;
             Pct = FClamp(float(P.Health) / (P.HealthMax + HealMax), 0f, 1f);
 
             if(P.Health >= P.HealthMax + HealMax)
@@ -121,7 +121,16 @@ function PostRender(Canvas C) {
                     BarColor = class'Util'.static.InterpolateColor(class'HUD'.default.GreenColor, class'HUD'.default.CyanColor, (P.Health - P.HealthMax) / (P.HealthMax + HealMax));
             }
 
-            DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height, Height, true);
+            switch(RPGInteraction.Settings.HealthBarStyle)
+            {
+                case 1:
+                    DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                    break;
+                case 0:
+                default:
+                    DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 10 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                    break;
+            }
         }
     }
 }

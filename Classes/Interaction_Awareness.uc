@@ -31,12 +31,12 @@ function PostRender(Canvas C) {
         return;
     }
 
-    FarAwayInv = 1.0f / TeamBeaconMaxDist;
+    FarAwayInv = 1.0f / TeamBeaconPlayerInfoMaxDist;
 
     for(i = 0; i < Ability.Enemies.Length; i++) {
         P = Ability.Enemies[i];
         if(IsPawnVisible(C, P, ScreenPos, Dist)) {
-            ScaledDist = TeamBeaconMaxDist * FClamp(0.04f * P.CollisionRadius, 1.0f, 2.0f);
+            ScaledDist = TeamBeaconPlayerInfoMaxDist * FClamp(0.04f * P.CollisionRadius, 1.0f, 2.0f);
 
             if(Dist < 0.0f || Dist > 3.0f * ScaledDist) {
                 continue;
@@ -49,7 +49,7 @@ function PostRender(Canvas C) {
             ScreenPos = C.WorldToScreen(P.Location + Height * vect(0, 0, 0.75));
 
             //Bar height
-            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconMaxDist * 0.5), 0.5, 1);
+            Height = SmallFontHeight * FClamp(1 - Dist / (TeamBeaconPlayerInfoMaxDist * 0.5), 0.5, 1);
 
             if(Vehicle(P) != None) {
                 Height *= 1.75;
@@ -57,21 +57,9 @@ function PostRender(Canvas C) {
 
             BarColor.A = 255;
 
-            if(Ability.AbilityLevel >= 2 && xPawn(P) != None && P.ShieldStrength > 0) {
-                //Shield bar
-                ScreenPos.Y -= Height + 2;
-                Pct = P.ShieldStrength / xPawn(P).ShieldStrengthMax;
-
-                BarColor.R = 255;
-                BarColor.G = 240;
-                BarColor.B = 0;
-
-                DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height, Height, true);
-            }
-
             //Health bar
             if(P.Health > 0) {
-                ScreenPos.Y -= Height + 2;
+                ScreenPos.Y -= (Height * RPGInteraction.Settings.BarHeightScale) + 2;
                 Pct = float(P.Health) / P.HealthMax;
 
                 if(Pct > 0.5) {
@@ -84,7 +72,37 @@ function PostRender(Canvas C) {
                     BarColor.B = 0;
                 }
 
-                DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height, Height, true);
+                switch(RPGInteraction.Settings.HealthBarStyle)
+                {
+                    case 1:
+                        DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                        break;
+                    case 0:
+                    default:
+                        DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                        break;
+                }
+            }
+
+            if(Ability.AbilityLevel >= 2 && xPawn(P) != None && P.ShieldStrength > 0) {
+                //Shield bar
+                ScreenPos.Y -= (Height * RPGInteraction.Settings.BarHeightScale) + 2;
+                Pct = P.ShieldStrength / xPawn(P).ShieldStrengthMax;
+
+                BarColor.R = 255;
+                BarColor.G = 240;
+                BarColor.B = 0;
+
+                switch(RPGInteraction.Settings.ShieldBarStyle)
+                {
+                    case 1:
+                        DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                        break;
+                    case 0:
+                    default:
+                        DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
+                        break;
+                }
             }
         }
     }

@@ -7,6 +7,9 @@ var config bool bHideWeaponExtra, bHideArtifactName, bHideExpGain, bHideHints, b
 var config bool bClassicArtifactSelection;
 var config int IconsPerRow;
 var config float IconScale, IconsX, IconsY, IconClassicY, ExpBarX, ExpBarY;
+var config float StatusScale;
+var config float BarHeightScale, BarWidthScale;
+var config byte HealthBarStyle, ShieldBarStyle; //0 Titan, 1 Druid's
 var config float ExpGainDuration;
 var config bool bEnableArtifactRadialMenu;
 var config float ArtifactRadialMenuAnimSpeed;
@@ -33,6 +36,9 @@ defaultproperties
     IconsX=0.0
     IconsY=0.20
     IconClassicY=0.666667
+    StatusScale=1.000000
+    BarHeightScale=1.000000
+    BarWidthScale=1.000000
     bClassicArtifactSelection=False
     ArtifactRadialMenuAnimSpeed=2.000000
     ArtifactRadialMenuMouseSens=1.750000

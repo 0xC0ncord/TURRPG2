@@ -17,6 +17,8 @@ var Texture TeamBeacon;
 var float TeamBeaconMaxDist;
 var float TeamBeaconPlayerInfoMaxDist;
 
+var RPGInteraction RPGInteraction;
+
 //Gets the team color for a PlayerReplicationInfo
 function Color GetTeamBeaconColor(PlayerReplicationInfo PRI) {
     if(PRI.Team != None && PRI.Team.TeamIndex >= 0 && PRI.Team.TeamIndex <= 3) {
@@ -145,8 +147,17 @@ function DrawTeamBeacon(Canvas C, float X, float Y, Color Color, float Scale, op
 //Initialize settings
 event Initialized() {
     local PlayerController PC;
+    local int i;
 
     Super.Initialized();
+
+    //Find the player's RPGInteraction if it exists
+    for(i = 0; i < ViewportOwner.LocalInteractions.Length; i++) {
+        if(RPGInteraction(ViewportOwner.LocalInteractions[i]) != None) {
+            RPGInteraction = RPGInteraction(ViewportOwner.LocalInteractions[i]);
+            break;
+        }
+    }
 
     PC = ViewportOwner.Actor;
     if(PC.IsA('OLTeamPlayerController')) { //CTF4
