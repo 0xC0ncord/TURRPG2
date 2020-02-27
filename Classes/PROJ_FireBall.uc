@@ -2,7 +2,6 @@ class PROJ_FireBall extends Projectile;
 
 var FX_FireBall FireBallEffect;
 var xEmitter SmokeTrail;
-var Material ModifierOverlay;
 
 simulated event PreBeginPlay()
 {
@@ -127,7 +126,6 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
             );
             if (Victims != None)
             {
-                Victims.SetOverlayMaterial(ModifierOverlay, 1.0, false);
                 if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
                     Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, Momentum, HitLocation);
             }
@@ -159,7 +157,6 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
         );
         if (Victims != None)
         {
-            Victims.SetOverlayMaterial(ModifierOverlay, 1.0, false);
             if (Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
                 Vehicle(Victims).DriverRadiusDamage(DamageAmount, DamageRadius, InstigatorController, DamageType, Momentum, HitLocation);
         }
@@ -190,7 +187,6 @@ simulated function Explode(vector HitLocation,vector HitNormal)
 
 defaultproperties
 {
-     ModifierOverlay=Texture'AW-2004Particles.Cubes.RedS1'
      Speed=3500.000000
      MaxSpeed=4000.000000
      bSwitchToZeroCollision=True
