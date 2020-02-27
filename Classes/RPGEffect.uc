@@ -358,8 +358,8 @@ state Activated
                 return;
             }
 
-            //re-apply overlay in case something removed it
-            if(EffectOverlay != None && Instigator.OverlayMaterial != EffectOverlay)
+            //re-apply overlay in case something removed it, but only if no other overlay is applied
+            if(EffectOverlay != None && Instigator.OverlayMaterial == None)
                 class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, Duration, false);
         }
     }
