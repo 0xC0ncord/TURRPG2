@@ -59,20 +59,31 @@ static function Sync_OverlayMaterial Sync(Actor Target, Material Mat, float Dura
     //server
     Target.SetOverlayMaterial(Mat, Duration, bOverride);
 
-    //hack to fix ASTurret bases not updating overlay when setting to NULL
-    if(Duration == 0.0 && ASTurret(Target) != None)
-        foreach Target.ChildActors(class'ASTurret_Base', A)
-            A.SetOverlayMaterial(Mat, Duration, bOverride);
+    if(Target.Level.NetMode != NM_DedicatedServer)
+    {
+        //hack to fix ASTurret bases not updating overlay when setting to NULL
+        if(Duration == 0.0 && ASTurret(Target) != None)
+            foreach Target.ChildActors(class'ASTurret_Base', A)
+                A.SetOverlayMaterial(Mat, Duration, bOverride);
+    }
 
     return Sync;
 }
 
 simulated function bool ClientFunction()
 {
+    local ASTurret_Base A;
+
     if(Target == None) {
         return false;
     } else {
         Target.SetOverlayMaterial(Mat, Duration, bOverride);
+
+        //hack to fix ASTurret bases not updating overlay when setting to NULL
+        if(Duration == 0.0 && ASTurret(Target) != None)
+            foreach Target.ChildActors(class'ASTurret_Base', A)
+                A.SetOverlayMaterial(Mat, Duration, bOverride);
+
         return true;
     }
 }
