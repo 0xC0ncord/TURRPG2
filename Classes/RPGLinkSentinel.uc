@@ -6,8 +6,8 @@ simulated event PostNetBeginPlay()
     // Static (non rotating) base
     if ( TurretBaseClass != None )
     {
-        // now check if on ceiling or floor. Passed in rotation yaw. 0=ceiling.
-        if (OriginalRotation.Yaw == 0)
+        // now check if on ceiling or floor. Passed in rotation roll. 0=ceiling.
+        if (OriginalRotation.Roll == 0)
             TurretBase = Spawn(TurretBaseClass, Self,, Location+vect(0,0,37), OriginalRotation);
         else
             TurretBase = Spawn(TurretBaseClass, Self,, Location-vect(0,0,37), OriginalRotation);
@@ -16,8 +16,8 @@ simulated event PostNetBeginPlay()
     // Swivel, rotates left/right (Yaw)
     if ( TurretSwivelClass != None )
     {
-        // now check if on ceiling or floor. Passed in rotation yaw. 0=ceiling.
-        if (OriginalRotation.Yaw == 0)
+        // now check if on ceiling or floor. Passed in rotation roll. 0=ceiling.
+        if (OriginalRotation.Roll == 0)
             TurretSwivel = Spawn(TurretSwivelClass, Self,, Location+vect(0,0,37), OriginalRotation);
         else
             TurretSwivel = Spawn(TurretSwivelClass, Self,, Location-vect(0,0,37), OriginalRotation);
