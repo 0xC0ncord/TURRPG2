@@ -72,16 +72,7 @@ function PostRender(Canvas C) {
                     BarColor.B = 0;
                 }
 
-                switch(RPGInteraction.Settings.HealthBarStyle)
-                {
-                    case 1:
-                        DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
-                        break;
-                    case 0:
-                    default:
-                        DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
-                        break;
-                }
+                DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
             }
 
             if(Ability.AbilityLevel >= 2 && xPawn(P) != None && P.ShieldStrength > 0) {
@@ -93,16 +84,7 @@ function PostRender(Canvas C) {
                 BarColor.G = 240;
                 BarColor.B = 0;
 
-                switch(RPGInteraction.Settings.ShieldBarStyle)
-                {
-                    case 1:
-                        DrawCenterStyleBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
-                        break;
-                    case 0:
-                    default:
-                        DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
-                        break;
-                }
+                DrawBar(C, ScreenPos.X, ScreenPos.Y, BarColor, Pct, 5 * Height * RPGInteraction.Settings.BarWidthScale, Height * RPGInteraction.Settings.BarHeightScale, true);
             }
         }
     }
