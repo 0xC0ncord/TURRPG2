@@ -4,7 +4,7 @@ defaultproperties
 {
     BlastClass=class'Blast_Poison'
     BlastProjectileClass=class'BlastProjectile_Poison'
-    MaxUses=0 //infinite
+    MaxUses=-1 //infinite
 
     CostPerSec=150
     HudColor=(R=0)

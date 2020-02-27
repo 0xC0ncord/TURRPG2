@@ -4,7 +4,7 @@ defaultproperties
 {
     BlastClass=class'Blast_Freeze'
     BlastProjectileClass=class'BlastProjectile_Freeze'
-    MaxUses=0 //infinite
+    MaxUses=-1 //infinite
 
     CostPerSec=100
     HudColor=(B=255,G=224,R=224)
