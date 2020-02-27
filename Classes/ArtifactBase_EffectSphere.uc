@@ -89,8 +89,11 @@ function CreateEffects()
         {
             if(CanApplyEffectOn(C.Pawn))
             {
-                if(class<RPGInstantEffect>(EffectClass) == None && class'Util'.static.InArray(C.Pawn, Pawns) == -1)
+                if(class<RPGInstantEffect>(EffectClass) == None && class'Util'.static.InArray(C.Pawn, Pawns) != -1)
+                {
+                    C = NextC;
                     continue;
+                }
                 else
                     Pawns[Pawns.Length] = C.Pawn;
 
