@@ -353,7 +353,14 @@ state Activated
             Duration -= dt;
 
             if(Duration <= 0)
+            {
                 Destroy();
+                return;
+            }
+
+            //re-apply overlay in case something removed it
+            if(EffectOverlay != None && Instigator.OverlayMaterial != EffectOverlay)
+                class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, Duration, false);
         }
     }
 
