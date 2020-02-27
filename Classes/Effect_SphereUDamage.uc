@@ -32,7 +32,7 @@ state Activated
 
         Instigator.DisableUDamage();
         if(EffectOverlay != None)
-            class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, 0, true);
+            class'Sync_OverlayMaterial'.static.Sync(Instigator, None, 0, true);
 
         //Fix the annoying UDamage running out sounds
         if(xPawn(Instigator) != None && xPawn(Instigator).UDamageTimer != None)
@@ -45,7 +45,7 @@ function Destroyed()
     Super.Destroyed();
     Instigator.DisableUDamage();
     if(EffectOverlay != None)
-        class'Sync_OverlayMaterial'.static.Sync(Instigator, EffectOverlay, 0, true);
+        class'Sync_OverlayMaterial'.static.Sync(Instigator, None, 0, true);
 
     //Fix the annoying UDamage running out sounds
     if(xPawn(Instigator) != None && xPawn(Instigator).UDamageTimer != None)

@@ -34,6 +34,7 @@ static function Discard(Actor Target) {
 static function Sync_OverlayMaterial Sync(Actor Target, Material Mat, float Duration, optional bool bOverride)
 {
     local Sync_OverlayMaterial Sync;
+    local ASTurret_Base A;
 
     Discard(Target); //Discard any existing
 
@@ -57,6 +58,11 @@ static function Sync_OverlayMaterial Sync(Actor Target, Material Mat, float Dura
 
     //server
     Target.SetOverlayMaterial(Mat, Duration, bOverride);
+
+    //hack to fix ASTurret bases not updating overlay when setting to NULL
+    if(Duration == 0.0 && ASTurret(Target) != None)
+        foreach Target.ChildActors(class'ASTurret_Base', A)
+            A.SetOverlayMaterial(Mat, Duration, bOverride);
 
     return Sync;
 }
