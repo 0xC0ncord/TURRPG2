@@ -34,7 +34,7 @@ event Destroyed() {
     }
 
     //assume that the combo was successful if the controller's adrenaline was sufficiently drained
-    if(ComboStarter.Adrenaline <= InitialAdrenaline - Cost * AdrenalineDrainThreshold) {
+    if(ComboStarter != None && ComboStarter.Adrenaline <= InitialAdrenaline - Cost * AdrenalineDrainThreshold) {
         class'RPGRules'.static.Instance(Level).ComboSuccess(ComboStarter, ActualComboClass);
     }
 }
