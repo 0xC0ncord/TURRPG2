@@ -8,9 +8,9 @@ simulated event PostNetBeginPlay()
     {
         // now check if on ceiling or floor. Passed in rotation roll. 0=ceiling.
         if (OriginalRotation.Roll == 0)
-            TurretBase = Spawn(TurretBaseClass, Self,, Location+vect(0,0,37), OriginalRotation);
-        else
             TurretBase = Spawn(TurretBaseClass, Self,, Location-vect(0,0,37), OriginalRotation);
+        else
+            TurretBase = Spawn(TurretBaseClass, Self,, Location+vect(0,0,37), OriginalRotation);
     }
 
     // Swivel, rotates left/right (Yaw)
@@ -18,9 +18,9 @@ simulated event PostNetBeginPlay()
     {
         // now check if on ceiling or floor. Passed in rotation roll. 0=ceiling.
         if (OriginalRotation.Roll == 0)
-            TurretSwivel = Spawn(TurretSwivelClass, Self,, Location+vect(0,0,37), OriginalRotation);
-        else
             TurretSwivel = Spawn(TurretSwivelClass, Self,, Location-vect(0,0,37), OriginalRotation);
+        else
+            TurretSwivel = Spawn(TurretSwivelClass, Self,, Location+vect(0,0,37), OriginalRotation);
     }
 
     super(ASVehicle).PostNetBeginPlay();
