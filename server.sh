@@ -11,7 +11,7 @@ else
     VERSION="UNKNOWN_VERSION"
 fi
 if [[ -d .git ]]; then
-    BUILD_INFO=$(git rev-parse --short HEAD)$([ -z "$(git status --porcelain 2>/dev/null | tail -n1)" ] || echo '-dirty')
+    BUILD_INFO=$(git branch | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/')-$(git rev-parse --short HEAD)$([ -z "$(git status --porcelain 2>/dev/null | tail -n1)" ] || echo '-dirty')
     VERSION_STRING="${VERSION}-${BUILD_INFO}"
 else
     BUILD_INFO=""
