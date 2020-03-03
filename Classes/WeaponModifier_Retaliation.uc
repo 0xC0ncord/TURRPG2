@@ -9,14 +9,14 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
     Super.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
     Identify();
 
-    if(DamageType == class'DamTypeCounterShove' || DamageType == class'DamTypeRetaliation')
+    if(InstigatedBy == None || DamageType == class'DamTypeCounterShove' || DamageType == class'DamTypeRetaliation')
         return;
 
     //TODO effect system
     if(class'WeaponModifier_Nullification'.static.GetFor(InstigatedBy.Weapon) != None)
         return;
 
-    if(InstigatedBy != None && InstigatedBy != Instigator && (InstigatedBy.Controller == None || !InstigatedBy.Controller.SameTeamAs(Instigator.Controller)))
+    if(InstigatedBy != Instigator && (InstigatedBy.Controller == None || !InstigatedBy.Controller.SameTeamAs(Instigator.Controller)))
     {
         RetalDamage = int(float(Modifier) * BonusPerLevel * float(Damage));
         RetalDamage = FMin(RetalDamage, float(Instigator.Health));
