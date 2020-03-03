@@ -12,7 +12,8 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         InstigatedBy.Controller.SameTeamAs(Injured.Controller) ||
         InstigatedBy.Controller.Adrenaline >= InstigatedBy.Controller.AdrenalineMax ||
         InstigatedBy.InCurrentCombo() ||
-        HasActiveArtifact(InstigatedBy)
+        HasActiveArtifact(InstigatedBy) ||
+        ClassIsChildOf(DamageType, class'RPGAdrenalineDamageType')
     )
     {
         return;
@@ -54,7 +55,7 @@ simulated function string DescriptionText()
 defaultproperties
 {
     AbilityName="Energy Leech"
-    Description="Whenever you deal damage to an opponent, you gain $1 of the damage per level as adrenaline."
+    Description="Whenever you deal damage to an opponent, you gain $1 of the damage per level as adrenaline. This ability will not be triggered while you have an artifact active or for artifact-related damage."
     StartingCost=5
     CostAddPerLevel=5
     MaxLevel=5
