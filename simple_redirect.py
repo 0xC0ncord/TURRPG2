@@ -126,6 +126,8 @@ class UT2K4RedirectHandler(http.server.SimpleHTTPRequestHandler):
         else:
             # Check our temporary directory for the file in its compressed form if it exists
             if os.access(TEMP_COMPRESSED_DIR + os.sep + filepath, os.R_OK):
+                self.send_response(200)
+                self.end_headers()
                 # Serve it up
                 with open(TEMP_COMPRESSED_DIR + os.sep + filepath, 'rb') as fp:
                     self.copyfile(fp, self.wfile)
@@ -145,9 +147,6 @@ class UT2K4RedirectHandler(http.server.SimpleHTTPRequestHandler):
                     try:
                         with open(TEMP_COMPRESSED_DIR + os.sep + filepath, 'rb') as fp:
                             self.copyfile(fp, self.wfile)
-                    except BrokenPipeError:
-                        # Something went horribly wrong... should delete the file...
-                        subprocess.run(["rm", "-f", TEMP_COMPRESSED_DIR + os.sep + filepath])
                     finally:
                         return
 
@@ -163,9 +162,6 @@ class UT2K4RedirectHandler(http.server.SimpleHTTPRequestHandler):
                         try:
                             with open(TEMP_COMPRESSED_DIR + os.sep + filepath, 'rb') as fp:
                                 self.copyfile(fp, self.wfile)
-                        except BrokenPipeError:
-                            # Something went horribly wrong... should delete the file...
-                            subprocess.run(["rm", "-f", TEMP_COMPRESSED_DIR + os.sep + filepath])
                         finally:
                             return
                 if not foundIt:
@@ -186,6 +182,7 @@ def run() -> None:
             shutil.rmtree(TEMP_COMPRESSED_DIR)
 
     signal.signal(signal.SIGTERM, clean_up)
+    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
     try:
         # Setup and bind
