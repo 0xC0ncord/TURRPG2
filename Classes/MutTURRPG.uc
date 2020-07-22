@@ -1144,6 +1144,8 @@ function Mutate(string MutateString, PlayerController Sender)
                 Cheat = Pawn(Sender.ViewTarget);
             CheatController = Cheat.Controller;
         }
+        else
+            CheatController = Sender;
 
         RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(CheatController);
 
