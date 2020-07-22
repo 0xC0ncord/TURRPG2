@@ -34,4 +34,5 @@ defaultproperties
     CostAddPerLevel=5
     MaxLevel=3
     Category=class'AbilityCategory_Adrenaline'
+    IconMaterial=Texture'AbAdrenalineRegenIcon'
 }

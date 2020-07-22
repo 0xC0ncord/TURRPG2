@@ -32,4 +32,5 @@ defaultproperties
     CostAddPerLevel=5
     MaxLevel=6
     Category=class'AbilityCategory_Health'
+	IconMaterial=Texture'AbRegenerationIcon'
 }

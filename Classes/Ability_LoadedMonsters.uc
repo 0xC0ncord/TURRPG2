@@ -141,4 +141,5 @@ defaultproperties
     GrantItem(1)=(Level=1,InventoryClass=Class'Artifact_KillDesiredMonster')
     Category=Class'TURRPG2.AbilityCategory_Monsters'
     StatusIconClass=Class'TURRPG2.StatusIcon_Monsters'
+	IconMaterial=Texture'AbLoadedMonstersIcon'
 }

@@ -84,4 +84,5 @@ defaultproperties
     CostAddPerLevel=5
     MaxLevel=7
     Category=class'AbilityCategory_Weapons'
+	IconMaterial=Texture'AbResupplyIcon'
 }

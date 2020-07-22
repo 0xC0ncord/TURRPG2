@@ -46,4 +46,5 @@ defaultproperties
     MaxLevel=5
     RequiredAbilities(0)=(AbilityClass=Class'Ability_LoadedMedic',Level=1)
     Category=class'AbilityCategory_Medic'
+	IconMaterial=Texture'AbConvalescingAuraIcon'
 }

@@ -50,4 +50,5 @@ defaultproperties
     MaxLevel=2
     BonusPerLevel=0.500000
     Category=class'AbilityCategory_Adrenaline'
+    IconMaterial=Texture'AbAdrenalineSurgeIcon'
 }

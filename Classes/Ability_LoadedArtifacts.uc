@@ -31,4 +31,5 @@ defaultproperties
     GrantItem(21)=(Level=4,InventoryClass=Class'Artifact_SphereInvulnerability')
     GrantItem(22)=(Level=4,InventoryClass=Class'Artifact_SphereDamage')
     Category=Class'AbilityCategory_Artifacts'
+    IconMaterial=Texture'AbLoadedArtifactsIcon'
 }
