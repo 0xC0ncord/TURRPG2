@@ -1,7 +1,7 @@
 class Ability_VehicleEject extends RPGAbility;
 
 var config array<class<DamageType> > ProtectAgainst;
-var config float VehicleCooldown; //can't enter a vehicle before this time has passed
+var config array<float> EjectCooldown; //can't enter a vehicle before this time has passed
 var config bool bResetTranslocatorCharge;
 
 var float LastEjectionTime;
@@ -23,7 +23,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
 function bool CanEjectDriver(Vehicle KilledVehicle)
 {
-    return (AbilityLevel == 1 && ONSWeaponPawn(KilledVehicle) == None) || AbilityLevel >= 2;
+    return Level.TimeSeconds >= NextVehicleTime;
 }
 
 function bool HasJustEjected()
@@ -37,6 +37,10 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     local Pawn Driver;
     local Vehicle V;
     local vector EjectVel;
+
+    //check if we're still on cooldown
+    if(Level.TimeSeconds < NextVehicleTime)
+        return false;
 
     V = Vehicle(Killed);
 
@@ -62,10 +66,10 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
 
     LastEjectionTime = Level.TimeSeconds;
 
-    if(VehicleCooldown > 0)
+    if(EjectCooldown[AbilityLevel - 1] > 0)
     {
-        NextVehicleTime = Level.TimeSeconds + VehicleCooldown;
-        ClientNotifyCooldown(VehicleCooldown);
+        NextVehicleTime = Level.TimeSeconds + EjectCooldown[AbilityLevel - 1];
+        ClientNotifyCooldown(EjectCooldown[AbilityLevel - 1]);
     }
 
     if(bResetTranslocatorCharge)
@@ -84,19 +88,6 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     return false; //NOT saving the vehicle
 }
 
-function bool CanEnterVehicle(Vehicle V)
-{
-    if(Level.TimeSeconds < NextVehicleTime)
-    {
-        if(PlayerController(RPRI.Controller) != None)
-            PlayerController(RPRI.Controller).ClientPlaySound(CantEnterSound,,, SLOT_Interface);
-
-        return false;
-    }
-
-    return true;
-}
-
 simulated function ClientNotifyCooldown(float Time)
 {
     //simulated client-side so status icon can use it correctly
@@ -108,15 +99,22 @@ defaultproperties
     StatusIconClass=class'StatusIcon_VehicleEject'
     CantEnterSound=Sound'TURRPG2.Interface.CantUse'
     bResetTranslocatorCharge=True
-    VehicleCooldown=5.00
+    EjectCooldown(0)=300.00
+    EjectCooldown(1)=180.00
+    EjectCooldown(2)=60.00
+    EjectCooldown(3)=0.00
     AbilityName="Ejector Seat"
-    Description="Ejects you from your vehicle when it's destroyed. You have to wait a short while before you can enter another vehicle."
-    LevelDescription(0)="Level 1 ejects you from the driver's seat when your vehicle gets destroyed."
-    LevelDescription(1)="Level 2 also ejects you from any other seat in a vehicle as well as from defensive turrets."
-    MaxLevel=2
+    Description="Ejects you from your vehicle when it's destroyed."
+    LevelDescription(0)="Level 1 ejects you from any seat in a vehicle as well as from any defensive turret when it is destroyed. This effect will not activate again until after a cooldown of 5 minutes.."
+    LevelDescription(1)="Level 2 reduces the cooldown to 3 minutes."
+    LevelDescription(2)="Level 3 reduces the cooldown to 1 minute."
+    LevelDescription(3)="Level 4 eliminates the cooldown entirely."
+    MaxLevel=4
     bUseLevelCost=true
-    LevelCost(0)=20
-    LevelCost(1)=10
+    LevelCost(0)=10
+    LevelCost(1)=5
+    LevelCost(2)=5
+    LevelCost(3)=5
     ProtectAgainst(0)=class'Onslaught.DamTypeONSVehicle'
     ProtectAgainst(1)=class'Onslaught.DamTypeONSVehicleExplosion'
     ProtectAgainst(2)=class'Onslaught.DamTypeDestroyedVehicleRoadKill'
