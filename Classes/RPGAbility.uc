@@ -720,7 +720,7 @@ defaultproperties
 
     Category=class'AbilityCategory_Misc'
 
-    IconMaterial=Texture'S_Actor'
+    IconMaterial=Texture'NYIIcon'
     IconScale=0.85
 
     StartingCost=0
