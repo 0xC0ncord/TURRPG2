@@ -408,11 +408,13 @@ simulated function int CostForNextLevel(int x)
 
 simulated function int Cost(optional class<RPGClass> RPGClass)
 {
-    local int x, i;
+    local int x, i, y;
     local RPGClass OwnedClass;
     local RPGSubclass OwnedSubclass;
     local class<RPGClass> CheckedClass;
     local int Idx;
+    local int lv;
+    local bool bCanBuy;
     local bool bDisjunctiveResult;
 
     if(AbilityLevel >= MaxLevel)
@@ -432,12 +434,11 @@ simulated function int Cost(optional class<RPGClass> RPGClass)
                 break;
         }
 
-        if(RPGClass == None)
+        if((RPGClass == None || RPGClass(Self) != None) && class<Ability_ClassNone>(RPGClass) == None)
         {
             //special handling if this is a class or subclass
-            if(RPGSubclass(Self) != None)
-                if(OwnedSubclass != None)
-                    return default.CantBuyCost; //cant have more than one subclass
+            if(RPGSubclass(Self) != None && OwnedSubclass != None)
+                return default.CantBuyCost; //cant have more than one subclass
             else if(RPGClass(Self) != None)
             {
                 if(OwnedClass != None)
@@ -462,26 +463,59 @@ simulated function int Cost(optional class<RPGClass> RPGClass)
             if(AbilityLevel < RequiredLevels.Length && RPRI.RPGLevel < RequiredLevels[AbilityLevel])
                 return default.CantBuyCost;
 
+            //check max level
+            for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
+            {
+                if(CheckedClass.default.ClassTreeInfos[i].AbilityClass == Class)
+                {
+                    if(CheckedClass.default.ClassTreeInfos[i].MaxLevel > 0 && AbilityLevel >= CheckedClass.default.ClassTreeInfos[i].MaxLevel)
+                        return default.MaxedCost;
+                    break;
+                }
+            }
+
             //check forbidden abilities
             for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
             {
+                lv = RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass);
+                if(lv == 0)
+                    continue;
                 for(x = 0; x < CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities.Length; x++)
                 {
                     Idx = CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Index;
-                    if(CheckedClass.default.ClassTreeInfos[Idx].AbilityClass == Class && RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass) >= CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Level)
-                        return default.ForbiddenAbilityPurchasedCost;
+                    if(CheckedClass.default.ClassTreeInfos[Idx].AbilityClass == Class)
+                    {
+                        for(y = 0; y < CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Levels.Length; y++)
+                        {
+                            if(lv >= CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Levels[y].Level
+                                && (AbilityLevel + 1 >= CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Levels[y].TargetLevel
+                                   || CheckedClass.default.ClassTreeInfos[i].ForbidsAbilities[x].Levels[y].TargetLevel == 0))
+                                return default.ForbiddenAbilityPurchasedCost;
+                        }
+                    }
                 }
             }
 
             //check required abilities
             for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
             {
+                lv = RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass);
                 for(x = 0; x < CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities.Length; x++)
                 {
                     Idx = CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Index;
                     if(CheckedClass.default.ClassTreeInfos[Idx].AbilityClass == Class)
                     {
-                        if(RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass) < CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Level)
+                        for(y = 0; y < CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Levels.Length; y++)
+                        {
+                            if(lv >= CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Levels[y].Level
+                                && (AbilityLevel + 1 <= CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Levels[y].TargetLevel
+                                   || CheckedClass.default.ClassTreeInfos[i].RequiredByAbilities[x].Levels[y].TargetLevel == 0))
+                            {
+                                bCanBuy = true;
+                                break;
+                            }
+                        }
+                        if(!bCanBuy)
                             return default.CantBuyCost;
                         else if(CheckedClass.default.ClassTreeInfos[Idx].bDisjunctiveRequirements)
                         {

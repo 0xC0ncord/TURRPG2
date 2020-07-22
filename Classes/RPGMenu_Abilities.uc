@@ -25,6 +25,7 @@ struct AbilityInfo
     var string Name;
     var int Cost;
     var int NextLevel;
+    var int MaxLevel;
     var int RelationshipIndex;
     var EAbilityState State;
     var array<RPGClass.ForbiddenStruct> ForbidsAbilities;
@@ -57,6 +58,7 @@ var int SelectedIndex;
 var int LastSelectedClass, LastSelectedAbility;
 
 var bool bInitialized;
+var bool bIgnoreNextInit;
 
 var Color DisabledColor;
 var Color AvailableColor;
@@ -67,6 +69,7 @@ var Color BlockedColor;
 
 var Shader IconSelectedShader;
 var Material IconSelectionMaterial;
+var Font TextFont;
 
 var automated GUISectionBackground sbAbilities, sbDesc;
 var automated GUIScrollTextBox lblDesc;
@@ -85,6 +88,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
 
+    TextFont = Font(DynamicLoadObject("UT2003Fonts.jFontSmall", class'Font'));
+
     OnDraw = SetListScaling;
 
     lstAbilities.NumColumns = NUM_COLUMNS;
@@ -92,6 +97,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     Abilities = lstAbilities.List;
     Abilities.NumColumns = NUM_COLUMNS;
     Abilities.ItemPadding = 0.0;
+    Abilities.bHotTrack = true;
+    Abilities.bHotTrackSound = false;
     Abilities.SelectedStyle = MyController.GetStyle("RPGAbilityListSelected", FontScale);
     Abilities.OnClickSound = CS_None;
     Abilities.OnDraw = DrawAbilityRelationships;
@@ -104,13 +111,16 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 final function bool SetListScaling(Canvas Canvas)
 {
     //hack to make list options square
-    if(Abilities.GetItem(0) != None && Abilities.Elements[0].WinHeight != Abilities.Elements[0].WinWidth)
+    //FIXME if theres exactly 7 rows, scaling readjusts every frame because of the scrollbar
+    if(Abilities.GetItem(0) != None && !(Abilities.Elements[0].WinHeight ~= Abilities.Elements[0].WinWidth))
         Abilities.ItemScaling = Abilities.Elements[0].WinWidth / Canvas.ClipY;
     return false;
 }
 
 static final function int LayoutToIndex(int Row, int Column)
 {
+    if(Row == 0 || Column == 0)
+        return -1;
     return (NUM_COLUMNS * (Row - 1)) + (Column - 1);
 }
 
@@ -137,6 +147,17 @@ function InitMenu()
     if(!bInitialized)
     {
         OwnedIdx = -1;
+
+        // Add the generic abilities tree
+        ClassInfos.Length = 2;
+        ClassInfos[0].RPGClass = class'Ability_ClassNone';
+        ClassInfos[0].Name = class'Ability_ClassNone'.default.AbilityName;
+        cbTree.AddItem(ClassInfos[0].Name);
+
+        // And the separator
+        ClassInfos[1].Name = "---";
+        cbTree.AddItem(ClassInfos[1].Name);
+
         for(i = 0; i < RPGMenu.RPRI.AllAbilities.Length; i++)
         {
             if(RPGClass(RPGMenu.RPRI.AllAbilities[i]) != None)
@@ -159,10 +180,14 @@ function InitMenu()
 
         bInitialized = true;
     }
-    else
+    else if(!bIgnoreNextInit)
         cbTree.SetIndex(LastSelectedClass);
 
-    SelectClassTree(None);
+    if(!bIgnoreNextInit)
+        SelectClassTree(None);
+    else
+        ReloadClassTree();
+
     SelectedIndex = LastSelectedAbility;
     SelectAbility(None);
 
@@ -192,6 +217,7 @@ final function LoadClassTree(class<RPGClass> RPGClass)
         AbilityInfos.Length = y + 1;
         AbilityInfos[y].Row = RPGClass.default.ClassTreeInfos[i].Row;
         AbilityInfos[y].Column = RPGClass.default.ClassTreeInfos[i].Column;
+        AbilityInfos[y].MaxLevel = RPGClass.default.ClassTreeInfos[i].MaxLevel;
         AbilityInfos[y].ForbidsAbilities = RPGClass.default.ClassTreeInfos[i].ForbidsAbilities;
         AbilityInfos[y].RequiredByAbilities = RPGClass.default.ClassTreeInfos[i].RequiredByAbilities;
         AbilityInfos[y].bDisjunctiveRequirements = RPGClass.default.ClassTreeInfos[i].bDisjunctiveRequirements;
@@ -205,7 +231,9 @@ final function LoadClassTree(class<RPGClass> RPGClass)
             {
                 AbilityInfos[y].LinkedAbility = RPGMenu.RPRI.AllAbilities[x];
                 AbilityInfos[y].Cost = AbilityInfos[y].LinkedAbility.Cost(CurrentClass);
-                if(AbilityInfos[y].LinkedAbility.AbilityLevel < AbilityInfos[y].LinkedAbility.MaxLevel)
+                if(AbilityInfos[y].LinkedAbility.AbilityLevel < AbilityInfos[y].MaxLevel)
+                    AbilityInfos[y].NextLevel = AbilityInfos[y].MaxLevel;
+                else if(AbilityInfos[y].LinkedAbility.AbilityLevel < AbilityInfos[y].LinkedAbility.MaxLevel)
                     AbilityInfos[y].NextLevel = AbilityInfos[y].LinkedAbility.AbilityLevel + 1;
                 AbilityInfos[y].Name = AbilityInfos[y].LinkedAbility.AbilityName;
             }
@@ -223,7 +251,13 @@ final function LoadClassTree(class<RPGClass> RPGClass)
     for(i = 0; i < AbilityInfos.Length; i++)
     {
         idx = LayoutToIndex(AbilityInfos[i].Row, AbilityInfos[i].Column);
+        if(idx == -1)
+            continue;
         Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(idx));
+#ifdef __DEBUG__
+        if(Option.LinkedAbility != None)
+            WARND("AbilityInfo at index" @ idx @ "already assigned to" @ Option.LinkedAbility $ "!")
+#endif //__DEBUG__
         Option.Index = i;
         Option.LinkedAbility = AbilityInfos[i].LinkedAbility;
         Option.OnChange = SelectAbility;
@@ -234,8 +268,11 @@ final function LoadClassTree(class<RPGClass> RPGClass)
         if(AbilityInfos[i].LinkedAbility != None)
         {
             Tip[0] = AbilityInfos[i].Name;
-            Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
-            if(AbilityInfos[i].Cost == 0)
+            if(AbilityInfos[i].MaxLevel > 0)
+                Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
+            else
+                Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].MaxLevel;
+            if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost)
                 Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
             else if(AbilityInfos[i].NextLevel == 0)
                 Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
@@ -247,6 +284,48 @@ final function LoadClassTree(class<RPGClass> RPGClass)
             for(x = 0; x < Tip.Length; x++)
                 Option.MyButton.ToolTip.Lines[x] = Tip[x];
         }
+    }
+
+    CalculateAbilityStates();
+}
+
+final function ReloadClassTree()
+{
+    local int i, x;
+    local int idx;
+    local RPGMenu_AbilityListMenuOption Option;
+    local array<string> Tip;
+
+    for(i = 0; i < AbilityInfos.Length; i++)
+    {
+        AbilityInfos[i].Cost = AbilityInfos[i].LinkedAbility.Cost(CurrentClass);
+        if(AbilityInfos[i].LinkedAbility.AbilityLevel < AbilityInfos[i].MaxLevel)
+            AbilityInfos[i].NextLevel = AbilityInfos[i].MaxLevel;
+        else if(AbilityInfos[i].LinkedAbility.AbilityLevel < AbilityInfos[i].LinkedAbility.MaxLevel)
+            AbilityInfos[i].NextLevel = AbilityInfos[i].LinkedAbility.AbilityLevel + 1;
+        AbilityInfos[i].State = AS_None;
+
+        idx = LayoutToIndex(AbilityInfos[i].Row, AbilityInfos[i].Column);
+        if(idx == -1)
+            continue;
+        Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(idx));
+
+        Tip[0] = AbilityInfos[i].Name;
+        if(AbilityInfos[i].MaxLevel > 0)
+            Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
+        else
+            Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].MaxLevel;
+        if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost)
+            Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
+        else if(AbilityInfos[i].NextLevel == 0)
+            Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
+        else
+            Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
+
+        Option.MyButton.ToolTip.SetTip("a");
+        Option.ToolTip.Lines.Length = 0;
+        for(x = 0; x < Tip.Length; x++)
+            Option.MyButton.ToolTip.Lines[x] = Tip[x];
     }
 
     CalculateAbilityStates();
@@ -267,33 +346,32 @@ final function CalculateAbilityStates()
 
 final function CalculateSingleAbilityState(int FromIdx, int ToIdx)
 {
-    local int i, x;
-    local int Cost;
+    local int x;
 
-    //Check for circular relationship in forbidden abilities
-    if(AbilityInfos[ToIdx].State == AS_Blocked && AbilityInfos[FromIdx].State == AS_Blocked)
-        for(i = 0; i < AbilityInfos[ToIdx].ForbidsAbilities.Length; i++)
-            if(AbilityInfos[ToIdx].ForbidsAbilities[i].Index == FromIdx)
-                return;
-
-    else if(AbilityInfos[FromIdx].State > AbilityInfos[ToIdx].State)
+    if(AbilityInfos[FromIdx].State > AbilityInfos[ToIdx].State)
         AbilityInfos[ToIdx].State = AbilityInfos[FromIdx].State;
 
     if(AbilityInfos[ToIdx].LinkedAbility.AbilityLevel > 0)
         AbilityInfos[ToIdx].State = AS_Purchased;
     else
     {
-        Cost = AbilityInfos[ToIdx].LinkedAbility.Cost(CurrentClass);
-        if(Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost)
+        if(AbilityInfos[ToIdx].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost)
             AbilityInfos[ToIdx].State = AS_Blocked;
-        else if(Cost == class'RPGAbility'.default.CantBuyCost)
+        else if(AbilityInfos[ToIdx].Cost == class'RPGAbility'.default.CantBuyCost)
             AbilityInfos[ToIdx].State = AS_Disabled;
         else
             AbilityInfos[ToIdx].State = AS_Available;
     }
 
     for(x = 0; x < AbilityInfos[ToIdx].ForbidsAbilities.Length; x++)
+    {
+        //Check for circular relationship in forbidden abilities
+        if(AbilityInfos[ToIdx].ForbidsAbilities[x].Index == FromIdx)
+        {
+            continue;
+        }
         CalculateSingleAbilityState(ToIdx, AbilityInfos[ToIdx].ForbidsAbilities[x].Index);
+    }
 
     for(x = 0; x < AbilityInfos[ToIdx].RequiredByAbilities.Length; x++)
         CalculateSingleAbilityState(ToIdx, AbilityInfos[ToIdx].RequiredByAbilities[x].Index);
@@ -367,7 +445,7 @@ static final function CalcRelationshipLine(GUIMultiOptionList List, GridPosition
 
 final function bool DrawAbilityRelationships(Canvas Canvas)
 {
-    local int i, x;
+    local int i, x, y;
     local int TopRow, BottomRow;
     local GridPosition Pos1, Pos2;
     local float X1, Y1, X2, Y2;
@@ -378,6 +456,9 @@ final function bool DrawAbilityRelationships(Canvas Canvas)
 
     for(i = 0; i < AbilityInfos.Length; i++)
     {
+        if(AbilityInfos[i].Row == 0 || AbilityInfos[i].Column == 0)
+            continue;
+
         for(x = 0; x < AbilityInfos[i].ForbidsAbilities.Length; x++)
         {
             Pos1.Row = AbilityInfos[i].Row;
@@ -394,7 +475,20 @@ final function bool DrawAbilityRelationships(Canvas Canvas)
             else if(AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].State == AS_Disabled)
                 Color = DisabledForbiddenColor;
             else
+            {
                 Color = ForbiddenColor;
+
+                // Check for circular forbidden abilities
+                for(y = 0; y < AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].ForbidsAbilities.Length; y++)
+                {
+                    if(AbilityInfos[AbilityInfos[i].ForbidsAbilities[x].Index].ForbidsAbilities[y].Index == i
+                    && AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost)
+                    {
+                        Color = BlockedColor;
+                        break;
+                    }
+                }
+            }
 
             CalcRelationshipLine(Abilities, Pos1, Pos2, X1, Y1, X2, Y2);
 
@@ -434,6 +528,8 @@ final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float 
     local float Width, Height;
     local float IconSize;
     local Material Material;
+    local string Text;
+    local float XL, YL;
 
     Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(Item));
     if(Option == None || Option.LinkedAbility == None)
@@ -480,6 +576,38 @@ final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float 
 
     Canvas.DrawTile(Material, IconSize, IconSize, 0, 0, Material.MaterialUSize(), Material.MaterialVSize());
 
+    if(RPGClass(Option.LinkedAbility) == None && !Controller.ShiftPressed)
+    {
+        Canvas.Font = TextFont;
+        Canvas.FontScaleX = Canvas.ClipX / 1920;
+        Canvas.FontScaleY = Canvas.FontScaleX;
+
+        if(AbilityInfos[Option.Index].MaxLevel != 0 && Option.LinkedAbility.AbilityLevel != AbilityInfos[Option.Index].MaxLevel)
+        {
+            Canvas.DrawColor = Canvas.MakeColor(255, 255, 255);
+            Text = Option.LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[Option.Index].MaxLevel;
+        }
+        else if(AbilityInfos[Option.Index].MaxLevel == 0 && Option.LinkedAbility.AbilityLevel != Option.LinkedAbility.MaxLevel)
+        {
+            Canvas.DrawColor = Canvas.MakeColor(255, 255, 255);
+            Text = Option.LinkedAbility.AbilityLevel $ "/" $ Option.LinkedAbility.MaxLevel;
+        }
+        else
+        {
+            Canvas.DrawColor = Canvas.MakeColor(128, 255, 128);
+            Text = Text_Max;
+        }
+
+        Canvas.TextSize(Text, XL, YL);
+        Canvas.SetPos(Option.MyButton.ActualLeft() + Option.MyButton.ActualWidth() - XL - YL * 0.3f, Option.MyButton.ActualTop() + Option.MyButton.ActualHeight() - YL * 1.15f);
+        Canvas.DrawText(Text);
+
+        //Reset
+        Canvas.Font = Canvas.default.Font;
+        Canvas.FontScaleX = Canvas.default.FontScaleX;
+        Canvas.FontScaleY = Canvas.default.FontScaleY;
+    }
+
     if(Option.Index == SelectedIndex)
     {
         Canvas.DrawColor = Canvas.MakeColor(255, 255, 255);
@@ -487,6 +615,8 @@ final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float 
         Material = IconSelectionMaterial;
         Canvas.DrawTileStretched(Material, Width, Height);
     }
+
+    Canvas.DrawColor = Canvas.default.DrawColor;
 }
 
 function CloseMenu()
@@ -503,6 +633,13 @@ final function SelectClassTree(GUIComponent Sender)
         return;
 
     RPGMenu.RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
+
+    //Hack to select the generic tree instead of the separator
+    if(cbTree.Index == 1)
+    {
+        cbTree.SetIndex(0);
+        return;
+    }
 
     for(i = 0; i < ClassInfos.Length; i++)
     {
@@ -535,7 +672,7 @@ final function SelectAbility(GUIComponent Sender)
         AInfo = AbilityInfos[SelectedIndex];
     }
 
-    if(AInfo.LinkedAbility != None && AInfo.Cost > 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.AbilityPointsAvailable >= AInfo.Cost)
+    if(AInfo.LinkedAbility != None && AInfo.Cost >= 0 && AInfo.NextLevel > 0 && RPGMenu.RPRI.AbilityPointsAvailable >= AInfo.Cost)
     {
         btBuy.Caption = Repl(Text_BuyX, "$1", AInfo.Name @ string(AInfo.NextLevel));
         btBuy.MenuState = MSAT_Blurry;
@@ -571,8 +708,10 @@ final function bool BuyAbility(GUIComponent Sender)
 
         if(AInfo.LinkedAbility != None)
         {
+            bIgnoreNextInit = true;
             if(AInfo.LinkedAbility.Buy() && RPGMenu.RPRI.Role < ROLE_Authority) //simulate for a pingless update if client
                 RPGMenu.RPRI.ServerBuyAbility(AInfo.LinkedAbility);
+            bIgnoreNextInit = false;
         }
     }
 
@@ -604,6 +743,7 @@ defaultproperties
     DisabledForbiddenColor=(R=32,G=32,A=255)
 
     Begin Object Class=AltSectionBackground Name=sbAbilities_
+        HeaderBase=Material'Display99Black'
         Caption="Available Abilities"
         LeftPadding=0.000000
         RightPadding=0.000000
@@ -619,8 +759,8 @@ defaultproperties
         bAcceptsInput=True
         bVisibleWhenEmpty=True
         OnCreateComponent=lstAbilities_.InternalOnCreateComponent
-        WinWidth=0.474912
-        WinHeight=0.712825
+        WinWidth=0.476158
+        WinHeight=0.716562
         WinLeft=0.013702
         WinTop=0.069684
     End Object
@@ -643,10 +783,10 @@ defaultproperties
         EOLDelay=0.001250
         OnCreateComponent=lblDesc_.InternalOnCreateComponent
         FontScale=FNS_Small
-        WinWidth=0.463460
-        WinHeight=0.667102
-        WinLeft=0.520971
-        WinTop=0.069684
+        WinWidth=0.455986
+        WinHeight=0.658383
+        WinLeft=0.524708
+        WinTop=0.073421
         bNeverFocus=True
     End Object
     lblDesc=GUIScrollTextBox'lblDesc_'
@@ -679,15 +819,18 @@ defaultproperties
     lblStats=GUILabel'lblStats_'
 
     Begin Object Class=GUIImage Name=imgAbilities_
+        Image=FinalBlend'ClassTreeBgFinal'
         ImageStyle=ISTY_Scaled
-        WinWidth=0.503702
-        WinHeight=0.754053
-        WinLeft=0.000000
-        WinTop=0.049684
+        WinWidth=0.482526
+        WinHeight=0.722913
+        WinLeft=0.011211
+        WinTop=0.066500
         StyleName="NoBackground"
     End Object
     imgAbilities=GUIImage'imgAbilities_'
 
     WinHeight=0.700000
     SelectedIndex=-1
+    IconSelectedShader=Shader'ClassTreeIconSelected'
+    IconSelectionMaterial=TexOscillator'ClassTreeReticleOsc'
 }

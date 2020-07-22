@@ -1,15 +1,20 @@
 class RPGClass extends RPGAbility
-	abstract;
+    abstract;
 
+struct LevelStruct
+{
+    var int Level;
+    var int TargetLevel;
+};
 struct ForbiddenStruct
 {
     var int Index;
-    var int Level;
+    var array<LevelStruct> Levels;
 };
 struct RequiredStruct
 {
     var int Index;
-    var int Level;
+    var array<LevelStruct> Levels;
 };
 
 //For predetermining layout of the ability tree in menus
@@ -18,6 +23,7 @@ struct ClassTreeInfoStruct
     var class<RPGAbility> AbilityClass;
     var int Row;
     var int Column;
+    var int MaxLevel;
     var array<ForbiddenStruct> ForbidsAbilities;
     var array<RequiredStruct> RequiredByAbilities;
     var bool bDisjunctiveRequirements;
