@@ -39,6 +39,10 @@ Documentation State
 -------------------
 There is currently no documentation for configuring TURRPG 2 and none is planned.
 
+License
+-------
+TURRPG 2 is licensed under the Open Unreal Mod License version 1.1. See [LICENSE](LICENSE) for details.
+
 Credits
 -------
 TURRPG 2 contains code written by the following people:

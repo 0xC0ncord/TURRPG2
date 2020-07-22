@@ -1,3 +1,11 @@
+//=============================================================================
+// LevelTeleporter.uc
+// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+//
+// This program is free software; you can redistribute and/or modify
+// it under the terms of the Open Unreal Mod License version 1.1.
+//=============================================================================
+
 /*
     A teleporter that will only let players with the required level or higher teleport.
 */

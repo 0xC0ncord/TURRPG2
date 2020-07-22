@@ -1,3 +1,11 @@
+//=============================================================================
+// FX_BlastCharger_Heal_NEW.uc
+// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+//
+// This program is free software; you can redistribute and/or modify
+// it under the terms of the Open Unreal Mod License version 1.1.
+//=============================================================================
+
 class FX_BlastCharger_Heal_NEW extends FX_BlastCharger_NEW;
 
 defaultproperties

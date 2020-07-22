@@ -1,3 +1,11 @@
+//=============================================================================
+// Ability_VehicleVampire.uc
+// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+//
+// This program is free software; you can redistribute and/or modify
+// it under the terms of the Open Unreal Mod License version 1.1.
+//=============================================================================
+
 class Ability_VehicleVampire extends Ability_Vampire;
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)

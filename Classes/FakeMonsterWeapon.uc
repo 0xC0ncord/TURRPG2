@@ -1,3 +1,11 @@
+//=============================================================================
+// FakeMonsterWeapon.uc
+// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+//
+// This program is free software; you can redistribute and/or modify
+// it under the terms of the Open Unreal Mod License version 1.1.
+//=============================================================================
+
 //This is a total hack to fix Epic's not calling GameRules.NetDamage for monsters
 class FakeMonsterWeapon extends Weapon
     CacheExempt

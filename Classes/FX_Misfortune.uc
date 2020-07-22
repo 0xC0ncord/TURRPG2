@@ -1,4 +1,12 @@
 //=============================================================================
+// FX_Misfortune.uc
+// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+//
+// This program is free software; you can redistribute and/or modify
+// it under the terms of the Open Unreal Mod License version 1.1.
+//=============================================================================
+
+//=============================================================================
 // TitanMisfortuneEffect - copy from Jailbreak's JBEmitterKillExplosion
 // Copyright 2004 by Wormbo <wormbo@onlinehome.de>
 // $Id: JBEmitterKillExplosion.uc,v 1.1 2004-05-31 11:14:58 wormbo Exp $
