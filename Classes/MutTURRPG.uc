@@ -828,7 +828,7 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
     TotalStatPoints += RPRI.StatPointsAvailable;
     TotalAbilityPoints += RPRI.AbilityPointsAvailable;
 
-    StatPointsShouldBe = StartingStatPoints + (Ceil((RPRI.RPGLevel - StartingLevel) / StatPointsIncrement) - 1) * StatPointsPerIncrement;
+    StatPointsShouldBe = StartingStatPoints + ((RPRI.RPGLevel / StatPointsIncrement) * StatPointsPerIncrement) - ((StartingLevel / StatPointsIncrement) * StatPointsPerIncrement);
     if(TotalStatPoints != StatPointsShouldBe)
     {
         Warn(RPRI.RPGName @ "had" @ TotalStatPoints @ "total stat points at Level" @ RPRI.RPGLevel $
@@ -855,7 +855,7 @@ function ValidateData(RPGPlayerReplicationInfo RPRI) {
         bSave = true;
     }
 
-    AbilityPointsShouldBe = StartingAbilityPoints + (Ceil((RPRI.RPGLevel - StartingLevel) / AbilityPointsIncrement) - 1) * AbilityPointsPerIncrement;
+    AbilityPointsShouldBe = StartingAbilityPoints + ((RPRI.RPGLevel / AbilityPointsIncrement) * AbilityPointsPerIncrement) - ((StartingLevel / AbilityPointsIncrement) * AbilityPointsPerIncrement);
     if(TotalAbilityPoints != AbilityPointsShouldBe)
     {
         Warn(RPRI.RPGName @ "had" @ TotalAbilityPoints @ "total ability points at Level" @ RPRI.RPGLevel $
