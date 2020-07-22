@@ -1011,23 +1011,6 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
     if(DoubleMod != None && DoubleMod.bActive)
         DoubleMod.GotoState('');
 
-    if((PlayerController(Killer) != None || Bot(Killer) != None) && damageType != None && Killer != Killed.Controller)
-    {
-        if(damageType == class'DamTypeTeleFrag' || damageType == class'DamTypeTeleFragged')
-        {
-            if(PlayerController(Killer) != None)
-            {
-                PlayerController(Killer).PlayAnnouncement(EagleEyeAnnouncement, 1, true);
-                PlayerController(Killer).ReceiveLocalizedMessage(class'LocalMessage_EagleEye');
-            }
-            if(PlayerController(Killed.Controller) != None)
-            {
-                //PlayerController(Killed.Controller).PlayAnnouncement(DisgraceAnnouncement, 1, true);
-                PlayerController(Killed.Controller).ReceiveLocalizedMessage(class'LocalMessage_Disgrace');
-            }
-        }
-    }
-
     bAlreadyPrevented = Super.PreventDeath(Killed, Killer, damageType, HitLocation);
 
     if (Killed.Controller != None)
