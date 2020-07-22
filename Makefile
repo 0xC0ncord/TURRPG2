@@ -27,6 +27,10 @@ compile:
 	@echo -e $(PREFIX) $@ $(SUFFIX)
 	@$(CURRENT_DIR)/build.sh
 
+norestore:
+	@echo -e $(PREFIX) $@ $(SUFFIX)
+	@$(CURRENT_DIR)/build.sh -n
+
 release:
 	@echo -e $(PREFIX) $@ $(SUFFIX)
 	@$(CURRENT_DIR)/build.sh -r
