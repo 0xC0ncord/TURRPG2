@@ -22,14 +22,14 @@ function Destroyed()
     {
         StopEffect(P);
 
-        if(TitanPawn(Owner) != None)
+        if(RPGPawn(Owner) != None)
         {
-            i = class'Util'.static.InArray(Self, TitanPawn(Owner).ActiveCombos);
-            TitanPawn(Owner).ActiveCombos.Remove(i, 1);
+            i = class'Util'.static.InArray(Self, RPGPawn(Owner).ActiveCombos);
+            RPGPawn(Owner).ActiveCombos.Remove(i, 1);
             if(P.CurrentCombo == self)
             {
-                if(TitanPawn(Owner).ActiveCombos.Length > 0)
-                    P.CurrentCombo = TitanPawn(Owner).ActiveCombos[TitanPawn(Owner).ActiveCombos.Length - 1];
+                if(RPGPawn(Owner).ActiveCombos.Length > 0)
+                    P.CurrentCombo = RPGPawn(Owner).ActiveCombos[RPGPawn(Owner).ActiveCombos.Length - 1];
                 else
                     P.CurrentCombo = None;
             }

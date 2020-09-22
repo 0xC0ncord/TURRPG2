@@ -20,12 +20,12 @@ function StartEffect(xPawn P)
     P.SetInvisibility(60.0);
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
 
-    if(TitanPawn(P)!=None)
+    if(RPGPawn(P)!=None)
     {
-        for(i = 0; i < TitanPawn(P).ActiveCombos.Length; i++)
+        for(i = 0; i < RPGPawn(P).ActiveCombos.Length; i++)
         {
-            if(RPGCombo(TitanPawn(P).ActiveCombos[i]) != None)
-                RPGCombo(TitanPawn(P).ActiveCombos[i]).DestroyEffects(P);
+            if(RPGCombo(RPGPawn(P).ActiveCombos[i]) != None)
+                RPGCombo(RPGPawn(P).ActiveCombos[i]).DestroyEffects(P);
         }
     }
 }
@@ -35,12 +35,12 @@ function StopEffect(xPawn P)
     local int i;
 
     P.SetInvisibility(0.0);
-    if(TitanPawn(P) != None)
+    if(RPGPawn(P) != None)
     {
-        for(i = 0; i < TitanPawn(P).ActiveCombos.Length; i++)
+        for(i = 0; i < RPGPawn(P).ActiveCombos.Length; i++)
         {
-            if(RPGCombo(TitanPawn(P).ActiveCombos[i]) != None)
-                RPGCombo(TitanPawn(P).ActiveCombos[i]).CreateEffects(P);
+            if(RPGCombo(RPGPawn(P).ActiveCombos[i]) != None)
+                RPGCombo(RPGPawn(P).ActiveCombos[i]).CreateEffects(P);
         }
     }
 }

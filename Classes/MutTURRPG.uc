@@ -203,10 +203,10 @@ event PreBeginPlay() {
     class'XGame.xPawn'.default.ControllerClass = class'RPGBot';
 
     if(Level.Game.PlayerControllerClassName ~= "XGame.xPlayer") //don't replace another mod's xPlayer replacement
-        Level.Game.PlayerControllerClassName = "TURRPG2.TitanPlayerController";
+        Level.Game.PlayerControllerClassName = "TURRPG2.RPGPlayerController";
 
     if(Level.Game.DefaultPlayerClassName ~= "XGame.xPawn") //don't replace another mod's xPawn replacement
-        Level.Game.DefaultPlayerClassName = "TURRPG2.TitanPawn";
+        Level.Game.DefaultPlayerClassName = "TURRPG2.RPGPawn";
 
     //Find specific settings for this gametype
     GameSettings = new(None, GetGameSettingsName(Level.Game)) class'RPGGameSettings';

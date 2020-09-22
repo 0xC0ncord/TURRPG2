@@ -218,7 +218,7 @@ replication
         ClientNotifyExpGain, ClientShowHint,
         ClientSetName, ClientGameEnded,
         ClientCheckArtifactClass,
-        ClientSwitchToWeapon, //moved from TitanPlayerController for better compatibility
+        ClientSwitchToWeapon, //moved from RPGPlayerController for better compatibility
         ClientCreateStatusIcon, ClientRemoveStatusIcon,
         ClientShowSelection, ClientCloseSelection, //artifact selection menu
         ClientEnteredONSWeaponPawn, ClientLeftONSWeaponPawn,
@@ -227,7 +227,7 @@ replication
         ServerBuyAbility, ServerNoteActivity,
         ServerSwitchBuild, ServerResetData, ServerRebuildData,
         ServerClearArtifactOrder, ServerAddArtifactOrderEntry, ServerSortArtifacts,
-        ServerGetArtifact, ServerActivateArtifact, //moved from TitanPlayerController for better compatibility
+        ServerGetArtifact, ServerActivateArtifact, //moved from RPGPlayerController for better compatibility
         ServerDestroyBuildings, ServerDestroySentinels, ServerDestroyTurrets,
         ServerDestroyVehicles, ServerDestroyUtilities, ServerKillMonsters;
 }

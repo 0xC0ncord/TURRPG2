@@ -43,8 +43,8 @@ function ModifyPawn(Pawn Other)
         ShieldMax = xPawn(Other).default.ShieldStrengthMax + BonusPerLevel * AbilityLevel;
         xPawn(Other).ShieldStrengthMax = ShieldMax;
 
-        if(TitanPawn(Other) != None)
-            TitanPawn(Other).MaxShieldAmount = ShieldMax;
+        if(RPGPawn(Other) != None)
+            RPGPawn(Other).MaxShieldAmount = ShieldMax;
     }
 }
 

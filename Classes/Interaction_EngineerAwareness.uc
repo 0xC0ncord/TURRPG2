@@ -118,8 +118,8 @@ function PostRender(Canvas C) {
 
             //Health bar
             ScreenPos.Y -= (Height * RPGInteraction.Settings.BarHeightScale) + 4;
-            if(TitanPawn(P) != None)
-                ShieldMax = TitanPawn(P).MaxShieldAmount;
+            if(RPGPawn(P) != None)
+                ShieldMax = RPGPawn(P).MaxShieldAmount;
             else if(xPawn(P) != None)
                 ShieldMax = xPawn(P).ShieldStrengthMax;
             else
