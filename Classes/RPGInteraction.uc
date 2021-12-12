@@ -884,6 +884,7 @@ function PostRender(Canvas Canvas)
             Canvas.FontScaleX = FontScale.X;
             Canvas.FontScaleY = FontScale.Y;
         }
+        /*
         else if(Settings.XPHudStyle == 1) //SAO style
         {
             Canvas.Font = GetMediumSAOFontFor(Canvas);
@@ -1035,6 +1036,7 @@ function PostRender(Canvas Canvas)
             Canvas.FontScaleX = FontScale.X;
             Canvas.FontScaleY = FontScale.Y;
         }
+        */
     }
 
     //Draw linkers indicator for vehicles
