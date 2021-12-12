@@ -276,13 +276,17 @@ final function LoadClassTree(class<RPGClass> RPGClass)
         if(AbilityInfos[i].LinkedAbility != None)
         {
             Tip[0] = AbilityInfos[i].Name;
-            if(AbilityInfos[i].MaxLevel > 0)
+            if(AbilityInfos[i].MaxLevel == 0)
                 Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
             else
                 Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].MaxLevel;
-            if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost)
+            if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost ||
+                AbilityInfos[i].Cost == class'RPGAbility'.default.ClassRequirementsUnmetCost ||
+                AbilityInfos[i].Cost == class'RPGAbility'.default.RequiredAbilityUnpurchasedCost ||
+                AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
+            )
                 Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
-            else if(AbilityInfos[i].NextLevel == 0)
+            else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
                 Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
             else
                 Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
@@ -319,13 +323,17 @@ final function ReloadClassTree()
         Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(idx));
 
         Tip[0] = AbilityInfos[i].Name;
-        if(AbilityInfos[i].MaxLevel > 0)
+        if(AbilityInfos[i].MaxLevel == 0)
             Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
         else
             Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].MaxLevel;
-        if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost)
+        if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost ||
+            AbilityInfos[i].Cost == class'RPGAbility'.default.ClassRequirementsUnmetCost ||
+            AbilityInfos[i].Cost == class'RPGAbility'.default.RequiredAbilityUnpurchasedCost ||
+            AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
+        )
             Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
-        else if(AbilityInfos[i].NextLevel == 0)
+        else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
             Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
         else
             Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
