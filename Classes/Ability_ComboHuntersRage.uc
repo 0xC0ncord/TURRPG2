@@ -16,4 +16,5 @@ defaultproperties
     MaxLevel=1
     StartingCost=40
     Category=class'AbilityCategory_Damage';
+    IconMaterial=Texture'AbHuntersRageIcon'
 }
