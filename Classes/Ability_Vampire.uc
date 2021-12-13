@@ -106,5 +106,6 @@ defaultproperties
     VehicleBonusPerLevel=0.00
     HealthBonusMax=0.333333
     HealthBonusAbsoluteCap=0
+    IconMaterial=Texture'AbVampirismIcon'
     Category=class'AbilityCategory_Health'
 }
