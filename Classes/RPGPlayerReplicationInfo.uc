@@ -183,6 +183,8 @@ var int AbilitiesReceived, AbilitiesTotal;
 var array<RPGAbility> AllAbilities;
 var array<class<RPGArtifact> > AllArtifacts;
 
+var Interaction_Jukebox JukeboxInteraction;
+
 //adrenaline gain modification
 var int AdrenalineBeforeKill;
 
@@ -222,6 +224,7 @@ replication
         ClientCreateStatusIcon, ClientRemoveStatusIcon,
         ClientShowSelection, ClientCloseSelection, //artifact selection menu
         ClientEnteredONSWeaponPawn, ClientLeftONSWeaponPawn,
+        ClientRemoveJukeboxInteraction, ClientJukeboxNowPlaying, ClientJukeboxDestroyed,
         ClientSyncProjectile;
     reliable if(Role < ROLE_Authority)
         ServerBuyAbility, ServerNoteActivity,
@@ -2390,6 +2393,49 @@ final function DrainAdrenaline(float Amount, optional Object Source)
     }
 
     Controller.Adrenaline = FMax(Controller.Adrenaline - Amount, 0);
+}
+
+simulated final function ClientCreateJukeboxInteraction()
+{
+    if(PlayerController(Controller) != None && JukeboxInteraction == None)
+        JukeboxInteraction = Interaction_Jukebox(PlayerController(Controller).Player.InteractionMaster.AddInteraction(string(class'Interaction_Jukebox'), PlayerController(Controller).Player));
+}
+
+simulated final function ClientRemoveJukeboxInteraction()
+{
+    if(JukeboxInteraction != None)
+        JukeboxInteraction.Remove();
+}
+
+simulated final function ClientJukeboxNowPlaying(string NewSong, string SongArtist, string SongTitle, string SongAlbum, Material AlbumArt, optional bool bForce)
+{
+    local float MusicVol;
+    local float EffectVol;
+
+    MusicVol = float(PlayerController(Controller).ConsoleCommand("get ini:Engine.Engine.AudioDevice MusicVolume"));
+    if(!bForce && MusicVol <= 0)
+        return;
+    else if(bForce)
+    {
+        if(MusicVol <= 0)
+        {
+            //set the music volume to be the same as effects volume to avoid ear rape
+            EffectVol = float(PlayerController(Controller).ConsoleCommand("get ini:Engine.Engine.AudioDevice SoundVolume"));
+            PlayerController(Controller).ConsoleCommand("set ini:Engine.Engine.AudioDevice MusicVolume" @ EffectVol);
+        }
+    }
+
+    PlayerController(Controller).ClientSetMusic(NewSong, MTRAN_Instant);
+    if(JukeboxInteraction == None)
+        ClientCreateJukeboxInteraction();
+    if(JukeboxInteraction != None)
+        JukeboxInteraction.JukeboxNowPlaying(NewSong, SongArtist, SongTitle, SongAlbum, AlbumArt);
+}
+
+simulated final function ClientJukeboxDestroyed(bool bShouldRestart)
+{
+    if(JukeboxInteraction != None)
+        JukeboxInteraction.JukeboxDestroyed(bShouldRestart);
 }
 
 defaultproperties
