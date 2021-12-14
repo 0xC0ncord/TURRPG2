@@ -51,11 +51,13 @@ function bool CanActivate()
     }
 }
 
+/*
 function bool CanDeactivate()
 {
     //return (Instigator.Physics != PHYS_Falling || Instigator.Base != None);
     return Super.CanDeactivate();
 }
+*/
 
 function BotWhatNext(Bot Bot) {
     //if it can be activated, it's probably required!
