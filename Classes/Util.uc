@@ -151,6 +151,20 @@ static function string FormatFloat(float p)
         return string(p);
 }
 
+static function string FormatTime(float Time, optional bool bNoShortSeconds)
+{
+    local int Hours, Minutes, Seconds;
+
+    if(Time < 1f && !bNoShortSeconds)
+        return "0." $ Ceil(Time * 10) $ "s";
+
+    Hours = int(Time / 3600);
+    Minutes = int(Time / 60) % 60;
+    Seconds = Time % 60;
+
+    return Eval(Hours < 10, "0" $ Hours, Hours) $ ":" $ Eval(Minutes < 10, "0" $ Minutes, Minutes) $ Eval(Seconds < 10, "0" $ Seconds, Seconds);
+}
+
 static function int InArray(Object x, array<Object> a)
 {
     local int i;
