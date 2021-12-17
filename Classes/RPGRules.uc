@@ -944,6 +944,11 @@ function bool OverridePickupQuery(Pawn Other, Pickup item, out byte bAllowPickup
         }
     }
 
+    //effects that may have been applied
+    for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
+        if(RPGEffect(Inv) != None && Inv.IsInState('Activated') && RPGEffect(Inv).OverridePickupQuery(Other, item, bAllowPickup))
+            return true;
+
     if(Ammo(item) != None) {
         //Handle ammo
         AmmoAmount = Ammo(item).AmmoAmount;

@@ -400,6 +400,8 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
 function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
 
+function OverridePickupQuery(Pawn Other, Pickup Item, out byte bAllowPickup);
+
 defaultproperties   {
     bPermanent=False
 
