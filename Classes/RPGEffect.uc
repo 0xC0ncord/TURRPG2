@@ -69,11 +69,14 @@ var float EffectLimitInterval; //to avoid sounds and effects being spammed like 
 //Internal
 var RPGPlayerReplicationInfo InstigatorRPRI;
 var bool bRestarting; //set when restarting the effect (when stacking)
+var bool bClientActivated; //for clients to detect that this effect is active
 
 replication
 {
     reliable if(Role == ROLE_Authority && bNetDirty)
         Duration, EffectCauser;
+    reliable if(Role == ROLE_Authority)
+        ClientStart;
 }
 
 static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier)
@@ -286,7 +289,10 @@ static function RPGEffect GetFor(Pawn Other)
     local RPGEffect Effect;
 
     Effect = RPGEffect(Other.FindInventoryType(default.class));
-    if(Effect != None && Effect.IsInState('Activated'))
+    if(
+        Effect != None && Effect.IsInState('Activated') ||
+        (Level.NetMode == NM_Client && bClientActivated)
+    )
         return Effect;
     else
         return None;
@@ -297,9 +303,15 @@ function Start()
     GotoState('Activated');
     if(bRestarting)
         bRestarting = false;
+    ClientStart();
 }
 
 function Stop();
+
+simulated function ClientStart()
+{
+    bClientActivated = true;
+}
 
 function DisplayEffect();
 
