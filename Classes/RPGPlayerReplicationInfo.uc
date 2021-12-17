@@ -190,6 +190,12 @@ var int AdrenalineBeforeKill;
 
 //Sound
 var Sound LevelUpSound;
+struct PrecacheAnnouncerSoundStruct
+{
+    var name PackageName;
+    var name SoundName;
+};
+var array<PrecacheSoundStruct> PrecacheAnnouncerSounds;
 
 //Materials
 var Material LockedVehicleOverlay;
@@ -529,7 +535,10 @@ simulated function ClientSetup()
     PRI.CustomReplicationInfo = Self;
 
     if(Role != ROLE_Authority && xPlayer(Controller) != None)
+    {
         ResetCombos();
+        PrecacheAnnouncerSounds();
+    }
 
     if(Role < ROLE_Authority) //not offline
     {
@@ -649,6 +658,19 @@ simulated final function ModifyCombos()
     for(i = 0; i < Abilities.Length; i++)
         if(Abilities[i].bAllowed && Abilities[i].ComboReplacements.Length > 0)
             Abilities[i].ReplaceCombos(xPlayer(Controller));
+}
+
+simulated final function PrecacheAnnouncerSounds()
+{
+    local int i, x;
+
+    if(Controller.AnnouncerVoice == None)
+        return;
+
+    //TODO im pretty sure that if this runs and then you
+    //change announcers, this will no longer work
+    for(i = 0; i < PrecacheAnnouncerSounds.Length; i++)
+        PlayerController(Controller).AnnouncerVoice.PrecacheFallbackPackage(PrecacheAnnouncerSounds[i].PackageName, PrecacheAnnouncerSounds[i].SoundName);
 }
 
 simulated function int FindOrderEntry(class<RPGArtifact> AClass)
