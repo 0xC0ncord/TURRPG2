@@ -415,6 +415,9 @@ function bool CanActivate()
     local RPGArtifact A;
     local int Countdown;
 
+    if(InstigatorRPRI.bDisableAllArtifacts)
+        return false;
+
     if(bExclusive)
     {
         for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)

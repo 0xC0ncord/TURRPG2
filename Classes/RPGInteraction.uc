@@ -428,6 +428,7 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
     local float XL, YL, SXL;
     local Color HUDColor;
     local string S;
+    local bool bDisabled;
 
     Canvas.Style = 5;
     HUDColor = GetHUDTeamColor(HUD);
@@ -446,11 +447,14 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
         ArtifactBorderMaterialRect.W,
         ArtifactBorderMaterialRect.H);
 
+    if(A != None && A.InstigatorRPRI != None && A.InstigatorRPRI.bDisableAllArtifacts)
+        bDisabled = true;
+
     if(AClass.default.IconMaterial != None)
     {
         if(A != None && A.class == AClass && (A.bActive || A == SelectionArtifact))
             Canvas.DrawColor = HUDColor;
-        else if(A == None || A.class != AClass || TimeSeconds < A.NextUseTime)
+        else if(A == None || A.class != AClass || TimeSeconds < A.NextUseTime || bDisabled)
             Canvas.DrawColor = DisabledOverlay;
         else
             Canvas.DrawColor = WhiteColor;
@@ -481,11 +485,17 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
             Canvas.FontScaleY = FontScale.Y;
         }
 
-        if(TimeSeconds < A.NextUseTime)
+        Canvas.DrawColor = WhiteColor;
+        if(bDisabled)
+        {
+            Canvas.TextSize("-", XL, YL);
+            Canvas.SetPos(X + (Size - XL) * 0.5, Y + (Size - YL) * 0.5);
+            Canvas.DrawText("-");
+        }
+        else if(TimeSeconds < A.NextUseTime)
         {
             Time = int(A.NextUseTime - TimeSeconds) + 1;
 
-            Canvas.DrawColor = WhiteColor;
             Canvas.TextSize(string(Time), XL, YL);
             Canvas.SetPos(X + (Size - XL) * 0.5, Y + (Size - YL) * 0.5);
             Canvas.DrawText(string(Time));

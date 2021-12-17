@@ -144,6 +144,7 @@ var int RPGLevel, NeededExp;
 var int StatPointsAvailable, AbilityPointsAvailable;
 var float Experience;
 var array<RPGAbility> Abilities;
+var bool bDisableAllArtifacts;
 
 var bool bGameEnded;
 
@@ -211,7 +212,7 @@ replication
     reliable if(Role == ROLE_Authority && bNetDirty)
         bImposter, RPGLevel, Experience, NeededExp,
         StatPointsAvailable, AbilityPointsAvailable,
-        bGameEnded,
+        bGameEnded, bDisableAllArtifacts,
         NumMonsters,
         MaxMonsters,
         NumBuildings, NumSentinels, NumTurrets, NumVehicles, NumUtilities,
