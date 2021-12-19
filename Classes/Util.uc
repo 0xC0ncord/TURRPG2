@@ -156,7 +156,7 @@ static function string FormatTime(float Time, optional bool bNoShortSeconds)
     local int Hours, Minutes, Seconds;
 
     if(Time < 1f && !bNoShortSeconds)
-        return "0." $ Ceil(Time * 10) $ "s";
+        return "0." $ int(Ceil(Time * 10)) $ "s";
 
     Hours = int(Time / 3600);
     Minutes = int(Time / 60) % 60;
