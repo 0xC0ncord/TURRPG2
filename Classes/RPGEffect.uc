@@ -225,8 +225,8 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
             if(NewModifier > Effect.Modifier)
                 Effect.Modifier = NewModifier;
 
-            AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
-            CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
+            AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
+            CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
         }
         else
         {
@@ -244,8 +244,8 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
                 if(NewModifier > Effect.Modifier)
                     Effect.Modifier = NewModifier;
 
-                AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
-                CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
+                AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
+                CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
 
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Other.Controller);
                 if(RPRI != None)
@@ -470,7 +470,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
 function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
 
-function OverridePickupQuery(Pawn Other, Pickup Item, out byte bAllowPickup);
+function bool OverridePickupQuery(Pawn Other, Pickup Item, out byte bAllowPickup);
 
 defaultproperties   {
     bPermanent=False
