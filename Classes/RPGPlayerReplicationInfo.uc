@@ -191,12 +191,12 @@ var int AdrenalineBeforeKill;
 
 //Sound
 var Sound LevelUpSound;
-struct PrecacheAnnouncerSoundStruct
+struct AnnouncerSoundStruct
 {
-    var name PackageName;
+    var string PackageName;
     var name SoundName;
 };
-var array<PrecacheSoundStruct> PrecacheAnnouncerSounds;
+var array<AnnouncerSoundStruct> AnnouncerSounds;
 
 //Materials
 var Material LockedVehicleOverlay;
@@ -663,15 +663,15 @@ simulated final function ModifyCombos()
 
 simulated final function PrecacheAnnouncerSounds()
 {
-    local int i, x;
+    local int i;
 
-    if(Controller.AnnouncerVoice == None)
+    if(PlayerController(Controller).RewardAnnouncer == None)
         return;
 
     //TODO im pretty sure that if this runs and then you
     //change announcers, this will no longer work
-    for(i = 0; i < PrecacheAnnouncerSounds.Length; i++)
-        PlayerController(Controller).AnnouncerVoice.PrecacheFallbackPackage(PrecacheAnnouncerSounds[i].PackageName, PrecacheAnnouncerSounds[i].SoundName);
+    for(i = 0; i < AnnouncerSounds.Length; i++)
+        PlayerController(Controller).RewardAnnouncer.PrecacheFallbackPackage(AnnouncerSounds[i].PackageName, AnnouncerSounds[i].SoundName);
 }
 
 simulated function int FindOrderEntry(class<RPGArtifact> AClass)
