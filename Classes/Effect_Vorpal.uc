@@ -16,6 +16,6 @@ function DoEffect()
 defaultproperties
 {
     EffectSound=Sound'WeaponSounds.Misc.instagib_rifleshot'
-    xEmitterClass=class'FX_VorpalExplosion'
+    EffectClass=class'FX_VorpalExplosion'
     EffectMessageClass=class'EffectMessage_Vorpal'
 }

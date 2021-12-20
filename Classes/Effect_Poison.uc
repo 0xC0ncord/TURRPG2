@@ -81,8 +81,9 @@ state Activated
 
 defaultproperties
 {
-    xEmitterClass=class'FX_PoisonSmoke'
+    EffectClass=class'FX_PoisonSmoke'
     EffectMessageClass=class'EffectMessage_Poison'
+    StatusIconClass=class'StatusIcon_Poison'
 
     PoisonMode=PM_Curve
 }

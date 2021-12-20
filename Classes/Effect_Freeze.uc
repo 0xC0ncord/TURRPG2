@@ -1,6 +1,6 @@
 //=============================================================================
 // Effect_Freeze.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -84,7 +84,8 @@ defaultproperties
 
     EffectOverlay=Shader'TURRPG2.Overlays.PulseGreyShader'
     EffectSound=Sound'Slaughtersounds.Machinery.Heavy_End'
-    xEmitterClass=class'FX_IceSmoke'
+    EffectClass=class'FX_IceSmoke'
 
     EffectMessageClass=class'EffectMessage_Freeze'
+    StatusIconClass=class'StatusIcon_Freeze'
 }
