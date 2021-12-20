@@ -13,12 +13,38 @@ var int HealAmount;
 var config int SelfHealingCap;
 var config float SelfHealingMultiplier;
 
-static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier) {
-    if(Vehicle(Other) == None && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0)) {
+static function bool CanBeApplied(Pawn Other, optional Controller Causer, optional float Duration, optional float Modifier)
+{
+    local RPGPlayerReplicationInfo RPRI;
+    local RPGEffect Effect;
+    local Ability_NullifyingCure Ability;
+
+    if(Vehicle(Other) == None && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0))
+    {
         return false;
     }
 
-    return Super.CanBeApplied(Other, Causer, Duration, Modifier);
+    if(!Super.CanBeApplied(Other, Causer, Duration, Modifier))
+        return false;
+
+    // check for bleeding
+    Effect = class'Effect_Bleeding'.static.GetFor(Other);
+    if(Effect != None && Effect.IsInState('Activated'))
+    {
+        RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Causer);
+        if(RPRI == None)
+            return false;
+
+        // if the causer has nullifying cure, roll to see
+        // if they can remove the bleeding
+        Ability = Ability_NullifyingCure(RPRI.GetOwnedAbility(class'Ability_NullifyingCure'));
+        if(Ability == None || FRand() > Ability.GetRemovalChance())
+            return false;
+        else
+            Effect.Destroy();
+    }
+
+    return true;
 }
 
 function bool ShouldDisplayEffect() {
