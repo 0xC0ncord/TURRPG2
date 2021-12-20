@@ -56,7 +56,10 @@ var config float TimerInterval;
 //Audiovisual
 var Sound EffectSound;
 var Material EffectOverlay;
-var class<xEmitter> xEmitterClass;
+var class<Actor> EffectClass;
+var Actor SpawnedEffect;
+var bool bNotifyClientKillEffect;
+var bool bSpawnEffectEveryInterval;
 
 var class<RPGEffectMessage> EffectMessageClass;
 var class<RPGStatusIcon> StatusIconClass;
@@ -291,7 +294,7 @@ static function RPGEffect GetFor(Pawn Other)
     Effect = RPGEffect(Other.FindInventoryType(default.class));
     if(
         Effect != None && Effect.IsInState('Activated') ||
-        (Level.NetMode == NM_Client && bClientActivated)
+        (Other.Level.NetMode == NM_Client && Effect.bClientActivated)
     )
         return Effect;
     else
@@ -334,8 +337,8 @@ state Activated
             if(EffectMessageClass != None)
                 Instigator.ReceiveLocalizedMessage(EffectMessageClass, 0, Instigator.PlayerReplicationInfo, CauserPRI);
 
-            if(xEmitterClass != None)
-                Instigator.Spawn(xEmitterClass, Instigator);
+            if(EffectClass != None && (SpawnedEffect == None || !bSpawnEffectEveryInterval))
+                SpawnedEffect = Instigator.Spawn(EffectClass, Instigator);
         }
 
         LastEffectTime = Level.TimeSeconds;
@@ -401,11 +404,30 @@ state Activated
     function EndState()
     {
         local RPGPlayerReplicationInfo RPRI;
+        local Controller C;
 
         if(StatusIconClass != None) {
             RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
             if(RPRI != None) {
                 RPRI.ClientRemoveStatusIcon(StatusIconClass);
+            }
+        }
+
+        if(Emitter(SpawnedEffect) != None && bNotifyClientKillEffect)
+        {
+            if(Level.NetMode == NM_Standalone)
+                Emitter(SpawnedEffect).Kill();
+            else
+            {
+                for(C = Level.ControllerList; C != None; C = C.NextController)
+                {
+                    if(PlayerController(C) != None)
+                    {
+                        RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
+                        if(RPRI != None)
+                            RPRI.ClientKillEmitter(Emitter(SpawnedEffect));
+                    }
+                }
             }
         }
 

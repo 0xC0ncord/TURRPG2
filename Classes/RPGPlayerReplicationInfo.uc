@@ -232,7 +232,7 @@ replication
         ClientShowSelection, ClientCloseSelection, //artifact selection menu
         ClientEnteredONSWeaponPawn, ClientLeftONSWeaponPawn,
         ClientRemoveJukeboxInteraction, ClientJukeboxNowPlaying, ClientJukeboxDestroyed,
-        ClientSyncProjectile;
+        ClientSyncProjectile, ClientKillEmitter;
     reliable if(Role < ROLE_Authority)
         ServerBuyAbility, ServerNoteActivity,
         ServerSwitchBuild, ServerResetData, ServerRebuildData,
@@ -894,6 +894,12 @@ simulated function CheckPlayerViewShake()
             PlayerController(Controller).ShakeOffsetMax /= ShakeScaling;
         }
     }
+}
+
+simulated function ClientKillEmitter(Emitter Effect)
+{
+    if(Effect != None)
+        Effect.Kill();
 }
 
 simulated event Tick(float dt)
