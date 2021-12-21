@@ -59,6 +59,7 @@ struct GrantWeapon
     var class<RPGWeaponModifier> ModifierClass;
     var int Modifier;
     var int Ammo[2]; //extra ammo per fire mode. 0 = none, -1 = full
+    var bool bIdentify;
     var bool bForce;
     var Object Source;
 };
@@ -2161,7 +2162,7 @@ function GrantQueuedWeapon(GrantWeapon GW) {
         }
 
         if(GW.ModifierClass != None) {
-            WM = GW.ModifierClass.static.Modify(W, GW.Modifier, GW.bForce || RPGMut.GameSettings.bNoUnidentified);
+            WM = GW.ModifierClass.static.Modify(W, GW.Modifier, GW.bIdentify || RPGMut.GameSettings.bNoUnidentified);
         }
 
         //W.GiveTo(Controller.Pawn);
@@ -2207,7 +2208,7 @@ function ProcessGrantQueue()
 }
 
 //Add to weapon grant queue
-function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass, int Modifier, optional int Ammo1, optional int Ammo2, optional bool bForce, optional Object Source)
+function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> ModifierClass, int Modifier, optional int Ammo1, optional int Ammo2, optional bool bIdentify, optional bool bForce, optional Object Source)
 {
     local int i;
     local GrantWeapon GW;
@@ -2232,6 +2233,7 @@ function QueueWeapon(class<Weapon> WeaponClass, class<RPGWeaponModifier> Modifie
     GW.Modifier = Modifier;
     GW.Ammo[0] = Ammo1;
     GW.Ammo[1] = Ammo2;
+    GW.bIdentify = bIdentify;
     GW.bForce = bForce;
     GW.Source = Source;
 

@@ -581,7 +581,7 @@ function ModifyPawn(Pawn Other)
                     }
                 }
                 if(!bGotIt)
-                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,, self);
+                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,,, self);
                 else
                     bGotIt = false;
             }

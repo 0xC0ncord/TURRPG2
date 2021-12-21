@@ -132,7 +132,7 @@ function ModifyPawn(Pawn Other)
             break;
     }
     if (!bGotIt)
-        RPRI.QueueWeapon(class'EngineerTransLauncher', None, 0,,, true, self);
+        RPRI.QueueWeapon(class'EngineerTransLauncher', None, 0,,, true, true, self);
 
     // Now let's give the EngineerLinkGun
     if(ELink == None || class'WeaponModifier_EngineerLink'.static.GetFor(ELink) == None)
@@ -151,7 +151,7 @@ function ModifyPawn(Pawn Other)
             }
         }
         if(!bGotIt)
-            RPRI.QueueWeapon(class'EngineerLinkGun', class'WeaponModifier_EngineerLink', 0,,, true, self);
+            RPRI.QueueWeapon(class'EngineerLinkGun', class'WeaponModifier_EngineerLink', 0,,, true, true, self);
     }
 }
 

@@ -75,7 +75,7 @@ function ModifyPawn(Pawn Other)
                         if(Inv != None)
                             continue;
                     }
-                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,, Self);
+                    RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,,, Self);
                 }
                 else
                     bGotIt = false;

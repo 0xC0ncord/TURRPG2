@@ -16,6 +16,7 @@ struct StoredWeapon
     var class<RPGWeaponModifier> ModifierClass;
     var int Modifier;
     var int Ammo[2];
+    var bool bIdentified;
 };
 var array<StoredWeapon> StoredWeapons;
 
@@ -110,6 +111,7 @@ function TryStoreWeapon(Weapon W)
     if(WM != None) {
         SW.ModifierClass = WM.class;
         SW.Modifier = WM.Modifier;
+        SW.bIdentified = WM.bIdentified;
     }
 
     StoredWeapons[StoredWeapons.Length] = SW;
@@ -128,6 +130,7 @@ function PreModifyPawn(Pawn Other)
             StoredWeapons[i].Modifier,
             StoredWeapons[i].Ammo[0],
             StoredWeapons[i].Ammo[1],
+            StoredWeapons[i].bIdentified,
             ,
             Self
         );
