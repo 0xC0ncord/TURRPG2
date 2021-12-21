@@ -482,7 +482,13 @@ simulated function int Cost(optional class<RPGClass> RPGClass)
                 }
             }
 
-            //check forbidden abilities
+            /*
+            Check forbidden abilities
+
+            If the player has an ability which forbids this one, and the player has at least Level
+            in that ability's ClassTreeInfo, then they cannot buy this ability if the TargetLevel
+            is equal to or higher than the current ability level OR if TargetLevel is zero.
+            */
             for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
             {
                 lv = RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass);
@@ -504,7 +510,14 @@ simulated function int Cost(optional class<RPGClass> RPGClass)
                 }
             }
 
-            //check required abilities
+            /*
+            Check required abilities
+
+            If the player has an ability which is required by this one, then the player must have
+            at least level Level in that ability's ClassTreeInfo to purchase up to TargetLevel. If
+            TargetLevel is zero, then at least level Level is required to purchase up to the maximum
+            level of this ability.
+            */
             for(i = 0; i < CheckedClass.default.ClassTreeInfos.Length; i++)
             {
                 lv = RPRI.HasAbility(CheckedClass.default.ClassTreeInfos[i].AbilityClass);
