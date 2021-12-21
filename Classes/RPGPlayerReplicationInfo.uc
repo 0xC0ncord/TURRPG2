@@ -491,6 +491,15 @@ simulated function ClientRemoveStatusIcon(class<RPGStatusIcon> IconType)
     }
 }
 
+simulated final function RPGStatusIcon GetStatusIcon(class<RPGStatusIcon> IconType)
+{
+    local int i;
+
+    for(i = 0; i < Status.Length; i++)
+        if(Status[i].class == IconType)
+            return Status[i];
+}
+
 //clients only
 simulated function class<RPGArtifact> GetArtifactClass(string ID)
 {
