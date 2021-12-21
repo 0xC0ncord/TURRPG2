@@ -1,6 +1,6 @@
 //=============================================================================
 // Util.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -688,6 +688,37 @@ static function bool SameTeamP(Pawn A, Pawn B) {
     TeamB = GetPawnTeam(B);
 
     return (TeamA != 255 && TeamA == TeamB);
+}
+
+static final function Actor GetClosestPawn(Controller Other)
+{
+    local Controller C, BC;
+    local float D, BD;
+    local Actor A;
+    local float bestAim, bestDist;
+
+    if(Other.Pawn == None)
+        return None;
+
+    bestAim = 0.70;
+
+    A = Other.PickTarget(bestAim, bestDist, vector(Other.GetViewRotation()), Other.Pawn.Location, 10000);
+    if(A != None)
+        return A;
+    for(C = Other.Level.ControllerList; C != None; C = C.NextController)
+    {
+        if(C != Other && C.Pawn != None && !C.SameTeamAs(Other))
+        {
+            D = VSize(C.Pawn.Location - Other.Pawn.Location);
+            if(D < BD || BD == 0)
+            {
+                BD = D;
+                BC = C;
+            }
+        }
+    }
+    if(BC != None)
+        return BC.Pawn;
 }
 
 //Check if a projectile belongs to the same team as a controller
