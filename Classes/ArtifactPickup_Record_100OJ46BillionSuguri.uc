@@ -10,6 +10,5 @@ class ArtifactPickup_Record_100OJ46BillionSuguri extends ArtifactPickup_Record;
 
 defaultproperties
 {
-    StaticMesh=StaticMesh'Record_100OJ46BillionSuguri'
     InventoryType=Class'Artifact_Record_100OJ46BillionSuguri'
 }

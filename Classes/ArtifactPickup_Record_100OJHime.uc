@@ -10,6 +10,5 @@ class ArtifactPickup_Record_100OJHime extends ArtifactPickup_Record;
 
 defaultproperties
 {
-    StaticMesh=StaticMesh'Record_100OJHime'
     InventoryType=Class'Artifact_Record_100OJHime'
 }

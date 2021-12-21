@@ -10,6 +10,5 @@ class ArtifactPickup_Record_100OJSumika extends ArtifactPickup_Record;
 
 defaultproperties
 {
-    StaticMesh=StaticMesh'Record_100OJSumika'
     InventoryType=Class'Artifact_Record_100OJSumika'
 }

@@ -12,7 +12,7 @@ defaultproperties
 {
     Begin Object Class=MeshEmitter Name=MeshEmitter1
         Disabled=True
-        StaticMesh=StaticMesh'Record_Green'
+        StaticMesh=StaticMesh'MusicDisc'
         SpinParticles=True
         AutomaticInitialSpawning=False
         UseVelocityScale=True

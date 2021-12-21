@@ -13,12 +13,11 @@ var FX_RecordPickup FX;
 simulated function PostNetBeginPlay()
 {
     Super.PostNetBeginPlay();
+
     FX = Spawn(class'FX_RecordPickup', self,, Location);
-    if(StaticMesh != None)
-    {
-        MeshEmitter(FX.Emitters[0]).StaticMesh = StaticMesh;
-        FX.Emitters[0].Disabled = False;
-    }
+
+    FX.Skins[0] = InventoryType.default.IconMaterial;
+    FX.Emitters[0].Disabled = False;
 }
 
 simulated function Destroyed()
@@ -33,4 +32,5 @@ defaultproperties
      InventoryType=Class'ArtifactBase_Record'
      PickupMessage="You got a Music Disc!"
      DrawType=DT_None
+     StaticMesh=StaticMesh'MusicDisc'
 }

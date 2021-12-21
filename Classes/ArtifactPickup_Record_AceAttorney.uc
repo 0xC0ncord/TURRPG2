@@ -10,6 +10,5 @@ class ArtifactPickup_Record_AceAttorney extends ArtifactPickup_Record;
 
 defaultproperties
 {
-    StaticMesh=StaticMesh'Record_AceAttorney'
     InventoryType=Class'Artifact_Record_AceAttorney'
 }
