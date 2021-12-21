@@ -19,6 +19,12 @@ var FriendlyPawnReplicationInfo FPRI;
 
 var FX_FriendlyMonster Effect;
 
+var array<NavigationPoint> NavPointList;
+var bool bSearching;
+var Actor CurrentSearchDestination;
+var float SearchingStartTime;
+var float MaxSearchingStuckTime;
+
 event PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -28,8 +34,6 @@ event PostBeginPlay()
 function Possess(Pawn aPawn)
 {
     Super(ScriptedController).Possess(aPawn);
-
-    InitializeSkill(DeathMatch(Level.Game).AdjustedDifficulty);
 
     Pawn.MaxFallSpeed = 1.1 * Pawn.default.MaxFallSpeed;
     Pawn.SetMovementPhysics();
@@ -76,6 +80,8 @@ function SetMaster(Controller NewMaster)
 
 function Destroyed()
 {
+    if(PlayerReplicationInfo != None)
+        PlayerReplicationInfo.Destroy();
     if(Effect != None)
         Effect.Destroy();
     Super.Destroyed();
@@ -91,19 +97,24 @@ function bool FindNewEnemy()
     local Pawn BestEnemy;
     local float BestDist;
     local Controller C;
+    local int Count;
 
     BestDist = 50000.f;
     for(C = Level.ControllerList; C != None; C = C.NextController)
     {
+        Count++;
         if(
             C != Master &&
             C != Self &&
             C.Pawn != None &&
             !C.SameTeamAs(Master) &&
             (FriendlyMonsterController(C) == None || FriendlyMonsterController(C).Master != Master) &&
-            CanSee(C.Pawn) &&
-            VSize(C.Pawn.Location - Pawn.Location) < BestDist
+            (CanSee(C.Pawn) || bSearching) &&
+            VSize(C.Pawn.Location - Pawn.Location) < BestDist &&
             //!Monster(Pawn).SameSpeciesAs(C.Pawn) - nevermind same species - it's an enemy!
+            !C.Pawn.IsA('ParentBlob') &&
+            (!C.Pawn.IsA('LenoreBoss') || bool(C.Pawn.GetPropertyText("bIsVulnerableNow"))) &&
+            (!C.Pawn.IsA('NaliSage') || bool(C.Pawn.GetPropertyText("bIsAppeared")))
         )
         {
             BestEnemy = C.Pawn;
@@ -144,7 +155,7 @@ function bool SetEnemy(Pawn NewEnemy, optional bool bThisIsNeverUsed)
         return false;
     }
 
-    if(NewEnemy.Controller.SameTeamAs(Master) || !CanSee(NewEnemy))
+    if(NewEnemy.Controller.SameTeamAs(Master) || (!CanSee(NewEnemy) && !bSearching))
         return false;
 
     if(Enemy == None)
@@ -168,6 +179,8 @@ function bool SetEnemy(Pawn NewEnemy, optional bool bThisIsNeverUsed)
 function ChangeEnemy(Pawn NewEnemy, bool bCanSeeNewEnemy)
 {
     Super.ChangeEnemy(NewEnemy, bCanSeeNewEnemy);
+
+    CurrentSearchDestination = None;
 
     //hack for invasion monsters so they'll fight back
     if(
@@ -217,13 +230,25 @@ event Tick(float dt) {
         Master.PlayerReplicationInfo == None ||
         Master.PlayerReplicationInfo.bOnlySpectator ||
         !SameTeamAs(Master)
-    ) {
+    )
+    {
         Pawn.Suicide();
-    } else if(MasterRPRI != None) {
+            return;
+    }
+    else if(MasterRPRI != None)
+    {
         //if my master died, test if I should as well
-        if(MasterRPRI.bMonstersDie && (Master.Pawn == None || Master.Pawn.Health <= 0)) {
+        if(MasterRPRI.bMonstersDie && (Master.Pawn == None || Master.Pawn.Health <= 0))
+        {
             Pawn.Suicide();
+            return;
         }
+    }
+
+    if(Level.TimeSeconds - SearchingStartTime >= MaxSearchingStuckTime && bSearching)
+    {
+        CurrentSearchDestination = None;
+        SearchAndDestroy();
     }
 }
 
@@ -255,20 +280,31 @@ function ExecuteWhatToDoNext()
         Enemy = None;
 
     if(Enemy == None || !EnemyVisible())
+    {
+        CurrentSearchDestination = None;
         FindNewEnemy();
+    }
 
     if(Enemy != None)
     {
+        CurrentSearchDestination = None;
         ChooseAttackMode();
     }
-    else if(Master.Pawn != None)
+    else if(Master.Pawn != None && !bSearching)
     {
         FollowMaster();
     }
     else
     {
-        GoalString = "WhatToDoNext Wander or Camp at "$Level.TimeSeconds;
-        WanderOrCamp(true);
+        if(bSearching)
+        {
+            SearchAndDestroy();
+        }
+        else
+        {
+            GoalString = "WhatToDoNext Wander or Camp at "$Level.TimeSeconds;
+            WanderOrCamp(true);
+        }
     }
 }
 
@@ -291,6 +327,52 @@ function FollowMaster()
 
     GoalString = "Wander or Camp at "$Level.TimeSeconds;
     WanderOrCamp(true);
+    CurrentSearchDestination = None;
+}
+
+function SearchAndDestroy()
+{
+    local NavigationPoint N;
+
+    if(Enemy == None && bSearching)
+    {
+        GoalString = "Search and destroy";
+
+        if(NavPointList.Length == 0)
+            for(N = Level.NavigationPointList; N != None; N = N.NextNavigationPoint)
+                if(FlyingPathNode(N) != None)
+                    NavPointList[NavPointList.Length] = N;
+
+        if(CurrentSearchDestination == None || VSize(Pawn.Location - CurrentSearchDestination.Location) < Pawn.CollisionRadius + 128)
+        {
+            N = NavPointList[Rand(NavPointList.Length)];
+            if(FindBestPathToward(N, false, Pawn.bCanPickupInventory))
+            {
+                SearchingStartTime = Level.TimeSeconds;
+                CurrentSearchDestination = MoveTarget;
+                GotoState('Roaming');
+                return;
+            }
+        }
+        else
+        {
+            if(FindBestPathToward(CurrentSearchDestination, false, Pawn.bCanPickupInventory))
+            {
+                GotoState('Roaming');
+                return;
+            }
+        }
+    }
+
+    GoalString = "Wander or Camp at "$Level.TimeSeconds;
+    WanderOrCamp(true);
+    CurrentSearchDestination = None;
+}
+
+function SearchAndDestroyCommand()
+{
+    bSearching = true;
+    SearchAndDestroy();
 }
 
 function NotifyKilled(Controller Killer, Controller Killed, pawn KilledPawn)
@@ -303,6 +385,40 @@ function NotifyKilled(Controller Killer, Controller Killed, pawn KilledPawn)
         Enemy = None;
         FindNewEnemy();
     }
+}
+
+function bool ShouldCharge(Pawn P)
+{
+    local vector HitLocation, HitNormal;
+    local PhysicsVolume V;
+
+    if(Skill < 5)
+        return ActorReachable(Enemy);
+
+    if(P.PhysicsVolume.bPainCausing)
+        return false;
+
+    if(P.Physics == PHYS_Walking)
+        return ActorReachable(Enemy);
+
+    Trace(HitLocation, HitNormal, P.Location, P.Location - vect(0, 0, 1) * Level.KillZ * 2);
+    if(HitLocation != vect(0, 0, 0))
+    {
+        if(HitLocation.Z <= Level.KillZ)
+            return false;
+
+        if(InvasionPro(Level.Game) != None && InvasionPro(Level.Game).CollisionTestActor != None)
+        {
+            InvasionPro(Level.Game).CollisionTestActor.SetLocation(HitLocation);
+            foreach AllActors(class'PhysicsVolume', V)
+                if(V != None && v.bPainCausing && V.Encompasses(InvasionPro(Level.Game).CollisionTestActor))
+                    return false;
+        }
+    }
+    else
+        return false;
+
+    return ActorReachable(Enemy);
 }
 
 function Celebrate()
@@ -361,7 +477,23 @@ Moving:
     GoalString $= " STUCK IN FALLBACK!";
 }
 
+state Charging
+{
+ignores SeePlayer, HearNoise;
+
+    function MayFall()
+    {
+        if(MoveTarget != Enemy)
+            return;
+
+        Pawn.bCanJump = ShouldCharge(Enemy);
+        if(!Pawn.bCanJump)
+            MoveTimer = -1.0;
+    }
+}
+
 defaultproperties
 {
     MasterFollowDistance=1024.000000
+    MaxSearchingStuckTime=120.000000
 }
