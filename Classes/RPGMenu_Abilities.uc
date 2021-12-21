@@ -286,7 +286,7 @@ final function LoadClassTree(class<RPGClass> RPGClass)
                 AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
             )
                 Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
-            else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
+            else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedCost || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
                 Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
             else
                 Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
@@ -333,7 +333,7 @@ final function ReloadClassTree()
             AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
         )
             Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
-        else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
+        else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedCost || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
             Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
         else
             Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
