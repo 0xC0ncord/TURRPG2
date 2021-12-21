@@ -246,6 +246,11 @@ defaultproperties
     RecordClasses(8)=class'Artifact_Record_100OJSumika'
     RecordClasses(9)=class'Artifact_Record_100OJTsih'
     RecordClasses(10)=class'Artifact_Record_100OJ46BillionSuguri'
+    RecordClasses(11)=class'Artifact_Record_Payday2AndNowWeRun'
+    RecordClasses(12)=class'Artifact_Record_Payday2BlackYellowMoebius'
+    RecordClasses(13)=class'Artifact_Record_Payday2CallingAllUnits'
+    RecordClasses(14)=class'Artifact_Record_Payday2EvilEye'
+    RecordClasses(15)=class'Artifact_Record_Payday2TheMark'
     Health=500
     DrawType=DT_StaticMesh
     StaticMesh=StaticMesh'JukeboxMesh'
