@@ -2072,7 +2072,10 @@ function LoadData(RPGData Data)
     }
 
     if(xPlayer(Controller) != None)
+    {
         ResetCombos();
+        PrecacheAnnouncerSounds();
+    }
 
     ModifyStats();
     PickAIBuild();
