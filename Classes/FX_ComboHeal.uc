@@ -105,4 +105,5 @@ defaultproperties
 
     Physics=PHYS_Trailer
     bTrailerAllowRotation=True
+    bOwnerNoSee=True
 }

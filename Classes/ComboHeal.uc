@@ -13,7 +13,10 @@ var int HealAmount;
 function CreateEffects(Pawn P)
 {
     if(P.Role == ROLE_Authority)
+    {
         Spawn(class'FX_ComboHeal', P,, P.Location, P.Rotation);
+        Spawn(class'FX_ComboHeal_FP', P,, P.Location, P.Rotation);
+    }
 }
 
 function StartEffect(xPawn P)
