@@ -2485,6 +2485,7 @@ defaultproperties
 
     LevelUpSound=Sound'TURRPG2.Effects.LevelUp'
     AnnouncerSounds(0)=(PackageName="TURRPG2",SoundName="ComboHeal")
+    AnnouncerSounds(1)=(PackageName="TURRPG2",SoundName="ComboIronSpirit")
 
     LockedVehicleOverlay=Shader'PulseRedShader'
 
