@@ -108,7 +108,6 @@ function bool Metamorphosize(Artifact_Metamorphosis A, Pawn Other, class<xPawn> 
     local rotator SpawnRot;
     local PlayerController PC;
     local vector HitLocation, HitNormal, End, Start;
-    local FX_Metamorphosis FX;
     local class<Pawn> OldPawnClass;
     local class<RPGArtifact> LastSelected;
     local bool bBehindView;
@@ -234,6 +233,7 @@ function bool Metamorphosize(Artifact_Metamorphosis A, Pawn Other, class<xPawn> 
             //something went very very wrong... no real recovery here
             Level.Game.Killed(PC, PC, None, class'DamTypeMetamorphosisFail');
             Spawn(class'FX_Metamorphosis',,, SpawnLoc);
+
             return true;
         }
 
@@ -244,9 +244,7 @@ function bool Metamorphosize(Artifact_Metamorphosis A, Pawn Other, class<xPawn> 
         if(bBehindView)
             PC.ClientSetBehindView(true);
 
-        FX = Spawn(class'FX_Metamorphosis',,, P.Location);
-        if(FX != None)
-        FX.FXSizeMultiplier = Max(OldPawnClass.default.CollisionRadius, P.default.CollisionRadius) / 44;
+        Spawn(class'FX_Metamorphosis', P,, P.Location);
 
         P.SelectedItem = RPGArtifact(P.FindInventoryType(LastSelected));
 
