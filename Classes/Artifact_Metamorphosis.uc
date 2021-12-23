@@ -11,7 +11,7 @@ class Artifact_Metamorphosis extends RPGArtifact
 
 var Ability_Metamorphosis Ability;
 
-var class<xPawn> PawnClass;
+var class<xPawn> PawnClass, DefaultPawnClass;
 var bool bFlying;
 
 var array<Ability_Metamorphosis.MonsterType> MonsterTypes;
@@ -75,6 +75,16 @@ simulated function ClientReceiveMonsterType(int i, Ability_Metamorphosis.Monster
     }
 }
 
+simulated function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    if(Role == ROLE_Authority)
+    {
+        DefaultPawnClass = class<xPawn>(DynamicLoadObject(Level.Game.DefaultPlayerClassName, class'Class'));
+    }
+}
+
 function bool CanActivate()
 {
     //hack for Venom munching
@@ -134,6 +144,11 @@ function bool DoEffect()
     if(Instigator != None)
     {
         if(Instigator.Class == PawnClass)
+        {
+            Msg(MSG_Already);
+            return false;
+        }
+        if(PawnClass == class'xPawn' && Instigator.Class == DefaultPawnClass)
         {
             Msg(MSG_Already);
             return false;

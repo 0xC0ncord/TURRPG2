@@ -211,7 +211,9 @@ function bool Metamorphosize(Artifact_Metamorphosis A, Pawn Other, class<xPawn> 
         }
         else if(PawnClass == Class'xPawn')
         {
-            P = xPawn(Spawn(Level.Game.GetDefaultPlayerClass(PC),,, SpawnLoc, SpawnRot));
+            PawnClass = class<xPawn>(DynamicLoadObject(Level.Game.DefaultPlayerClassName, class'Class'));
+
+            P = Spawn(PawnClass,,, SpawnLoc, SpawnRot);
             if(P != None)
             {
                 DoPossession(PC, P);
