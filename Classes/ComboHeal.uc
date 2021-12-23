@@ -44,7 +44,7 @@ defaultproperties
 {
     HealAmount=100
     ExecMessage="Heal!"
-    ComboAnnouncementName="Heal"
+    ComboAnnouncementName="ComboHeal"
     keys(0)=2
     keys(1)=2
     keys(2)=2
