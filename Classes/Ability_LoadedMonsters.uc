@@ -14,7 +14,7 @@ struct MonsterTypeStruct
 {
     var int Level;
     var class<Monster> MonsterClass;
-    var string FriendlyName;
+    var string DisplayName;
     var int Cost;
     var int Points;
     var int Cooldown;
@@ -63,7 +63,7 @@ function ModifyArtifact(RPGArtifact A)
             if(AbilityLevel >= MonsterTypes[i].Level)
             {
                 ArtifactMonster.MonsterClass = MonsterTypes[i].MonsterClass;
-                ArtifactMonster.FriendlyName = MonsterTypes[i].FriendlyName;
+                ArtifactMonster.DisplayName = MonsterTypes[i].DisplayName;
                 ArtifactMonster.Cost = MonsterTypes[i].Cost;
                 ArtifactMonster.Points = MonsterTypes[i].Points;
                 ArtifactMonster.Cooldown = MonsterTypes[i].Cooldown;
@@ -109,7 +109,7 @@ simulated function string DescriptionText()
         for(x = 0; x < MonsterTypes.Length; x++)
         {
             if(MonsterTypes[x].MonsterClass != None && MonsterTypes[x].Level == lv)
-                list[list.Length] = MonsterTypes[x].FriendlyName;
+                list[list.Length] = MonsterTypes[x].DisplayName;
         }
 
         if(list.Length > 0)
@@ -149,5 +149,5 @@ defaultproperties
     GrantItem(1)=(Level=1,InventoryClass=Class'Artifact_KillDesiredMonster')
     Category=Class'TURRPG2.AbilityCategory_Monsters'
     StatusIconClass=Class'TURRPG2.StatusIcon_Monsters'
-	IconMaterial=Texture'AbLoadedMonstersIcon'
+    IconMaterial=Texture'AbLoadedMonstersIcon'
 }

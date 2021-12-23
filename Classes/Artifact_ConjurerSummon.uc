@@ -12,7 +12,7 @@ class Artifact_ConjurerSummon extends ArtifactBase_Summon
 struct MonsterTypeStruct
 {
     var class<Monster> MonsterClass;
-    var string FriendlyName;
+    var string DisplayName;
     var int Cost;
     var int Points;
     var int Cooldown;
@@ -21,7 +21,7 @@ var config array<MonsterTypeStruct> MonsterTypes;
 
 struct ReplicatedMonsterTypeStruct
 {
-    var string FriendlyName;
+    var string DisplayName;
     var int Cost;
     var int Points;
 };
@@ -61,7 +61,7 @@ function SendMonsterTypes()
 
     for(i = 0; i < MonsterTypes.Length; i++)
     {
-        M.FriendlyName = MonsterTypes[i].FriendlyName;
+        M.DisplayName = MonsterTypes[i].DisplayName;
         M.Cost = MonsterTypes[i].Cost;
         M.Points = MonsterTypes[i].Points;
         ClientReceiveMonsterType(i, M);
@@ -79,7 +79,7 @@ simulated function ClientReceiveMonsterType(int i, ReplicatedMonsterTypeStruct M
 
         x = MonsterTypes.Length;
         MonsterTypes.Length = x + 1;
-        MonsterTypes[x].FriendlyName = M.FriendlyName;
+        MonsterTypes[x].DisplayName = M.DisplayName;
         MonsterTypes[x].Cost = M.Cost;
         MonsterTypes[x].Points = M.Points;
     }
@@ -185,7 +185,7 @@ simulated function int GetNumOptions()
 
 simulated function string GetOption(int i)
 {
-    return MonsterTypes[i].FriendlyName;
+    return MonsterTypes[i].DisplayName;
 }
 
 simulated function int GetOptionCost(int i) {
@@ -243,7 +243,7 @@ exec function Summon(string Chosen)
     local int i;
 
     for(i = 0; i < MonsterTypes.Length; i++)
-        if(MonsterTypes[i].FriendlyName ~= Repl(Chosen, "_", " "))
+        if(MonsterTypes[i].DisplayName ~= Repl(Chosen, "_", " "))
             break;
 
     SelectedOption = i;
