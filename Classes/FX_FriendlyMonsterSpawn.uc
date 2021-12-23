@@ -79,18 +79,18 @@ simulated function UpdateEffects(class<Pawn> Other)
     Emitters[9].StartSizeRange.X.Max = 100 * (Other.default.CollisionRadius / 25);
 
     //the spiral blue trail
-    Emitters[11].StartLocationOffset.X = 32 * (Other.default.CollisionRadius / 25);
-    Emitters[11].StartLocationOffset.X = 32 * (Other.default.CollisionRadius / 25);
-    Emitters[11].StartLocationOffset.Z = -64 * (Other.default.CollisionHeight / 44);
-    Emitters[11].StartLocationOffset.Z = -64 * (Other.default.CollisionHeight / 44);
-    Emitters[11].StartVelocityRange.Z.Min = 64 * (Other.default.CollisionHeight / 44);
-    Emitters[11].StartVelocityRange.Z.Max = 64 * (Other.default.CollisionHeight / 44);
+    Emitters[10].StartLocationOffset.X = 32 * (Other.default.CollisionRadius / 25);
+    Emitters[10].StartLocationOffset.X = 32 * (Other.default.CollisionRadius / 25);
+    Emitters[10].StartLocationOffset.Z = -64 * (Other.default.CollisionHeight / 44);
+    Emitters[10].StartLocationOffset.Z = -64 * (Other.default.CollisionHeight / 44);
+    Emitters[10].StartVelocityRange.Z.Min = 64 * (Other.default.CollisionHeight / 44);
+    Emitters[10].StartVelocityRange.Z.Max = 64 * (Other.default.CollisionHeight / 44);
 
     //teleport dust
-    Emitters[10].MaxActiveParticles *= DrawScale;
-    Emitters[10].Particles.Length = Emitters[11].MaxActiveParticles;
-    Emitters[10].StartVelocityRadialRange.Min = -200 * (Other.default.CollisionRadius / 25);
-    Emitters[10].StartVelocityRadialRange.Max = -200 * (Other.default.CollisionRadius / 25);
+    Emitters[11].MaxActiveParticles *= DrawScale;
+    Emitters[11].Particles.Length = Emitters[11].MaxActiveParticles;
+    Emitters[11].StartVelocityRadialRange.Min = -200 * (Other.default.CollisionRadius / 25);
+    Emitters[11].StartVelocityRadialRange.Max = -200 * (Other.default.CollisionRadius / 25);
 
     if(Other.default.CollisionHeight < 44)
     {
@@ -334,61 +334,59 @@ defaultproperties
     End Object
     Emitters(9)=SpriteEmitter'TURRPG2.FX_FriendlyMonsterSpawn.SpriteEmitter9'
 
-    Begin Object Class=SpriteEmitter Name=SpriteEmitter11
-        UseColorScale=True
-        FadeOut=True
-        FadeIn=True
-        RespawnDeadParticles=False
-        SpinParticles=True
-        UniformSize=True
-        AutomaticInitialSpawning=False
-        UseVelocityScale=True
-        Acceleration=(Z=200.000000)
-        ColorScale(0)=(Color=(B=128,G=255))
-        ColorScale(1)=(RelativeTime=1.000000,Color=(B=128,G=255))
-        Opacity=0.500000
-        FadeOutStartTime=0.100000
-        FadeInEndTime=0.100000
-        MaxParticles=50
-        StartLocationShape=PTLS_Sphere
-        SphereRadiusRange=(Min=8.000000,Max=8.000000)
-        StartSpinRange=(X=(Max=1.000000))
-        StartSizeRange=(X=(Min=5.000000,Max=8.000000))
-        InitialParticlesPerSecond=5000.000000
-        Texture=Texture'EpicParticles.Flares.FlickerFlare2'
-        LifetimeRange=(Min=1.000000,Max=1.000000)
-        InitialDelayRange=(Min=2.000000,Max=2.000000)
-        StartVelocityRadialRange=(Min=-200.000000,Max=-200.000000)
-        GetVelocityDirectionFrom=PTVD_AddRadial
-        VelocityScale(0)=(RelativeVelocity=(X=1.000000,Y=1.000000,Z=1.000000))
-        VelocityScale(1)=(RelativeTime=0.400000,RelativeVelocity=(X=0.300000,Y=0.300000,Z=0.300000))
-        VelocityScale(2)=(RelativeTime=1.000000,RelativeVelocity=(X=0.100000,Y=0.100000,Z=0.100000))
-    End Object
-    Emitters(10)=SpriteEmitter'TURRPG2.FX_FriendlyMonsterSpawn.SpriteEmitter11'
-
     Begin Object Class=TrailEmitter Name=TrailEmitter0
-        TrailShadeType=PTTST_PointLife
+        TrailShadeType=PTTST_Linear
+        MaxPointsPerTrail=60
         DistanceThreshold=4.000000
-        MaxTrailTwistAngle=0
         UseCrossedSheets=True
         UseColorScale=True
-        FadeOut=True
-        FadeIn=True
         RespawnDeadParticles=False
         UseRevolution=True
+        AutomaticInitialSpawning=False
         ColorScale(0)=(Color=(G=255))
         ColorScale(1)=(RelativeTime=1.000000,Color=(G=255))
-        FadeOutStartTime=1.750000
-        FadeInEndTime=0.250000
-        MaxParticles=64
+        MaxParticles=20
         StartLocationOffset=(X=32.000000,Z=-64.000000)
         RevolutionsPerSecondRange=(Z=(Min=3.000000,Max=3.000000))
-        StartSizeRange=(X=(Min=8.000000,Max=8.000000))
-        Texture=Texture'AW-2004Particles.Energy.PowerBeam'
+        StartSizeRange=(X=(Min=12.000000,Max=12.000000))
+        InitialParticlesPerSecond=10.000000
+        Texture=Texture'EpicParticles.Beams.WhiteStreak01aw'
         LifetimeRange=(Min=2.000000,Max=2.000000)
         StartVelocityRange=(Z=(Min=64.000000,Max=64.000000))
     End Object
-    Emitters(11)=TrailEmitter'TURRPG2.FX_FriendlyMonsterSpawn.TrailEmitter0'
+    Emitters(10)=TrailEmitter'TURRPG2.FX_FriendlyMonsterSpawn.TrailEmitter0'
+
+    Begin Object Class=SpriteEmitter Name=SpriteEmitter37
+       UseColorScale=True
+       FadeOut=True
+       FadeIn=True
+       RespawnDeadParticles=False
+       SpinParticles=True
+       UniformSize=True
+       AutomaticInitialSpawning=False
+       UseVelocityScale=True
+       Acceleration=(Z=200.000000)
+       ColorScale(0)=(Color=(G=255))
+       ColorScale(1)=(RelativeTime=1.000000,Color=(G=255))
+       Opacity=0.500000
+       FadeOutStartTime=0.100000
+       FadeInEndTime=0.100000
+       MaxParticles=50
+       StartLocationShape=PTLS_Sphere
+       SphereRadiusRange=(Min=8.000000,Max=8.000000)
+       StartSpinRange=(X=(Max=1.000000))
+       StartSizeRange=(X=(Min=5.000000,Max=8.000000))
+       InitialParticlesPerSecond=5000.000000
+       Texture=Texture'EpicParticles.Flares.FlickerFlare2'
+       LifetimeRange=(Min=1.000000,Max=1.000000)
+       InitialDelayRange=(Min=2.000000,Max=2.000000)
+       StartVelocityRadialRange=(Min=-200.000000,Max=-200.000000)
+       GetVelocityDirectionFrom=PTVD_AddRadial
+       VelocityScale(0)=(RelativeVelocity=(X=1.000000,Y=1.000000,Z=1.000000))
+       VelocityScale(1)=(RelativeTime=0.400000,RelativeVelocity=(X=0.300000,Y=0.300000,Z=0.300000))
+       VelocityScale(2)=(RelativeTime=1.000000,RelativeVelocity=(X=0.100000,Y=0.100000,Z=0.100000))
+    End Object
+    Emitters(11)=SpriteEmitter'TURRPG2.FX_FriendlyMonsterSpawn.SpriteEmitter37'
 
     AutoDestroy=True
     bNoDelete=False
