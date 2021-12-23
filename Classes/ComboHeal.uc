@@ -24,6 +24,14 @@ function StartEffect(xPawn P)
     local RPGPlayerReplicationInfo RPRI;
     local int OldHealth;
 
+    if(P.Health >= P.SuperHealthMax && P.ShieldStrength >= P.ShieldStrengthMax)
+    {
+        if(PlayerController(P.Controller) != None)
+            PlayerController(P.Controller).ReceiveLocalizedMessage(class'LocalMessage_ComboHealCancel');
+        Destroy();
+        return;
+    }
+
     Super.StartEffect(P);
 
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
@@ -45,7 +53,7 @@ function StartEffect(xPawn P)
 
 defaultproperties
 {
-    HealAmount=100
+    HealAmount=150
     ExecMessage="Heal!"
     ComboAnnouncementName="ComboHeal"
     keys(0)=2
