@@ -37,9 +37,10 @@ defaultproperties
         StartVelocityRadialRange=(Min=48.000000,Max=48.000000)
         GetVelocityDirectionFrom=PTVD_AddRadial
     End Object
-    Emitters(0)=SpriteEmitter'FX_ComboHeal.SpriteEmitter0'
+    Emitters(0)=SpriteEmitter'FX_ComboHeal_FP.SpriteEmitter0'
 
     Physics=PHYS_Trailer
     bTrailerAllowRotation=True
+    bOnlyOwnerSee=True
     bOnlyRelevantToOwner=True
 }
