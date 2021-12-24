@@ -503,4 +503,5 @@ defaultproperties
     RequiredLevels(7)=32
     MaxLevel=10
     Category=Class'AbilityCategory_Monsters'
+    IconMaterial=Texture'AbMetamorphosis'
 }
