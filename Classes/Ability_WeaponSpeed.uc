@@ -87,6 +87,17 @@ function UnModifyVehicle(Vehicle V)
     ModifyVehicleFireRate(V, 1.0);
 }
 
+function ModifyPawn(Pawn Other)
+{
+    Super.ModifyPawn(Other);
+
+    if(MorphMonster(Other) != None)
+    {
+        MorphMonster(Other).FireAnimSpeed = 1.0 + ((BonusPerLevel * AbilityLevel) * 0.5);
+        MorphMonster(Other).ClientSetFireAnimSpeed(MorphMonster(Other).FireAnimSpeed);
+    }
+}
+
 simulated function string DescriptionText()
 {
     return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
