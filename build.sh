@@ -91,19 +91,53 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
 
         OPTS=()
         [[ ${RELEASE_BUILD} -eq 0 ]] && OPTS+=("-D__DEBUG__")
+
+        INC_LINES=0
         if [[ -f "${CURRENT_DIR}/${BASENAME}.inc" ]]; then
+
+            # Test number of lines in output include file
+            gpp \
+                -n -U "" "" "(" "," ")" "(" ")" "#" "" \
+                -M "\n#\w" "\n" " " " " "\n" "" "" \
+                +cccs "/*" "*/" +cccs "//" "\n" +cccs "\\\n" "" \
+                +s "\"" "\"" "\\" +s "'" "'" "\\" \
+                ${OPTS[@]} \
+                -D__VERSION__="${VERSION}" \
+                -D__BUILDINFO__="${BUILD_INFO}" \
+                -D__VERSIONSTRING__="${VERSION_STRING}" \
+                -D__BUILDDATE__="${BUILD_DATE}" \
+                -o "${CURRENT_DIR}/.${BASENAME}.inc" \
+                "${CURRENT_DIR}/${BASENAME}.inc"
+
+            INC_LINES=$(wc -l "${CURRENT_DIR}/.${BASENAME}.inc" | cut -d' ' -f1)
+            rm "${CURRENT_DIR}/.${BASENAME}.inc"
+
             OPTS+=("--nostdinc")
             OPTS+=("--include ${CURRENT_DIR}/${BASENAME}.inc")
         fi
 
         for FILE in "${CURRENT_DIR}"/.Classes/*.uc; do
-            gpp -C ${OPTS[@]} \
+
+            DEST="${CURRENT_DIR}/Classes/$(basename ${FILE})"
+
+            gpp \
+                -n -U "" "" "(" "," ")" "(" ")" "#" "" \
+                -M "\n#\w" "\n" " " " " "\n" "" "" \
+                +csss "/*" "*/" +csss "//" "\n" +csss "\\\n" "" \
+                +s "\"" "\"" "\\" +s "'" "'" "\\" \
+                ${OPTS[@]} \
                 -D__VERSION__="${VERSION}" \
                 -D__BUILDINFO__="${BUILD_INFO}" \
                 -D__VERSIONSTRING__="${VERSION_STRING}" \
                 -D__BUILDDATE__="${BUILD_DATE}" \
-                -o "${CURRENT_DIR}/Classes/$(basename ${FILE})" \
+                -o "${DEST}" \
                 "${FILE}"
+
+            # Remove lines occupied by include file if we used one
+            if [[ ${INC_LINES} -ne 0 ]]; then
+                tail -n +$((${INC_LINES} + 1)) "${DEST}" >"${DEST}.1"
+                mv -f "${DEST}.1" "${DEST}"
+            fi
         done
         touch "${CURRENT_DIR}"/Classes/.preprocessed
     fi
