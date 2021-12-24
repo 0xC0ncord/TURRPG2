@@ -106,6 +106,7 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
                 -D__BUILDINFO__="${BUILD_INFO}" \
                 -D__VERSIONSTRING__="${VERSION_STRING}" \
                 -D__BUILDDATE__="${BUILD_DATE}" \
+                -D__FILE__="${BASENAME}.inc" \
                 -o "${CURRENT_DIR}/.${BASENAME}.inc" \
                 "${CURRENT_DIR}/${BASENAME}.inc"
 
@@ -130,6 +131,7 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
                 -D__BUILDINFO__="${BUILD_INFO}" \
                 -D__VERSIONSTRING__="${VERSION_STRING}" \
                 -D__BUILDDATE__="${BUILD_DATE}" \
+                -D__FILE__="$(basename ${FILE})" \
                 -o "${DEST}" \
                 "${FILE}"
 
