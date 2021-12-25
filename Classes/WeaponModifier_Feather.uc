@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Feather.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -70,7 +70,7 @@ defaultproperties
     MinModifier=-3
     MaxModifier=10
     bCanHaveZeroModifier=False
-    ModifierOverlay=Shader'XGameShaders.BRShaders.BombIconBS'
+    ModifierOverlay=Shader'FeatherShader'
     PatternPos="$W of Feather"
     PatternNeg="$W of Burden"
     //AI

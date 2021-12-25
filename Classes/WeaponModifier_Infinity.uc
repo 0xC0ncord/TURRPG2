@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Infinity.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -45,7 +45,7 @@ defaultproperties
     DamageBonus=0.050000
     MinModifier=-3
     MaxModifier=8
-    ModifierOverlay=Shader'XGameShaders.BRShaders.BombIconRS'
+    ModifierOverlay=Shader'InfinityShader'
     PatternPos="$W of Infinity"
     PatternNeg="$W of Infinity"
     bCanHaveZeroModifier=True

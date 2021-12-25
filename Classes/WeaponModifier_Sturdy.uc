@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Sturdy.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -40,7 +40,7 @@ defaultproperties
     DamageBonus=0.040000
     MinModifier=-2
     MaxModifier=6
-    ModifierOverlay=Shader'UT2004Weapons.Shaders.ShockHitShader'
+    ModifierOverlay=Shader'SturdyShader'
     PatternPos="Sturdy $W"
     PatternNeg="Sturdy $W"
     //AI

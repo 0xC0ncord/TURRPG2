@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Damage.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -20,7 +20,7 @@ defaultproperties
     MinModifier=-3
     MaxModifier=6
     bCanHaveZeroModifier=False
-    ModifierOverlay=Combiner'AWGlobal.Shaders.Combiner4'
+    ModifierOverlay=Combiner'DamageShader'
     PatternPos="$W of Damage"
     PatternNeg="$W of Reduced Damage"
 }

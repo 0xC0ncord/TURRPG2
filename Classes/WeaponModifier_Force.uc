@@ -76,7 +76,7 @@ defaultproperties
     MinModifier=-4
     MaxModifier=10
     bCanHaveZeroModifier=False
-    ModifierOverlay=Shader'XGameShaders.PlayerShaders.PlayerTransRed'
+    ModifierOverlay=Shader'ForceShader'
     PatternPos="$W of Force"
     PatternNeg="$W of Slow Motion"
     //AI

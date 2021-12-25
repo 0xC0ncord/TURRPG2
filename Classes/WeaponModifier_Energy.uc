@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Energy.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -79,7 +79,7 @@ defaultproperties
     MinModifier=-3
     MaxModifier=4
     bCanHaveZeroModifier=False
-    ModifierOverlay=Shader'XGameShaders.PlayerShaders.LightningHit'
+    ModifierOverlay=Shader'EnergyShader'
     PatternPos="$W of Energy"
     PatternNeg="Draining $W"
     //AI

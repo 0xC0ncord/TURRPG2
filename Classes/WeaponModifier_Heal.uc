@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Heal.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -12,9 +12,8 @@ var config int MaxHealth;
 
 var localized string HealText;
 
+/*
 static function bool AllowedFor(class<Weapon> Weapon, optional Pawn Other) {
-    return Super.AllowedFor(Weapon, Other);
-    /*
     local int x;
     local class<ProjectileFire> ProjFire;
 
@@ -42,8 +41,8 @@ static function bool AllowedFor(class<Weapon> Weapon, optional Pawn Other) {
         }
     }
     return false;
-    */
 }
+*/
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType) {
     local Effect_Heal Heal;
@@ -97,7 +96,7 @@ defaultproperties {
     MaxHealth=50
     MinModifier=1
     MaxModifier=6
-    ModifierOverlay=Shader'TURRPG2.Overlays.PulseBlueShader'
+    ModifierOverlay=Shader'HealShader'
     PatternPos="Healing $W"
     //AI
     AIRatingBonus=0

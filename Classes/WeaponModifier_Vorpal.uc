@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Vorpal.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -49,7 +49,7 @@ defaultproperties
     DamageBonus=0.10
     MinModifier=6
     MaxModifier=10
-    ModifierOverlay=Shader'XGameShaders.BRShaders.BombIconYS'
+    ModifierOverlay=Shader'VorpalShader'
     PatternPos="Vorpal $W"
     ForbiddenWeaponTypes(0)=Class'XWeapons.AssaultRifle'
     ForbiddenWeaponTypes(1)=Class'XWeapons.FlakCannon'

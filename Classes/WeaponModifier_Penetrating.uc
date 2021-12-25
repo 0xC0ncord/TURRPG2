@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Penetrating.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -95,7 +95,7 @@ defaultproperties
     MaxModifier=4
     bCanHaveZeroModifier=True
     PenetratingText="fires through enemies"
-    ModifierOverlay=Shader'XGameShaders.PlayerShaders.PlayerTrans'
+    ModifierOverlay=Shader'PenetratingShader'
     PatternPos="Penetrating $W"
     //AI
     AIRatingBonus=0

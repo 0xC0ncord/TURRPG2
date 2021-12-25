@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_Knockback.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2021 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -77,7 +77,7 @@ defaultproperties
     KnockbackText="knocks targets away"
     MinModifier=2
     MaxModifier=6
-    ModifierOverlay=Shader'TURRPG2.Overlays.PulseRedShader'
+    ModifierOverlay=Shader'KnockbackShader'
     PatternPos="$W of Knockback"
     //AI
     AIRatingBonus=0
