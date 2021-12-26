@@ -55,7 +55,7 @@ function StopEffect(xPawn P)
     DestroyEffects(P);
 }
 
-simulated function Tick(float DeltaTime)
+function Tick(float DeltaTime)
 {
     local Pawn P;
 
