@@ -16,7 +16,7 @@ defaultproperties
         FadeOut=True
         FadeIn=True
         UseRevolution=True
-        ColorMultiplierRange=(Z=(Min=0.600000,Max=0.900000))
+        ColorMultiplierRange=(X=(Min=0.600000,Max=0.900000))
         FadeOutStartTime=0.800000
         FadeInEndTime=0.200000
         MaxParticles=8

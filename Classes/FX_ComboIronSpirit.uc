@@ -14,7 +14,7 @@ defaultproperties
         StaticMesh=StaticMesh'AW-2004Particles.Weapons.PlasmaSphere'
         UseParticleColor=True
         AutomaticInitialSpawning=False
-        ColorMultiplierRange=(Z=(Min=0.800000,Max=0.800000))
+        ColorMultiplierRange=(X=(Min=0.800000,Max=0.800000))
         CoordinateSystem=PTCS_Relative
         MaxParticles=1
         StartSizeRange=(X=(Min=0.500000,Max=0.500000),Y=(Min=0.500000,Max=0.500000),Z=(Min=0.750000,Max=0.750000))
@@ -29,7 +29,7 @@ defaultproperties
         FadeOut=True
         FadeIn=True
         UseRevolution=True
-        ColorMultiplierRange=(Z=(Min=0.600000,Max=0.900000))
+        ColorMultiplierRange=(X=(Min=0.600000,Max=0.900000))
         FadeOutStartTime=0.800000
         FadeInEndTime=0.200000
         MaxParticles=8
