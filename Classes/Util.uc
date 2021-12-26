@@ -724,7 +724,11 @@ static final function Actor GetClosestPawn(Controller Other)
 //Check if a projectile belongs to the same team as a controller
 static final function bool ProjectileSameTeamC(Projectile P, Controller C)
 {
-    return (P.InstigatorController != None && static.SameTeamC(P.InstigatorController, C) || (P.Instigator != None && static.SameTeamCP(C, P.Instigator)));
+    return (
+        (P.InstigatorController == C || (C.Pawn != None && P.Instigator == C.Pawn))
+        || (P.InstigatorController != None && static.SameTeamC(P.InstigatorController, C))
+        || (P.Instigator != None && static.SameTeamCP(C, P.Instigator))
+    );
 }
 
 //
