@@ -8,6 +8,10 @@
 
 class RPGCombo extends Combo;
 
+var bool bFlagSensitive; // drain more adrenaline if owner is carrying a flag
+
+var RPGPlayerReplicationInfo RPRI;
+
 function CreateEffects(Pawn P);
 function DestroyEffects(Pawn P);
 
@@ -41,6 +45,8 @@ function Destroyed()
 
 function StartEffect(xPawn P)
 {
+    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
+
     CreateEffects(P);
 }
 
@@ -49,6 +55,37 @@ function StopEffect(xPawn P)
     DestroyEffects(P);
 }
 
+simulated function Tick(float DeltaTime)
+{
+    local Pawn P;
+
+    P = Pawn(Owner);
+
+    if(P == None || P.Controller == None)
+    {
+        Destroy();
+        return;
+    }
+
+    if(
+        bFlagSensitive
+        && P.Controller.PlayerReplicationInfo != None
+        && P.Controller.PlayerReplicationInfo.HasFlag != None
+    )
+        DeltaTime *= 2;
+
+    if(RPRI != None)
+        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
+    else
+        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
+    if (P.Controller.Adrenaline <= 0.0)
+    {
+        P.Controller.Adrenaline = 0.0;
+        Destroy();
+    }
+}
+
 defaultproperties
 {
+    bFlagSensitive=True
 }

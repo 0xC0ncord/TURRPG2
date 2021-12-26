@@ -21,7 +21,6 @@ function CreateEffects(Pawn P)
 
 function StartEffect(xPawn P)
 {
-    local RPGPlayerReplicationInfo RPRI;
     local int OldHealth;
 
     if(P.Health >= P.SuperHealthMax && P.ShieldStrength >= P.ShieldStrengthMax)
@@ -33,8 +32,6 @@ function StartEffect(xPawn P)
     }
 
     Super.StartEffect(P);
-
-    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
 
     if(P.Role == ROLE_Authority)
     {
@@ -53,6 +50,7 @@ function StartEffect(xPawn P)
 
 defaultproperties
 {
+    bFlagSensitive=False
     HealAmount=150
     ExecMessage="Heal!"
     ComboAnnouncementName="ComboHeal"

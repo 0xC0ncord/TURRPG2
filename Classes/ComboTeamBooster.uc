@@ -8,36 +8,9 @@
 
 class ComboTeamBooster extends RPGCombo;
 
-var RPGPlayerReplicationInfo RPRI;
-
 var array<xEmitter> Effects;
 var array<Controller> Controllers;
 var array<Pawn> Pawns;
-
-simulated function Tick(float DeltaTime)
-{
-    local Pawn P;
-
-    P = Pawn(Owner);
-
-    if (P == None || P.Controller == None)
-    {
-        Destroy();
-        return;
-    }
-
-    if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-        DeltaTime *= 2;
-    if(RPRI != None)
-        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-    else
-        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
-    if (P.Controller.Adrenaline <= 0.0)
-    {
-        P.Controller.Adrenaline = 0.0;
-        Destroy();
-    }
-}
 
 function StartEffect(xPawn P)
 {

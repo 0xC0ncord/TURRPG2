@@ -8,35 +8,8 @@
 
 class ComboIronSpirit extends RPGCombo;
 
-var RPGPlayerReplicationInfo RPRI;
-
 var FX_ComboIronSpirit FX;
 var FX_ComboIronSpirit_FP FX_FP;
-
-simulated function Tick(float DeltaTime)
-{
-    local Pawn P;
-
-    P = Pawn(Owner);
-
-    if (P == None || P.Controller == None)
-    {
-        Destroy();
-        return;
-    }
-
-    if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-        DeltaTime *= 2;
-    if(RPRI != None)
-        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-    else
-        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
-    if (P.Controller.Adrenaline <= 0.0)
-    {
-        P.Controller.Adrenaline = 0.0;
-        Destroy();
-    }
-}
 
 function CreateEffects(Pawn P)
 {
@@ -54,11 +27,11 @@ function DestroyEffects(Pawn P)
 
 defaultproperties
 {
-     ExecMessage="Iron Spirit!"
-     Duration=20.000000
-     ComboAnnouncementName="ComboIronSpirit"
-     keys(0)=4
-     keys(1)=4
-     keys(2)=8
-     keys(3)=8
+    ExecMessage="Iron Spirit!"
+    Duration=20.000000
+    ComboAnnouncementName="ComboIronSpirit"
+    keys(0)=4
+    keys(1)=4
+    keys(2)=8
+    keys(3)=8
 }

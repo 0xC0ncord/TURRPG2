@@ -9,39 +9,12 @@
 class RPGComboSpeed extends RPGCombo;
 
 var xEmitter LeftTrail, RightTrail;
-var RPGPlayerReplicationInfo RPRI;
-
-simulated function Tick(float DeltaTime)
-{
-    local Pawn P;
-
-    P = Pawn(Owner);
-
-    if (P == None || P.Controller == None)
-    {
-        Destroy();
-        return;
-    }
-
-    if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-        DeltaTime *= 2;
-    if(RPRI != None)
-        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-    else
-        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
-    if (P.Controller.Adrenaline <= 0.0)
-    {
-        P.Controller.Adrenaline = 0.0;
-        Destroy();
-    }
-}
 
 function CreateEffects(Pawn P)
 {
     local class<xEmitter> EmitterClass;
     local Ability_Speed SpeedAbility;
 
-    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
     if(RPRI != None)
     {
         SpeedAbility = Ability_Speed(RPRI.GetOwnedAbility(class'Ability_Speed'));
@@ -93,11 +66,12 @@ function StopEffect(xPawn P)
 
 defaultproperties
 {
-     ExecMessage="Speed!"
-     Duration=16.000000
-     ComboAnnouncementName="Speed"
-     keys(0)=1
-     keys(1)=1
-     keys(2)=1
-     keys(3)=1
+    bFlagSensitive=True
+    ExecMessage="Speed!"
+    Duration=16.000000
+    ComboAnnouncementName="Speed"
+    keys(0)=1
+    keys(1)=1
+    keys(2)=1
+    keys(3)=1
 }

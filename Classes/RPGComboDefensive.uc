@@ -10,7 +10,6 @@
 class RPGComboDefensive extends RPGCombo;
 
 var xEmitter Effect;
-var RPGPlayerReplicationInfo RPRI;
 
 function CreateEffects(Pawn P)
 {
@@ -27,35 +26,8 @@ function DestroyEffects(Pawn P)
 function StartEffect(xPawn P)
 {
     Super.StartEffect(P);
-    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
     SetTimer(0.9, true);
     Timer();
-}
-
-simulated function Tick(float DeltaTime)
-{
-    local Pawn P;
-
-    P = Pawn(Owner);
-
-    if(P == None || P.Controller == None)
-    {
-        Destroy();
-        return;
-    }
-
-    if(P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-        DeltaTime *= 2;
-
-    if(RPRI!=None)
-        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-    else
-        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
-    if (P.Controller.Adrenaline <= 0.0)
-    {
-        P.Controller.Adrenaline = 0.0;
-        Destroy();
-    }
 }
 
 function Timer()
@@ -70,10 +42,10 @@ function Timer()
 
 defaultproperties
 {
-     ExecMessage="Booster!"
-     ComboAnnouncementName="Booster"
-     keys(0)=2
-     keys(1)=2
-     keys(2)=2
-     keys(3)=2
+    ExecMessage="Booster!"
+    ComboAnnouncementName="Booster"
+    keys(0)=2
+    keys(1)=2
+    keys(2)=2
+    keys(3)=2
 }

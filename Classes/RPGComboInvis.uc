@@ -8,8 +8,6 @@
 
 class RPGComboInvis extends RPGCombo;
 
-var RPGPlayerReplicationInfo RPRI;
-
 //special handling for effects; if this combo is started,
 //destroy the effects from other combos so as to not blow
 //the player's cover!
@@ -42,30 +40,6 @@ function StopEffect(xPawn P)
             if(RPGCombo(RPGPawn(P).ActiveCombos[i]) != None)
                 RPGCombo(RPGPawn(P).ActiveCombos[i]).CreateEffects(P);
         }
-    }
-}
-
-simulated function Tick(float DeltaTime)
-{
-    local Pawn P;
-
-    P = Pawn(Owner);
-
-    if(P == None || P.Controller == None)
-    {
-        Destroy();
-        return;
-    }
-    if(P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-        DeltaTime *= 2;
-    if(RPRI != None)
-        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-    else
-        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
-    if (P.Controller.Adrenaline <= 0.0)
-    {
-        P.Controller.Adrenaline = 0.0;
-        Destroy();
     }
 }
 

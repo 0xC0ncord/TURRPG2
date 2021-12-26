@@ -9,32 +9,6 @@
 class RPGComboBerserk extends RPGCombo;
 
 var xEmitter Effect;
-var RPGPlayerReplicationInfo RPRI;
-
-simulated function Tick(float DeltaTime)
-{
-    local Pawn P;
-
-    P = Pawn(Owner);
-
-    if(P == None || P.Controller == None)
-    {
-        Destroy();
-        return;
-    }
-
-    if (P.Controller.PlayerReplicationInfo != None && P.Controller.PlayerReplicationInfo.HasFlag != None)
-        DeltaTime *= 2;
-    if(RPRI != None)
-        RPRI.DrainAdrenaline(AdrenalineCost * DeltaTime / Duration, Self);
-    else
-        P.Controller.Adrenaline -= AdrenalineCost * DeltaTime / Duration;
-    if (P.Controller.Adrenaline <= 0.0)
-    {
-        P.Controller.Adrenaline = 0.0;
-        Destroy();
-    }
-}
 
 function CreateEffects(Pawn P)
 {
@@ -53,8 +27,6 @@ function StartEffect(xPawn P)
     local int i;
 
     Super.StartEffect(P);
-
-    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
 
     if(P.Weapon != None)
         P.Weapon.StartBerserk();
@@ -88,10 +60,10 @@ function StopEffect(xPawn P)
 
 defaultproperties
 {
-     ExecMessage="Berserk!"
-     ComboAnnouncementName="Berzerk"
-     keys(0)=2
-     keys(1)=2
-     keys(2)=1
-     keys(3)=1
+    ExecMessage="Berserk!"
+    ComboAnnouncementName="Berzerk"
+    keys(0)=2
+    keys(1)=2
+    keys(2)=1
+    keys(3)=1
 }
