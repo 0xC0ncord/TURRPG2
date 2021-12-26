@@ -2488,6 +2488,7 @@ defaultproperties
     AnnouncerSounds(1)=(PackageName="TURRPG2",SoundName="ComboIronSpirit")
     AnnouncerSounds(2)=(PackageName="TURRPG2",SoundName="ComboEthereal")
     AnnouncerSounds(3)=(PackageName="TURRPG2",SoundName="ComboSiphon")
+    AnnouncerSounds(4)=(PackageName="TURRPG2",SoundName="ComboReflect")
 
     LockedVehicleOverlay=Shader'PulseRedShader'
 
