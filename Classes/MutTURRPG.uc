@@ -1115,6 +1115,7 @@ function Mutate(string MutateString, PlayerController Sender)
     local class<RPGEffect> EffectClass;
     local RPGEffect Effect;
     local RPGArtifact A;
+    local class<Combo> ComboClass;
 #endif // __DEBUG__
 
     if(Level.NetMode != NM_Standalone)
@@ -1358,6 +1359,17 @@ function Mutate(string MutateString, PlayerController Sender)
                 Sender.ClientMessage("Effect class '" $ Args[1] $ "' not found!");
             }
             return;
+        }
+        else if(xPawn(Cheat) != None && Args[0] ~= "combo" && Args.Length > 1)
+        {
+            ComboClass = class<Combo>(DynamicLoadObject("XGame." $ Args[1], class'Class'));
+            if(ComboClass == None)
+                ComboClass = class<Combo>(DynamicLoadObject("TURRPG2." $ Args[1], class'Class'));
+            if(ComboClass == None)
+                ComboClass = class<Combo>(DynamicLoadObject(Args[1], class'Class'));
+
+            if(ComboClass != None)
+                xPawn(Cheat).DoCombo(ComboClass);
         }
         else if(Cheat != None && Args[0] ~= "give" && Args.Length > 1)
         {
