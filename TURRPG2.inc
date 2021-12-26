@@ -32,6 +32,11 @@
 // for more info.
 #define DUMPARR(x, y) for(y = 0; y < x.Length; y++){ SHOWARR(x, y); }
 
+// DUMPSTATICARR takes an array in ARG1, an iterator in ARG2,
+// and an array length in ARG3 and prints the contents of the
+// array. See SHOWARR for more info.
+#define DUMPSTATICARR(x, y, z) for(y = 0; y < z; y++){ SHOWARR(x, y); }
+
 #else
 #define LOGD
 #define WARND
