@@ -4,7 +4,7 @@
 #mode string QQQ "$$" "$$"
 #mode push
 
-#define __VERBOSE__ 0
+#define __VERBOSE__ 1
 
 #ifdef __DEBUG__
 #define LOGD(x) Log($$"(__FILE__:__LINE__)"$$ @ x);
