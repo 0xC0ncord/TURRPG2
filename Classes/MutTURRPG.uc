@@ -934,19 +934,28 @@ function bool CheckPDP(Pawn Other, class<Weapon> WeaponType) {
 
 function class<RPGWeaponModifier> GetRandomWeaponModifier(class<Weapon> WeaponType, Pawn Other, optional bool bForceModifier)
 {
-    local int x, Chance;
+    local int x, Chance, Tries;
 
     //Generate
-    //TODO: fair algorithm (this one favors those first in the list)
-    if(WeaponModifiers.Length > 0) {
+    if(WeaponModifiers.Length > 0)
+    {
         if(bForceModifier || FRand() < GameSettings.WeaponModifierChance)
         {
-            Chance = Rand(TotalModifierChance);
-            for (x = 0; x < WeaponModifiers.Length; x++)
+            while(Tries < 10)
             {
-                Chance -= WeaponModifiers[x].Chance;
-                if (Chance < 0 && WeaponModifiers[x].ModifierClass.static.AllowedFor(WeaponType, Other))
-                    return WeaponModifiers[x].ModifierClass;
+                Tries++;
+
+                Chance = Rand(TotalModifierChance);
+                for (x = 0; x < WeaponModifiers.Length; x++)
+                {
+                    Chance -= WeaponModifiers[x].Chance;
+                    if (Chance < 0)
+                    {
+                        if(WeaponModifiers[x].ModifierClass.static.AllowedFor(WeaponType, Other))
+                            return WeaponModifiers[x].ModifierClass;
+                        break;
+                    }
+                }
             }
         }
     }
