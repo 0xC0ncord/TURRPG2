@@ -33,8 +33,6 @@ function StartEffect(xPawn P)
 {
     Super.StartEffect(P);
 
-    RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(P.Controller);
-
     P.AirControl  *= (1.0 + SpeedBonus);
     P.GroundSpeed *= (1.0 + SpeedBonus);
     P.WaterSpeed  *= (1.0 + SpeedBonus);
