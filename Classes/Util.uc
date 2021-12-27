@@ -338,6 +338,28 @@ static function SetVehicleWeaponFireRate(Actor W, float Modifier)
     }
 }
 
+static function AdjustVehicleWeaponFireRate(Actor W, float Modifier)
+{
+    if(W != None)
+    {
+        if(ONSWeapon(W) != None)
+        {
+            ONSWeapon(W).FireInterval /= Modifier;
+            ONSWeapon(W).AltFireInterval /= Modifier;
+            return;
+        }
+        else if(Weapon(W) != None)
+        {
+            AdjustWeaponFireRate(Weapon(W), Modifier);
+            return;
+        }
+        else
+        {
+            Warn("Could not set fire rate for " $ W $ "!");
+        }
+    }
+}
+
 static function function SetVehicleFireRate(Vehicle V, float Modifier)
 {
     local int i;
@@ -368,6 +390,42 @@ static function function SetVehicleFireRate(Vehicle V, float Modifier)
                 if(Weapon(Inv) != None)
                 {
                     SetVehicleWeaponFireRate(Weapon(Inv), Modifier);
+                }
+            }
+        }
+    }
+}
+
+static function function AdjustVehicleFireRate(Vehicle V, float Modifier)
+{
+    local int i;
+    local ONSVehicle OV;
+    local ONSWeaponPawn WP;
+    local Inventory Inv;
+
+    OV = ONSVehicle(V);
+    if (OV != None)
+    {
+        for(i = 0; i < OV.Weapons.length; i++)
+        {
+            AdjustVehicleWeaponFireRate(OV.Weapons[i], Modifier);
+        }
+    }
+    else
+    {
+        WP = ONSWeaponPawn(V);
+        if (WP != None)
+        {
+            AdjustVehicleWeaponFireRate(WP.Gun, Modifier);
+        }
+        else //some other type of vehicle (usually ASVehicle) using standard weapon system
+        {
+            //at this point, the vehicle's Weapon is not yet set, but it should be its only inventory
+            for(Inv = V.Inventory; Inv != None; Inv = Inv.Inventory)
+            {
+                if(Weapon(Inv) != None)
+                {
+                    AdjustVehicleWeaponFireRate(Weapon(Inv), Modifier);
                 }
             }
         }
