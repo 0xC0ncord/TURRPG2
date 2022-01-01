@@ -2491,6 +2491,8 @@ defaultproperties
     AnnouncerSounds(4)=(PackageName="TURRPG2",SoundName="ComboReflect")
     AnnouncerSounds(5)=(PackageName="TURRPG2",SoundName="ComboNimble")
     AnnouncerSounds(6)=(PackageName="TURRPG2",SoundName="ComboOverload")
+    //the male one sounds better
+    AnnouncerSounds(7)=(PackageName="AnnouncerMale2K4",SoundName="Holograph")
 
     LockedVehicleOverlay=Shader'PulseRedShader'
 
