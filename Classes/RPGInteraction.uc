@@ -99,7 +99,6 @@ var Color StatusIconOverlay;
 //Pre-calculated values for PostRender - updated if the canvas size or settings changed
 var Vec2 CanvasSize, FontScale, ArtifactIconPos, StatusIconPos;
 var Rect ExpBarRect;
-var Font TextFont;
 var float ArtifactIconSize;
 
 //Labs stuff
@@ -110,7 +109,6 @@ var int SAOFontScreenWidthMedium[9];
 event Initialized()
 {
     CheckBindings();
-    TextFont = Font(DynamicLoadObject("UT2003Fonts.jFontSmall", class'Font'));
 
     //Load client settings
     Settings = new(None, "TURRPG2") class'RPGSettings';
@@ -550,8 +548,8 @@ function UpdateCanvas(Canvas Canvas)
     CanvasSize.X = Canvas.ClipX;
     CanvasSize.Y = Canvas.ClipY;
 
-    FontScale.X = Canvas.ClipX / 1024.0f;
-    FontScale.Y = Canvas.ClipY / 768.0f;
+    FontScale.X = (Canvas.ClipX / 1024.0f) * 0.35;
+    FontScale.Y = (Canvas.ClipY / 768.0f) * 0.35;
 
     Canvas.FontScaleX = FontScale.X;
     Canvas.FontScaleY = FontScale.Y;
@@ -560,7 +558,7 @@ function UpdateCanvas(Canvas Canvas)
 
     ExpBarRect.X = Canvas.ClipX * Settings.ExpBarX;
     ExpBarRect.Y = Canvas.ClipY * Settings.ExpBarY;
-    ExpBarRect.W = FMax(XL + 9.0f * FontScale.X, 135.0f * FontScale.X);
+    ExpBarRect.W = FMax(XL + 9.0f * FontScale.X * (1 / 0.35), 135.0f * FontScale.X * (1 / 0.35));
     ExpBarRect.H = Canvas.ClipY / 48.0f;
 
     StatusIconSize.X = default.StatusIconSize.X * Canvas.ClipX / 640.0f;
@@ -743,8 +741,7 @@ function PostRender(Canvas Canvas)
     if(HUD_Assault(HUD) != None && !HUD_Assault(HUD).ShouldShowObjectiveBoard())
         DrawAdrenaline(Canvas, HUD);
 
-    if(TextFont != None)
-        Canvas.Font = TextFont;
+    Canvas.Font = HUD.GetMediumFontFor(Canvas);
 
     if(bUpdateCanvas || CanvasSize.X != Canvas.ClipX || CanvasSize.Y != Canvas.ClipY)
         UpdateCanvas(Canvas);
@@ -829,7 +826,7 @@ function PostRender(Canvas Canvas)
                 Canvas.DrawTile(
                     Material'InterfaceContent.Hud.SkinA',
                     ExpBarRect.W * XL,
-                    15.0f * Canvas.FontScaleY,
+                    15.0f * Canvas.FontScaleY * (1 / 0.35),
                     836, 454, -386 * XL, 36);
             }
 
@@ -1039,10 +1036,7 @@ function PostRender(Canvas Canvas)
             }
 
             //Reset
-            if(TextFont != None)
-                Canvas.Font = TextFont;
-            else
-                Canvas.Font = Canvas.default.Font;
+            Canvas.Font = Canvas.default.Font;
             Canvas.FontScaleX = FontScale.X;
             Canvas.FontScaleY = FontScale.Y;
         }
