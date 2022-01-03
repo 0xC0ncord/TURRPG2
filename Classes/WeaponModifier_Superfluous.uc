@@ -49,9 +49,9 @@ simulated function BuildDescription()
     Super.BuildDescription();
 
     if(ONSMineLayer(Weapon) != None)
-        AddToDescription(MinesText, BonusPerLevel);
+        Description $= ", +" $ Repl(MinesText, "$1", int(2 * Modifier * BonusPerLevel));
     else if(ONSGrenadeLauncher(Weapon) != None)
-        AddToDescription(GrenadesText, BonusPerLevel);
+        Description $= ", +" $ Repl(GrenadesText, "$1", int(2 * Modifier * BonusPerLevel));
 }
 
 simulated static function string StaticGetDescription(int Modifier)
@@ -60,7 +60,7 @@ simulated static function string StaticGetDescription(int Modifier)
 
     Description = Super.StaticGetDescription(Modifier);
 
-    StaticAddToDescription(Description, Modifier, default.SuperfluousText, default.BonusPerLevel);
+    Description $= ", +" $ Repl(default.SuperfluousText, "$1", int(2 * Modifier * default.BonusPerLevel));
 
     return Description;
 }
