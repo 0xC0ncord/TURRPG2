@@ -314,15 +314,17 @@ function bool SelectModifier(GUIComponent Sender)
             neModifierLevel.DisableMe();
     }
 
-    //update description text
-    lbDesc.MyScrollText.bNoTeletype = false;
-    lbDesc.SetContent(GetDescriptionText());
-
+    //update modifier level
     bIgnoreNextChange = true;
     neModifierLevel.SetValue(Clamp(SelectedModifierLevel, SelectedModifier.default.MinModifier, SelectedModifier.default.MaxModifier));
     bIgnoreNextChange = false;
 
-    neModifierLevel.SetValue(neModifierLevel.GetValue()); //force check if zero modifier is allowed and update description
+    //hack to force modifier update if zero and zero is not allowed for this modifier
+    InternalOnChange(neModifierLevel);
+
+    //update description text, with teletype
+    lbDesc.MyScrollText.bNoTeletype = false;
+    lbDesc.SetContent(GetDescriptionText());
 
     if(bInitialized)
         CheckFavorite();
