@@ -113,6 +113,7 @@ defaultproperties
 {
     QuadShotText="quad-shot"
     DamageBonus=-0.15
+    PatternPos="Quad-shot $W"
     bCanHaveZeroModifier=True
     ModifierOverlay=Shader'QuadShotShader'
     //AI
