@@ -108,7 +108,7 @@ defaultproperties
     Modifier=0 //max bonus
 
     SelfHealingCap=0
-    SelfHealingMultiplier=0.25
+    SelfHealingMultiplier=1.0
 
     bHarmful=False
     bAllowOnEnemies=False
