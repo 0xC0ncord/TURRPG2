@@ -113,7 +113,7 @@ defaultproperties
     EjectCooldown(3)=0.00
     AbilityName="Ejector Seat"
     Description="Ejects you from your vehicle when it's destroyed."
-    LevelDescription(0)="Level 1 ejects you from any seat in a vehicle as well as from any defensive turret when it is destroyed. This effect will not activate again until after a cooldown of 5 minutes.."
+    LevelDescription(0)="Level 1 ejects you from any seat in a vehicle as well as from any defensive turret when it is destroyed. This effect will not activate again until after a cooldown of 5 minutes."
     LevelDescription(1)="Level 2 reduces the cooldown to 3 minutes."
     LevelDescription(2)="Level 3 reduces the cooldown to 1 minute."
     LevelDescription(3)="Level 4 eliminates the cooldown entirely."
