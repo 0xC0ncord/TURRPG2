@@ -68,6 +68,10 @@ var int LastSelectedClass, LastSelectedAbility;
 var bool bInitialized;
 var bool bIgnoreNextInit;
 
+var array<class<Actor> > AbilityIconEffectClasses;
+var array<Actor> AbilityIconEffects;
+var vector AbilityIconEffectsOffset;
+
 var Color DisabledColor;
 var Color AvailableColor;
 var Color PurchasedColor;
@@ -109,7 +113,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     Abilities.bHotTrackSound = false;
     Abilities.SelectedStyle = MyController.GetStyle("RPGAbilityListSelected", FontScale);
     Abilities.OnClickSound = CS_None;
-    Abilities.OnDraw = DrawAbilityRelationships;
+    Abilities.OnDraw = AbilitiesOnDraw;
     Abilities.OnDrawItem = DrawAbilityIcon;
 
     cbTree.Edit.bReadOnly = true;
@@ -151,6 +155,9 @@ function InitMenu()
 {
     local int i, x;
     local int OwnedIdx;
+
+    for(i = 0; i < AbilityIconEffectClasses.Length; i++)
+        AbilityIconEffects[i] = RPGMenu.RPRI.Controller.Spawn(AbilityIconEffectClasses[i]);
 
     if(!bInitialized)
     {
@@ -456,6 +463,13 @@ static final function CalcRelationshipLine(GUIMultiOptionList List, GridPosition
     }
 }
 
+final function bool AbilitiesOnDraw(Canvas Canvas)
+{
+    DrawAbilityIconEffects(Canvas);
+    DrawAbilityRelationships(Canvas);
+    return false;
+}
+
 final function bool DrawAbilityRelationships(Canvas Canvas)
 {
     local int i, x, y;
@@ -534,6 +548,61 @@ final function bool DrawAbilityRelationships(Canvas Canvas)
 
     return false;
 }
+
+final function bool DrawAbilityIconEffects(Canvas Canvas)
+{
+    local float Width, Height;
+    local vector CamPos;
+    local rotator CamRot;
+    local vector X, Y, Z;
+    local int i;
+    local RPGMenu_AbilityListMenuOption Option;
+    local float IconSize;
+    local Actor A;
+
+    Width = Abilities.ItemWidth;
+    Height = Abilities.ItemHeight;
+
+    Canvas.GetCameraLocation(CamPos, CamRot);
+    GetAxes(CamRot, X, Y, Z);
+
+    for(i = Abilities.Top; i < Abilities.Top + Abilities.ItemsPerPage; i++)
+    {
+        if(i >= Abilities.ItemCount)
+            break;
+
+        Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(i));
+        if(Option == None || Option.LinkedAbility == None)
+            continue;
+        IconSize = FMin(Width, Height) * Option.LinkedAbility.IconScale;
+
+        A = GetAbilityIconEffect(Option);
+
+        if(A != None)
+        {
+            A.SetLocation(CamPos
+                + (AbilityIconEffectsOffset.X * X)
+                + (AbilityIconEffectsOffset.Y * Y)
+                + (AbilityIconEffectsOffset.Z * Z)
+            );
+            A.SetRotation(CamRot);
+
+            Canvas.DrawActorClipped(
+                A,
+                false,
+                Option.MyButton.ActualLeft() - IconSize,
+                Option.MyButton.ActualTop() - IconSize,
+                IconSize * 3,
+                IconSize * 3,
+                true,
+                90.0);
+        }
+    }
+
+    return false;
+}
+
+final function Actor GetAbilityIconEffect(RPGMenu_AbilityListMenuOption Option);
 
 final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float W, float HT, bool bSelected, bool bPending)
 {
@@ -634,6 +703,12 @@ final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float 
 
 function CloseMenu()
 {
+    local int i;
+
+    for(i = 0; i < AbilityIconEffects.Length; i++)
+        AbilityIconEffects[i].Destroy();
+    AbilityIconEffects.Length = 0;
+
     Abilities.Clear();
     AbilityInfos.Length = 0;
 }
@@ -748,6 +823,7 @@ defaultproperties
     Text_Description="Description"
     Text_NoClassSelected="No class ability tree selected"
     Text_Cost="Cost"
+    AbilityIconEffectsOffset=(X=40.000000)
     DisabledColor=(R=32,G=32,B=32,A=255)
     BlockedColor=(R=255,A=255)
     AvailableColor=(R=224,G=255,B=224,A=255)
