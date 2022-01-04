@@ -275,21 +275,7 @@ final function LoadClassTree(class<RPGClass> RPGClass)
 
         if(AbilityInfos[i].LinkedAbility != None)
         {
-            Tip[0] = AbilityInfos[i].Name;
-            if(AbilityInfos[i].MaxLevel == 0)
-                Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
-            else
-                Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].MaxLevel;
-            if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost ||
-                AbilityInfos[i].Cost == class'RPGAbility'.default.ClassRequirementsUnmetCost ||
-                AbilityInfos[i].Cost == class'RPGAbility'.default.RequiredAbilityUnpurchasedCost ||
-                AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
-            )
-                Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
-            else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedCost || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
-                Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
-            else
-                Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
+            Tip = SetupToolTip(AbilityInfos[i]);
 
             Option.MyButton.ToolTip.SetTip("a");
             Option.ToolTip.Lines.Length = 0;
@@ -322,21 +308,7 @@ final function ReloadClassTree()
             continue;
         Option = RPGMenu_AbilityListMenuOption(Abilities.GetItem(idx));
 
-        Tip[0] = AbilityInfos[i].Name;
-        if(AbilityInfos[i].MaxLevel == 0)
-            Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].LinkedAbility.MaxLevel;
-        else
-            Tip[1] = Text_Level $ ":" @ AbilityInfos[i].LinkedAbility.AbilityLevel $ "/" $ AbilityInfos[i].MaxLevel;
-        if(AbilityInfos[i].Cost == class'RPGAbility'.default.CantBuyCost ||
-            AbilityInfos[i].Cost == class'RPGAbility'.default.ClassRequirementsUnmetCost ||
-            AbilityInfos[i].Cost == class'RPGAbility'.default.RequiredAbilityUnpurchasedCost ||
-            AbilityInfos[i].Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
-        )
-            Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
-        else if(AbilityInfos[i].NextLevel == 0 || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedCost || AbilityInfos[i].Cost == class'RPGAbility'.default.MaxedForClassCost)
-            Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
-        else
-            Tip[2] = Text_Cost $ ":" @ AbilityInfos[i].Cost;
+        Tip = SetupToolTip(AbilityInfos[i]);
 
         Option.MyButton.ToolTip.SetTip("a");
         Option.ToolTip.Lines.Length = 0;
@@ -345,6 +317,31 @@ final function ReloadClassTree()
     }
 
     CalculateAbilityStates();
+}
+
+final function array<string> SetupToolTip(AbilityInfo AbilityInfo)
+{
+    local array<string> Tip;
+
+    Tip[0] = AbilityInfo.Name;
+    if(AbilityInfo.MaxLevel == 0)
+        Tip[1] = Text_Level $ ":" @ AbilityInfo.LinkedAbility.AbilityLevel $ "/" $ AbilityInfo.LinkedAbility.MaxLevel;
+    else
+        Tip[1] = Text_Level $ ":" @ AbilityInfo.LinkedAbility.AbilityLevel $ "/" $ AbilityInfo.MaxLevel;
+    if(AbilityInfo.Cost == class'RPGAbility'.default.CantBuyCost
+        || AbilityInfo.Cost == class'RPGAbility'.default.ClassRequirementsUnmetCost
+        || AbilityInfo.Cost == class'RPGAbility'.default.RequiredAbilityUnpurchasedCost
+        || AbilityInfo.Cost == class'RPGAbility'.default.ForbiddenAbilityPurchasedCost
+    )
+        Tip[2] = Text_Cost $ ":" @ Text_CantBuy;
+    else if(AbilityInfo.NextLevel == 0
+        || AbilityInfo.Cost == class'RPGAbility'.default.MaxedCost
+        || AbilityInfo.Cost == class'RPGAbility'.default.MaxedForClassCost)
+        Tip[2] = Text_Cost $ ":" @ Text_AlreadyMax;
+    else
+        Tip[2] = Text_Cost $ ":" @ AbilityInfo.Cost;
+
+    return Tip;
 }
 
 final function CalculateAbilityStates()
