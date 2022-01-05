@@ -53,7 +53,7 @@ defaultproperties
         SizeScale(2)=(RelativeTime=1.000000,RelativeSize=0.150000)
         StartSizeRange=(X=(Min=32.000000,Max=48.000000))
         InitialParticlesPerSecond=9.103000
-        Texture=Texture'UC2_Flamesq2'
+        Texture=Texture'ONSBPTextures.fX.Fire'
         TextureUSubdivisions=4
         TextureVSubdivisions=4
         LifetimeRange=(Min=0.674000,Max=0.674000)
