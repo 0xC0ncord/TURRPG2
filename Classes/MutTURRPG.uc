@@ -1328,10 +1328,10 @@ function Mutate(string MutateString, PlayerController Sender)
             } else {
                 WMClass = class<RPGWeaponModifier>(DynamicLoadObject("TURRPG2.WeaponModifier_" $ Args[1], class'Class'));
                 if(WMClass != None) {
-                    x = WMClass.static.GetRandomModifierLevel();
-
                     if(Args.Length > 2 && Args[2] != "")
                         x = int(Args[2]);
+                    else
+                        x = WMClass.static.GetRandomModifierLevel();
 
                     WM = WMClass.static.Modify(
                         Cheat.Weapon, x, true, true);
