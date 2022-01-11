@@ -212,6 +212,10 @@ function SetWeapon(Weapon W) {
     Weapon = W;
     Instigator = W.Instigator;
 
+    // WOP: ensure that BaseChange() gets called if the weapon is destroyed
+    // so we can act on it as early as possible during the destroy process
+    SetBase(W);
+
     if(Instigator.PlayerReplicationInfo != None) {
         RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
     } else {
