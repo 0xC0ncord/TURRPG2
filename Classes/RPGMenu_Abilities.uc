@@ -823,7 +823,7 @@ defaultproperties
     Text_Description="Description"
     Text_NoClassSelected="No class ability tree selected"
     Text_Cost="Cost"
-    AbilityIconEffectsOffset=(X=40.000000)
+    AbilityIconEffectsOffset=(X=40.000000,Y=2.000000,Z=-2.000000)
     DisabledColor=(R=32,G=32,B=32,A=255)
     BlockedColor=(R=255,A=255)
     AvailableColor=(R=224,G=255,B=224,A=255)
