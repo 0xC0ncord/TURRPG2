@@ -16,6 +16,7 @@ class RPGWeaponModifier extends ReplicationInfo
 var Weapon Weapon;
 var RPGPlayerReplicationInfo RPRI;
 var bool bActive;
+var float OldFireTime[2];
 
 //Modifier level
 var config int MinModifier, MaxModifier;
@@ -180,6 +181,8 @@ static function int GetRandomPositiveModifierLevel(optional int Minimum) {
     local int x;
 
     if(default.bCanHaveZeroModifier) {
+        // WeaponFire calls DoFireEffect() on the tick immediately
+        // after the tick where fire was pressed
         Minimum = Max(0, Minimum);
     } else {
         Minimum = Max(1, Minimum);
@@ -250,6 +253,8 @@ function SetModifier(int x, optional bool bIdentify) {
 
 simulated event Tick(float dt) {
     local xPawn X;
+    local int i;
+    local WeaponFire WF;
 
     if(Role == ROLE_Authority) {
         if(Weapon == None) {
@@ -282,6 +287,17 @@ simulated event Tick(float dt) {
                 } else if(Weapon.OverlayMaterial != ModifierOverlay) {
                     SetOverlay();
                 }
+            }
+
+            // WeaponFire hook
+            for(i = 0; i < Weapon.NUM_FIRE_MODES; i++) {
+                WF = Weapon.GetFireMode(i);
+                // WeaponFire calls DoFireEffect() on the tick immediately
+                // after the tick where fire was pressed
+                if(WF.NextFireTime > OldFireTime[i] && WF.NextFireTime != Level.TimeSeconds) {
+                    WeaponFire(i);
+                }
+                OldFireTime[i] = WF.NextFireTime;
             }
 
             RPGTick(dt);
@@ -411,7 +427,6 @@ simulated function PostRender(Canvas C); //called client-side by the Interaction
 function RPGTick(float dt); //called only if weapon is active
 simulated function ClientRPGTick(float dt);
 
-//TODO hook
 function WeaponFire(byte Mode); //called when weapon just fired
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType) {
