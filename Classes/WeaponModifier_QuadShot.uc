@@ -91,6 +91,28 @@ simulated function StopQuadShot(WeaponFire FireMode)
     }
 }
 
+function WeaponFire(byte Mode)
+{
+    local WeaponFire WF;
+
+    if(!bIdentified)
+        Identify();
+
+    WF = Weapon.GetFireMode(Mode);
+
+    if(ProjectileFire(WF) != None
+        || LinkFire(WF) != None
+        || SniperZoom(WF) != None
+    )
+    {
+        return;
+    }
+
+    WF.DoFireEffect();
+    WF.DoFireEffect();
+    WF.DoFireEffect();
+}
+
 simulated function BuildDescription()
 {
     Super.BuildDescription();
