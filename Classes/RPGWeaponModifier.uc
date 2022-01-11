@@ -205,8 +205,6 @@ simulated event PostBeginPlay() {
         if(Weapon == None) {
             Warn(Self @ "has no weapon!");
             Destroy();
-        } else {
-            SetOwner(Weapon.Instigator);
         }
     }
 }
