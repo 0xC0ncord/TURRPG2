@@ -558,7 +558,7 @@ function UpdateCanvas(Canvas Canvas)
 
     ExpBarRect.X = Canvas.ClipX * Settings.ExpBarX;
     ExpBarRect.Y = Canvas.ClipY * Settings.ExpBarY;
-    ExpBarRect.W = FMax(XL + 9.0f * FontScale.X * (1 / 0.35), 135.0f * FontScale.X * (1 / 0.35));
+    ExpBarRect.W = FMax(XL * 3f + 9.0f * FontScale.X, 135.0f * FontScale.X);
     ExpBarRect.H = Canvas.ClipY / 48.0f;
 
     StatusIconSize.X = default.StatusIconSize.X * Canvas.ClipX / 640.0f;
@@ -746,11 +746,6 @@ function PostRender(Canvas Canvas)
     if(bUpdateCanvas || CanvasSize.X != Canvas.ClipX || CanvasSize.Y != Canvas.ClipY)
         UpdateCanvas(Canvas);
 
-    Canvas.FontScaleX = FontScale.X;
-    Canvas.FontScaleY = FontScale.Y;
-
-    Canvas.TextSize(LevelText @ RPRI.RPGLevel, XL, YL);
-
     Canvas.Style = 5; //STY_Alpha
 
     //Draw artifact radial menu
@@ -811,6 +806,11 @@ function PostRender(Canvas Canvas)
             Canvas.DrawIcon(Texture'Pointer', 1);
         }
     }
+
+    Canvas.FontScaleX = FontScale.X;
+    Canvas.FontScaleY = FontScale.Y;
+
+    Canvas.TextSize(LevelText @ RPRI.RPGLevel, XL, YL);
 
     //Draw exp bar
     if(!Settings.bHideExpBar)
