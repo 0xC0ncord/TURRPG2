@@ -24,13 +24,42 @@ var float PassiveDamageBonus, PassiveDamageReduction;
 
 var bool bSelect;
 
+//Client
+var Interaction_ConjurerAwareness Interaction;
+
 var localized string MonsterPreText, MonsterPostText;
+
+replication
+{
+    reliable if(Role == ROLE_Authority)
+        ClientCreateInteraction;
+}
+
+simulated function ClientCreateInteraction()
+{
+    local PlayerController PC;
+
+    if(Level.NetMode != NM_DedicatedServer)
+    {
+        if(Interaction == None)
+        {
+            PC = Level.GetLocalPlayerController();
+            if(PC == None)
+                return;
+
+            Interaction = Interaction_ConjurerAwareness(
+                PC.Player.InteractionMaster.AddInteraction(string(class'Interaction_ConjurerAwareness'), PC.Player));
+        }
+    }
+}
 
 function ModifyPawn(Pawn Other)
 {
     local RPGArtifact A;
 
     Super.ModifyPawn(Other);
+
+    ClientCreateInteraction();
 
     A = Artifact_ConjurerSummon(Other.FindInventoryType(class'Artifact_ConjurerSummon'));
     if(A != None)
@@ -45,6 +74,18 @@ function ModifyPawn(Pawn Other)
     A = Other.Spawn(class'Artifact_ConjurerSummon');
     if(A != None)
         A.GiveTo(Other);
+}
+
+simulated event Destroyed()
+{
+    if(Interaction != None)
+    {
+        Interaction.GlobalInteraction = None;
+        Interaction.Master.RemoveInteraction(Interaction);
+        Interaction = None;
+    }
+
+    Super.Destroyed();
 }
 
 function ModifyArtifact(RPGArtifact A)
