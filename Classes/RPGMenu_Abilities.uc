@@ -1,6 +1,6 @@
 //=============================================================================
 // RPGMenu_Abilities.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2022 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -602,7 +602,12 @@ final function bool DrawAbilityIconEffects(Canvas Canvas)
     return false;
 }
 
-final function Actor GetAbilityIconEffect(RPGMenu_AbilityListMenuOption Option);
+final function Actor GetAbilityIconEffect(RPGMenu_AbilityListMenuOption Option)
+{
+    if(RPGClass(Option.LinkedAbility) != None)
+        return AbilityIconEffects[1];
+    return AbilityIconEffects[0];
+}
 
 final function DrawAbilityIcon(Canvas Canvas, int Item, float X, float Y, float W, float HT, bool bSelected, bool bPending)
 {
@@ -823,6 +828,9 @@ defaultproperties
     Text_Description="Description"
     Text_NoClassSelected="No class ability tree selected"
     Text_Cost="Cost"
+    AbilityIconEffectClasses(0)=Class'FX_AbilityIconGlowBasic'
+    AbilityIconEffectClasses(1)=Class'FX_AbilityIconGlowSuper'
+    AbilityIconEffectClasses(2)=Class'FX_AbilityIconGlowUltra'
     AbilityIconEffectsOffset=(X=40.000000,Y=2.000000,Z=-2.000000)
     DisabledColor=(R=32,G=32,B=32,A=255)
     BlockedColor=(R=255,A=255)
