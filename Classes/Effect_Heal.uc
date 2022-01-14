@@ -114,7 +114,7 @@ defaultproperties
     bAllowOnEnemies=False
 
     EffectOverlay=Shader'TURRPG2.Overlays.PulseBlueShader'
-    EffectSound=Sound'TURRPG2.Effects.Heal'
+    EffectSound=Sound'PickupSounds.HealthPack'
     EffectClass=class'FX_Heal'
 
     EffectMessageClass=class'EffectMessage_Heal'
