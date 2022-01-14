@@ -767,7 +767,7 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
 /*
     Called by RPGEffect when an effect has been applied.
 */
-function ModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration);
+function ModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration, optional float NewModifier);
 
 defaultproperties
 {

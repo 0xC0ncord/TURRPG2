@@ -15,7 +15,7 @@ struct NullifyValueStruct
 };
 var array<NullifyValueStruct> NullifyValues;
 
-function ModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration)
+function ModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration, optional float NewModifier)
 {
     local Inventory Inv, NextInv;
 

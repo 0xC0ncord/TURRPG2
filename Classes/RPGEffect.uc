@@ -225,8 +225,8 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
             if(NewModifier > Effect.Modifier)
                 Effect.Modifier = NewModifier;
 
-            AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
-            CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
+            AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
+            CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
         }
         else
         {
@@ -244,8 +244,8 @@ static function RPGEffect Create(Pawn Other, optional Controller Causer, optiona
                 if(NewModifier > Effect.Modifier)
                     Effect.Modifier = NewModifier;
 
-                AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
-                CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration);
+                AbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
+                CauserAbilitiesModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
 
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Other.Controller);
                 if(RPRI != None)
@@ -442,7 +442,7 @@ state Activated
     }
 }
 
-static final function AbilitiesModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration)
+static final function AbilitiesModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration, optional float NewModifier)
 {
     local int i;
     local RPGPlayerReplicationInfo RPRI;
@@ -450,10 +450,10 @@ static final function AbilitiesModifyEffect(RPGEffect Effect, Pawn Other, option
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Other.Controller);
     if(RPRI != None)
         for(i = 0; i < RPRI.Abilities.Length; i++)
-            RPRI.Abilities[i].ModifyEffect(Effect, Other, Causer, OverrideDuration);
+            RPRI.Abilities[i].ModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
 }
 
-static final function CauserAbilitiesModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration)
+static final function CauserAbilitiesModifyEffect(RPGEffect Effect, Pawn Other, optional Controller Causer, optional float OverrideDuration, optional float NewModifier)
 {
     local int i;
     local RPGPlayerReplicationInfo RPRI;
@@ -461,7 +461,7 @@ static final function CauserAbilitiesModifyEffect(RPGEffect Effect, Pawn Other, 
     RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(Causer);
     if(RPRI != None)
         for(i = 0; i < RPRI.Abilities.Length; i++)
-            RPRI.Abilities[i].ModifyEffect(Effect, Other, Causer, OverrideDuration);
+            RPRI.Abilities[i].ModifyEffect(Effect, Other, Causer, OverrideDuration, NewModifier);
 }
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Victim, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType);
