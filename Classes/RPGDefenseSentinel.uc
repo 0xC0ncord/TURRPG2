@@ -1,6 +1,6 @@
 //=============================================================================
 // RPGDefenseSentinel.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2022 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -15,6 +15,7 @@ var int AdrenalineHealingLevel;
 var int ResupplyLevel;
 var int ArmorHealingLevel;
 var float SpiderBoostLevel;
+var bool bHasTransRepair;
 
 var float HealthHealingAmount;       // the amount of health the defense sentinel heals per level (% of max health)
 var float ShieldHealingAmount;       // the amount of shield the defense sentinel heals per level (% of max shield)

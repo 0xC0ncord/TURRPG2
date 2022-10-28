@@ -1,6 +1,6 @@
 //=============================================================================
 // WeaponModifier_EngineerLink.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2022 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -10,8 +10,11 @@ class WeaponModifier_EngineerLink extends RPGWeaponModifier;
 
 var array<float> DamageBonusFromLinks;
 var float ShieldBoostingXPPercent;
+var float SpiderGrowthRate;
 
 var Ability_ShieldBoosting Ability;
+var float SpiderBoostLevel;
+var bool bHasTransRepair;
 
 var localized string ProjectileDamageText, ShaftDamageText, ProjectileSpeedText, FireRateText, ShaftRangeText;
 
@@ -37,12 +40,36 @@ function BoostShield(Pawn P, int Amount)
     }
 }
 
-function Ability_ShieldBoosting GetBoostingAbility()
+function BoostMine(ONSMineProjectile Mine, float Rate)
+{
+    local vector NewLoc;
+
+    // this code based on the mutator by Rachel 'Angel Mapper' Cordone
+    NewLoc = Mine.Location;
+    NewLoc.Z += 2 * Rate;
+    Mine.SetDrawScale(Mine.DrawScale * Rate);
+    Mine.SetCollisionSize(Mine.CollisionRadius * Rate, Mine.CollisionHeight * Rate);
+    Mine.SetLocation(NewLoc);
+    Mine.DamageRadius *= Rate;
+    Mine.Damage *= Rate;
+    Mine.MomentumTransfer *= Rate;
+    Mine.SetPhysics(PHYS_Falling);
+}
+
+function Ability_ShieldBoosting GetShieldBoostingAbility()
 {
     if(RPRI == None)
         return None;
 
     return Ability_ShieldBoosting(RPRI.GetAbility(class'Ability_ShieldBoosting'));
+}
+
+function int GetSpiderSteroidsLevel()
+{
+    if(RPRI == None)
+        return 0;
+
+    return RPRI.HasAbility(class'Ability_SpiderSteroids');
 }
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
@@ -58,7 +85,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn Ins
 
     if(Ability == None)
     {
-        Ability = GetBoostingAbility();
+        Ability = GetShieldBoostingAbility();
         if(Ability == None || Ability.AbilityLevel == 0 || !Ability.bAllowed)
             return;
     }
@@ -147,6 +174,7 @@ defaultproperties
      DamageBonusFromLinks(2)=2.250000
      DamageBonusFromLinks(3)=2.500000
      ShieldBoostingXPPercent=0.010000
+     SpiderGrowthRate=1.100000
      ProjectileDamageText="$1 projectile damage"
      ShaftDamageText="$1 shaft damage/repair"
      ProjectileSpeedText="$1 projectile speed"
