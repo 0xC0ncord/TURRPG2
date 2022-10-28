@@ -33,6 +33,6 @@ defaultproperties
     Description="Reduces all damage you take by $1 per level."
     MaxLevel=500
     StartingCost=1
-    BonusPerLevel=0.2
+    BonusPerLevel=0.1
     Category=class'AbilityCategory_Damage'
 }
