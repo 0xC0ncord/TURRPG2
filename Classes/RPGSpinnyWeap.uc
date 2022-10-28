@@ -65,50 +65,11 @@ simulated function SetOverlayMaterial(Material mat, float time, bool bOverride)
 
     //reset all current allocated overlay objects
     for(i = 0; i < DuplicateShaders.Length; i++)
-    {
         DuplicateShaders[i].Diffuse = None;
-        /*
-        DuplicateShaders[i].Opacity = None;
-        DuplicateShaders[i].Specular = None;
-        DuplicateShaders[i].SpecularityMask = None;
-        DuplicateShaders[i].SelfIllumination = None;
-        DuplicateShaders[i].SelfIlluminationMask = None;
-        DuplicateShaders[i].Detail = None;
-        DuplicateShaders[i].DetailScale = 8.0;
-        DuplicateShaders[i].OutputBlending = OB_Normal;
-        DuplicateShaders[i].TwoSided = false;
-        DuplicateShaders[i].Wireframe = false;
-        DuplicateShaders[i].PerformLightingOnSpecularPass = false;
-        DuplicateShaders[i].ModulateSpecular2X = false;
-        */
-    }
     for(i = 0; i < DuplicateCombiners.Length; i++)
-    {
-        /*
-        DuplicateCombiners[i].CombineOperation = CO_Use_Color_From_Material1;
-        DuplicateCombiners[i].AlphaOperation = AO_Use_Mask;
-        DuplicateCombiners[i].Material1 = None;
-        */
         DuplicateCombiners[i].Material2 = None;
-        /*
-        DuplicateCombiners[i].Mask = None;
-        DuplicateCombiners[i].InvertMask =f alse;
-        DuplicateCombiners[i].Modulate2X = false;
-        DuplicateCombiners[i].Modulate4X = false;
-        */
-    }
     for(i = 0; i < OverlayFinals.Length; i++)
-    {
         OverlayFinals[i].Material = None;
-        /*
-        OverlayFinals[i].FrameBufferBlending = FB_Overwrite;
-        OverlayFinals[i].ZWrite = true;
-        OverlayFinals[i].ZTest = true;
-        OverlayFinals[i].AlphaTest = false;
-        OverlayFinals[i].TwoSided = false;
-        OverlayFinals[i].AlphaRef = 0;
-        */
-    }
 
     if(StaticMesh != None && DrawType == DT_StaticMesh)
     {
