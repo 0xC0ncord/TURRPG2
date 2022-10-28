@@ -27,7 +27,6 @@ var config array<string> MyBuilds;
 
 //Labs settings
 var config byte XPHudStyle; //0 classic
-                            //1 SAO
 
 defaultproperties
 {
