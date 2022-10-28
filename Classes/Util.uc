@@ -14,12 +14,12 @@ class Util extends Object abstract;
 
 var Color HighlightColor;
 
-static function vector ReflectVector(vector v, vector normal)
+static final function vector ReflectVector(vector v, vector normal)
 {
     return (v - 2.0 * normal * (v dot normal));
 }
 
-static function bool InVehicle(Pawn P, Vehicle V) {
+static final function bool InVehicle(Pawn P, Vehicle V) {
     if(P.DrivenVehicle != None) {
         if(P.DrivenVehicle == V) {
             return true;
@@ -31,7 +31,7 @@ static function bool InVehicle(Pawn P, Vehicle V) {
     return false;
 }
 
-static function array<Pawn> GetAllPassengers(Vehicle V)
+static final function array<Pawn> GetAllPassengers(Vehicle V)
 {
     local array<Pawn> Passengers;
     local int x;
@@ -65,7 +65,7 @@ static function array<Pawn> GetAllPassengers(Vehicle V)
     return Passengers;
 }
 
-static function array<Controller> GetAllPassengerControllers(Vehicle V)
+static final function array<Controller> GetAllPassengerControllers(Vehicle V)
 {
     local array<Controller> Passengers;
     local int x;
@@ -132,17 +132,17 @@ static final function Vehicle GetRootVehicle(Vehicle V)
     return V;
 }
 
-static function string HighlightText(string Text, Color Highlight, Color Old)
+static final function string HighlightText(string Text, Color Highlight, Color Old)
 {
     return class'GameInfo'.static.MakeColorCode(Highlight) $ Text $ class'GameInfo'.static.MakeColorCode(Old);
 }
 
-static function string FormatPercent(float p)
+static final function string FormatPercent(float p)
 {
     return FormatFloat(p * 100.0) $ "%";
 }
 
-static function string FormatFloat(float p)
+static final function string FormatFloat(float p)
 {
     //~= to avoid evil floating point magic
     if(float(int(p)) ~= p || Round(p) == p)
@@ -151,7 +151,7 @@ static function string FormatFloat(float p)
         return string(p);
 }
 
-static function string FormatTime(float Time, optional bool bNoShortSeconds)
+static final function string FormatTime(float Time, optional bool bNoShortSeconds)
 {
     local int Hours, Minutes, Seconds;
 
@@ -165,7 +165,7 @@ static function string FormatTime(float Time, optional bool bNoShortSeconds)
     return Eval(Hours < 10, "0" $ Hours, Hours) $ ":" $ Eval(Minutes < 10, "0" $ Minutes, Minutes) $ Eval(Seconds < 10, "0" $ Seconds, Seconds);
 }
 
-static function int InArray(Object x, array<Object> a)
+static final function int InArray(Object x, array<Object> a)
 {
     local int i;
 
@@ -178,14 +178,14 @@ static function int InArray(Object x, array<Object> a)
     return -1;
 }
 
-static function PawnScaleSpeed(Pawn P, float Multiplier)
+static final function PawnScaleSpeed(Pawn P, float Multiplier)
 {
     P.GroundSpeed *= Multiplier;
     P.WaterSpeed *= Multiplier;
     P.AirSpeed *= Multiplier;
 }
 
-static function Inventory GiveInventory(Pawn P, class<Inventory> InventoryClass, optional bool bRemoveIfExists)
+static final function Inventory GiveInventory(Pawn P, class<Inventory> InventoryClass, optional bool bRemoveIfExists)
 {
     local Inventory Inv;
 
@@ -213,7 +213,7 @@ static function Inventory GiveInventory(Pawn P, class<Inventory> InventoryClass,
     return Inv;
 }
 
-static function SetWeaponFireRate(Weapon W, float Scale)
+static final function SetWeaponFireRate(Weapon W, float Scale)
 {
     local int i;
     local WeaponFire WF;
@@ -265,7 +265,7 @@ static function SetWeaponFireRate(Weapon W, float Scale)
     }
 }
 
-static function AdjustWeaponFireRate(Weapon W, float Scale)
+static final function AdjustWeaponFireRate(Weapon W, float Scale)
 {
     local int i;
     local WeaponFire WF;
@@ -317,7 +317,7 @@ static function AdjustWeaponFireRate(Weapon W, float Scale)
     }
 }
 
-static function SetVehicleWeaponFireRate(Actor W, float Modifier)
+static final function SetVehicleWeaponFireRate(Actor W, float Modifier)
 {
     if(W != None)
     {
@@ -338,7 +338,7 @@ static function SetVehicleWeaponFireRate(Actor W, float Modifier)
     }
 }
 
-static function AdjustVehicleWeaponFireRate(Actor W, float Modifier)
+static final function AdjustVehicleWeaponFireRate(Actor W, float Modifier)
 {
     if(W != None)
     {
@@ -360,7 +360,7 @@ static function AdjustVehicleWeaponFireRate(Actor W, float Modifier)
     }
 }
 
-static function function SetVehicleFireRate(Vehicle V, float Modifier)
+static final function SetVehicleFireRate(Vehicle V, float Modifier)
 {
     local int i;
     local ONSVehicle OV;
@@ -396,7 +396,7 @@ static function function SetVehicleFireRate(Vehicle V, float Modifier)
     }
 }
 
-static function function AdjustVehicleFireRate(Vehicle V, float Modifier)
+static final function AdjustVehicleFireRate(Vehicle V, float Modifier)
 {
     local int i;
     local ONSVehicle OV;
@@ -432,7 +432,7 @@ static function function AdjustVehicleFireRate(Vehicle V, float Modifier)
     }
 }
 
-static function AdjustVehicleSpeed(Vehicle V, float Factor)
+static final function AdjustVehicleSpeed(Vehicle V, float Factor)
 {
     local int i;
 
@@ -469,7 +469,7 @@ static function AdjustVehicleSpeed(Vehicle V, float Factor)
     }
 }
 
-static function SetVehicleSpeed(Vehicle V, float Factor)
+static final function SetVehicleSpeed(Vehicle V, float Factor)
 {
     local int i;
 
@@ -506,7 +506,7 @@ static function SetVehicleSpeed(Vehicle V, float Factor)
     }
 }
 
-static function SetVehicleOverlay(Vehicle V, Material Mat, float Duration, bool bOverride)
+static final function SetVehicleOverlay(Vehicle V, Material Mat, float Duration, bool bOverride)
 {
     local int i;
     local ONSVehicle OV;
@@ -540,7 +540,7 @@ static function SetVehicleOverlay(Vehicle V, Material Mat, float Duration, bool 
 
 
 //TAM support
-static function IncreaseTAMWeaponFireStats(PlayerReplicationInfo PRI, string HitStatName, string Mode)
+static final function IncreaseTAMWeaponFireStats(PlayerReplicationInfo PRI, string HitStatName, string Mode)
 {
     local string HitStatStr;
     local Object HitStat;
@@ -555,7 +555,7 @@ static function IncreaseTAMWeaponFireStats(PlayerReplicationInfo PRI, string Hit
 }
 
 //Forces the weapon to be given to the pawn - even if he has a weapon of the same type already
-static function Weapon ForceGiveTo(Pawn Other, Weapon W, optional WeaponPickup Pickup) {
+static final function Weapon ForceGiveTo(Pawn Other, Weapon W, optional WeaponPickup Pickup) {
     local Weapon Pivot, First;
     local class<Weapon> WeaponClass;
     local Actor Inv, Prev;
@@ -635,7 +635,7 @@ static function Weapon ForceGiveTo(Pawn Other, Weapon W, optional WeaponPickup P
     return W;
 }
 
-static function SetWeaponAmmo(Weapon W, int Mode, int Ammo) {
+static final function SetWeaponAmmo(Weapon W, int Mode, int Ammo) {
     local int Diff;
 
     Diff = Ammo - W.AmmoAmount(Mode);
@@ -647,7 +647,7 @@ static function SetWeaponAmmo(Weapon W, int Mode, int Ammo) {
 }
 
 //Grants experience for healing
-static function DoHealableDamage(Pawn Healer, Pawn Healed, int Amount, optional float Factor) {
+static final function DoHealableDamage(Pawn Healer, Pawn Healed, int Amount, optional float Factor) {
     local RPGPlayerReplicationInfo RPRI;
     local Inv_HealableDamage Healable;
     local int Adjusted;
@@ -673,7 +673,7 @@ static function DoHealableDamage(Pawn Healer, Pawn Healed, int Amount, optional 
 }
 
 //Check if two controllers are on the same team
-static function bool SameTeamC(Controller A, Controller B) {
+static final function bool SameTeamC(Controller A, Controller B) {
     local int TeamA, TeamB;
 
     if(A == None || B == None) {
@@ -690,7 +690,7 @@ static function bool SameTeamC(Controller A, Controller B) {
 }
 
 //Gets the team a certain pawn is on
-static function int GetPawnTeam(Pawn P) {
+static final function int GetPawnTeam(Pawn P) {
     if(P != None) {
         if(P.Controller != None) {
             return P.Controller.GetTeamNum();
@@ -709,7 +709,7 @@ static function int GetPawnTeam(Pawn P) {
 }
 
 //Check if a controller and a pawn are on the same team
-static function bool SameTeamCP(Controller C, Pawn P) {
+static final function bool SameTeamCP(Controller C, Pawn P) {
     local int TeamC, TeamP;
 
     if(C == None || P == None) {
@@ -727,7 +727,7 @@ static function bool SameTeamCP(Controller C, Pawn P) {
 }
 
 //Check if two pawns are on the same team
-static function bool SameTeamP(Pawn A, Pawn B) {
+static final function bool SameTeamP(Pawn A, Pawn B) {
     local int TeamA, TeamB;
 
     if(A == None || B == None) {
@@ -790,7 +790,7 @@ static final function bool ProjectileSameTeamC(Projectile P, Controller C)
 }
 
 //
-static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Flag, optional class<Emitter> FXClass) {
+static final function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Flag, optional class<Emitter> FXClass) {
     local Controller C;
     local RPGPlayerReplicationInfo RPRI;
     local vector ClientLocation;
@@ -854,7 +854,7 @@ static final function bool KeyHasBinding(string TestBinding, string Binding)
     return false;
 }
 
-static function Color InterpolateColor(Color C1, Color C2, float Fraction)
+static final function Color InterpolateColor(Color C1, Color C2, float Fraction)
 {
     local Color Result;
 
