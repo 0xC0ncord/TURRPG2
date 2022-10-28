@@ -806,8 +806,9 @@ static final function ModifyProjectileSpeed(Projectile Proj, float Multiplier, n
 
     if(RocketProj(Proj) != None) {
         RocketProj(Proj).FlockMaxForce *= Multiplier;
+    }
     /*
-    } else if(ONSMineProjectile(Proj) != None) {
+    else if(ONSMineProjectile(Proj) != None) {
         ONSMineProjectile(Proj).ScurrySpeed *= Multiplier;
     }
     */
