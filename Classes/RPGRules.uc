@@ -704,27 +704,6 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     }
 
     /*
-        Invasion auto adjustment - with a big FIXME note...
-
-        UT2004RPG solved this by treating a monster as another RPG character who spent half of his stat points on
-        damage bonus and the other half on damage reduction.
-    */
-    if(
-        RPGMut.bAutoAdjustInvasionLevel &&
-        RPGMut.InvasionDamageAdjustment > 0 &&
-        (Monster(injured) != None || Monster(instigatedBy) != None)
-    )
-    {
-        x = float(Damage) * RPGMut.InvasionDamageAdjustment;
-
-        if(Monster(instigatedBy) != None)
-            Damage += x;
-
-        if(Monster(injured) != None)
-            Damage -= x;
-    }
-
-    /*
         ACTIVE DAMAGE MODIFICATION
     */
     if(instigatedBy != None)

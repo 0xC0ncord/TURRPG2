@@ -45,11 +45,6 @@ var config array<class<Combo> > Combos; //additional combos to enable for player
 
 var config array<class<Weapon> > DisallowModifiersFor; //these weapons can not be modified
 
-//Invasion
-var config bool bAutoAdjustInvasionLevel; //auto adjust invasion monsters' level based on lowest level player
-var config float InvasionAutoAdjustFactor; //affects how dramatically monsters increase in level for each level of the lowest level player
-var float InvasionDamageAdjustment; //calculated from lowest player level and a lot of Mysterial's mojo
-
 //OLTeamGames support
 var bool bOLTeamGames;
 
@@ -168,9 +163,6 @@ final function string ProcessPlayerName(RPGPlayerReplicationInfo RPRI)
 
 event PreBeginPlay() {
     local int i, x;
-
-    if(Invasion(Level.Game) == None)
-        bAutoAdjustInvasionLevel = false; //don't waste any time doing Invasion stuff if we're not in Invasion
 
     //OLTeamGames support
     bOLTeamGames = Level.Game.IsA('OLTeamGame');
@@ -979,38 +971,10 @@ function NotifyLogout(Controller Exiting)
 
 function Timer()
 {
-    local int LowestLevel;
-    local RPGPlayerReplicationInfo RPRI;
-    local Controller C;
-
     if(SaveDuringGameInterval > 0 && Level.TimeSeconds >= NextSaveTime)
     {
         SaveData();
         NextSaveTime = Level.TimeSeconds + float(SaveDuringGameInterval);
-    }
-
-    //find level of lowest level player
-    if(Invasion(Level.Game) != None && bAutoAdjustInvasionLevel)
-    {
-        LowestLevel = 0;
-        for(C = Level.ControllerList; C != None; C = C.NextController)
-        {
-            RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
-            if(RPRI != None && (LowestLevel == 0 || RPRI.RPGLevel < LowestLevel))
-                LowestLevel = RPRI.RPGLevel;
-        }
-
-        if(LowestLevel > 0)
-        {
-            InvasionDamageAdjustment =
-                0.0025f * float(AbilityPointsPerIncrement) * (
-                2 * (Invasion(Level.Game).WaveNum + 1) +
-                float(LowestLevel) * InvasionAutoAdjustFactor);
-        }
-    }
-    else
-    {
-        InvasionDamageAdjustment = 0;
     }
 }
 
@@ -1591,8 +1555,6 @@ defaultproperties
     MaxLevelReqExpPerLevel=0
 
     MinHumanPlayersForExp=0
-    bAutoAdjustInvasionLevel=True
-    InvasionAutoAdjustFactor=0.30
     SaveDuringGameInterval=0
     StartingLevel=1
     StartingStatPoints=0
