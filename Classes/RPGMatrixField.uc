@@ -13,8 +13,6 @@ var Controller Creator;
 var float Radius, Multiplier;
 var array<name> Ignore;
 
-delegate OnMatrix(RPGMatrixField Field, Projectile Proj, float Multiplier);
-
 event PostBeginPlay() {
     Super.PostBeginPlay();
 
@@ -52,8 +50,6 @@ event Tick(float dt) {
                 continue;
             }
         }
-
-        OnMatrix(Self, Proj, Multiplier);
 
         Proj.Tag = 'Matrix';
         class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, 'Matrix', class'FX_MatrixTrail');
