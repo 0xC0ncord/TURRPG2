@@ -406,7 +406,7 @@ function ScoreKill(Controller Killer, Controller Killed)
                 /*
                     ADRENALINE ADJUSTMENT
                 */
-                if(KillDamageType == class'DamTypeLightningRod') //TODO: make generic?
+                if(ClassIsChildOf(KillDamageType, class'RPGAdrenalineDamageType'))
                     Killer.Adrenaline = KillerRPRI.AdrenalineBeforeKill;
 
                 /*
