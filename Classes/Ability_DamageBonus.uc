@@ -10,12 +10,18 @@ class Ability_DamageBonus extends RPGAbility;
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-    Damage = float(Damage) * (1.0 + float(AbilityLevel) * BonusPerLevel);
+    if(bIsStat)
+        Damage = Ceil(float(AbilityLevel) * BonusPerLevel) - 1;
+    else
+        Damage = float(Damage) * (1.0 + float(AbilityLevel) * BonusPerLevel);
 }
 
 simulated function string DescriptionText()
 {
-    return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
+    if(bIsStat)
+        return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatFloat(BonusPerLevel));
+    else
+        return repl(Super.DescriptionText(), "$1", class'Util'.static.FormatPercent(BonusPerLevel));
 }
 
 defaultproperties
@@ -24,6 +30,6 @@ defaultproperties
     Description="Increases all damage you do by $1 per level."
     MaxLevel=500
     StartingCost=1
-    BonusPerLevel=0.001
+    BonusPerLevel=0.2
     Category=class'AbilityCategory_Damage'
 }
