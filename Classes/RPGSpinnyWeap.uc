@@ -7,7 +7,6 @@
 //=============================================================================
 
 //Total hack to make overlays work even if using a StaticMesh
-//TODO: VertMesh support?
 class RPGSpinnyWeap extends SpinnyWeap;
 
 var array<Material> OriginalSkins;
@@ -58,7 +57,7 @@ simulated function SetOverlayMaterial(Material mat, float time, bool bOverride)
 
     Super.SetOverlayMaterial(mat, time, bOverride);
 
-    if(SkeletalMesh(Mesh) != None || OverlayMaterial == None || StaticMesh == None)
+    if(SkeletalMesh(Mesh) != None || OverlayMaterial == None || (StaticMesh == None && VertMesh(Mesh) == None))
         return;
 
     //reset skins
@@ -111,11 +110,16 @@ simulated function SetOverlayMaterial(Material mat, float time, bool bOverride)
         */
     }
 
-    //it's almost a miracle this works
-    SetPropertyText("StaticMeshMaterials", StaticMesh.GetPropertyText("Materials"));
-    if(Skins.Length < StaticMeshMaterials.Length)
-        for(i = Skins.Length; i < StaticMeshMaterials.Length; i++)
-            Skins[i] = StaticMeshMaterials[i].Material;
+    if(StaticMesh != None && DrawType == DT_StaticMesh)
+    {
+        //can you believe this actually works?
+        SetPropertyText("StaticMeshMaterials", StaticMesh.GetPropertyText("Materials"));
+        if(Skins.Length < StaticMeshMaterials.Length)
+            for(i = Skins.Length; i < StaticMeshMaterials.Length; i++)
+                Skins[i] = StaticMeshMaterials[i].Material;
+    }
+    else if(VertMesh(Mesh) != None && DrawType == DT_Mesh)
+        SetPropertyText("Skins", Mesh.GetPropertyText("Materials"));
 
     for(i = 0; i < Skins.Length; i++)
         Skins[i] = ApplyOverlayMaterial(Skins[i], i);
