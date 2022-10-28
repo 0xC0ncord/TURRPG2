@@ -806,9 +806,11 @@ static function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Fl
 
     if(RocketProj(Proj) != None) {
         RocketProj(Proj).FlockMaxForce *= Multiplier;
+    /*
     } else if(ONSMineProjectile(Proj) != None) {
-        //ONSMineProjectile(Proj).ScurrySpeed *= Multiplier;
+        ONSMineProjectile(Proj).ScurrySpeed *= Multiplier;
     }
+    */
 
     if(Proj.Role == ROLE_Authority) {
         ClientLocation = Proj.Location + Proj.Velocity * 0.05f;
