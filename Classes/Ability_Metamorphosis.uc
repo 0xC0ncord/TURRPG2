@@ -420,13 +420,13 @@ function TryStoreArtifact(RPGArtifact A)
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     if(Monster(InstigatedBy) != None && PlayerController(InstigatedBy.Controller) != None)
-        Damage = float(Damage) * (1.0 + PassiveDamageBonus);
+        Damage += float(OriginalDamage) * PassiveDamageBonus;
 }
 
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     if(Monster(Injured) != None && PlayerController(Injured.Controller) != None)
-        Damage = float(Damage) * (1.0 - PassiveDamageReduction);
+        Damage = Max(0, Damage - (float(OriginalDamage) * PassiveDamageReduction));
 }
 
 simulated function string DescriptionText()

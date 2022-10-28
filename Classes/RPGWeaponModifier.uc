@@ -428,7 +428,7 @@ function WeaponFire(byte Mode); //called when weapon just fired
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType) {
     if(DamageBonus != 0 && Modifier != 0)
-        Damage += float(Damage) * Modifier * DamageBonus;
+        Damage += float(OriginalDamage) * Modifier * DamageBonus;
 }
 
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType);

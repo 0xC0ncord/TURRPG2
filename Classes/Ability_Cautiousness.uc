@@ -11,7 +11,7 @@ class Ability_Cautiousness extends RPGAbility;
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     if(InstigatedBy == Injured && DamageType != class'Fell')
-        Damage -= int(float(Damage) * BonusPerLevel * float(AbilityLevel));
+        Damage = Max(0, Damage - int(float(OriginalDamage) * BonusPerLevel * float(AbilityLevel)));
 }
 
 simulated function string DescriptionText()

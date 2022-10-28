@@ -24,7 +24,7 @@ function AdjustTargetDamage(
         && Injured != FriendlyMonsterController(InstigatedBy.Controller).Master
     )
     {
-        Damage = float(Damage) * (1.0 + float(AbilityLevel) * BonusPerLevel);
+        Damage += float(OriginalDamage) * float(AbilityLevel) * BonusPerLevel;
     }
 }
 

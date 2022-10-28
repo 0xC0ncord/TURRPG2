@@ -62,7 +62,7 @@ function AdjustTargetDamage(
 )
 {
     if(Damage > 0 && InstigatedBy == RPRI.Controller.Pawn)
-        Damage = Damage + (Damage * Min(5, NumTeammates) * BonusPerLevel * AbilityLevel);
+        Damage += float(OriginalDamage) * Min(5, NumTeammates) * BonusPerLevel * float(AbilityLevel);
 }
 
 function AdjustPlayerDamage(
@@ -76,7 +76,7 @@ function AdjustPlayerDamage(
 )
 {
     if(Damage > 0 && Injured == RPRI.Controller.Pawn)
-        Damage = Damage - (Damage * Max(0, 5 - NumTeammates) * DamageReductionPerLevel * AbilityLevel);
+        Damage = Max(1, Damage - (float(OriginalDamage) * Max(0, 5 - NumTeammates) * DamageReductionPerLevel * float(AbilityLevel)));
 }
 
 simulated function string DescriptionText()
