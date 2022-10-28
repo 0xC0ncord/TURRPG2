@@ -28,7 +28,7 @@ function YellAt(Pawn Moron)
 
     //don't yell if being healed
     Modifier = class'RPGWeaponModifier'.static.GetFor(Moron.Weapon);
-    if(Modifier == None || !Modifier.bHealingCapable)
+    if(Modifier == None || !Modifier.bTeamFriendly)
     {
         Super(xBot).YellAt(Moron);
     }
