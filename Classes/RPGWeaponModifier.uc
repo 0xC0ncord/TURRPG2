@@ -181,8 +181,6 @@ static function int GetRandomPositiveModifierLevel(optional int Minimum) {
     local int x;
 
     if(default.bCanHaveZeroModifier) {
-        // WeaponFire calls DoFireEffect() on the tick immediately
-        // after the tick where fire was pressed
         Minimum = Max(0, Minimum);
     } else {
         Minimum = Max(1, Minimum);
