@@ -24,8 +24,11 @@ var float DenyPatientTime;
 
 function YellAt(Pawn Moron)
 {
+    local RPGWeaponModifier Modifier;
+
     //don't yell if being healed
-    if(class'WeaponModifier_Heal'.static.GetFor(Moron.Weapon) == None)
+    Modifier = class'RPGWeaponModifier'.static.GetFor(Moron.Weapon);
+    if(Modifier == None || !Modifier.bHealingCapable)
     {
         Super(xBot).YellAt(Moron);
     }

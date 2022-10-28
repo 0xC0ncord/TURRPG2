@@ -45,6 +45,7 @@ var localized string PatternPos, PatternNeg;
 var float AIRatingBonus;
 var array<class<DamageType> > CountersDamage;
 var array<class<RPGWeaponModifier> > CountersModifier;
+var bool bTeamFriendly; //whether or not this modifier counts as one which boosts or heals teammates
 
 //Restrictions
 var config array<class<Weapon> > ForbiddenWeaponTypes;

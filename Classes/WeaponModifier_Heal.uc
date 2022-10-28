@@ -100,4 +100,5 @@ defaultproperties {
     PatternPos="Healing $W"
     //AI
     AIRatingBonus=0
+    bTeamFriendly=True
 }

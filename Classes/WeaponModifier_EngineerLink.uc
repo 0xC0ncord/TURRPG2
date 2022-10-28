@@ -186,4 +186,5 @@ defaultproperties
      MaxModifier=0
      PatternPos="Engineer $W of Infinity"
      bCanThrow=False
+     bTeamFriendly=True
 }
