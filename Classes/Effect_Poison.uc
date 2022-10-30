@@ -15,6 +15,7 @@ enum EPoisonMode
     PM_Curve //use the TitanRPG curve (BasePercentage and Curve)
 };
 var EPoisonMode PoisonMode;
+var class<DamageType> PoisonDamageType;
 
 var float BasePercentage;
 var float Curve;
@@ -59,7 +60,7 @@ state Activated
             else if(PoisonDamage >= Instigator.Health)
             {
                 //Kill
-                Instigator.TakeDamage(PoisonDamage, EffectCauser.Pawn, Instigator.Location, vect(0, 0, 0), class'DamTypePoison');
+                Instigator.TakeDamage(PoisonDamage, EffectCauser.Pawn, Instigator.Location, vect(0, 0, 0), PoisonDamageType);
             }
             else
             {
@@ -86,4 +87,5 @@ defaultproperties
     StatusIconClass=class'StatusIcon_Poison'
 
     PoisonMode=PM_Curve
+    PoisonDamageType=Class'DamTypePoison'
 }
