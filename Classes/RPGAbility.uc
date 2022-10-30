@@ -633,6 +633,7 @@ simulated function ReplaceCombos(xPlayer xP)
                     {
                         xP.ComboList[i] = ComboReplacements[x].NewComboClass;
                         xP.ComboNameList[i] = string(ComboReplacements[x].NewComboClass);
+                        xP.MinAdrenalineCost = FMin(xP.MinAdrenalineCost, ComboReplacements[x].NewComboClass.default.AdrenalineCost);
                         break;
                     }
                 }
