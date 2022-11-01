@@ -65,7 +65,7 @@ function bool CancelCombo(class<Combo> ComboClass)
     return false;
 }
 
-function DoCombo( class<Combo> ComboClass )
+function DoCombo(class<Combo> ComboClass)
 {
     local int i;
 
@@ -74,10 +74,13 @@ function DoCombo( class<Combo> ComboClass )
         if (CurrentCombo == None || bCanMultiCombo)
         {
             CurrentCombo = Spawn(ComboClass, self);
-            ActiveCombos[ActiveCombos.Length] = CurrentCombo;
+            //if a combo destroys itself immediately, make sure we don't add it
+            //or else it breaks all subsequent combos
+            if(CurrentCombo != None)
+                ActiveCombos[ActiveCombos.Length] = CurrentCombo;
 
             // Record stats for using the combo
-            UnrealMPGameInfo(Level.Game).SpecialEvent(PlayerReplicationInfo, string(CurrentCombo.Class));
+            UnrealMPGameInfo(Level.Game).SpecialEvent(PlayerReplicationInfo, string(ComboClass));
             if (ClassIsChildOf(ComboClass, class'ComboSpeed') || ClassIsChildOf(ComboClass, class'RPGComboSpeed'))
                 i = 0;
             else if (ClassIsChildOf(ComboClass, class'ComboBerserk') || ClassIsChildOf(ComboClass, class'RPGComboBerserk'))
