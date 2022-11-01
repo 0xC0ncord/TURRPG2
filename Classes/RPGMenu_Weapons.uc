@@ -554,6 +554,7 @@ defaultproperties
     Text_NotNormallyAllowed="This weapon/modifier combination is not naturally occuring!"
 
     Begin Object Class=AltSectionBackground Name=sbSpinnyWeap_
+        Caption="Weapon Preview"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.412921
@@ -565,6 +566,7 @@ defaultproperties
     sbSpinnyWeap=GUISectionBackground'sbSpinnyWeap_'
 
     Begin Object Class=AltSectionBackground Name=sbWeapons_
+        Caption="Weapons"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.348149
@@ -576,6 +578,7 @@ defaultproperties
     sbWeapons=GUISectionBackground'sbWeapons_'
 
     Begin Object Class=AltSectionBackground Name=sbModifiers_
+        Caption="Magic Weapon Modifiers"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.399219
@@ -587,6 +590,7 @@ defaultproperties
     sbModifiers=GUISectionBackground'sbModifiers_'
 
     Begin Object Class=AltSectionBackground Name=sbWeaponDesc_
+        Caption="Weapon Description Preview"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.578588
@@ -598,6 +602,7 @@ defaultproperties
     sbWeaponDesc=GUISectionBackground'sbWeaponDesc_'
 
     Begin Object Class=AltSectionBackground Name=sbSettings_
+        Caption="Settings"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.241026
