@@ -273,11 +273,14 @@ function bool SelectWeapon(GUIComponent Sender)
         {
             SpinnyWeap.SetDrawType(DT_None);
         }
-
-        //update description text
-        lbDesc.MyScrollText.bNoTeletype = false;
-        lbDesc.SetContent(GetDescriptionText());
     }
+
+    //update description background caption
+    sbWeaponDesc.Caption = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel);
+
+    //update description text
+    lbDesc.MyScrollText.bNoTeletype = false;
+    lbDesc.SetContent(GetDescriptionText());
 
     if(bInitialized)
         CheckFavorite();
@@ -322,6 +325,9 @@ function bool SelectModifier(GUIComponent Sender)
     //hack to force modifier update if zero and zero is not allowed for this modifier
     InternalOnChange(neModifierLevel);
 
+    //update description background caption
+    sbWeaponDesc.Caption = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel);
+
     //update description text, with teletype
     lbDesc.MyScrollText.bNoTeletype = false;
     lbDesc.SetContent(GetDescriptionText());
@@ -356,8 +362,7 @@ function string GetDescriptionText()
     if(SelectedWeapon == None || SelectedModifier == None)
         return "";
 
-    Description = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel) $ "|";
-    Description $= "================||" $ SelectedModifier.static.StaticGetDescription(SelectedModifierLevel);
+    Description = SelectedModifier.static.StaticGetDescription(SelectedModifierLevel);
 
     if(!SelectedModifier.static.AllowedFor(SelectedWeapon))
         Description $= "||*" @ Text_NotNormallyAllowed;
