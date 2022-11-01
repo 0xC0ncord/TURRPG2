@@ -1,6 +1,6 @@
 //=============================================================================
 // RPGMenu_Character.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2022 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -259,7 +259,7 @@ defaultproperties
     Rebuild_Hint="Allows you to rebuild your character at a certain cost of experience.";
 
     Begin Object Class=AltSectionBackground Name=sbAbilities_
-        Caption="Character information"
+        Caption="Character Information"
         LeftPadding=0.000000
         WinWidth=0.997718
         WinHeight=0.849959

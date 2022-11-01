@@ -1,6 +1,6 @@
 //=============================================================================
 // RPGMenu_Artifacts.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2022 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -268,7 +268,7 @@ defaultproperties
     NotAvailableDesc="This artifact is not available on this server."
 
     Begin Object Class=AltSectionBackground Name=sbArtifactOrder_
-        Caption="Artifact order"
+        Caption="Artifact Order"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.454518
