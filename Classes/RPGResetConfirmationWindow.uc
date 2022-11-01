@@ -56,7 +56,7 @@ function MyOnClose(optional bool bCanceled)
 
 defaultproperties
 {
-    Text_Reset="You about to reset $1.|This action CANNOT be undone.|YOUR LEVEL AND YOUR ABILITIES WILL BE LOST!|ARE YOU SURE?"
+    Text_Reset="You are about to reset $1.|This action CANNOT be undone.|YOUR LEVEL AND YOUR ABILITIES WILL BE LOST!|ARE YOU SURE?"
     WindowTitle="Character Reset"
 
     bResizeWidthAllowed=False

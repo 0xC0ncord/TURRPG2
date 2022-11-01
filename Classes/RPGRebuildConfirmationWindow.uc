@@ -60,7 +60,7 @@ function MyOnClose(optional bool bCanceled)
 
 defaultproperties
 {
-    Text_Rebuild="You about to rebuild $1.|This will cost you $2 experience or maximally $3 level(s).|ARE YOU SURE?"
+    Text_Rebuild="You are about to rebuild $1.|This will cost you $2 experience or maximally $3 level(s).|ARE YOU SURE?"
     WindowTitle="Character Rebuild"
 
     bResizeWidthAllowed=False
