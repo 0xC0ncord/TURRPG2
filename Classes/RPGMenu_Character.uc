@@ -306,7 +306,7 @@ defaultproperties
         WinWidth=0.043973
         WinHeight=0.068000
         WinLeft=0.555008
-        WinTop=0.865749
+        WinTop=0.866042
         OnClick=RPGMenu_Character.RemoveClicked
         OnKeyEvent=btRemove_.InternalOnKeyEvent
     End Object
