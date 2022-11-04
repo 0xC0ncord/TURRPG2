@@ -71,4 +71,5 @@ defaultproperties
     MaxLevel=1
     bAllowSuicide=True
     Category=class'AbilityCategory_Misc'
+    IconMaterial=Texture'AbGhost'
 }
