@@ -240,7 +240,7 @@ function SelectArtifact(optional GUIList List)
     if(List == None)
         List = lbArtifacts.List;
 
-    AClass = class<RPGArtifact>(List.GetObjectAtIndex(List.Index));
+    AClass = class<RPGArtifact>(List.GetObject());
     if(AClass != None)
     {
         sbArtifact.Caption = AClass.default.ItemName;
