@@ -178,6 +178,7 @@ simulated function bool Buy(optional int Amount)
 
     if(Role == ROLE_Authority && bAllowed && RPRI.Controller.Pawn != None)
     {
+        //FIXME redundant?
         RPRI.ModifyStats();
 
         if(Vehicle(RPRI.Controller.Pawn) != None)
