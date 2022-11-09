@@ -39,6 +39,12 @@ var bool bIgnoreNextChange;
 
 var() RPGSpinnyWeap SpinnyWeap;
 var() vector SpinnyWeapOffset;
+struct SpinnyWeapPrePivotStruct
+{
+    var string WeaponClassName;
+    var vector PrePivot;
+};
+var array<SpinnyWeapPrePivotStruct> PrePivotMaps;
 var string ModifierDescription;
 var FX_WeaponMenuHearts HeartsEffect;
 
@@ -255,6 +261,18 @@ function bool SelectWeapon(GUIComponent Sender)
 
                 SpinnyWeap.SetDrawType(DT_Mesh);
             }
+
+            for(i = 0; i < PrePivotMaps.Length; i++)
+            {
+                if(PrePivotMaps[i].WeaponClassName ~= string(SelectedWeapon))
+                {
+                    SpinnyWeap.PrePivot = PrePivotMaps[i].PrePivot;
+                    i = -1;
+                    break;
+                }
+            }
+            if(i != -1)
+                SpinnyWeap.PrePivot = vect(0, 0, 0);
 
             if(SelectedModifier != None)
             {
@@ -552,6 +570,7 @@ defaultproperties
     WeaponClassNames(13)="Onslaught.ONSAVRiL"
     WeaponClassNames(14)="OnslaughtFull.ONSPainter"
     WeaponClassNames(15)="UTClassic.ClassicSniperRifle"
+    PrePivotMaps(0)=(WeaponClassName="XWeapons.Redeemer",PrePivot=(Z=10.0))
     Text_ModifierLevel="Preview Modifier Level"
     Text_ShowFavorites="Favorites Only"
     Text_Favorite="Favorite"
