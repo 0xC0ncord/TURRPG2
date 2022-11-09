@@ -37,4 +37,5 @@ defaultproperties
     LevelCost(8)=25
     LevelCost(9)=25
     Category=class'AbilityCategory_Vehicles'
+    IconMaterial=Texture'AbVehicleVampire'
 }
