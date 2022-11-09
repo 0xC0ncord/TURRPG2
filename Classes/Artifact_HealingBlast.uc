@@ -18,7 +18,7 @@ defaultproperties
     CostPerSec=0
     Cooldown=60
     HudColor=(B=255,G=0,R=0)
-    ArtifactID="Healing Blast"
+    ArtifactID="HealingBlast"
     Description="Heals nearby teammates."
     PickupClass=Class'ArtifactPickup_HealingBlast'
     IconMaterial=Texture'TURRPG2.ArtifactIcons.HealingBomb'
