@@ -294,7 +294,8 @@ function bool SelectWeapon(GUIComponent Sender)
     }
 
     //update description background caption
-    sbWeaponDesc.Caption = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel);
+    if(SelectedModifier != None)
+        sbWeaponDesc.Caption = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel);
 
     //update description text
     lbDesc.MyScrollText.bNoTeletype = false;
@@ -452,6 +453,7 @@ function InternalOnChange(GUIComponent Sender)
                 bIgnoreNextChange = false;
             }
             SelectedModifierLevel = neModifierLevel.GetValue();
+            sbWeaponDesc.Caption = SelectedModifier.static.ConstructItemName(SelectedWeapon, SelectedModifierLevel);
             lbDesc.MyScrollText.bNoTeletype = true;
             lbDesc.SetContent(GetDescriptionText());
             break;
@@ -573,8 +575,8 @@ defaultproperties
     PrePivotMaps(0)=(WeaponClassName="XWeapons.Redeemer",PrePivot=(Z=10.0))
     Text_ModifierLevel="Preview Modifier Level"
     Text_ShowFavorites="Favorites Only"
-    Text_Favorite="Favorite"
-    Text_Unfavorite="Unfavorite"
+    Text_Favorite="Favorite Weapon"
+    Text_Unfavorite="Unfavorite Weapon"
     Text_NotNormallyAllowed="This weapon/modifier combination is not naturally occuring!"
 
     Begin Object Class=AltSectionBackground Name=sbSpinnyWeap_
