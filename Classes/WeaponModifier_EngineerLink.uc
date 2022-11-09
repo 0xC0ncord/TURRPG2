@@ -26,6 +26,12 @@ static function bool AllowedFor(class<Weapon> Weapon, Pawn Other)
     return false;
 }
 
+//this modifier should never be removed
+static function bool AllowRemoval(Weapon W, int Modifier)
+{
+    return false;
+}
+
 function BoostShield(Pawn P, int Amount)
 {
     local Effect_ShieldBoost Boost;

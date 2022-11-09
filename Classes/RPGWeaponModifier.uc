@@ -96,6 +96,12 @@ static function bool AllowedFor(class<Weapon> WeaponType, optional Pawn Other) {
     return true;
 }
 
+//interface for weapon makers
+static function bool AllowRemoval(Weapon W, int Modifier)
+{
+    return true;
+}
+
 static function RPGWeaponModifier Modify(Weapon W, int Modifier, optional bool bIdentify, optional bool bForce) {
     local RPGWeaponModifier WM;
 
