@@ -22,6 +22,7 @@ var automated GUIScrollTextBox lbDesc;
 var automated moNumericEdit neModifierLevel;
 var automated moCheckBox chShowFavorites;
 var automated GUIButton btFavorite;
+var automated GUIButton btArtificerWorkbench;
 
 var automated GUIImage imHeart;
 
@@ -51,6 +52,7 @@ var FX_WeaponMenuHearts HeartsEffect;
 var localized string Text_ModifierLevel;
 var localized string Text_ShowFavorites;
 var localized string Text_Favorite, Text_Unfavorite;
+var localized string Text_ArtificersWorkbench;
 var localized string Text_NotNormallyAllowed;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
@@ -79,6 +81,9 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 
     chShowFavorites.Caption = Text_ShowFavorites;
     chShowFavorites.InitComponent(MyController, Self);
+
+    btArtificerWorkbench.Caption = Text_ArtificersWorkbench;
+    btArtificerWorkbench.InitComponent(MyController, Self);
 }
 
 function InitMenu()
@@ -95,6 +100,11 @@ function InitMenu()
 
     bInitialized = true;
     CheckFavorite();
+
+    if(RPGMenu.RPRI.HasAbility(class'Ability_LoadedAugments') == 0)
+        btArtificerWorkbench.DisableMe();
+    else if(btArtificerWorkbench.MenuState == MSAT_Disabled)
+        btArtificerWorkbench.EnableMe();
 }
 
 function InternalDrawWeaponListItem(Canvas C, int Item, float X, float Y, float W, float H, bool bSelected, bool bPending)
@@ -518,6 +528,10 @@ function bool InternalOnClick(GUIComponent Sender)
                 }
             }
             break;
+        case btArtificerWorkbench:
+            Controller.OpenMenu("TURRPG2.RPGMenu_ArtificersWorkbenchWindow");
+            RPGMenu_ArtificersWorkbenchWindow(Controller.TopPage()).InitFor(RPGMenu.RPRI);
+            break;
     }
 
     return true;
@@ -577,6 +591,7 @@ defaultproperties
     Text_ShowFavorites="Favorites Only"
     Text_Favorite="Favorite Weapon"
     Text_Unfavorite="Unfavorite Weapon"
+    Text_ArtificersWorkbench="Artificer's Workbench"
     Text_NotNormallyAllowed="This weapon/modifier combination is not naturally occuring!"
 
     Begin Object Class=AltSectionBackground Name=sbSpinnyWeap_
@@ -711,15 +726,26 @@ defaultproperties
     chShowFavorites=chShowFavorites_
 
     Begin Object Class=GUIButton Name=btFavorite_
-        WinWidth=0.162805
+        WinWidth=0.208893
         WinHeight=0.072008
-        WinLeft=0.791775
-        WinTop=0.789970
+        WinLeft=0.770599
+        WinTop=0.620235
         bBoundToParent=True
         bScaleToParent=True
         OnClick=RPGMenu_Weapons.InternalOnClick
     End Object
     btFavorite=btFavorite_
+
+    Begin Object Class=GUIButton Name=btArtificerWorkbench_
+        WinWidth=0.208893
+        WinHeight=0.072008
+        WinLeft=0.770599
+        WinTop=0.800496
+        bBoundToParent=True
+        bScaleToParent=True
+        OnClick=RPGMenu_Weapons.InternalOnClick
+    End Object
+    btArtificerWorkbench=btArtificerWorkbench_
 
     Begin Object Class=GUIImage Name=imHeart_
         ImageStyle=ISTY_Justified

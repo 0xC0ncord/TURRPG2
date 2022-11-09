@@ -33,6 +33,15 @@ struct FavoriteWeaponStruct
 };
 var config array<FavoriteWeaponStruct> FavoriteWeaponsConfig;
 
+struct ArtificerAugmentStruct
+{
+    var class<ArtificerAugmentBase> AugmentClass;
+    var int ModifierLevel;
+};
+var config array<ArtificerAugmentStruct> ArtificerCharmAlphaConfig;
+var config array<ArtificerAugmentStruct> ArtificerCharmBetaConfig;
+var config array<ArtificerAugmentStruct> ArtificerCharmGammaConfig;
+
 defaultproperties
 {
 }

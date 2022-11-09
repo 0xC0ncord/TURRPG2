@@ -168,6 +168,11 @@ struct RadialMenuArtifactStruct
 };
 var array<RadialMenuArtifactStruct> ArtifactRadialMenuOrder;
 
+//artificer augments (replicated client->server)
+var array<RPGCharSettings.ArtificerAugmentStruct> ArtificerAugmentsAlpha;
+var array<RPGCharSettings.ArtificerAugmentStruct> ArtificerAugmentsBeta;
+var array<RPGCharSettings.ArtificerAugmentStruct> ArtificerAugmentsGamma;
+
 //rebuild info
 var bool bAllowRebuild;
 var int RebuildCost;
@@ -238,7 +243,9 @@ replication
         ServerClearArtifactOrder, ServerAddArtifactOrderEntry, ServerSortArtifacts,
         ServerGetArtifact, ServerActivateArtifact, //moved from RPGPlayerController for better compatibility
         ServerDestroyBuildings, ServerDestroySentinels, ServerDestroyTurrets,
-        ServerDestroyVehicles, ServerDestroyUtilities, ServerKillMonsters;
+        ServerDestroyVehicles, ServerDestroyUtilities, ServerKillMonsters,
+        ServerClearArtificerAugments, ServerAddArtificerAugmentEntry,
+        ServerCommitArtificerAugments;
 }
 
 static function RPGPlayerReplicationInfo CreateFor(Controller C)
@@ -607,6 +614,14 @@ simulated function ClientSetup()
 
                 //load weapon favorites from settings
                 FavoriteWeapons = Interaction.CharSettings.FavoriteWeaponsConfig;
+
+                //load artificer loadouts from settings and sync
+                ArtificerAugmentsAlpha = Interaction.CharSettings.ArtificerCharmAlphaConfig;
+                ArtificerAugmentsBeta = Interaction.CharSettings.ArtificerCharmBetaConfig;
+                ArtificerAugmentsGamma = Interaction.CharSettings.ArtificerCharmGammaConfig;
+                ResendArtificerAugments(0);
+                ResendArtificerAugments(1);
+                ResendArtificerAugments(2);
             }
 
             //add all artifacts that were not in the settings to the end
@@ -1599,6 +1614,94 @@ final function ServerDestroyUtilities()
     }
     NumUtilities = 0;
     UtilityPoints = MaxUtilityPoints;
+}
+
+simulated function ResendArtificerAugments(byte Which)
+{
+    local int i;
+
+    if(Role == ROLE_Authority)
+    {
+        //don't actually resync on listen or standalone
+        ServerCommitArtificerAugments(Which);
+        return;
+    }
+
+    ServerClearArtificerAugments(Which);
+    switch(Which)
+    {
+        case 0: //ALPHA
+            for(i = 0; i < ArtificerAugmentsAlpha.Length; i++)
+                ServerAddArtificerAugmentEntry(Which, i, ArtificerAugmentsAlpha[i]);
+            break;
+        case 1: //BETA
+            for(i = 0; i < ArtificerAugmentsBeta.Length; i++)
+                ServerAddArtificerAugmentEntry(Which, i, ArtificerAugmentsBeta[i]);
+            break;
+        case 2: //GAMMA
+            for(i = 0; i < ArtificerAugmentsGamma.Length; i++)
+                ServerAddArtificerAugmentEntry(Which, i, ArtificerAugmentsGamma[i]);
+            break;
+    }
+    ServerCommitArtificerAugments(Which);
+}
+
+function ServerClearArtificerAugments(byte Which)
+{
+    switch(Which)
+    {
+        case 0: //ALPHA
+            ArtificerAugmentsAlpha.Length = 0;
+            break;
+        case 1: //BETA
+            ArtificerAugmentsBeta.Length = 0;
+            break;
+        case 2: //GAMMA
+            ArtificerAugmentsGamma.Length = 0;
+            break;
+    }
+}
+
+function ServerAddArtificerAugmentEntry(byte Which, int Index, RPGCharSettings.ArtificerAugmentStruct Modifier)
+{
+    switch(Which)
+    {
+        case 0: //ALPHA
+            ArtificerAugmentsAlpha[Index] = Modifier;
+            break;
+        case 1: //BETA
+            ArtificerAugmentsBeta[Index] = Modifier;
+            break;
+        case 2: //GAMMA
+            ArtificerAugmentsGamma[Index] = Modifier;
+            break;
+    }
+}
+
+function ServerCommitArtificerAugments(byte Which)
+{
+    local AbilityBase_ArtificerCharm Ability;
+
+    //TODO check augments validity here
+
+    switch(Which)
+    {
+        case 0: //ALPHA
+            Ability = Ability_ArtificerCharmAlpha(GetOwnedAbility(class'Ability_ArtificerCharmAlpha'));
+            if(Ability != None && Ability.WeaponModifier != None)
+                Ability.WeaponModifier.InitAugments(ArtificerAugmentsAlpha);
+            break;
+        case 1: //BETA
+            Ability = Ability_ArtificerCharmBeta(GetOwnedAbility(class'Ability_ArtificerCharmBeta'));
+            if(Ability != None && Ability.WeaponModifier != None)
+                Ability.WeaponModifier.InitAugments(ArtificerAugmentsBeta);
+            break;
+        case 2: //GAMMA
+            Ability = Ability_ArtificerCharmGamma(GetOwnedAbility(class'Ability_ArtificerCharmGamma'));
+            if(Ability != None && Ability.WeaponModifier != None)
+                Ability.WeaponModifier.InitAugments(ArtificerAugmentsGamma);
+            break;
+    }
 }
 
 final function AddConstruction(string ConstructionType, Pawn P, int Points)
