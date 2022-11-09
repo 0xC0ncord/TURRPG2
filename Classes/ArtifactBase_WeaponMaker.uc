@@ -19,8 +19,12 @@ var class<RPGWeaponModifier> ModifierClass;
 const MSG_UnableToGenerate = 0x0100;
 const MSG_AlreadyConstructing = 0x0101;
 const MSG_Broken = 0x0102;
+const MSG_Forbidden = 0x0103;
+const MSG_CannotRemove = 0x0104;
+const MSG_Duplicate = 0x0105;
 
 var localized string MsgUnableToGenerate, MsgAlreadyConstructing, MsgBroken;
+var localized string MsgForbidden, MsgCannotRemove, MsgDuplicate;
 
 var Weapon OldWeapon, ModifiedWeapon;
 var int OldAmmo[2];
@@ -39,6 +43,15 @@ static function string GetMessageString(int Msg, optional int Value, optional Ob
         case MSG_Broken:
             return default.MsgBroken;
 
+        case MSG_Forbidden:
+            return default.MsgForbidden;
+
+        case MSG_CannotRemove:
+            return default.MsgCannotRemove;
+
+        case MSG_Duplicate:
+            return default.MsgDuplicate;
+
         default:
             return Super.GetMessageString(Msg, Value);
     }
@@ -55,6 +68,7 @@ simulated event PostBeginPlay()
 function bool CanActivate()
 {
     local int i;
+    local RPGWeaponModifier WM;
 
     if(!Super.CanActivate())
         return false;
@@ -63,23 +77,43 @@ function bool CanActivate()
 
     if(ModifiedWeapon != None)
     {
+        //don't allow on forbidden weapons
         for(i = 0; i < ForbiddenWeaponTypes.Length; i++)
         {
             if(ClassIsChildOf(ModifiedWeapon.Class, ForbiddenWeaponTypes[i]))
             {
-                ModifiedWeapon = None;
-                break;
+                Msg(MSG_Forbidden);
+                return false;
             }
         }
-    }
 
-    if(ModifiedWeapon == None
-    || class'WeaponModifier_EngineerLink'.static.GetFor(ModifiedWeapon) != None
-    || (ModifierClass != None && ModifiedWeapon != None && (!ModifierClass.static.AllowedFor(ModifiedWeapon.Class, Instigator) || ModifierClass == class'RPGWeaponModifier'.static.GetFor(ModifiedWeapon).Class))
-    )
-    {
-        Msg(MSG_UnableToGenerate);
-        return false;
+        if(ModifierClass != None)
+        {
+            //don't allow if the modifier isn't allowed for this weapon
+            if(!ModifierClass.static.AllowedFor(ModifiedWeapon.Class, Instigator))
+            {
+                Msg(MSG_UnableToGenerate);
+                return false;
+            }
+
+            WM = class'RPGWeaponModifier'.static.GetFor(ModifiedWeapon);
+            if(WM != None)
+            {
+                //don't allow modifying the same weapon twice
+                if(WM.Class == ModifierClass)
+                {
+                    Msg(MSG_Duplicate);
+                    return false;
+                }
+
+                //don't remove nonremovable modifiers
+                if(!WM.static.AllowRemoval(ModifiedWeapon, WM.Modifier))
+                {
+                    Msg(MSG_CannotRemove);
+                    return false;
+                }
+            }
+        }
     }
 
     return true;
@@ -181,6 +215,9 @@ defaultproperties
     MsgUnableToGenerate="Unable to enchant weapon."
     MsgAlreadyConstructing="Already enchanting a weapon."
     MsgBroken="The artifact has broken."
+    MsgForbidden="Unable to enchant a weapon where magics are forbidden."
+    MsgCannotRemove="Unable to remove the existing magic."
+    MsgDuplicate="The weapon already has the desired magic."
     ForbiddenWeaponTypes(0)=class'BallLauncher'
     ForbiddenWeaponTypes(1)=class'TransLauncher'
 }
