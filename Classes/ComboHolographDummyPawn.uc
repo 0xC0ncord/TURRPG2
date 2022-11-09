@@ -129,8 +129,8 @@ defaultproperties
     NetUpdateFrequency=8.000000
     Mesh=SkeletalMesh'Bot.BotB'
     DrawScale=0.000001
-    Skins(0)=Shader'IniLandTex2.Orbs.InvisTex'
-    Skins(1)=Shader'IniLandTex2.Orbs.InvisTex'
+    Skins(0)=FinalBlend'ONSstructureTextures.CoreGroup.InvisibleFinal'
+    Skins(1)=FinalBlend'ONSstructureTextures.CoreGroup.InvisibleFinal'
     bCanBeDamaged=False
     bOwnerNoSee=False
     bHardAttach=True
