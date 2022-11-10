@@ -10,6 +10,7 @@ class Artifact_ArtificerCharmBeta extends ArtifactBase_ArtificerCharm;
 
 defaultproperties
 {
+    ModifierClass=Class'WeaponModifier_ArtificerBeta'
     ArtifactID="ArtificerCharmBeta"
     ItemName="Artificer's Charm: Beta"
 }

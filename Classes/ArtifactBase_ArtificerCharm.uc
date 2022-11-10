@@ -24,30 +24,7 @@ state Activated
 {
     function bool DoEffect()
     {
-        local WeaponModifier_Artificer WM;
-
-        if(ModifiedWeapon.bNoAmmoInstances)
-            Ability.OldAmmoCount = ModifiedWeapon.AmmoCharge[0];
-        else
-            Ability.OldAmmoCount = class'DummyWeaponHack'.static.GetAmmo(ModifiedWeapon, 0).AmmoAmount;
-
-        WM = WeaponModifier_Artificer(ModifierClass.static.Modify(ModifiedWeapon, Ability.AbilityLevel, true));
-        switch(Class)
-        {
-            case class'Artifact_ArtificerCharmAlpha':
-                WM.InitAugments(InstigatorRPRI.ArtificerAugmentsAlpha);
-                break;
-            case class'Artifact_ArtificerCharmBeta':
-                WM.InitAugments(InstigatorRPRI.ArtificerAugmentsBeta);
-                break;
-            case class'Artifact_ArtificerCharmGamma':
-                WM.InitAugments(InstigatorRPRI.ArtificerAugmentsGamma);
-                break;
-        }
-
-        ModifiedWeapon.bCanThrow = false;
-
-        Ability.WeaponModifier = WM;
+        DoModifyWeapon(ModifiedWeapon);
 
         Msg(MSG_Broken);
 
@@ -58,6 +35,34 @@ state Activated
 
         return true;
     }
+}
+
+function DoModifyWeapon(Weapon W)
+{
+    local WeaponModifier_Artificer WM;
+
+    if(ModifiedWeapon.bNoAmmoInstances)
+        Ability.OldAmmoCount = ModifiedWeapon.AmmoCharge[0];
+    else
+        Ability.OldAmmoCount = class'DummyWeaponHack'.static.GetAmmo(ModifiedWeapon, 0).AmmoAmount;
+
+    WM = WeaponModifier_Artificer(ModifierClass.static.Modify(ModifiedWeapon, Ability.AbilityLevel, true));
+    switch(Class)
+    {
+        case class'Artifact_ArtificerCharmAlpha':
+            WM.InitAugments(InstigatorRPRI.ArtificerAugmentsAlpha);
+            break;
+        case class'Artifact_ArtificerCharmBeta':
+            WM.InitAugments(InstigatorRPRI.ArtificerAugmentsBeta);
+            break;
+        case class'Artifact_ArtificerCharmGamma':
+            WM.InitAugments(InstigatorRPRI.ArtificerAugmentsGamma);
+            break;
+    }
+
+    ModifiedWeapon.bCanThrow = false;
+
+    Ability.WeaponModifier = WM;
 }
 
 defaultproperties
