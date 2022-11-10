@@ -12,6 +12,12 @@ class ArtifactBase_ArtificerCharm extends ArtifactBase_WeaponMaker
 
 var AbilityBase_ArtificerCharm Ability;
 
+replication
+{
+    reliable if(Role < ROLE_Authority)
+        ServerAutoApplyWeapon;
+}
+
 function bool CanActivate()
 {
     if(!Super.CanActivate() || Ability == None)
@@ -35,6 +41,51 @@ state Activated
 
         return true;
     }
+}
+
+simulated function PostNetBeginPlay()
+{
+    local class<Weapon> AutoApplyWeaponClass;
+
+    Super.PostNetBeginPlay();
+
+    if(Role == ROLE_Authority)
+        return;
+
+    switch(Class)
+    {
+        case class'Artifact_ArtificerCharmAlpha':
+            if(InstigatorRPRI.ArtificerAutoApplyWeaponAlpha != None)
+                AutoApplyWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponAlpha;
+            break;
+        case class'Artifact_ArtificerCharmBeta':
+            if(InstigatorRPRI.ArtificerAutoApplyWeaponBeta != None)
+                AutoApplyWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponBeta;
+            break;
+        case class'Artifact_ArtificerCharmGamma':
+            if(InstigatorRPRI.ArtificerAutoApplyWeaponGamma != None)
+                AutoApplyWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponGamma;
+            break;
+    }
+
+    if(AutoApplyWeaponClass != None)
+        ServerAutoApplyWeapon(AutoApplyWeaponClass);
+}
+
+function ServerAutoApplyWeapon(class<Weapon> WeaponClass)
+{
+    local Inventory Inv;
+
+    for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)
+        if(Inv.Class == WeaponClass)
+            break;
+
+    ForcedWeapon = Weapon(Inv);
+
+    if(CanActivate())
+        DoEffect();
+
+    ForcedWeapon = None;
 }
 
 function DoModifyWeapon(Weapon W)

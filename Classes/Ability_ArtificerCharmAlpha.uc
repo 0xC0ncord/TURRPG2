@@ -10,6 +10,6 @@ class Ability_ArtificerCharmAlpha extends AbilityBase_ArtificerCharm;
 
 defaultproperties
 {
-    GrantItem(0)=(Level=1,InventoryClass=Class'Artifact_ArtificerCharmAlpha')
+    ArtificerCharmClass=Class'Artifact_ArtificerCharmAlpha'
     AbilityName="Artificer Charm: Alpha"
 }

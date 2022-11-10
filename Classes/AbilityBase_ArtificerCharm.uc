@@ -9,11 +9,15 @@
 class AbilityBase_ArtificerCharm extends RPGAbility
     abstract;
 
+var class<ArtifactBase_ArtificerCharm> ArtificerCharmClass;
+
 var WeaponModifier_Artificer WeaponModifier; //to prevent granting multiple charms by upgrading this ability
 var ArtifactBase_ArtificerCharm Artifact;
 
 var int OldAmmoCount; //TODO old amount of ammo a weapon had before it was sealed
                       //to prevent gaining infinite ammo from sealing/unsealing
+
+var class<Weapon> AutoApplyWeaponClass; //weapon class to auto-apply on
 
 replication
 {
@@ -23,69 +27,100 @@ replication
 
 function ModifyPawn(Pawn Other)
 {
-    local int x, i;
-    local Ability_Denial Denial;
-    local class<ArtifactBase_ArtificerCharm> AClass;
+    Super.ModifyPawn(Other);
+    GrantArtificerCharm(Other);
+}
 
-    Instigator = Other;
-
-    if(StatusIconClass != None)
-        RPRI.ClientCreateStatusIcon(StatusIconClass);
-
-    for(x = 0; x < GrantItem.Length; x++)
+function ModifyGrantedWeapon(Weapon Weapon, RPGWeaponModifier WM, optional Object Source)
+{
+    if(Weapon.Class == AutoApplyWeaponClass)
     {
-        if(AbilityLevel >= GrantItem[x].Level)
+        //make sure this is legal
+        if(!class'WeaponModifier_Artificer'.static.AllowedFor(Weapon.Class, Weapon.Instigator)
+            || Weapon.Class == class'BallLauncher'
+            || Weapon.Class == class'TransLauncher'
+        )
         {
-            AClass = class<ArtifactBase_ArtificerCharm>(GrantItem[x].InventoryClass);
-            if(AClass == None)
+            //give them an artifact if they dont have one and be done.
+            if(Weapon.Instigator.FindInventoryType(ArtificerCharmClass) != None)
+                return; //wtf?
+
+            Artifact = ArtifactBase_ArtificerCharm(class'Util'.static.GiveInventory(Weapon.Instigator, ArtificerCharmClass));
+            if(Artifact != None)
+                Artifact.Ability = Self;
+        }
+        else
+        {
+            //mostly copied from ArtifactBase_ArtificerCharm::Activated::DoEffect
+            if(Weapon.bNoAmmoInstances)
+                OldAmmoCount = Weapon.AmmoCharge[0];
+            else
+                OldAmmoCount = class'DummyWeaponHack'.static.GetAmmo(Weapon, 0).AmmoAmount;
+
+            WeaponModifier = WeaponModifier_Artificer(class'WeaponModifier_Artificer'.static.Modify(Weapon, AbilityLevel, true));
+            switch(Class)
             {
-                class'Util'.static.GiveInventory(Other, GrantItem[x].InventoryClass);
-                continue;
+                case class'Ability_ArtificerCharmAlpha':
+                    WeaponModifier.InitAugments(RPRI.ArtificerAugmentsAlpha);
+                    break;
+                case class'Ability_ArtificerCharmBeta':
+                    WeaponModifier.InitAugments(RPRI.ArtificerAugmentsBeta);
+                    break;
+                case class'Ability_ArtificerCharmGamma':
+                    WeaponModifier.InitAugments(RPRI.ArtificerAugmentsGamma);
+                    break;
             }
 
-            //ability was just upgraded
-            if(bJustBought && AbilityLevel > 1)
-            {
-                //if they have denial, don't grant another charm if a weapon is going to be restored
-                Denial = Ability_Denial(RPRI.GetOwnedAbility(class'Ability_Denial'));
-                if(Denial != None)
-                {
-                    for(i = 0; i < Denial.StoredWeapons.Length; i++)
-                    {
-                        if(Denial.StoredWeapons[i].ModifierClass == AClass.default.ModifierClass)
-                        {
-                            //ability was upgraded, let's upgrade this modifier
-                            Denial.StoredWeapons[i].Modifier = AbilityLevel;
-                            i = -1;
-                            break;
-                        }
-                    }
-                }
+            WeaponModifier.bCanThrow = false;
+        }
+    }
+}
 
-                //we should only get here if the player is alive
-                if(i != -1)
-                {
-                    //just upgrade the artifact or weapon modifier
-                    Artifact = ArtifactBase_ArtificerCharm(Other.FindInventoryType(GrantItem[x].InventoryClass));
+function GrantArtificerCharm(Pawn Other)
+{
+    local int i;
+    local Ability_Denial Denial;
 
-                    //artifact uses ability's level instead of tracking it, so we only care if it was used
-                    if(Artifact == None && WeaponModifier != None)
-                        WeaponModifier.SetModifier(AbilityLevel, true);
-                }
-            }
-            else //ability was just bought or player just spawned
+    //ability was just upgraded
+    if(bJustBought && AbilityLevel > 1)
+    {
+        //if they have denial, don't grant another charm if a weapon is going to be restored
+        Denial = Ability_Denial(RPRI.GetOwnedAbility(class'Ability_Denial'));
+        if(Denial != None)
+        {
+            for(i = 0; i < Denial.StoredWeapons.Length; i++)
             {
-                Artifact = ArtifactBase_ArtificerCharm(class'Util'.static.GiveInventory(Other, GrantItem[x].InventoryClass));
-                if(Artifact != None)
-                    Artifact.Ability = Self;
+                if(Denial.StoredWeapons[i].ModifierClass == ArtificerCharmClass.default.ModifierClass)
+                {
+                    //ability was upgraded, let's upgrade this modifier
+                    Denial.StoredWeapons[i].Modifier = AbilityLevel;
+                    i = -1;
+                    break;
+                }
             }
         }
+
+        //we should only get here if the player is alive
+        if(i != -1)
+        {
+            //just upgrade the artifact or weapon modifier
+            Artifact = ArtifactBase_ArtificerCharm(Other.FindInventoryType(ArtificerCharmClass));
+
+            //artifact uses ability's level instead of tracking it, so we only care if it was used
+            if(Artifact == None && WeaponModifier != None)
+                WeaponModifier.SetModifier(AbilityLevel, true);
+        }
+    }
+    else if(AutoApplyWeaponClass == None) //ability was just bought or player just spawned
+    {
+        Artifact = ArtifactBase_ArtificerCharm(class'Util'.static.GiveInventory(Other, ArtificerCharmClass));
+        if(Artifact != None)
+            Artifact.Ability = Self;
     }
 }
 
 defaultproperties
 {
-    GrantItem(0)=(Level=1,InventoryClass=Class'ArtifactBase_ArtificerCharm')
     StartingCost=5
     CostAddPerLevel=1
     MaxLevel=10

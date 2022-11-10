@@ -41,6 +41,9 @@ struct ArtificerAugmentStruct
 var config array<ArtificerAugmentStruct> ArtificerCharmAlphaConfig;
 var config array<ArtificerAugmentStruct> ArtificerCharmBetaConfig;
 var config array<ArtificerAugmentStruct> ArtificerCharmGammaConfig;
+var config class<Weapon> ArtificerAutoApplyWeaponAlpha;
+var config class<Weapon> ArtificerAutoApplyWeaponBeta;
+var config class<Weapon> ArtificerAutoApplyWeaponGamma;
 
 defaultproperties
 {

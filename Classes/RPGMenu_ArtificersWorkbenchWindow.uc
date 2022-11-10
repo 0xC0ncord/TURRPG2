@@ -19,9 +19,14 @@ var automated GUIListBox lbAugmentPool, lbCharmA, lbCharmB, lbCharmC;
 var automated GUIGFXButton btAddCharmA, btRemoveCharmA;
 var automated GUIGFXButton btAddCharmB, btRemoveCharmB;
 var automated GUIGFXButton btAddCharmC, btRemoveCharmC;
+var automated GUIComboBox cmbAutoApplyAlpha, cmbAutoApplyBeta, cmbAutoApplyGamma;
+var automated GUILabel lblAutoApplyAlpha, lblAutoApplyBeta, lblAutoApplyGamma;
 var automated GUIImage imIcon;
 var automated GUIScrollTextBox lbDesc;
 var automated GUIButton btHelp;
+
+var class<Weapon> OldAutoApplyWeaponAlpha, OldAutoApplyWeaponBeta, OldAutoApplyWeaponGamma;
+var array<GUIListElem> AutoApplyAlphaList, AutoApplyBetaList, AutoApplyGammaList;
 
 var GUIList LastInteractedList; //list which we were last interacting with
                                 //which isn't the modifier pool
@@ -29,6 +34,12 @@ var GUIList LastInteractedList; //list which we were last interacting with
 var localized string WindowTitle;
 
 var localized string Text_HintHelp;
+
+var localized string Text_NoAutoApply;
+
+var localized string Text_AutoApplyAlpha;
+var localized string Text_AutoApplyBeta;
+var localized string Text_AutoApplyGamma;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -103,8 +114,24 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     lbCharmB.List.OnDrawItem = InternalDrawCharmBItem;
     lbCharmC.List.OnDrawItem = InternalDrawCharmCItem;
 
+    cmbAutoApplyAlpha.Edit.bReadOnly = true;
+    cmbAutoApplyAlpha.List.bInitializeList = false;
+    cmbAutoApplyAlpha.List.bSorted = true;
+
+    cmbAutoApplyBeta.Edit.bReadOnly = true;
+    cmbAutoApplyBeta.List.bInitializeList = false;
+    cmbAutoApplyBeta.List.bSorted = true;
+
+    cmbAutoApplyGamma.Edit.bReadOnly = true;
+    cmbAutoApplyGamma.List.bInitializeList = false;
+    cmbAutoApplyGamma.List.bSorted = true;
+
     t_WindowTitle.SetCaption(WindowTitle);
     btHelp.ToolTip.SetTip(Text_HintHelp);
+
+    lblAutoApplyAlpha.Caption = Text_AutoApplyAlpha;
+    lblAutoApplyBeta.Caption = Text_AutoApplyBeta;
+    lblAutoApplyGamma.Caption = Text_AutoApplyGamma;
 }
 
 function InitFor(RPGPlayerReplicationInfo Whom)
@@ -167,6 +194,67 @@ function InitFor(RPGPlayerReplicationInfo Whom)
     lbCharmB.List.SilentSetIndex(0);
     lbCharmC.List.SilentSetIndex(0);
     SelectModifier();
+
+    //populate the auto-apply combo boxes
+    cmbAutoApplyAlpha.List.bNotify = false;
+    cmbAutoApplyBeta.List.bNotify = false;
+    cmbAutoApplyGamma.List.bNotify = false;
+
+    cmbAutoApplyAlpha.List.Elements.Length = 0;
+    cmbAutoApplyBeta.List.Elements.Length = 0;
+    cmbAutoApplyGamma.List.Elements.Length = 0;
+
+    //TODO make this dynamic
+    for(i = 0; i < class'Ability_LoadedWeapons'.default.GrantItem.Length; i++)
+    {
+        cmbAutoApplyAlpha.AddItem(
+            class'Ability_LoadedWeapons'.default.GrantItem[i].InventoryClass.default.ItemName,
+            class'Ability_LoadedWeapons'.default.GrantItem[i].InventoryClass);
+        cmbAutoApplyBeta.AddItem(
+            class'Ability_LoadedWeapons'.default.GrantItem[i].InventoryClass.default.ItemName,
+            class'Ability_LoadedWeapons'.default.GrantItem[i].InventoryClass);
+        cmbAutoApplyGamma.AddItem(
+            class'Ability_LoadedWeapons'.default.GrantItem[i].InventoryClass.default.ItemName,
+            class'Ability_LoadedWeapons'.default.GrantItem[i].InventoryClass);
+    }
+
+    cmbAutoApplyAlpha.List.Sort();
+    cmbAutoApplyBeta.List.Sort();
+    cmbAutoApplyGamma.List.Sort();
+
+    //no auto apply option inserted manually after sorting
+    AutoApplyAlphaList = cmbAutoApplyAlpha.List.Elements;
+    AutoApplyBetaList = cmbAutoApplyBeta.List.Elements;
+    AutoApplyGammaList = cmbAutoApplyGamma.List.Elements;
+
+    cmbAutoApplyAlpha.List.Insert(0, Text_NoAutoApply,,, true);
+    cmbAutoApplyBeta.List.Insert(0, Text_NoAutoApply,,, true);
+    cmbAutoApplyGamma.List.Insert(0, Text_NoAutoApply,,, true);
+
+    cmbAutoApplyAlpha.List.bNotify = true;
+    cmbAutoApplyBeta.List.bNotify = true;
+    cmbAutoApplyGamma.List.bNotify = true;
+
+    //now load auto-apply from settings
+    if(Settings.ArtificerAutoApplyWeaponAlpha != None)
+        cmbAutoApplyAlpha.SetIndex(cmbAutoApplyAlpha.FindIndex(Settings.ArtificerAutoApplyWeaponAlpha.default.ItemName));
+    else
+        cmbAutoApplyAlpha.SetIndex(0);
+
+    if(Settings.ArtificerAutoApplyWeaponBeta != None
+        && Settings.ArtificerAutoApplyWeaponBeta != Settings.ArtificerAutoApplyWeaponAlpha
+    )
+        cmbAutoApplyBeta.SetIndex(cmbAutoApplyBeta.FindIndex(Settings.ArtificerAutoApplyWeaponBeta.default.ItemName));
+    else
+        cmbAutoApplyBeta.SetIndex(0);
+
+    if(Settings.ArtificerAutoApplyWeaponGamma != None
+        && Settings.ArtificerAutoApplyWeaponGamma != Settings.ArtificerAutoApplyWeaponAlpha
+        && Settings.ArtificerAutoApplyWeaponGamma != Settings.ArtificerAutoApplyWeaponBeta
+    )
+        cmbAutoApplyGamma.SetIndex(cmbAutoApplyGamma.FindIndex(Settings.ArtificerAutoApplyWeaponGamma.default.ItemName));
+    else
+        cmbAutoApplyGamma.SetIndex(0);
 }
 
 function SelectModifier(optional GUIList List)
@@ -297,11 +385,9 @@ function bool AddModifier(GUIComponent Sender)
     lbAugmentPool.List.ClearPendingElements();
     lbAugmentPool.List.SetIndex(lbAugmentPool.List.Index); //to check if button states should change
 
-    if(lbAugmentPool.List.bSorted)
-        lbAugmentPool.List.Sort();
+    lbAugmentPool.List.Sort();
 
-    if(Target.bSorted)
-        Target.Sort();
+    Target.Sort();
 
     bDirty = true;
 
@@ -402,10 +488,8 @@ function bool InternalOnDragDrop(GUIComponent Target)
     Source.ClearPendingElements();
     Source.SetIndex(Source.Index); //to check if button states should change
 
-    if(Source.bSorted)
-        Source.Sort();
-    if(GUIList(Target).bSorted)
-        GUIList(Target).Sort();
+    Source.Sort();
+    GUIList(Target).Sort();
 
     bDirty = true;
 
@@ -588,6 +672,166 @@ final function UnpackCharmList(GUIList List, out array<RPGCharSettings.Artificer
     }
 }
 
+function AutoApplySelected(GUIComponent Sender)
+{
+    local GUIListElem Elem;
+    local int i;
+
+    switch(Sender)
+    {
+        case cmbAutoApplyAlpha:
+            bDirty = true;
+            cmbAutoApplyBeta.List.bNotify = false;
+            cmbAutoApplyGamma.List.bNotify = false;
+            if(OldAutoApplyWeaponAlpha != None)
+            {
+                Elem.Item = OldAutoApplyWeaponAlpha.default.ItemName;
+                Elem.ExtraData = OldAutoApplyWeaponAlpha;
+
+                AutoApplyBetaList[AutoApplyBetaList.Length] = Elem;
+                AutoApplyGammaList[AutoApplyGammaList.Length] = Elem;
+
+                cmbAutoApplyBeta.List.Elements = AutoApplyBetaList;
+                cmbAutoApplyGamma.List.Elements = AutoApplyGammaList;
+
+                cmbAutoApplyBeta.List.Sort();
+                cmbAutoApplyGamma.List.Sort();
+
+                cmbAutoApplyBeta.List.Insert(0, Text_NoAutoApply,,, true);
+                cmbAutoApplyGamma.List.Insert(0, Text_NoAutoApply,,, true);
+            }
+            if(cmbAutoApplyAlpha.GetObject() != None)
+            {
+                for(i = 0; i < AutoApplyBetaList.Length; i++)
+                {
+                    if(AutoApplyBetaList[i] == cmbAutoApplyAlpha.List.Elements[cmbAutoApplyAlpha.List.Index])
+                    {
+                        AutoApplyBetaList.Remove(i, 1);
+                        break;
+                    }
+                }
+                for(i = 0; i < AutoApplyGammaList.Length; i++)
+                {
+                    if(AutoApplyGammaList[i] == cmbAutoApplyAlpha.List.Elements[cmbAutoApplyAlpha.List.Index])
+                    {
+                        AutoApplyGammaList.Remove(i, 1);
+                        break;
+                    }
+                }
+
+                cmbAutoApplyBeta.List.Elements = AutoApplyBetaList;
+                cmbAutoApplyGamma.List.Elements = AutoApplyGammaList;
+
+                cmbAutoApplyBeta.List.Insert(0, Text_NoAutoApply,,, true);
+                cmbAutoApplyGamma.List.Insert(0, Text_NoAutoApply,,, true);
+            }
+            cmbAutoApplyBeta.List.bNotify = true;
+            cmbAutoApplyGamma.List.bNotify = true;
+            OldAutoApplyWeaponAlpha = class<Weapon>(cmbAutoApplyAlpha.GetObject());
+            break;
+        case cmbAutoApplyBeta:
+            bDirty = true;
+            cmbAutoApplyAlpha.List.bNotify = false;
+            cmbAutoApplyGamma.List.bNotify = false;
+            if(OldAutoApplyWeaponBeta != None)
+            {
+                Elem.Item = OldAutoApplyWeaponBeta.default.ItemName;
+                Elem.ExtraData = OldAutoApplyWeaponBeta;
+
+                AutoApplyAlphaList[AutoApplyAlphaList.Length] = Elem;
+                AutoApplyGammaList[AutoApplyGammaList.Length] = Elem;
+
+                cmbAutoApplyAlpha.List.Elements = AutoApplyAlphaList;
+                cmbAutoApplyGamma.List.Elements = AutoApplyGammaList;
+
+                cmbAutoApplyAlpha.List.Sort();
+                cmbAutoApplyGamma.List.Sort();
+
+                cmbAutoApplyAlpha.List.Insert(0, Text_NoAutoApply,,, true);
+                cmbAutoApplyGamma.List.Insert(0, Text_NoAutoApply,,, true);
+            }
+            if(cmbAutoApplyBeta.GetObject() != None)
+            {
+                for(i = 0; i < AutoApplyAlphaList.Length; i++)
+                {
+                    if(AutoApplyAlphaList[i] == cmbAutoApplyBeta.List.Elements[cmbAutoApplyBeta.List.Index])
+                    {
+                        AutoApplyAlphaList.Remove(i, 1);
+                        break;
+                    }
+                }
+                for(i = 0; i < AutoApplyGammaList.Length; i++)
+                {
+                    if(AutoApplyGammaList[i] == cmbAutoApplyBeta.List.Elements[cmbAutoApplyBeta.List.Index])
+                    {
+                        AutoApplyGammaList.Remove(i, 1);
+                        break;
+                    }
+                }
+
+                cmbAutoApplyAlpha.List.Elements = AutoApplyAlphaList;
+                cmbAutoApplyGamma.List.Elements = AutoApplyGammaList;
+
+                cmbAutoApplyAlpha.List.Insert(0, Text_NoAutoApply,,, true);
+                cmbAutoApplyGamma.List.Insert(0, Text_NoAutoApply,,, true);
+            }
+            cmbAutoApplyAlpha.List.bNotify = true;
+            cmbAutoApplyGamma.List.bNotify = true;
+            OldAutoApplyWeaponBeta = class<Weapon>(cmbAutoApplyBeta.GetObject());
+            break;
+        case cmbAutoApplyGamma:
+            bDirty = true;
+            cmbAutoApplyAlpha.List.bNotify = false;
+            cmbAutoApplyBeta.List.bNotify = false;
+            if(OldAutoApplyWeaponGamma != None)
+            {
+                Elem.Item = OldAutoApplyWeaponGamma.default.ItemName;
+                Elem.ExtraData = OldAutoApplyWeaponGamma;
+
+                AutoApplyAlphaList[AutoApplyAlphaList.Length] = Elem;
+                AutoApplyBetaList[AutoApplyBetaList.Length] = Elem;
+
+                cmbAutoApplyAlpha.List.Elements = AutoApplyAlphaList;
+                cmbAutoApplyBeta.List.Elements = AutoApplyBetaList;
+
+                cmbAutoApplyAlpha.List.Sort();
+                cmbAutoApplyBeta.List.Sort();
+
+                cmbAutoApplyAlpha.List.Insert(0, Text_NoAutoApply,,, true);
+                cmbAutoApplyBeta.List.Insert(0, Text_NoAutoApply,,, true);
+            }
+            if(cmbAutoApplyGamma.GetObject() != None)
+            {
+                for(i = 0; i < AutoApplyAlphaList.Length; i++)
+                {
+                    if(AutoApplyAlphaList[i] == cmbAutoApplyGamma.List.Elements[cmbAutoApplyGamma.List.Index])
+                    {
+                        AutoApplyAlphaList.Remove(i, 1);
+                        break;
+                    }
+                }
+                for(i = 0; i < AutoApplyBetaList.Length; i++)
+                {
+                    if(AutoApplyBetaList[i] == cmbAutoApplyGamma.List.Elements[cmbAutoApplyGamma.List.Index])
+                    {
+                        AutoApplyBetaList.Remove(i, 1);
+                        break;
+                    }
+                }
+
+                cmbAutoApplyAlpha.List.Elements = AutoApplyAlphaList;
+                cmbAutoApplyBeta.List.Elements = AutoApplyBetaList;
+
+                cmbAutoApplyAlpha.List.Insert(0, Text_NoAutoApply,,, true);
+                cmbAutoApplyBeta.List.Insert(0, Text_NoAutoApply,,, true);
+            }
+            cmbAutoApplyAlpha.List.bNotify = true;
+            cmbAutoApplyBeta.List.bNotify = true;
+            OldAutoApplyWeaponGamma = class<Weapon>(cmbAutoApplyGamma.GetObject());
+            break;
+    }
+}
+
 event Closed(GUIComponent Sender, bool bCancelled)
 {
     local RPGCharSettings Settings;
@@ -613,6 +857,11 @@ event Closed(GUIComponent Sender, bool bCancelled)
         Settings.ArtificerCharmGammaConfig = Augments;
         RPRI.ArtificerAugmentsGamma = Augments;
         RPRI.ResendArtificerAugments(2);
+
+        Settings.ArtificerAutoApplyWeaponAlpha = class<Weapon>(cmbAutoApplyAlpha.GetObject());
+        Settings.ArtificerAutoApplyWeaponBeta = class<Weapon>(cmbAutoApplyBeta.GetObject());
+        Settings.ArtificerAutoApplyWeaponGamma = class<Weapon>(cmbAutoApplyGamma.GetObject());
+        RPRI.ResendArtificerAutoApplyWeapons();
 
         bDirty = false;
     }
@@ -851,6 +1100,63 @@ defaultproperties
     End Object
     btRemoveCharmC=btRemoveCharmC_
 
+    Begin Object class=GUIComboBox Name=cmbAutoApplyAlpha_
+        WinWidth=0.280164
+        WinHeight=0.041458
+        WinLeft=0.707875
+        WinTop=0.507177
+        Hint="Select a weapon to auto-apply Artificer Charm Alpha on when spawning."
+        OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
+    End Object
+    cmbAutoApplyAlpha=cmbAutoApplyAlpha_
+
+    Begin Object class=GUIComboBox Name=cmbAutoApplyBeta_
+        WinWidth=0.280164
+        WinHeight=0.041458
+        WinLeft=0.707875
+        WinTop=0.686195
+        Hint="Select a weapon to auto-apply Artificer Charm Beta on when spawning."
+        OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
+    End Object
+    cmbAutoApplyBeta=cmbAutoApplyBeta_
+
+    Begin Object class=GUIComboBox Name=cmbAutoApplyGamma_
+        WinWidth=0.280164
+        WinHeight=0.041458
+        WinLeft=0.707875
+        WinTop=0.865391
+        Hint="Select a weapon to auto-apply Artificer Charm Gamma on when spawning."
+        OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
+    End Object
+    cmbAutoApplyGamma=cmbAutoApplyGamma_
+
+    Begin Object Class=GUILabel Name=lblAutoApplyAlpha_
+        WinWidth=0.280164
+        WinHeight=0.039407
+        WinLeft=0.707875
+        WinTop=0.468261
+        StyleName="NoBackground"
+    End Object
+    lblAutoApplyAlpha=GUILabel'lblAutoApplyAlpha_'
+
+    Begin Object Class=GUILabel Name=lblAutoApplyBeta_
+        WinWidth=0.280164
+        WinHeight=0.039407
+        WinLeft=0.707875
+        WinTop=0.647278
+        StyleName="NoBackground"
+    End Object
+    lblAutoApplyBeta=GUILabel'lblAutoApplyBeta_'
+
+    Begin Object Class=GUILabel Name=lblAutoApplyGamma_
+        WinWidth=0.280164
+        WinHeight=0.039407
+        WinLeft=0.707875
+        WinTop=0.826116
+        StyleName="NoBackground"
+    End Object
+    lblAutoApplyGamma=GUILabel'lblAutoApplyGamma_'
+
     Begin Object Class=GUIScrollTextBox Name=lbDesc_
         WinWidth=0.270051
         WinHeight=0.152044
@@ -907,7 +1213,13 @@ defaultproperties
     WinWidth=0.90
     WinHeight=0.90
 
+    WindowTitle="Artificer's Workbench"
+
     Text_HintHelp="Show the help message."
 
-    WindowTitle="Artificer's Workbench"
+    Text_NoAutoApply="Do not auto-apply"
+
+    Text_AutoApplyAlpha="Auto-apply Charm Alpha on:"
+    Text_AutoApplyBeta="Auto-apply Charm Beta on:"
+    Text_AutoApplyGamma="Auto-apply Charm Gamma on:"
 }
