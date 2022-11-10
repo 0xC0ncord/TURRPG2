@@ -26,7 +26,7 @@ const MSG_Duplicate = 0x0105;
 var localized string MsgUnableToGenerate, MsgAlreadyConstructing, MsgBroken;
 var localized string MsgForbidden, MsgCannotRemove, MsgDuplicate;
 
-var Weapon OldWeapon, ModifiedWeapon;
+var Weapon OldWeapon, ModifiedWeapon, ForcedWeapon;
 var int OldAmmo[2];
 var() Sound BrokenSound;
 
@@ -73,7 +73,11 @@ function bool CanActivate()
     if(!Super.CanActivate())
         return false;
 
-    ModifiedWeapon = Instigator.Weapon;
+    //interface to allow modifying a specific weapon without manual activation
+    if(ForcedWeapon != None)
+        ModifiedWeapon = ForcedWeapon;
+    else
+        ModifiedWeapon = Instigator.Weapon;
 
     if(ModifiedWeapon != None)
     {
