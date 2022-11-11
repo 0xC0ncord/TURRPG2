@@ -61,7 +61,6 @@ simulated function Destroyed()
         else
             Augment.ClientStopEffect();
         Augment.Free();
-        Level.ObjectPool.FreeObject(Augment);
 
         Augment = NextAugment;
     }
@@ -88,7 +87,6 @@ simulated function ClientInitAugment(class<ArtificerAugmentBase> AugmentClass, i
 simulated function ClientRemoveAugment(ArtificerAugmentBase Augment)
 {
     Augment.Remove();
-    Level.ObjectPool.FreeObject(Augment);
 }
 
 function StartEffect()

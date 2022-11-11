@@ -21,6 +21,7 @@ var int ModifierLevel;
 var Weapon Weapon;
 var WeaponModifier_Artificer WeaponModifier;
 var Pawn Instigator;
+var ObjectPool ObjectPool;
 
 var ArtificerAugmentBase NextAugment, PrevAugment;
 
@@ -54,6 +55,7 @@ function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
     ModifierLevel = NewModifierLevel;
     Weapon = WM.Weapon;
     Instigator = Weapon.Instigator;
+    ObjectPool = WM.Level.ObjectPool;
 }
 
 final function Remove()
@@ -90,6 +92,8 @@ function Free()
     Instigator = None;
     NextAugment = None;
     PrevAugment = None;
+    ObjectPool.FreeObject(Self);
+    ObjectPool = None;
 }
 
 function StartEffect(); //weapon gets drawn
