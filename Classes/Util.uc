@@ -144,9 +144,18 @@ static final function string FormatPercent(float p)
 
 static final function string FormatFloat(float p)
 {
+    local string Result;
+    local int Pos;
+
     //~= to avoid evil floating point magic
-    if(float(int(p)) ~= p || Round(p) == p)
-        return string(int(p));
+    if(float(int(p)) ~= p)
+    {
+        Result = string(int(p));
+        Pos = InStr(Result, ".");
+        if(Pos != -1 && Right(Result, Len(Result) - Pos) == "00")
+            return Left(Result, InStr(Result, "."));
+        return Result;
+    }
     else
         return string(p);
 }
