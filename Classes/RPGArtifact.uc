@@ -778,6 +778,8 @@ simulated function Shader GetCooldownGUIShader()
     //CooldownGUIShader.ModulateSpecular2X = false;
     CooldownGUIShader.FallbackMaterial = None;
     //CooldownGUIShader.SurfaceType = EST_Default;
+
+    return CooldownGUIShader;
 }
 
 simulated function FreeCooldownGUIShader()
