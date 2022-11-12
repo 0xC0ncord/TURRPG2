@@ -155,17 +155,10 @@ function DrawTeamBeacon(Canvas C, float X, float Y, Color Color, float Scale, op
 //Initialize settings
 event Initialized() {
     local PlayerController PC;
-    local int i;
 
     Super.Initialized();
 
-    //Find the player's RPGInteraction if it exists
-    for(i = 0; i < ViewportOwner.LocalInteractions.Length; i++) {
-        if(RPGInteraction(ViewportOwner.LocalInteractions[i]) != None) {
-            RPGInteraction = RPGInteraction(ViewportOwner.LocalInteractions[i]);
-            break;
-        }
-    }
+    FindRPGInteraction();
 
     PC = ViewportOwner.Actor;
     if(PC.IsA('OLTeamPlayerController')) { //CTF4
@@ -177,6 +170,19 @@ event Initialized() {
     }
 
     TeamBeacon = PC.TeamBeaconTexture;
+}
+
+function FindRPGInteraction()
+{
+    local int i;
+
+    //Find the player's RPGInteraction if it exists
+    for(i = 0; i < ViewportOwner.LocalInteractions.Length; i++) {
+        if(RPGInteraction(ViewportOwner.LocalInteractions[i]) != None) {
+            RPGInteraction = RPGInteraction(ViewportOwner.LocalInteractions[i]);
+            break;
+        }
+    }
 }
 
 //Remove interaction when map changes

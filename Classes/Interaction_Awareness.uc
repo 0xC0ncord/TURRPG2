@@ -39,6 +39,11 @@ function PostRender(Canvas C) {
         return;
     }
 
+    if(RPGInteraction == None)
+        FindRPGInteraction();
+    if(RPGInteraction == None)
+        return;
+
     FarAwayInv = 1.0f / TeamBeaconPlayerInfoMaxDist;
 
     for(i = 0; i < Ability.Enemies.Length; i++) {
