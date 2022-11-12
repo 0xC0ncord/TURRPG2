@@ -19,7 +19,9 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
 
     Super.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
 
-    Damage = Max(0, Damage - float(OriginalDamage) * (1 - BonusPerLevel * Modifier));
+    if(Damage > 0)
+        Damage = Max(0, Damage - float(OriginalDamage) * (1 - BonusPerLevel * Modifier));
+
     Identify();
 
     if(Modifier > 0 && Damage >= Instigator.Health && Instigator.Health > HealthCap) {

@@ -13,7 +13,8 @@ var float BaseDamageMult;
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     //Randomly multiply damage
-    Damage += float(OriginalDamage) * (BaseDamageMult + Rand(Modifier) * 0.01);
+    if(Damage > 0)
+        Damage += float(OriginalDamage) * (BaseDamageMult + Rand(Modifier) * 0.01);
 }
 
 defaultproperties
