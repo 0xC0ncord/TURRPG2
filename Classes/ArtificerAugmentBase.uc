@@ -11,7 +11,8 @@ class ArtificerAugmentBase extends Object;
 var() float BonusPerLevel;
 var() int MaxLevel;
 var() string ModifierName;
-var() localized string Description;
+var() localized string Description; //for the weapon modifier description
+var() localized string LongDescription; //for the menu
 var() Material IconMaterial;
 var() Color ModifierColor;
 var() Material ModifierOverlay;
@@ -138,9 +139,15 @@ static function string StaticGetDescription(optional int ModifierLevel)
     return Repl(default.Description, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, ModifierLevel)));
 }
 
+static function string StaticGetLongDescription(optional int ModifierLevel)
+{
+    return Repl(default.LongDescription, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, ModifierLevel)));
+}
+
 defaultproperties
 {
     ModifierName="Modifier"
     Description="$1 damage"
+    LongDescription="Increases weapon damage by $1 per level."
     ModifierColor=(R=255,G=255,B=255)
 }

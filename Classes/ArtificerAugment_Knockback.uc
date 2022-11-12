@@ -63,6 +63,7 @@ defaultproperties
     MaxLevel=4
     ModifierName="Knockback"
     Description="knockback"
+    LongDescription="Causes your weapon to knock targets away."
     ModifierColor=(R=255)
     ModifierOverlay=Shader'TURRPG2.RPGWeapons.KnockbackShader'
     IconMaterial=Texture'TURRPG2.WOPIcons.KnockbackIcon'

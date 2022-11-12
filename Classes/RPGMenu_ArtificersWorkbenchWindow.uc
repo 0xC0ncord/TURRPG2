@@ -289,7 +289,7 @@ function SelectModifier(optional GUIList List)
     if(MClass != None)
     {
         sbDescription.Caption = MClass.default.ModifierName;
-        lbDesc.SetContent(MClass.static.StaticGetDescription());
+        lbDesc.SetContent(MClass.static.StaticGetLongDescription());
 
         imIcon.Image = Texture(MClass.default.IconMaterial);
         imIcon.X2 = imIcon.Image.MaterialUSize();

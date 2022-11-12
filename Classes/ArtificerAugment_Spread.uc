@@ -20,6 +20,7 @@ defaultproperties
     MaxLevel=2
     ModifierName="Spread"
     Description="spread fire"
+    LongDescription="Grants the Bio-Rifle or Link Gun spread fire modes."
     ModifierOverlay=Shader'TURRPG2.WOPWeapons.SpreadShader'
     IconMaterial=Texture'TURRPG2.WOPIcons.SpreadIcon'
     ModifierColor=(R=128,B=128)

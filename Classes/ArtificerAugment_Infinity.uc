@@ -18,6 +18,7 @@ defaultproperties
 {
     ModifierName="Infinity"
     Description="infinite ammo"
+    LongDescription="Grants infinite ammo."
     ModifierOverlay=TexPanner'TURRPG2.WOPWeapons.InfinityPanner'
     IconMaterial=Texture'TURRPG2.WOPIcons.InfinityIcon'
 }
