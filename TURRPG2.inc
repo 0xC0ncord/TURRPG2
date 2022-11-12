@@ -9,8 +9,8 @@
 #ifdef __DEBUG__
 #define LOGD(x) Log($$"(__FILE__:__LINE__)"$$ @ x);
 #define WARND(x) Warn($$"(__FILE__:__LINE__)"$$ @ x);
-#define CONSOLED(x) Level.GetLocalPlayerController().ClientMessage(Name @ $$"(__FILE__:__LINE__):"$$ @ x);
-#define ECONSOLED(PC, x) PC.ClientMessage(Name @ $$"(__FILE__:__LINE__):"$$ @ x);
+#define CONSOLED(x) if(Level.NetMode != NM_DedicatedServer){ Level.GetLocalPlayerController().ClientMessage(Name @ $$"(__FILE__:__LINE__):"$$ @ x); }
+#define ECONSOLED(PC, x) if(PC.Level.NetMode != NM_DedicatedServer){ PC.ClientMessage(Name @ $$"(__FILE__:__LINE__):"$$ @ x); }
 
 #ifeq __VERBOSE__ 1
 #define PRINTD(x) CONSOLED(x); LOGD(x);
