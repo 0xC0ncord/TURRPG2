@@ -293,8 +293,8 @@ static function RPGEffect GetFor(Pawn Other)
 
     Effect = RPGEffect(Other.FindInventoryType(default.class));
     if(
-        Effect != None && Effect.IsInState('Activated') ||
-        (Other.Level.NetMode == NM_Client && Effect.bClientActivated)
+        Effect != None && (Effect.IsInState('Activated') ||
+        (Other.Level.NetMode == NM_Client && Effect.bClientActivated))
     )
         return Effect;
     else
