@@ -43,6 +43,8 @@ var Rect ArtifactBorderMaterialRect;
 var float ArtifactBorderSize;
 var float ArtifactHighlightIndention;
 var float ArtifactIconInnerScale;
+const NUM_PROGRESS_TEXTURES = 32;
+var Texture ProgressTextures[NUM_PROGRESS_TEXTURES];
 
 var float ArtifactRadialSize;
 var bool bArtifactRadialActive;
@@ -400,6 +402,7 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
     local Color HUDColor;
     local string S;
     local bool bDisabled;
+    local Shader CooldownShader;
 
     Canvas.Style = 5;
     HUDColor = GetHUDTeamColor(HUD);
@@ -432,6 +435,18 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
 
         Canvas.SetPos(X + Size * 0.5 * (1.0 - ArtifactIconInnerScale), Y + Size * 0.5 * (1.0 - ArtifactIconInnerScale));
         Canvas.DrawTile(AClass.default.IconMaterial, Size * ArtifactIconInnerScale, Size * ArtifactIconInnerScale, 0, 0, AClass.default.IconMaterial.MaterialUSize(), AClass.default.IconMaterial.MaterialVSize());
+
+        //draw cooldown animation icon
+        if(A != None && A.Class == AClass && TimeSeconds < A.NextUseTime && !bDisabled)
+        {
+            Canvas.DrawColor = WhiteColor;
+
+            CooldownShader = A.GetCooldownGUIShader();
+            CooldownShader.SelfIlluminationMask = ProgressTextures[Ceil(((A.NextUseTime - TimeSeconds) / A.Cooldown) * float(NUM_PROGRESS_TEXTURES)) - 1];
+
+            Canvas.SetPos(X + Size * 0.5 * (1.0 - ArtifactIconInnerScale), Y + Size * 0.5 * (1.0 - ArtifactIconInnerScale));
+            Canvas.DrawTile(CooldownShader, Size * ArtifactIconInnerScale, Size * ArtifactIconInnerScale, 0, 0, CooldownShader.MaterialUSize(), CooldownShader.MaterialVSize());
+        }
     }
 
     if(A != None)
@@ -1584,4 +1599,36 @@ defaultproperties
     ArtifactHighlightIndention=0.15
     ArtifactRadialSize=250
     SelectedRadialSlot=-1
+    ProgressTextures(0)=Texture'progress31'
+    ProgressTextures(1)=Texture'progress30'
+    ProgressTextures(2)=Texture'progress29'
+    ProgressTextures(3)=Texture'progress28'
+    ProgressTextures(4)=Texture'progress27'
+    ProgressTextures(5)=Texture'progress26'
+    ProgressTextures(6)=Texture'progress25'
+    ProgressTextures(7)=Texture'progress24'
+    ProgressTextures(8)=Texture'progress23'
+    ProgressTextures(9)=Texture'progress22'
+    ProgressTextures(10)=Texture'progress21'
+    ProgressTextures(11)=Texture'progress20'
+    ProgressTextures(12)=Texture'progress19'
+    ProgressTextures(13)=Texture'progress18'
+    ProgressTextures(14)=Texture'progress17'
+    ProgressTextures(15)=Texture'progress16'
+    ProgressTextures(16)=Texture'progress15'
+    ProgressTextures(17)=Texture'progress14'
+    ProgressTextures(18)=Texture'progress13'
+    ProgressTextures(19)=Texture'progress12'
+    ProgressTextures(20)=Texture'progress11'
+    ProgressTextures(21)=Texture'progress10'
+    ProgressTextures(22)=Texture'progress9'
+    ProgressTextures(23)=Texture'progress8'
+    ProgressTextures(24)=Texture'progress7'
+    ProgressTextures(25)=Texture'progress6'
+    ProgressTextures(26)=Texture'progress5'
+    ProgressTextures(27)=Texture'progress4'
+    ProgressTextures(28)=Texture'progress3'
+    ProgressTextures(29)=Texture'progress2'
+    ProgressTextures(30)=Texture'progress1'
+    ProgressTextures(31)=Texture'progress0'
 }

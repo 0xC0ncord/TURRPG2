@@ -68,6 +68,7 @@ var localized string
 
 //these are for the HUD
 var float NextUseTime; //time when this artifact will be available again
+var Shader CooldownGUIShader; //shader for drawing the cooldown
 
 //RPRI of current holder
 var RPGPlayerReplicationInfo InstigatorRPRI;
@@ -651,6 +652,8 @@ simulated event Destroyed()
             CloseSelection();
     }
 
+    FreeCooldownGUIShader();
+
     Super.Destroyed();
 }
 
@@ -753,6 +756,38 @@ function RoundAdrenaline()
 
 function ModifyAdrenalineGain(out float Amount, float OriginalAmount, optional Object Source);
 function ModifyAdrenalineDrain(out float Amount, float OriginalAmount, optional Object Source);
+
+simulated function Shader GetCooldownGUIShader()
+{
+    if(CooldownGUIShader != None)
+        return CooldownGUIShader;
+
+    CooldownGUIShader = Shader(Level.ObjectPool.AllocateObject(class'Shader'));
+    CooldownGUIShader.Diffuse = None;
+    CooldownGUIShader.Opacity = default.IconMaterial;
+    CooldownGUIShader.Specular = None;
+    CooldownGUIShader.SpecularityMask = None;
+    CooldownGUIShader.SelfIllumination = default.IconMaterial;
+    //CooldownGUIShader.SelfIlluminationMask = None;
+    CooldownGUIShader.Detail = None;
+    //CooldownGUIShader.DetailScale = 8.0;
+    CooldownGUIShader.OutputBlending = OB_Invisible;
+    //CooldownGUIShader.TwoSided = false;
+    CooldownGUIShader.Wireframe = false;
+    //CooldownGUIShader.PerformLightingOnSpecularPass = false;
+    //CooldownGUIShader.ModulateSpecular2X = false;
+    CooldownGUIShader.FallbackMaterial = None;
+    //CooldownGUIShader.SurfaceType = EST_Default;
+}
+
+simulated function FreeCooldownGUIShader()
+{
+    if(CooldownGUIShader != None)
+    {
+        Level.ObjectPool.FreeObject(CooldownGUIShader);
+        CooldownGUIShader = None;
+    }
+}
 
 defaultproperties
 {
