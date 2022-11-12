@@ -52,11 +52,20 @@ function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
     EPRINTD(PlayerController(WM.Instigator.Controller), "New, Level" @ NewModifierLevel);
 
     WeaponModifier = WM;
-    ModifierLevel = NewModifierLevel;
     Weapon = WM.Weapon;
     Instigator = Weapon.Instigator;
     ObjectPool = WM.Level.ObjectPool;
+
+    SetLevel(NewModifierLevel);
+    Apply();
 }
+
+function SetLevel(int NewModifierLevel)
+{
+    ModifierLevel = NewModifierLevel;
+}
+
+function Apply();
 
 final function Remove()
 {

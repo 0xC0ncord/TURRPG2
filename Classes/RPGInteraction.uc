@@ -83,6 +83,8 @@ var localized string ArtifactTutorialText;
 
 //Keys
 var array<EInputKey> ArtifactUseKey;
+var array<EInputKey> FireKey, AltFireKey;
+var float NextPrimaryFirePressTime, NextAlternateFirePressTime;
 
 //Artifact selection options
 var RPGArtifact SelectionArtifact;
@@ -139,6 +141,10 @@ function CheckBindings()
         }
         else if(class'Util'.static.KeyHasBinding(KeyBinding, "NextItem") || class'Util'.static.KeyHasBinding(KeyBinding, "PrevItem"))
             bDefaultArtifactBindings = false;
+        else if(class'Util'.static.KeyHasBinding(KeyBinding, "Fire") || class'Util'.static.KeyHasBinding(KeyBinding, "Button bFire"))
+            FireKey[FireKey.Length] = Key;
+        else if(class'Util'.static.KeyHasBinding(KeyBinding, "AltFire") || class'Util'.static.KeyHasBinding(KeyBinding, "Button bAltFire"))
+            AltFireKey[AltFireKey.Length] = Key;
     }
 }
 
@@ -184,6 +190,7 @@ exec function RPGSwitch(string NewName) {
 function bool KeyEvent(EInputKey Key, EInputAction Action, float Delta)
 {
     local int n;
+    local WeaponModifier_Artificer WM;
 
     if(Settings.bEnableArtifactRadialMenu)
     {
@@ -227,6 +234,46 @@ function bool KeyEvent(EInputKey Key, EInputAction Action, float Delta)
                 MousePosY = FClamp(ViewportOwner.WindowsMouseY, 0, ResY);
             }
             return true;
+        }
+    }
+
+    //WOP fire mode switching
+    if(ViewportOwner.Actor.Pawn != None)
+    {
+        WM = WeaponModifier_Artificer(class'WeaponModifier_Artificer'.static.GetFor(ViewportOwner.Actor.Pawn.Weapon));
+        if(WM != None)
+        {
+            if(Action == IST_Press)
+            {
+                if(ViewportOwner.Actor.bAltFire == 1 && static.HasKey(FireKey, Key))
+                {
+                    if(NextPrimaryFirePressTime > ViewportOwner.Actor.Level.TimeSeconds)
+                    {
+                        NextAlternateFireMode();
+                        NextPrimaryFirePressTime = 0.0;
+                    }
+                    else
+                        NextPrimaryFirePressTime = ViewportOwner.Actor.Level.TimeSeconds + 0.25; //TODO make configurable
+                }
+                else if(ViewportOwner.Actor.bFire == 1 && static.HasKey(AltFireKey, Key))
+                {
+                    if(NextAlternateFirePressTime > ViewportOwner.Actor.Level.TimeSeconds)
+                    {
+                        NextPrimaryFireMode();
+                        NextAlternateFirePressTime = 0.0;
+                    }
+                    else
+                        NextAlternateFirePressTime = ViewportOwner.Actor.Level.TimeSeconds + 0.25; //TODO make configurable
+                }
+            }
+            else if(Action == IST_Release)
+            {
+                if(static.HasKey(FireKey, Key))
+                    NextAlternateFirePressTime = 0.0;
+                else if(static.HasKey(AltFireKey, Key))
+                    NextPrimaryFirePressTime = 0.0;
+            }
+            //TODO pass to weaponmodifier itself for handling
         }
     }
 
@@ -1515,6 +1562,30 @@ exec function UnlockVehicle()
     {
         ViewportOwner.Actor.ClientPlaySound(VehicleUnlockSound,, 1);
         ViewportOwner.Actor.ClientMessage(VehicleUnlockedMessage);
+    }
+}
+
+exec function NextPrimaryFireMode()
+{
+    local WeaponModifier_Artificer WM;
+
+    if(ViewportOwner.Actor.Pawn != None)
+    {
+        WM = WeaponModifier_Artificer(class'WeaponModifier_Artificer'.static.GetFor(ViewportOwner.Actor.Pawn.Weapon));
+        if(WM != None)
+            WM.NextPrimaryFireMode();
+    }
+}
+
+exec function NextAlternateFireMode()
+{
+    local WeaponModifier_Artificer WM;
+
+    if(ViewportOwner.Actor.Pawn != None)
+    {
+        WM = WeaponModifier_Artificer(class'WeaponModifier_Artificer'.static.GetFor(ViewportOwner.Actor.Pawn.Weapon));
+        if(WM != None)
+            WM.NextAlternateFireMode();
     }
 }
 
