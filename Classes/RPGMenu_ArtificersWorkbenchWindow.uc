@@ -14,7 +14,8 @@ var bool bDirty;
 var bool bIgnoreNextChange;
 
 var automated GUISectionBackground sbModifierPool, sbListCharmA, sbListCharmB,
-                                   sbListCharmC, sbSettings, sbDescription;
+                                   sbListCharmC, sbSettings, sbDescription,
+                                   sbMessages;
 var automated GUIListBox lbAugmentPool, lbCharmA, lbCharmB, lbCharmC;
 var automated GUIGFXButton btAddCharmA, btRemoveCharmA;
 var automated GUIGFXButton btAddCharmB, btRemoveCharmB;
@@ -22,7 +23,7 @@ var automated GUIGFXButton btAddCharmC, btRemoveCharmC;
 var automated GUIComboBox cmbAutoApplyAlpha, cmbAutoApplyBeta, cmbAutoApplyGamma;
 var automated GUILabel lblAutoApplyAlpha, lblAutoApplyBeta, lblAutoApplyGamma;
 var automated GUIImage imIcon;
-var automated GUIScrollTextBox lbDesc;
+var automated GUIScrollTextBox lbDesc, lbMessages;
 var automated GUIButton btHelp;
 
 var class<Weapon> OldAutoApplyWeaponAlpha, OldAutoApplyWeaponBeta, OldAutoApplyWeaponGamma;
@@ -40,6 +41,9 @@ var localized string Text_NoAutoApply;
 var localized string Text_AutoApplyAlpha;
 var localized string Text_AutoApplyBeta;
 var localized string Text_AutoApplyGamma;
+
+var RPGSpinnyWeap SpinnyCharmA, SpinnyCharmB, SpinnyCharmC;
+var vector SpinnyCharmOffset;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -140,6 +144,21 @@ function InitFor(RPGPlayerReplicationInfo Whom)
     local Ability_LoadedAugments Ability;
     local class<ArtificerAugmentBase> MClass;
     local RPGCharSettings Settings;
+
+    SpinnyCharmA = PlayerOwner().Spawn(class'RPGSpinnyWeap',,,, PlayerOwner().Rotation);
+    SpinnyCharmA.bHidden = true;
+    SpinnyCharmA.SetStaticMesh(StaticMesh'MonsterSummon');
+    SpinnyCharmA.Skins[0] = Shader'WOPAlphaShader';
+
+    SpinnyCharmB = PlayerOwner().Spawn(class'RPGSpinnyWeap',,,, PlayerOwner().Rotation);
+    SpinnyCharmB.bHidden = true;
+    SpinnyCharmB.SetStaticMesh(StaticMesh'MonsterSummon');
+    SpinnyCharmB.Skins[0] = Shader'WOPBetaShader';
+
+    SpinnyCharmC = PlayerOwner().Spawn(class'RPGSpinnyWeap',,,, PlayerOwner().Rotation);
+    SpinnyCharmC.bHidden = true;
+    SpinnyCharmC.SetStaticMesh(StaticMesh'MonsterSummon');
+    SpinnyCharmC.Skins[0] = Shader'WOPGammaShader';
 
     RPRI = Whom;
     Settings = RPRI.Interaction.CharSettings;
@@ -617,6 +636,62 @@ function DrawListItem(GUIList List, Canvas C, int Item, float X, float Y, float 
     }
 }
 
+function InternalDraw(Canvas C)
+{
+    local vector CamPos;
+    local rotator CamRot;
+    local vector X, Y, Z;
+
+    //draw spinny charms
+    if(SpinnyCharmA != None || SpinnyCharmB != None || SpinnyCharmC != None)
+    {
+        C.GetCameraLocation(CamPos, CamRot);
+        GetAxes(CamRot, X, Y, Z);
+    }
+    else
+        return;
+
+    if(SpinnyCharmA != None)
+    {
+        SpinnyCharmA.SetLocation(CamPos + (SpinnyCharmOffset.X * X) + (SpinnyCharmOffset.Y * Y) + (SpinnyCharmOffset.Z * Z));
+        C.DrawActorClipped(
+            SpinnyCharmA,
+            false,
+            lbCharmA.ClientBounds[2],
+            lbCharmA.ClientBounds[1],
+            sbListCharmA.ClientBounds[2] - lbCharmA.ClientBounds[2],
+            sbListCharmA.ClientBounds[2] - lbCharmA.ClientBounds[2],
+            true,
+            90.0);
+    }
+    if(SpinnyCharmB != None)
+    {
+        SpinnyCharmB.SetLocation(CamPos + (SpinnyCharmOffset.X * X) + (SpinnyCharmOffset.Y * Y) + (SpinnyCharmOffset.Z * Z));
+        C.DrawActorClipped(
+            SpinnyCharmB,
+            false,
+            lbCharmB.ClientBounds[2],
+            lbCharmB.ClientBounds[1],
+            sbListCharmB.ClientBounds[2] - lbCharmB.ClientBounds[2],
+            sbListCharmB.ClientBounds[2] - lbCharmB.ClientBounds[2],
+            true,
+            90.0);
+    }
+    if(SpinnyCharmC != None)
+    {
+        SpinnyCharmC.SetLocation(CamPos + (SpinnyCharmOffset.X * X) + (SpinnyCharmOffset.Y * Y) + (SpinnyCharmOffset.Z * Z));
+        C.DrawActorClipped(
+            SpinnyCharmC,
+            false,
+            lbCharmC.ClientBounds[2],
+            lbCharmC.ClientBounds[1],
+            sbListCharmC.ClientBounds[2] - lbCharmC.ClientBounds[2],
+            sbListCharmC.ClientBounds[2] - lbCharmC.ClientBounds[2],
+            true,
+            90.0);
+    }
+}
+
 function InternalOnChange(GUIComponent Sender)
 {
     RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
@@ -873,6 +948,17 @@ event Free()
 {
     Super.Free();
     RPRI = None;
+
+    if(SpinnyCharmA != None)
+        SpinnyCharmA.Destroy();
+    if(SpinnyCharmB != None)
+        SpinnyCharmB.Destroy();
+    if(SpinnyCharmC != None)
+        SpinnyCharmC.Destroy();
+
+    SpinnyCharmA = None;
+    SpinnyCharmB = None;
+    SpinnyCharmC = None;
 }
 
 defaultproperties
@@ -929,21 +1015,33 @@ defaultproperties
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.305175
-        WinHeight=0.383878
+        WinHeight=0.288971
         WinLeft=0.694855
         WinTop=0.032034
         OnPreDraw=sbDescription_.InternalPreDraw
     End Object
     sbDescription=GUISectionBackground'sbDescription_'
 
+    Begin Object Class=AltSectionBackground Name=sbMessages_
+        Caption="Messages"
+        LeftPadding=0.000000
+        RightPadding=0.000000
+        WinWidth=0.305175
+        WinHeight=0.201009
+        WinLeft=0.694855
+        WinTop=0.323186
+        OnPreDraw=sbMessages_.InternalPreDraw
+    End Object
+    sbMessages=GUISectionBackground'sbMessages_'
+
     Begin Object Class=AltSectionBackground Name=sbSettings_
         Caption="Settings"
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.305175
-        WinHeight=0.554017
+        WinHeight=0.445221
         WinLeft=0.694855
-        WinTop=0.417836
+        WinTop=0.526890
         OnPreDraw=sbSettings_.InternalPreDraw
     End Object
     sbSettings=GUISectionBackground'sbSettings_'
@@ -962,7 +1060,7 @@ defaultproperties
     Begin Object Class=GUIListBox Name=lbCharmA_
         WinWidth=0.264595
         WinHeight=0.225865
-        WinLeft=0.316734
+        WinLeft=0.317313
         WinTop=0.075056
         bVisibleWhenEmpty=true
         Hint="These are the augments active on Charm Alpha."
@@ -973,7 +1071,7 @@ defaultproperties
     Begin Object Class=GUIListBox Name=lbCharmB_
         WinWidth=0.264595
         WinHeight=0.225865
-        WinLeft=0.316734
+        WinLeft=0.317313
         WinTop=0.388416
         bVisibleWhenEmpty=true
         Hint="These are the augments active on Charm Beta."
@@ -984,7 +1082,7 @@ defaultproperties
     Begin Object Class=GUIListBox Name=lbCharmC_
         WinWidth=0.264595
         WinHeight=0.225865
-        WinLeft=0.316734
+        WinLeft=0.317313
         WinTop=0.703662
         bVisibleWhenEmpty=true
         Hint="These are the augments active on Charm Gamma."
@@ -1104,7 +1202,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.041458
         WinLeft=0.707875
-        WinTop=0.507177
+        WinTop=0.613147
         Hint="Select a weapon to auto-apply Artificer Charm Alpha on when spawning."
         OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
     End Object
@@ -1114,7 +1212,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.041458
         WinLeft=0.707875
-        WinTop=0.686195
+        WinTop=0.738666
         Hint="Select a weapon to auto-apply Artificer Charm Beta on when spawning."
         OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
     End Object
@@ -1134,7 +1232,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.039407
         WinLeft=0.707875
-        WinTop=0.468261
+        WinTop=0.574230
         StyleName="NoBackground"
     End Object
     lblAutoApplyAlpha=GUILabel'lblAutoApplyAlpha_'
@@ -1143,7 +1241,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.039407
         WinLeft=0.707875
-        WinTop=0.647278
+        WinTop=0.699749
         StyleName="NoBackground"
     End Object
     lblAutoApplyBeta=GUILabel'lblAutoApplyBeta_'
@@ -1159,7 +1257,7 @@ defaultproperties
 
     Begin Object Class=GUIScrollTextBox Name=lbDesc_
         WinWidth=0.270051
-        WinHeight=0.152044
+        WinHeight=0.066396
         WinLeft=0.712384
         WinTop=0.214958
         CharDelay=0.001250
@@ -1171,6 +1269,21 @@ defaultproperties
         StyleName="NoBackground"
     End Object
     lbDesc=lbDesc_
+
+    Begin Object Class=GUIScrollTextBox Name=lbMessages_
+        WinWidth=0.270051
+        WinHeight=0.125424
+        WinLeft=0.712384
+        WinTop=0.360020
+        CharDelay=0.001250
+        EOLDelay=0.001250
+        bNeverFocus=true
+        bAcceptsInput=false
+        bVisibleWhenEmpty=True
+        FontScale=FNS_Small
+        StyleName="NoBackground"
+    End Object
+    lbMessages=lbMessages_
 
     Begin Object class=GUIImage Name=imIcon_
         WinWidth=0.054630
@@ -1222,4 +1335,7 @@ defaultproperties
     Text_AutoApplyAlpha="Auto-apply Charm Alpha on:"
     Text_AutoApplyBeta="Auto-apply Charm Beta on:"
     Text_AutoApplyGamma="Auto-apply Charm Gamma on:"
+
+    OnRendered=InternalDraw
+    SpinnyCharmOffset=(X=60)
 }
