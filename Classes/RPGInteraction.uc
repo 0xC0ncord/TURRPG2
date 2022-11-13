@@ -132,7 +132,7 @@ function CheckBindings()
 
         if(class'Util'.static.KeyHasBinding(KeyBinding, "RPGStatsMenu"))
             bDefaultBindings = false;
-        else if(class'Util'.static.KeyHasBinding(KeyBinding, "ActivateItem") || class'Util'.static.KeyHasBinding(KeyBinding, "InventoryActivate"))
+        else if(class'Util'.static.KeyHasBinding(KeyBinding, "ActivateItem"))
         {
             ArtifactUseKey[ArtifactUseKey.Length] = Key;
             bDefaultArtifactBindings = false;
