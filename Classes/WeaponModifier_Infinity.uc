@@ -45,7 +45,7 @@ defaultproperties
     DamageBonus=0.050000
     MinModifier=-3
     MaxModifier=8
-    ModifierOverlay=Shader'InfinityShader'
+    ModifierOverlay=Shader'RPGWeapons.InfinityShader'
     PatternPos="$W of Infinity"
     PatternNeg="$W of Infinity"
     bCanHaveZeroModifier=True
