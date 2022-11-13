@@ -149,15 +149,15 @@ static final function string FormatFloat(float p)
 
     //~= to avoid evil floating point magic
     if(float(int(p)) ~= p)
-    {
-        Result = string(int(p));
-        Pos = InStr(Result, ".");
-        if(Pos != -1 && Right(Result, Len(Result) - Pos) == "00")
-            return Left(Result, InStr(Result, "."));
-        return Result;
-    }
+        return string(int(p));
     else
+    {
+        Result = string(p);
+        Pos = InStr(Result, ".");
+        if(Right(Result, Len(Result) - Pos - 1) == "00")
+            return Left(Result, Pos);
         return string(p);
+    }
 }
 
 static final function string FormatTime(float Time, optional bool bNoShortSeconds)
