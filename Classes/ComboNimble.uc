@@ -31,9 +31,15 @@ function CreateEffects(Pawn P)
 function DestroyEffects(Pawn P)
 {
     if(FX != None)
+    {
+        FX.Kill();
         FX.ClientKill();
+    }
     if(FX_FP != None)
+    {
+        FX_FP.Kill();
         FX_FP.ClientKill();
+    }
 
     if (LeftTrail != None)
         LeftTrail.Destroy();

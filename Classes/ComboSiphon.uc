@@ -55,10 +55,18 @@ function DestroyEffects(Pawn P)
     local int i;
 
     if(FX != None)
+    {
+        FX.Kill();
         FX.ClientKill();
+    }
     for(i = 0; i < Targets.Length; i++)
+    {
         if(Targets[i].FX != None)
+        {
+            Targets[i].FX.Kill();
             Targets[i].FX.ClientKill();
+        }
+    }
 }
 
 function Tick(float dt)
