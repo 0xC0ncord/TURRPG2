@@ -446,6 +446,13 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         Damage = Max(0, Damage - (float(OriginalDamage) * PassiveDamageReduction));
 }
 
+function PlayerDied(bool bLogout, optional Pawn Killer, optional class<DamageType> DamageType)
+{
+    // MAKE SURE to reset pawn class on death!
+    if(RPRI.Controller != None)
+        RPRI.Controller.PawnClass = RPRI.Controller.default.PawnClass;
+}
+
 simulated function string DescriptionText()
 {
     local int lv, x, i;
