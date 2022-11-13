@@ -104,9 +104,5 @@ function bool ShouldDestroy() {
     }
 }
 
-simulated event Destroyed() {
-    Super.Destroyed();
-}
-
 defaultproperties {
 }
