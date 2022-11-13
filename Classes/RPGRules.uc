@@ -745,16 +745,6 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
         PASSIVE DAMAGE MODIFICATION
     */
 
-    //Stats
-    if(injuredRPRI != None)
-    {
-        for(x = 0; x < injuredRPRI.Abilities.length; x++)
-        {
-            if(injuredRPRI.Abilities[x].bAllowed && injuredRPRI.Abilities[x].bIsStat)
-                injuredRPRI.Abilities[x].AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
-        }
-    }
-
     //Weapon modifier
     WM = class'RPGWeaponModifier'.static.GetFor(injured.Weapon);
     if(WM != None)
@@ -774,7 +764,7 @@ function int NetDamage(int OriginalDamage, int Damage, pawn injured, pawn instig
     {
         for(x = 0; x < injuredRPRI.Abilities.length; x++)
         {
-            if(injuredRPRI.Abilities[x].bAllowed && !injuredRPRI.Abilities[x].bIsStat)
+            if(injuredRPRI.Abilities[x].bAllowed)
                 injuredRPRI.Abilities[x].AdjustPlayerDamage(Damage, OriginalDamage, injured, instigatedBy, HitLocation, Momentum, DamageType);
         }
     }
