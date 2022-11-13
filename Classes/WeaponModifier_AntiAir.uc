@@ -18,7 +18,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     {
         if(!bIdentified)
             Identify();
-        Damage += float(OriginalDamage) * BonusPerLevel * Modifier;
+        Damage += float(Damage) * BonusPerLevel * Modifier;
     }
 }
 

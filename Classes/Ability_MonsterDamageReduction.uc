@@ -24,7 +24,7 @@ function AdjustPlayerDamage(
         && InstigatedBy != FriendlyMonsterController(Injured.Controller).Master
     )
     {
-        Damage = Max(0, Damage - (float(OriginalDamage) * float(AbilityLevel) * BonusPerLevel));
+        Damage = float(Damage) * (1.0 - float(AbilityLevel) * BonusPerLevel);
     }
 }
 

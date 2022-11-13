@@ -17,7 +17,7 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
         DamageType == class'DamTypeLightningRod')
     {
         Identify();
-        Damage = Max(0, Damage - float(OriginalDamage) * (1 - BonusPerLevel * Modifier));
+        Damage = Max(Damage * (1 - BonusPerLevel * Modifier), 0);
     }
 
     Super.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
