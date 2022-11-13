@@ -60,6 +60,10 @@ simulated function Timer() {
                     continue;
                 }
 
+                if(ComboHolographDummyPawn(P) != None) {
+                    continue;
+                }
+
                 if(Interaction.GlobalInteraction != None && Interaction.GlobalInteraction.IsFriendlyPawn(P)) {
                     continue;
                 }
