@@ -30,6 +30,6 @@ defaultproperties
     Description="Increases all damage you do by $1 per level."
     MaxLevel=500
     StartingCost=1
-    BonusPerLevel=0.1
+    BonusPerLevel=0.2
     Category=class'AbilityCategory_Damage'
 }
