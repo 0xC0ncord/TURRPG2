@@ -345,7 +345,7 @@ simulated function ClientIdentify() {
         Weapon.ItemName = ConstructItemName(Weapon.class, Modifier);
         Description = "";
 
-        if(Instigator.Weapon == Weapon) {
+        if(Instigator != None && Instigator.Weapon == Weapon) {
             //Hud hack - force display of weapon name as if it has just been selected
             Instigator.PendingWeapon = Weapon;
             bResetPendingWeapon = true;
@@ -364,7 +364,7 @@ simulated function ClientIdentify() {
 
 simulated function ClientRestore() {
     Weapon.ItemName = Weapon.default.ItemName;
-    if(Role < ROLE_Authority && Instigator.Weapon == Weapon) {
+    if(Role < ROLE_Authority && Instigator != None && Instigator.Weapon == Weapon) {
         Instigator.PendingWeapon = Weapon;
     }
 }
