@@ -67,13 +67,24 @@ function Timer()
         // get next controller here because C may be destroyed if it's a nonplayer and C.Pawn is killed
         NextC = C.NextController;
 
-        if (C != None && C.Pawn != None && Pawn != None && C.Pawn != Pawn && C.Pawn != PlayerSpawner.Pawn && C.Pawn.Health > 0
-          && VSize(C.Pawn.Location - Pawn.Location) < TargetRadius && !C.Pawn.IsA('ParentBlob') && FastTrace(C.Pawn.Location, Pawn.Location)
-          && ((TeamGame(Level.Game) != None && !C.SameTeamAs(PlayerSpawner))    // on a different team
-            || (TeamGame(Level.Game) == None && C.Pawn.Owner != PlayerSpawner)) // or just not me
-            && (!C.Pawn.IsA('LenoreBoss') || C.Pawn.GetPropertyText("bIsVulnerableNow")~="True")
-            && (!C.Pawn.IsA('NaliSage') || C.Pawn.GetPropertyText("bIsAppeared")~="True")
+        if(
+            C != None
+            && C.Pawn != None
+            && Pawn != None
+            && C.Pawn != Pawn
+            && C.Pawn != PlayerSpawner.Pawn
+            && C.Pawn.Health > 0
+            && (
+                TeamGame(Level.Game) != None && !C.SameTeamAs(PlayerSpawner)     // on a different team
+                || TeamGame(Level.Game) == None && C.Pawn.Owner != PlayerSpawner // or just not me
             )
+            && ComboHolographDummyPawn(C.Pawn) == None
+            && !C.Pawn.IsA('ParentBlob')
+            && (!C.Pawn.IsA('LenoreBoss') || C.Pawn.GetPropertyText("bIsVulnerableNow") ~= "True")
+            && (!C.Pawn.IsA('NaliSage') || C.Pawn.GetPropertyText("bIsAppeared") ~= "True")
+            && VSize(C.Pawn.Location - Pawn.Location) < TargetRadius
+            && FastTrace(C.Pawn.Location, Pawn.Location)
+        )
         {
             // scale damage done according to distnace from sentinel
             dir = C.Pawn.Location - Pawn.Location;

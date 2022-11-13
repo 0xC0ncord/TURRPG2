@@ -46,15 +46,21 @@ function SetPlayerSpawner(Controller PlayerC)
     }
 }
 
-function bool IsTargetRelevant( Pawn Target )
+function bool IsTargetRelevant(Pawn Target)
 {
-    if ( (Target != None) && (Target.Controller != None)
-        && (Target.Health > 0) && (VSize(Target.Location-Pawn.Location) < Pawn.SightRadius*1.25)
-        && (((TeamGame(Level.Game) != None) && !SameTeamAs(Target.Controller))
-        || ((TeamGame(Level.Game) == None) && (Target.Owner != PlayerSpawner)))
-        && (!Target.IsA('LenoreBoss') || Target.GetPropertyText("bIsVulnerableNow")~="True")
-        && (!Target.IsA('NaliSage') || Target.GetPropertyText("bIsAppeared")~="True")
+    if(
+        Target != None
+        && Target.Controller != None
+        && Target.Health > 0
+        && (
+            TeamGame(Level.Game) != None && !SameTeamAs(Target.Controller)
+            || ((TeamGame(Level.Game) == None) && (Target.Owner != PlayerSpawner))
         )
+        && ComboHolographDummyPawn(Target) == None
+        && (VSize(Target.Location - Pawn.Location) < Pawn.SightRadius * 1.25)
+        && (!Target.IsA('LenoreBoss') || Target.GetPropertyText("bIsVulnerableNow") ~= "True")
+        && (!Target.IsA('NaliSage') || Target.GetPropertyText("bIsAppeared") ~= "True")
+    )
         return true;
 
     return false;

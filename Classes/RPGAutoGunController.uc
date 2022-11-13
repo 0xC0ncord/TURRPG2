@@ -47,12 +47,19 @@ function SetPlayerSpawner(Controller PlayerC)
     }
 }
 
-function bool IsTargetRelevant( Pawn Target )
+function bool IsTargetRelevant(Pawn Target)
 {
-    if ( (Target != None) && (Target.Controller != None)
-        && (Target.Health > 0) && (VSize(Target.Location-Pawn.Location) < Pawn.SightRadius*1.25)
-        && (((TeamGame(Level.Game) != None) && !SameTeamAs(Target.Controller))
-        || ((TeamGame(Level.Game) == None) && (Target.Owner != PlayerSpawner))))
+    if(
+        Target != None
+        && Target.Controller != None
+        && Target.Health > 0
+        && (
+            (TeamGame(Level.Game) != None && !SameTeamAs(Target.Controller))
+            || (TeamGame(Level.Game) == None && Target.Owner != PlayerSpawner)
+        )
+        && ComboHolographDummyPawn(Target) == None
+        && VSize(Target.Location - Pawn.Location) < Pawn.SightRadius * 1.25
+    )
         return true;
 
     return false;
