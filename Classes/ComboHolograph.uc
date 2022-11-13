@@ -14,6 +14,7 @@ function StartEffect(xPawn P)
 {
     local Actor A;
     local vector HitLocation, HitNormal;
+    local rotator R;
 
     A = Trace(HitLocation, HitNormal, P.Location - vect(0, 0, 512), P.Location);
     if((A != None && !A.bWorldGeometry && A != Level) || HitLocation == vect(0, 0, 0))
@@ -26,7 +27,9 @@ function StartEffect(xPawn P)
 
     Super.StartEffect(P);
 
-    Dummy = Spawn(class'ComboHolographDummy', Self,, HitLocation + vect(0, 0, 60));
+    R = RotRand();
+    R.Pitch = 0;
+    Dummy = Spawn(class'ComboHolographDummy', Self,, HitLocation + vect(0, 0, 60), R);
 }
 
 function StopEffect(xPawn P)
