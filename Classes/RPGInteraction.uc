@@ -442,7 +442,9 @@ function DrawArtifactBox(class<RPGArtifact> AClass, RPGArtifact A, Canvas Canvas
             Canvas.DrawColor = WhiteColor;
 
             CooldownShader = A.GetCooldownGUIShader();
-            CooldownShader.SelfIlluminationMask = ProgressTextures[Ceil(((A.NextUseTime - TimeSeconds) / A.Cooldown) * float(NUM_PROGRESS_TEXTURES)) - 1];
+            CooldownShader.SelfIlluminationMask = ProgressTextures[
+                Ceil(((A.NextUseTime - TimeSeconds) / A.CurrentCooldown) * float(NUM_PROGRESS_TEXTURES)) - 1
+            ];
 
             Canvas.SetPos(X + Size * 0.5 * (1.0 - ArtifactIconInnerScale), Y + Size * 0.5 * (1.0 - ArtifactIconInnerScale));
             Canvas.DrawTile(CooldownShader, Size * ArtifactIconInnerScale, Size * ArtifactIconInnerScale, 0, 0, CooldownShader.MaterialUSize(), CooldownShader.MaterialVSize());

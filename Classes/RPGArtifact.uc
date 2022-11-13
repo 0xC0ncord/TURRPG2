@@ -16,7 +16,7 @@ var int MinAdrenaline; //adrenaline required to activate this artifact
 
 var Color HudColor;
 
-var float Cooldown;
+var float Cooldown, CurrentCooldown;
 var bool bChargeUp; //initial "cooldown"
 var bool bResetCooldownOnRespawn;
 
@@ -471,8 +471,9 @@ function DoCooldown()
 {
     if(Cooldown > 0)
     {
-        NextUseTime = Level.TimeSeconds + Cooldown;
-        ClientNotifyCooldown(Cooldown);
+        CurrentCooldown = Cooldown;
+        NextUseTime = Level.TimeSeconds + CurrentCooldown;
+        ClientNotifyCooldown(CurrentCooldown);
     }
 }
 
@@ -488,7 +489,8 @@ function DoAmmo()
 
 function ForceCooldown(float Time)
 {
-    NextUseTime = Level.TimeSeconds + Time;
+    CurrentCooldown = Time;
+    NextUseTime = Level.TimeSeconds + CurrentCooldown;
     ClientNotifyCooldown(Time);
 }
 
@@ -638,7 +640,8 @@ static function string GetArtifactNameExtra()
 
 simulated function ClientNotifyCooldown(float Delay)
 {
-    NextUseTime = Level.TimeSeconds + Delay;
+    CurrentCooldown = Delay;
+    NextUseTime = Level.TimeSeconds + CurrentCooldown;
 }
 
 simulated event Destroyed()
