@@ -105,7 +105,11 @@ function CreateEffects()
                 else
                     Pawns[Pawns.Length] = C.Pawn;
 
-                Effect = EffectClass.static.Create(C.Pawn, Instigator.Controller, EstimatedRunTime, EstimatedRunTime);
+                //do not set duration for instant effects
+                if(class<RPGInstantEffect>(EffectClass) != None)
+                    Effect = EffectClass.static.Create(C.Pawn, Instigator.Controller);
+                else
+                    Effect = EffectClass.static.Create(C.Pawn, Instigator.Controller, EstimatedRunTime);
                 if(Effect != None)
                 {
                     ModifyEffect(Effect);
