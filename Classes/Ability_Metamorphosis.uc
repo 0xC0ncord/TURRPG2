@@ -45,6 +45,12 @@ var() config float PassiveDamageReduction;
 
 var() localized string MonsterPreText, MonsterPostText;
 
+replication
+{
+    reliable if(Role == ROLE_Authority)
+        ClientModifyPossession;
+}
+
 function ModifyPawn(Pawn Other)
 {
     local RPGArtifact A;
@@ -281,6 +287,17 @@ function DoPossession(PlayerController PC, Pawn P)
     PC.Pawn.LastStartTime = Level.TimeSeconds;
     PC.Possess(P);
     PC.PawnClass = P.Class;
+
+    ClientModifyPossession(P);
+}
+
+simulated function ClientModifyPossession(Pawn P)
+{
+    P.bNoWeaponFiring = true;
+    P.default.HealthMax = P.default.Health;
+    P.default.SuperHealthMax = P.HealthMax + 99;
+    P.HealthMax = P.default.Health;
+    P.SuperHealthMax = P.HealthMax + 99;
 }
 
 function RestoreWeapons(Pawn P)
