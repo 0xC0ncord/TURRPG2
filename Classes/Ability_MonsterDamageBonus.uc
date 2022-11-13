@@ -19,8 +19,7 @@ function AdjustTargetDamage(
 )
 {
     if(
-        Damage > 0
-        && Monster(InstigatedBy) != None
+        Monster(InstigatedBy) != None
         && FriendlyMonsterController(InstigatedBy.Controller) != None
         && Injured != FriendlyMonsterController(InstigatedBy.Controller).Master
     )

@@ -10,7 +10,7 @@ class Ability_ConstructionDamage extends RPGAbility;
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-    if(Damage > 0 && Vehicle(InstigatedBy) != None && Vehicle(InstigatedBy).bNonHumanControl && InstigatedBy.Controller != None)
+    if(Vehicle(InstigatedBy) != None && Vehicle(InstigatedBy).bNonHumanControl && InstigatedBy.Controller != None)
         Damage += float(OriginalDamage) * BonusPerLevel * float(AbilityLevel);
 }
 

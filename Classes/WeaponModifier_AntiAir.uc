@@ -14,7 +14,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 {
     Super.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
-    if(Damage > 0 && Injured != InstigatedBy && Injured.Physics == PHYS_Flying)
+    if(Injured != InstigatedBy && Injured.Physics == PHYS_Flying)
     {
         if(!bIdentified)
             Identify();

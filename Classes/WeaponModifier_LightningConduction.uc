@@ -12,11 +12,9 @@ var localized string LCText;
 
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-    if(Damage > 0 &&
-        (DamageType == class'DamTypeSniperShot' ||
+    if(DamageType == class'DamTypeSniperShot' ||
         DamageType == class'DamTypeSniperHeadShot' ||
         DamageType == class'DamTypeLightningRod')
-    )
     {
         Identify();
         Damage = Max(0, Damage - float(OriginalDamage) * (1 - BonusPerLevel * Modifier));
