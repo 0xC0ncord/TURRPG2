@@ -19,7 +19,10 @@ static function bool CanBeApplied(Pawn Other, optional Controller Causer, option
     local RPGEffect Effect;
     local Ability_NullifyingCure Ability;
 
-    if(Vehicle(Other) == None && (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0))
+    if(
+        (Other.Health >= Other.HealthMax + Modifier || Other.Health <= 0)
+        || (Vehicle(Other) != None && Vehicle(Other).bNonHumanControl) //no real effect on sentinels, but avoid it anyway
+    )
     {
         return false;
     }
