@@ -11,7 +11,7 @@ class FX_AuraPulse_Shield extends FX_AuraPulse;
 defaultproperties
 {
     Begin Object Class=MeshEmitter Name=MeshEmitter0
-        StaticMesh=StaticMesh'ParticleMeshes.Complex.IonSphere'
+        StaticMesh=StaticMesh'ParticleMeshes.Complex.ExplosionSphere'
         UseParticleColor=True
         FadeOut=True
         FadeIn=True
