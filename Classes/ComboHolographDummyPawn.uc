@@ -53,7 +53,7 @@ function Tick(float dt)
     {
         if(M != None && M.Health > 0 && M.MaxFallSpeed != 100000)
         {
-            if(MonsterController(M.Controller) != None && M.Controller.Enemy != Self)
+            if(MonsterController(M.Controller) != None && FriendlyMonsterController(M.Controller) == None && M.Controller.Enemy != Self)
             {
                 MonsterController(M.Controller).ChangeEnemy(Self, true);
             }
