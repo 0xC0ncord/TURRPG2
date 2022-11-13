@@ -24,7 +24,7 @@ simulated event Tick(float dt)
 {
     Super.Tick(dt);
 
-    if(Role < ROLE_Authority && AbilityLevel > 0 && RPRI != None)
+    if(Role < ROLE_Authority && AbilityLevel > 0 && RPRI != None && RPRI.Controller != None && RPRI.Controller.Pawn != None)
     {
         if(LastPawn != RPRI.Controller.Pawn)
             LastPawn = xPawn(RPRI.Controller.Pawn);
