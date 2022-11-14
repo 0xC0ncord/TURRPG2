@@ -6,7 +6,8 @@
 // it under the terms of the Open Unreal Mod License version 1.1.
 //=============================================================================
 
-class ArtificerAugmentBase extends Object;
+class ArtificerAugmentBase extends Object
+    DependsOn(RPGCharSettings);
 
 var() float BonusPerLevel;
 var() int MaxLevel;
@@ -16,6 +17,7 @@ var() localized string LongDescription; //for the menu
 var() Material IconMaterial;
 var() Color ModifierColor;
 var() Material ModifierOverlay;
+var() array<class<ArtificerAugmentBase> > ConflictsWith;
 
 var int ModifierLevel;
 
@@ -29,15 +31,55 @@ var ArtificerAugmentBase NextAugment, PrevAugment;
 var array<class<ArtificerAugmentBase> > AugmentOrder; //internal order of augments for sorting
 var int OrderIndex; //cached index from internal AugmentOrder
 
-static function bool CanApply(WeaponModifier_Artificer WM)
+var localized string Text_AlreadyAtMax;
+var localized string Text_ConflictsWith;
+
+//determine if this augment can be inserted into an array of others and add it, or return false otherwise
+static function bool InsertInto(out array<RPGCharSettings.ArtificerAugmentStruct> Augments, optional out string Reason)
 {
-    local ArtificerAugmentBase Augment;
+    local int i, x;
 
-    if(default.MaxLevel == 0)
-        return true;
+    if(default.MaxLevel > 0 || default.ConflictsWith.Length != 0)
+    {
+        for(i = 0; i < default.ConflictsWith.Length; i++)
+        {
+            for(x = 0; x < Augments.Length; x++)
+            {
+                if(default.ConflictsWith[i] == Augments[x].AugmentClass)
+                {
+                    Reason = Repl(default.Text_ConflictsWith, "$1", default.ConflictsWith[i].default.ModifierName);
+                    return false;
+                }
+            }
+        }
 
-    Augment = GetFor(WM);
-    return (Augment == None || Augment.ModifierLevel < default.MaxLevel);
+        for(i = 0; i < Augments.Length; i++)
+        {
+            if(Augments[i].AugmentClass == default.Class)
+            {
+                if(Augments[i].ModifierLevel >= default.MaxLevel)
+                {
+                    Reason = default.Text_AlreadyAtMax;
+                    return false;
+                }
+                else
+                {
+                    Augments[i].ModifierLevel++;
+                    return true;
+                }
+            }
+        }
+    }
+
+    Augments.Length = i + 1;
+    Augments[i].AugmentClass = default.Class;
+    Augments[i].ModifierLevel = 1;
+    return true;
+}
+
+static function bool AllowedOn(Weapon W)
+{
+    return true;
 }
 
 static final function ArtificerAugmentBase GetFor(WeaponModifier_Artificer WM)
@@ -154,4 +196,6 @@ defaultproperties
     AugmentOrder(3)=Class'ArtificerAugment_Knockback'
     AugmentOrder(4)=Class'ArtificerAugment_Flight'
     AugmentOrder(5)=Class'ArtificerAugment_Spread'
+    Text_AlreadyAtMax="Augment is at its maximum possible level."
+    Text_ConflictsWith="Augment cannot be sealed alongside $1."
 }

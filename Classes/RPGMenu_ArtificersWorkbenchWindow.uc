@@ -42,6 +42,8 @@ var localized string Text_AutoApplyAlpha;
 var localized string Text_AutoApplyBeta;
 var localized string Text_AutoApplyGamma;
 
+var localized string Text_CannotAdd;
+
 var RPGSpinnyWeap SpinnyCharmA, SpinnyCharmB, SpinnyCharmC;
 var vector SpinnyCharmOffset;
 
@@ -367,6 +369,9 @@ function bool AddModifier(GUIComponent Sender)
     local array<GUIListElem> PendingElements;
     local GUIList Target;
     local int i;
+    local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
+    local string Reason;
+    local string Messages;
 
     if(!lbAugmentPool.List.IsValid())
         return true;
@@ -393,11 +398,22 @@ function bool AddModifier(GUIComponent Sender)
 
     PendingElements = lbAugmentPool.List.GetPendingElements(true);
 
+    UnpackCharmList(Target, Augments);
+
     lbAugmentPool.List.bNotify = false;
     for(i = PendingElements.Length - 1; i >= 0; i--)
     {
-        lbAugmentPool.List.RemoveElement(PendingElements[i],, true);
-        Target.AddElement(PendingElements[i]);
+        if(class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
+        {
+            lbAugmentPool.List.RemoveElement(PendingElements[i],, true);
+            Target.AddElement(PendingElements[i]);
+        }
+        else
+        {
+            if(Messages != "")
+                Messages $= "||";
+            Messages $= Repl(Text_CannotAdd, "$1", class<ArtificerAugmentBase>(PendingElements[i].ExtraData).default.ModifierName) $ "|" $ Reason;
+        }
     }
 
     lbAugmentPool.List.bNotify = true;
@@ -407,6 +423,8 @@ function bool AddModifier(GUIComponent Sender)
     lbAugmentPool.List.Sort();
 
     Target.Sort();
+
+    lbMessages.SetContent(Messages);
 
     switch(Target)
     {
@@ -460,6 +478,8 @@ function bool RemoveModifier(GUIComponent Sender)
     List.bNotify = true;
     List.ClearPendingElements();
 
+    lbMessages.SetContent("");
+
     switch(List)
     {
         case lbCharmA.List:
@@ -507,6 +527,10 @@ function bool InternalOnDragDrop(GUIComponent Target)
     local GUIList Source;
     local array<GUIListElem> PendingElements;
     local int i;
+    local bool bTargetIsCharmList;
+    local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
+    local string Reason;
+    local string Messages;
 
     if(Controller == None)
         return false;
@@ -518,10 +542,22 @@ function bool InternalOnDragDrop(GUIComponent Target)
     if(!Source.IsValid())
         return false;
 
+    bTargetIsCharmList = (Target == lbCharmA.List || Target == lbCharmB.List || Target == lbCharmC.List);
+
     PendingElements = Source.GetPendingElements(true);
+
+    UnpackCharmList(GUIList(Target), Augments);
+
     Source.bNotify = false;
     for(i = PendingElements.Length - 1; i >= 0; i--)
     {
+        if(bTargetIsCharmList && !class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
+        {
+            if(Messages != "")
+                Messages $= "||";
+            Messages $= Repl(Text_CannotAdd, "$1", class<ArtificerAugmentBase>(PendingElements[i].ExtraData).default.ModifierName) $ "|" $ Reason;
+            continue;
+        }
         Source.RemoveElement(PendingElements[i],, true);
         GUIList(Target).AddElement(PendingElements[i]);
     }
@@ -531,6 +567,8 @@ function bool InternalOnDragDrop(GUIComponent Target)
 
     Source.Sort();
     GUIList(Target).Sort();
+
+    lbMessages.SetContent(Messages);
 
     switch(Target)
     {
@@ -1076,7 +1114,7 @@ defaultproperties
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.305175
-        WinHeight=0.201009
+        WinHeight=0.297652
         WinLeft=0.694855
         WinTop=0.323186
         OnPreDraw=sbMessages_.InternalPreDraw
@@ -1088,9 +1126,9 @@ defaultproperties
         LeftPadding=0.000000
         RightPadding=0.000000
         WinWidth=0.305175
-        WinHeight=0.445221
+        WinHeight=0.348578
         WinLeft=0.694855
-        WinTop=0.526890
+        WinTop=0.622572
         OnPreDraw=sbSettings_.InternalPreDraw
     End Object
     sbSettings=GUISectionBackground'sbSettings_'
@@ -1251,7 +1289,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.041458
         WinLeft=0.707875
-        WinTop=0.613147
+        WinTop=0.703685
         Hint="Select a weapon to auto-apply Artificer Charm Alpha on when spawning."
         OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
     End Object
@@ -1261,7 +1299,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.041458
         WinLeft=0.707875
-        WinTop=0.738666
+        WinTop=0.796281
         Hint="Select a weapon to auto-apply Artificer Charm Beta on when spawning."
         OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
     End Object
@@ -1271,7 +1309,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.041458
         WinLeft=0.707875
-        WinTop=0.865391
+        WinTop=0.889054
         Hint="Select a weapon to auto-apply Artificer Charm Gamma on when spawning."
         OnChange=RPGMenu_ArtificersWorkbenchWindow.AutoApplySelected
     End Object
@@ -1281,7 +1319,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.039407
         WinLeft=0.707875
-        WinTop=0.574230
+        WinTop=0.665796
         StyleName="NoBackground"
     End Object
     lblAutoApplyAlpha=GUILabel'lblAutoApplyAlpha_'
@@ -1290,7 +1328,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.039407
         WinLeft=0.707875
-        WinTop=0.699749
+        WinTop=0.758393
         StyleName="NoBackground"
     End Object
     lblAutoApplyBeta=GUILabel'lblAutoApplyBeta_'
@@ -1299,7 +1337,7 @@ defaultproperties
         WinWidth=0.280164
         WinHeight=0.039407
         WinLeft=0.707875
-        WinTop=0.826116
+        WinTop=0.850808
         StyleName="NoBackground"
     End Object
     lblAutoApplyGamma=GUILabel'lblAutoApplyGamma_'
@@ -1321,7 +1359,7 @@ defaultproperties
 
     Begin Object Class=GUIScrollTextBox Name=lbMessages_
         WinWidth=0.270051
-        WinHeight=0.125424
+        WinHeight=0.223803
         WinLeft=0.712384
         WinTop=0.360020
         CharDelay=0.001250
@@ -1384,6 +1422,8 @@ defaultproperties
     Text_AutoApplyAlpha="Auto-apply Charm Alpha on:"
     Text_AutoApplyBeta="Auto-apply Charm Beta on:"
     Text_AutoApplyGamma="Auto-apply Charm Gamma on:"
+
+    Text_CannotAdd="The $1 augment could not be added:"
 
     OnRendered=InternalDraw
     SpinnyCharmOffset=(X=60)

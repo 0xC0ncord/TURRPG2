@@ -31,15 +31,15 @@ static final function FireModeStruct GetFireModeFor(class<Weapon> WeaponClass)
     return default.NullEntry;
 }
 
-static function bool CanApply(WeaponModifier_Artificer WM)
+static function bool AllowedOn(Weapon W)
 {
     local FireModeStruct Entry;
 
-    Entry = GetFireModeFor(WM.Weapon.Class);
+    Entry = GetFireModeFor(W.Class);
     if(Entry.WeaponClass == None)
         return false;
 
-    return Super.CanApply(WM);
+    return Super.AllowedOn(W);
 }
 
 function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
@@ -67,7 +67,7 @@ function Free()
     Super.Free();
 }
 
-function bool ClientStartFire(int ModeNum)
+final function bool ClientStartFire(int ModeNum)
 {
     if(Weapon == None || Weapon.GetFireMode(0) == None)
         return true;
@@ -84,7 +84,7 @@ function bool ClientStartFire(int ModeNum)
     return true;
 }
 
-function DestroyFireMode()
+final function DestroyFireMode()
 {
     EPRINTD(PlayerController(WeaponModifier.RPRI.Controller), "Destroying!");
     if(FireMode != None)

@@ -71,7 +71,7 @@ defaultproperties
     GrantAugments(3)=(AbilityLevel=2,AugmentClass=Class'ArtificerAugment_Damage',Amount=2)
     GrantAugments(4)=(AbilityLevel=2,AugmentClass=Class'ArtificerAugment_Infinity',Amount=2)
     GrantAugments(5)=(AbilityLevel=2,AugmentClass=Class'ArtificerAugment_Flight',Amount=2)
-    GrantAugments(6)=(AbilityLevel=2,AugmentClass=Class'ArtificerAugment_Spread',Amount=2)
+    GrantAugments(6)=(AbilityLevel=2,AugmentClass=Class'ArtificerAugment_Spread',Amount=5)
     AbilityName="Loaded Augments"
     Description="Grants you augments for use in the Artificer's Workbench. Each level of this ability will grant you more powerful augments."
     StartingCost=4

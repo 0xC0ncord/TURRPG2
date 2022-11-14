@@ -36,13 +36,20 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
 {
     local int i, x;
     local ArtificerAugmentBase Augment;
+    local array<RPGCharSettings.ArtificerAugmentStruct> ValidatedAugments;
 
     SetActive(false);
 
+    //validate the augments first
+    for(i = 0; i < NewAugments.Length; i++)
+        for(x = 0; x < NewAugments[x].ModifierLevel; x++)
+            NewAugments[i].AugmentClass.static.InsertInto(ValidatedAugments);
+
+
 #ifdef __DEBUG__
     PRINTD("BEGIN NEW AUGMENTS");
-    for(i = 0; i < NewAugments.Length; i++)
-        PRINTD(NewAugments[i].AugmentClass @ NewAugments[i].ModifierLevel);
+    for(i = 0; i < ValidatedAugments.Length; i++)
+        PRINTD(ValidatedAugments[i].AugmentClass @ ValidatedAugments[i].ModifierLevel);
     PRINTD("END NEW AUGMENTS");
 #endif
 
@@ -53,9 +60,9 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
     //remove old augments not in the new array
     for(i = 0; i < CurrentAugments.Length; i++)
     {
-        for(x = 0; x < NewAugments.Length; x++)
+        for(x = 0; x < ValidatedAugments.Length; x++)
         {
-            if(CurrentAugments[i].AugmentClass == NewAugments[x].AugmentClass)
+            if(CurrentAugments[i].AugmentClass == ValidatedAugments[x].AugmentClass)
             {
                 x = -1;
                 break;
@@ -70,16 +77,16 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
     }
 
     //add new augments not in the old array, or adjust levels
-    for(i = 0; i < NewAugments.Length; i++)
+    for(i = 0; i < ValidatedAugments.Length; i++)
     {
         for(x = 0; x < CurrentAugments.Length; x++)
         {
-            if(NewAugments[i].AugmentClass == CurrentAugments[x].AugmentClass)
+            if(ValidatedAugments[i].AugmentClass == CurrentAugments[x].AugmentClass)
             {
-                if(NewAugments[i].ModifierLevel == CurrentAugments[x].ModifierLevel)
+                if(ValidatedAugments[i].ModifierLevel == CurrentAugments[x].ModifierLevel)
                 {
-                    SetAugmentLevel(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
-                    ClientSetAugmentLevel(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+                    SetAugmentLevel(ValidatedAugments[i].AugmentClass, ValidatedAugments[i].ModifierLevel);
+                    ClientSetAugmentLevel(ValidatedAugments[i].AugmentClass, ValidatedAugments[i].ModifierLevel);
                 }
                 x = -1;
                 break;
@@ -87,8 +94,8 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
         }
         if(x != -1)
         {
-            AddAugment(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
-            ClientAddAugment(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+            AddAugment(ValidatedAugments[i].AugmentClass, ValidatedAugments[i].ModifierLevel);
+            ClientAddAugment(ValidatedAugments[i].AugmentClass, ValidatedAugments[i].ModifierLevel);
         }
     }
 
@@ -107,7 +114,7 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
 
     SetActive(true);
 
-    CurrentAugments = NewAugments;
+    CurrentAugments = ValidatedAugments;
 }
 
 simulated function Destroyed()
