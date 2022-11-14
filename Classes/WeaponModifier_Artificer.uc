@@ -647,6 +647,7 @@ static function string ConstructItemName(class<Weapon> WeaponClass, int Modifier
 defaultproperties
 {
     bCanHaveZeroModifier=False
+    bCanThrow=False
     PatternPoorQuality="Crude Artificer's $W"
     PatternLowQuality="Artificer's Lesser $W"
     PatternMediumQuality="Artificer's $W of Handicraft"

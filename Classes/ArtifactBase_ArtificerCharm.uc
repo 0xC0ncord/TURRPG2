@@ -111,8 +111,6 @@ function DoModifyWeapon(Weapon W)
             break;
     }
 
-    ModifiedWeapon.bCanThrow = false;
-
     Ability.WeaponModifier = WM;
 }
 
