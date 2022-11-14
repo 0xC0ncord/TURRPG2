@@ -1124,6 +1124,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
         //TODO: AwardEXPForDamage(Killer, class'RPGPlayerReplicationInfo'.static.GetFor(Killer), Killed, Killed.Health);
     }
 
+#ifeq ENABLE_3190_BACK_COMPAT_PATCH 1
     //Yet Another Invasion Hack - Invasion doesn't call ScoreKill() on the GameRules if a monster kills something
     //This one's so bad I swear I'm fixing it for a patch
     if(int(Level.EngineVersion) < 3190 && Invasion(Level.Game) != None && KilledController != None && MonsterController(Killer) != None)
@@ -1133,6 +1134,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> dam
 
         ScoreKill(Killer, KilledController);
     }
+#endif
 
     //unless another GameRules decides to prevent death, this is certain death
     if(KillerRPRI == None)
