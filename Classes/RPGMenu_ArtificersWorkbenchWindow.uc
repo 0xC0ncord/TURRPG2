@@ -686,16 +686,75 @@ function DrawListItem(GUIList List, Canvas C, int Item, float X, float Y, float 
     local GUIStyles DStyle;
     local float XL, YL;
     local class<ArtificerAugmentBase> Augment;
+    local bool bIsDrop;
 
+    //transcribed from UGUIVertList::Draw because setting the delegate stops
+    //selection boxes from drawing...
+    bIsDrop = (Item == List.DropIndex);
+
+    if(bSelected || (bPending && !bIsDrop))
+    {
+        if(List.SelectedStyle != None)
+        {
+            if(List.SelectedStyle.Images[List.MenuState] != None)
+                List.SelectedStyle.Draw(C, List.MenuState, X, Y, W, H);
+            else
+            {
+                C.SetPos(X, Y);
+                C.DrawTile(Controller.DefaultPens[0], W, H, 0, 0, 32, 32);
+            }
+        }
+        else
+        {
+            if(List.MenuState == MSAT_Focused || List.MenuState == MSAT_Pressed)
+            {
+                if(List.SelectedImage == None)
+                {
+                    C.SetPos(X, Y);
+                    C.DrawTile(Controller.DefaultPens[0], W, H, 0, 0, 32, 32);
+                }
+                else
+                {
+                    C.DrawColor = List.SelectedBKColor;
+                    C.SetPos(X, Y);
+                    C.DrawTileStretched(List.SelectedImage, W, H);
+                }
+            }
+        }
+    }
+
+    if(bPending && List.OutlineStyle != None)
+    {
+        if(List.OutlineStyle.Images[List.MenuState] != None)
+        {
+            if(bIsDrop)
+                List.OutlineStyle.Draw(C, List.MenuState, X + 1, Y + 1, W - 2, H - 2);
+            else
+            {
+                List.OutlineStyle.Draw(C, List.MenuState, X, Y, W, H);
+                if(List.DropState == DRP_Source)
+                    List.OutlineStyle.Draw(
+                        C,
+                        List.MenuState,
+                        Controller.MouseX - List.MouseOffset[0],
+                        Controller.MouseY - List.MouseOffset[1] + Y - List.ClientBounds[1],
+                        List.MouseOffset[2] + List.MouseOffset[0],
+                        H);
+            }
+        }
+    }
+
+    //manual call to DrawItem itself
     if(bSelected)
         DStyle = List.SelectedStyle;
     else
         DStyle = List.Style;
+
     DStyle.Draw(C, List.MenuState, X, Y, W, H);
 
     DStyle.DrawText(C, List.MenuState, X, Y, W, H, TXTA_Center, List.GetItemAtIndex(Item), List.FontScale);
 
-    //draw icon next to item
+    //now our custom code... draw an icon next to the item
     Augment = class<ArtificerAugmentBase>(List.GetObjectAtIndex(Item));
     if(Augment.default.IconMaterial != None)
     {
