@@ -16,7 +16,7 @@ var localized string PatternHighQuality;
 var localized string PatternPristineQuality;
 
 var ArtificerAugmentBase AugmentList, AugmentListTail;
-var array<RPGCharSettings.ArtificerAugmentStruct> OldAugments;
+var array<RPGCharSettings.ArtificerAugmentStruct> CurrentAugments;
 
 var ArtificerFireModeBase PrimaryFireModes, AlternateFireModes;
 var ArtificerFireModeBase LastPrimaryFireMode, LastAlternateFireMode;
@@ -51,11 +51,11 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
     //in order to avoid an unsealing/sealing exploit
 
     //remove old augments not in the new array
-    for(i = 0; i < OldAugments.Length; i++)
+    for(i = 0; i < CurrentAugments.Length; i++)
     {
         for(x = 0; x < NewAugments.Length; x++)
         {
-            if(OldAugments[i].AugmentClass == NewAugments[x].AugmentClass)
+            if(CurrentAugments[i].AugmentClass == NewAugments[x].AugmentClass)
             {
                 x = -1;
                 break;
@@ -63,20 +63,20 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
         }
         if(x != -1)
         {
-            RemoveAugment(OldAugments[i].AugmentClass);
+            RemoveAugment(CurrentAugments[i].AugmentClass);
             if(Level.NetMode != NM_Standalone)
-                ClientRemoveAugment(OldAugments[i].AugmentClass);
+                ClientRemoveAugment(CurrentAugments[i].AugmentClass);
         }
     }
 
     //add new augments not in the old array, or adjust levels
     for(i = 0; i < NewAugments.Length; i++)
     {
-        for(x = 0; x < OldAugments.Length; x++)
+        for(x = 0; x < CurrentAugments.Length; x++)
         {
-            if(NewAugments[i].AugmentClass == OldAugments[x].AugmentClass)
+            if(NewAugments[i].AugmentClass == CurrentAugments[x].AugmentClass)
             {
-                if(NewAugments[i].ModifierLevel == OldAugments[x].ModifierLevel)
+                if(NewAugments[i].ModifierLevel == CurrentAugments[x].ModifierLevel)
                 {
                     SetAugmentLevel(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
                     ClientSetAugmentLevel(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
@@ -107,7 +107,7 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
 
     SetActive(true);
 
-    OldAugments = NewAugments;
+    CurrentAugments = NewAugments;
 }
 
 simulated function Destroyed()
