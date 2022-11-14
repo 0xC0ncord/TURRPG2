@@ -84,7 +84,6 @@ defaultproperties
     ModifierName="Fly"
     Description="flight"
     LongDescription="Grants you flight while a weapon sealed with this augment is held."
-    ModifierOverlay=TexPanner'TURRPG2.WOPWeapons.FlightPanner'
     IconMaterial=Texture'TURRPG2.WOPIcons.FlyIcon'
     ModifierColor=(R=255,G=255)
 }

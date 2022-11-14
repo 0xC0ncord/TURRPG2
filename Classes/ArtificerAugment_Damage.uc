@@ -19,6 +19,6 @@ defaultproperties
     BonusPerLevel=0.02
     ModifierName="Damage"
     IconMaterial=Texture'TURRPG2.WOPIcons.DamageIcon'
-    ModifierOverlay=TexPanner'TURRPG2.WOPWeapons.DamagePanner'
+    ModifierOverlay=Shader'WOPWeapons.DamageShader'
     ModifierColor=(R=255,B=255)
 }

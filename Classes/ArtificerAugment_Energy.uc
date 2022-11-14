@@ -39,5 +39,5 @@ defaultproperties
     Description="$1 adrenaline gain"
     LongDescription="Adds $1 adrenaline gain from weapon damage per level."
     IconMaterial=Texture'TURRPG2.WOPIcons.EnergyIcon'
-    ModifierOverlay=Shader'TURRPG2.RPGWeapons.EnergyShader'
+    ModifierOverlay=Shader'RPGWeapons.EnergyShader'
 }
