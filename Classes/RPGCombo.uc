@@ -29,7 +29,8 @@ function Destroyed()
         if(RPGPawn(Owner) != None)
         {
             i = class'Util'.static.InArray(Self, RPGPawn(Owner).ActiveCombos);
-            RPGPawn(Owner).ActiveCombos.Remove(i, 1);
+            if(i != -1)
+                RPGPawn(Owner).ActiveCombos.Remove(i, 1);
             if(P.CurrentCombo == self)
             {
                 if(RPGPawn(Owner).ActiveCombos.Length > 0)
