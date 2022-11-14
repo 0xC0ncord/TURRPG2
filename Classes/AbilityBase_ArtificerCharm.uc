@@ -17,8 +17,6 @@ var ArtifactBase_ArtificerCharm Artifact;
 var int OldAmmoCount; //TODO old amount of ammo a weapon had before it was sealed
                       //to prevent gaining infinite ammo from sealing/unsealing
 
-var class<Weapon> AutoApplyWeaponClass; //weapon class to auto-apply on
-
 replication
 {
     reliable if(Role == ROLE_Authority)
@@ -33,45 +31,22 @@ function ModifyPawn(Pawn Other)
 
 function ModifyGrantedWeapon(Weapon Weapon, RPGWeaponModifier WM, optional Object Source)
 {
-    if(Weapon.Class == AutoApplyWeaponClass)
+    if(WeaponModifier_Artificer(WM) != None)
     {
-        //make sure this is legal
-        if(!class'WeaponModifier_Artificer'.static.AllowedFor(Weapon.Class, Weapon.Instigator)
-            || Weapon.Class == class'BallLauncher'
-            || Weapon.Class == class'TransLauncher'
-        )
+        switch(Class)
         {
-            //give them an artifact if they dont have one and be done.
-            if(Weapon.Instigator.FindInventoryType(ArtificerCharmClass) != None)
-                return; //wtf?
-
-            Artifact = ArtifactBase_ArtificerCharm(class'Util'.static.GiveInventory(Weapon.Instigator, ArtificerCharmClass));
-            if(Artifact != None)
-                Artifact.Ability = Self;
-        }
-        else
-        {
-            //mostly copied from ArtifactBase_ArtificerCharm::Activated::DoEffect
-            if(Weapon.bNoAmmoInstances)
-                OldAmmoCount = Weapon.AmmoCharge[0];
-            else
-                OldAmmoCount = class'DummyWeaponHack'.static.GetAmmo(Weapon, 0).AmmoAmount;
-
-            WeaponModifier = WeaponModifier_Artificer(class'WeaponModifier_Artificer'.static.Modify(Weapon, AbilityLevel, true));
-            switch(Class)
-            {
-                case class'Ability_ArtificerCharmAlpha':
+            case class'Ability_ArtificerCharmAlpha':
+                if(WeaponModifier_ArtificerAlpha(WM) != None)
                     WeaponModifier.InitAugments(RPRI.ArtificerAugmentsAlpha);
-                    break;
-                case class'Ability_ArtificerCharmBeta':
+                break;
+            case class'Ability_ArtificerCharmBeta':
+                if(WeaponModifier_ArtificerBeta(WM) != None)
                     WeaponModifier.InitAugments(RPRI.ArtificerAugmentsBeta);
-                    break;
-                case class'Ability_ArtificerCharmGamma':
+                break;
+            case class'Ability_ArtificerCharmGamma':
+                if(WeaponModifier_ArtificerGamma(WM) != None)
                     WeaponModifier.InitAugments(RPRI.ArtificerAugmentsGamma);
-                    break;
-            }
-
-            WeaponModifier.bCanThrow = false;
+                break;
         }
     }
 }
@@ -111,7 +86,7 @@ function GrantArtificerCharm(Pawn Other)
                 WeaponModifier.SetModifier(AbilityLevel, true);
         }
     }
-    else if(AutoApplyWeaponClass == None) //ability was just bought or player just spawned
+    else //ability was just bought or player just spawned
     {
         Artifact = ArtifactBase_ArtificerCharm(class'Util'.static.GiveInventory(Other, ArtificerCharmClass));
         if(Artifact != None)

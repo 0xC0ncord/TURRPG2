@@ -16,6 +16,7 @@ var localized string PatternHighQuality;
 var localized string PatternPristineQuality;
 
 var ArtificerAugmentBase AugmentList, AugmentListTail;
+var array<RPGCharSettings.ArtificerAugmentStruct> OldAugments;
 
 var ArtificerFireModeBase PrimaryFireModes, AlternateFireModes;
 var ArtificerFireModeBase LastPrimaryFireMode, LastAlternateFireMode;
@@ -25,29 +26,88 @@ var ArtificerFireModeDeathObserver DeathWatcher;
 replication
 {
     reliable if(Role == ROLE_Authority)
-        ClientInitAugment, ClientRemoveAugment, ClientUpdateDescription;
+        ClientAddAugment, ClientRemoveAugment, ClientSetAugmentLevel,
+        ClientSortAugments, ClientUpdateDescription;
+    reliable if(Role < ROLE_Authority)
+        ServerNextPrimaryFireMode, ServerNextAlternateFireMode;
 }
 
-function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAugments)
+final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAugments)
 {
+    local int i, x;
     local ArtificerAugmentBase Augment;
-    local int i;
 
     SetActive(false);
+
+#ifdef __DEBUG__
+    PRINTD("BEGIN NEW AUGMENTS");
+    for(i = 0; i < NewAugments.Length; i++)
+        PRINTD(NewAugments[i].AugmentClass @ NewAugments[i].ModifierLevel);
+    PRINTD("END NEW AUGMENTS");
+#endif
 
     //FIXME if an augment ever has any functionality which involves a cooldown,
     //this will need to be rewritten later so that we don't also reset its cooldown
     //in order to avoid an unsealing/sealing exploit
-    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        ClientRemoveAugment(Augment);
 
+    //remove old augments not in the new array
+    for(i = 0; i < OldAugments.Length; i++)
+    {
+        for(x = 0; x < NewAugments.Length; x++)
+        {
+            if(OldAugments[i].AugmentClass == NewAugments[x].AugmentClass)
+            {
+                x = -1;
+                break;
+            }
+        }
+        if(x != -1)
+        {
+            RemoveAugment(OldAugments[i].AugmentClass);
+            if(Level.NetMode != NM_Standalone)
+                ClientRemoveAugment(OldAugments[i].AugmentClass);
+        }
+    }
+
+    //add new augments not in the old array, or adjust levels
     for(i = 0; i < NewAugments.Length; i++)
-        ClientInitAugment(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+    {
+        for(x = 0; x < OldAugments.Length; x++)
+        {
+            if(NewAugments[i].AugmentClass == OldAugments[x].AugmentClass)
+            {
+                if(NewAugments[i].ModifierLevel == OldAugments[x].ModifierLevel)
+                {
+                    SetAugmentLevel(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+                    ClientSetAugmentLevel(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+                }
+                x = -1;
+                break;
+            }
+        }
+        if(x != -1)
+        {
+            AddAugment(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+            ClientAddAugment(NewAugments[i].AugmentClass, NewAugments[i].ModifierLevel);
+        }
+    }
+
+    SortAugments();
+    ClientSortAugments();
+
+#ifdef __DEBUG__
+    PRINTD("BEGIN AUGMENT DUMP");
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+        PRINTD(Augment @ Augment.ModifierLevel);
+    PRINTD("END AUGMENT DUMP");
+#endif
 
     SetOverlay();
     ClientUpdateDescription();
 
     SetActive(true);
+
+    OldAugments = NewAugments;
 }
 
 simulated function Destroyed()
@@ -73,7 +133,7 @@ simulated function Destroyed()
     }
 }
 
-simulated function ClientInitAugment(class<ArtificerAugmentBase> AugmentClass, int NewLevel)
+simulated final function AddAugment(class<ArtificerAugmentBase> AugmentClass, int NewLevel)
 {
     local ArtificerAugmentBase Augment;
 
@@ -89,14 +149,106 @@ simulated function ClientInitAugment(class<ArtificerAugmentBase> AugmentClass, i
     AugmentListTail = Augment;
 
     Augment.Init(Self, NewLevel);
+    Augment.Apply();
+
+    PRINTD("New augment" @ Augment $ "; Prev" @ Augment.PrevAugment $ "; Next" @ Augment.NextAugment);
 }
 
-simulated function ClientRemoveAugment(ArtificerAugmentBase Augment)
+simulated final function RemoveAugment(class<ArtificerAugmentBase> AugmentClass)
 {
-    Augment.Remove();
+    local ArtificerAugmentBase Augment;
+
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+    {
+        if(Augment.Class == AugmentClass)
+        {
+            Augment.Remove();
+            return;
+        }
+    }
 }
 
-simulated function ArtificerFireModeBase CreateFireMode(class<ArtificerFireModeBase> FireModeClass, int ModeNum)
+simulated final function SetAugmentLevel(class<ArtificerAugmentBase> AugmentClass, int NewLevel)
+{
+    local ArtificerAugmentBase Augment;
+
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+    {
+        if(Augment.Class == AugmentClass)
+        {
+            Augment.SetLevel(NewLevel);
+            return;
+        }
+    }
+}
+
+simulated final function SortAugments()
+{
+    local ArtificerAugmentBase Augment, PrevAugment, NextAugment;
+    local int Length;
+    local int i, x;
+
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+        Length++;
+
+    if(Length == 0)
+        return;
+
+    for(i = 1; i < Length; i++)
+    {
+        Augment = AugmentList;
+        for(x = 0; x <= Length - i - 1; x++)
+        {
+            if(Augment.OrderIndex > Augment.NextAugment.OrderIndex)
+            {
+                PrevAugment = Augment.PrevAugment;
+                NextAugment = Augment.NextAugment;
+
+                if(PrevAugment != None)
+                    PrevAugment.NextAugment = NextAugment;
+                else
+                    AugmentList = Augment.NextAugment;
+
+                Augment.NextAugment = NextAugment.NextAugment;
+                Augment.PrevAugment = NextAugment;
+
+                if(NextAugment.NextAugment != None)
+                    NextAugment.NextAugment.PrevAugment = Augment;
+
+                NextAugment.NextAugment = Augment;
+                NextAugment.PrevAugment = PrevAugment;
+            }
+            else
+                Augment = Augment.NextAugment;
+        }
+    }
+}
+
+simulated final function ClientAddAugment(class<ArtificerAugmentBase> AugmentClass, int NewLevel)
+{
+    if(Role < ROLE_Authority)
+        AddAugment(AugmentClass, NewLevel);
+}
+
+simulated final function ClientRemoveAugment(class<ArtificerAugmentBase> AugmentClass)
+{
+    if(Role < ROLE_Authority)
+        RemoveAugment(AugmentClass);
+}
+
+simulated final function ClientSetAugmentLevel(class<ArtificerAugmentBase> AugmentClass, int NewLevel)
+{
+    if(Role < ROLE_Authority)
+        SetAugmentLevel(AugmentClass, NewLevel);
+}
+
+simulated final function ClientSortAugments()
+{
+    if(Role < ROLE_Authority)
+        SortAugments();
+}
+
+simulated final function ArtificerFireModeBase CreateFireMode(class<ArtificerFireModeBase> FireModeClass, int ModeNum)
 {
     local ArtificerFireModeBase NewFireMode;
 
@@ -108,7 +260,7 @@ simulated function ArtificerFireModeBase CreateFireMode(class<ArtificerFireModeB
     return NewFireMode;
 }
 
-simulated function AddFireMode(ArtificerFireModeBase NewFireMode)
+simulated final function AddFireMode(ArtificerFireModeBase NewFireMode)
 {
     EPRINTD(PlayerController(Instigator.Controller), "Adding new fire mode:" @ NewFireMode);
     //When adding a new fire mode, spawn a normal fire mode for the original
@@ -152,7 +304,7 @@ simulated function AddFireMode(ArtificerFireModeBase NewFireMode)
     }
 }
 
-simulated function RemoveFireMode(ArtificerFireModeBase FireMode)
+simulated final function RemoveFireMode(ArtificerFireModeBase FireMode)
 {
     local ArtificerFireModeBase CurrentFireMode;
     local bool bRemoved;
@@ -246,10 +398,13 @@ simulated function RemoveFireMode(ArtificerFireModeBase FireMode)
     }
 }
 
-simulated function SetFireModeHelper(ArtificerFireModeBase NewFireMode)
+simulated final function SetFireMode(ArtificerFireModeBase NewFireMode)
 {
     local bool bRestartFiring;
     local int i;
+
+    if(Role < ROLE_Authority)
+        ServerSetFireMode(NewFireMode);
 
     bRestartFiring = false;
     if(Instigator != None && NewFireMode != None && NewFireMode.FireMode != None && Weapon != None)
@@ -267,16 +422,9 @@ simulated function SetFireModeHelper(ArtificerFireModeBase NewFireMode)
         if(Instigator != None)
         {
             if(RPRI != None)
-            {
-                if(Level.NetMode == NM_Standalone || (Level.NetMode == NM_ListenServer && Level.GetLocalPlayerController() == Instigator.Controller))
-                {
-                    for(i = 0; i < RPRI.Abilities.Length; i++)
-                        if(RPRI.Abilities[i].bAllowed)
-                            RPRI.Abilities[i].ModifyWeapon(Weapon);
-                }
-                else if(Level.NetMode == NM_Client)
-                    ServerRequestWeaponModify();
-            }
+                for(i = 0; i < RPRI.Abilities.Length; i++)
+                    if(RPRI.Abilities[i].bAllowed)
+                        RPRI.Abilities[i].ModifyWeapon(Weapon);
 
             if(Role == ROLE_Authority)
                 StartEffect();
@@ -284,37 +432,25 @@ simulated function SetFireModeHelper(ArtificerFireModeBase NewFireMode)
                 ClientStartEffect();
 
             if(bRestartFiring)
-                Weapon.StartFire(NewFireMode.ModeNum);
+            {
+                if(Role == ROLE_Authority && Instigator.IsLocallyControlled())
+                    Weapon.ServerStartFire(NewFireMode.ModeNum);
+                else
+                    Weapon.ClientStartFire(NewFireMode.ModeNum);
+                PRINTD("Restarted firing on" @ Weapon $ "," @ NewFireMode);
+            }
 
             BuildDescription();
         }
     }
 }
 
-function ServerRequestWeaponModify()
+final function ServerSetFireMode(ArtificerFireModeBase NewFireMode)
 {
-    local int i;
-
-    if(RPRI == None)
-        return;
-
-    for(i = 0; i < RPRI.Abilities.Length; i++)
-        if(RPRI.Abilities[i].bAllowed)
-            RPRI.Abilities[i].ModifyWeapon(Weapon);
+    SetFireMode(NewFireMode);
 }
 
-simulated function ClientSetFireMode(ArtificerFireModeBase NewFireMode)
-{
-    SetFireModeHelper(NewFireMode);
-}
-
-simulated function SetFireMode(ArtificerFireModeBase NewFireMode)
-{
-    SetFireModeHelper(NewFireMode);
-    ClientSetFireMode(NewFireMode);
-}
-
-function ResetFireModes()
+final function ResetFireModes()
 {
     if(PrimaryFireModes != None)
         SetFireMode(PrimaryFireModes);
@@ -322,7 +458,7 @@ function ResetFireModes()
         SetFireMode(AlternateFireModes);
 }
 
-simulated function DestroyFireModes()
+simulated final function DestroyFireModes()
 {
     local ArtificerFireModeBase CurrentFireMode;
     local array<ArtificerFireModeBase> FireModes;
@@ -340,7 +476,7 @@ simulated function DestroyFireModes()
     }
 }
 
-simulated function NextPrimaryFireMode()
+simulated final function NextPrimaryFireMode()
 {
     local ArtificerFireModeBase NextFireMode;
 
@@ -348,6 +484,9 @@ simulated function NextPrimaryFireMode()
 
     if(PrimaryFireModes == None)
         return;
+
+    if(Role < ROLE_Authority)
+        ServerNextPrimaryFireMode();
 
     if(CurrentPrimaryFireMode == None)
         NextFireMode = PrimaryFireModes;
@@ -389,7 +528,7 @@ simulated function NextPrimaryFireMode()
     EPRINTD(PlayerController(Instigator.Controller), "New fire mode:" @ CurrentPrimaryFireMode);
 }
 
-simulated function NextAlternateFireMode()
+simulated final function NextAlternateFireMode()
 {
     local ArtificerFireModeBase NextFireMode;
 
@@ -397,6 +536,9 @@ simulated function NextAlternateFireMode()
 
     if(AlternateFireModes == None)
         return;
+
+    if(Role < ROLE_Authority)
+        ServerNextAlternateFireMode();
 
     if(CurrentAlternateFireMode == None)
         NextFireMode = AlternateFireModes;
@@ -437,6 +579,16 @@ simulated function NextAlternateFireMode()
     }
 
     EPRINTD(PlayerController(Instigator.Controller), "New fire mode:" @ CurrentAlternateFireMode);
+}
+
+final function ServerNextPrimaryFireMode()
+{
+    NextPrimaryFireMode();
+}
+
+final function ServerNextAlternateFireMode()
+{
+    NextAlternateFireMode();
 }
 
 function StartEffect()
@@ -551,7 +703,7 @@ function SetOverlay(optional Material Mat)
     // determine which overlay to show, then show it
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
     {
-        if(MaxLevel < Augment.ModifierLevel)
+        if(MaxLevel < Augment.ModifierLevel && Augment.ModifierOverlay != None)
         {
             MaxLevel = Augment.ModifierLevel;
             Mat = Augment.ModifierOverlay;

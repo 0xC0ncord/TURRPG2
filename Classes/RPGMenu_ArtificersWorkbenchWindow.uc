@@ -10,7 +10,7 @@ class RPGMenu_ArtificersWorkbenchWindow extends FloatingWindow
     DependsOn(RPGCharSettings);
 
 var RPGPlayerReplicationInfo RPRI;
-var bool bDirty;
+var bool bDirtyCharmA, bDirtyCharmB, bDirtyCharmC, bDirtyAutoApply;
 var bool bIgnoreNextChange;
 
 var automated GUISectionBackground sbModifierPool, sbListCharmA, sbListCharmB,
@@ -408,7 +408,18 @@ function bool AddModifier(GUIComponent Sender)
 
     Target.Sort();
 
-    bDirty = true;
+    switch(Target)
+    {
+        case lbCharmA.List:
+            bDirtyCharmA = true;
+            break;
+        case lbCharmB.List:
+            bDirtyCharmB = true;
+            break;
+        case lbCharmC.List:
+            bDirtyCharmC = true;
+            break;
+    }
 
     return true;
 }
@@ -449,7 +460,18 @@ function bool RemoveModifier(GUIComponent Sender)
     List.bNotify = true;
     List.ClearPendingElements();
 
-    bDirty = true;
+    switch(List)
+    {
+        case lbCharmA.List:
+            bDirtyCharmA = true;
+            break;
+        case lbCharmB.List:
+            bDirtyCharmB = true;
+            break;
+        case lbCharmC.List:
+            bDirtyCharmC = true;
+            break;
+    }
 
     return true;
 }
@@ -510,7 +532,18 @@ function bool InternalOnDragDrop(GUIComponent Target)
     Source.Sort();
     GUIList(Target).Sort();
 
-    bDirty = true;
+    switch(Target)
+    {
+        case lbCharmA.List:
+            bDirtyCharmA = true;
+            break;
+        case lbCharmB.List:
+            bDirtyCharmB = true;
+            break;
+        case lbCharmC.List:
+            bDirtyCharmC = true;
+            break;
+    }
 
     return false;
 }
@@ -752,10 +785,11 @@ function AutoApplySelected(GUIComponent Sender)
     local GUIListElem Elem;
     local int i;
 
+    bDirtyAutoApply = true;
+
     switch(Sender)
     {
         case cmbAutoApplyAlpha:
-            bDirty = true;
             cmbAutoApplyBeta.List.bNotify = false;
             cmbAutoApplyGamma.List.bNotify = false;
             if(OldAutoApplyWeaponAlpha != None)
@@ -805,7 +839,6 @@ function AutoApplySelected(GUIComponent Sender)
             OldAutoApplyWeaponAlpha = class<Weapon>(cmbAutoApplyAlpha.GetObject());
             break;
         case cmbAutoApplyBeta:
-            bDirty = true;
             cmbAutoApplyAlpha.List.bNotify = false;
             cmbAutoApplyGamma.List.bNotify = false;
             if(OldAutoApplyWeaponBeta != None)
@@ -855,7 +888,6 @@ function AutoApplySelected(GUIComponent Sender)
             OldAutoApplyWeaponBeta = class<Weapon>(cmbAutoApplyBeta.GetObject());
             break;
         case cmbAutoApplyGamma:
-            bDirty = true;
             cmbAutoApplyAlpha.List.bNotify = false;
             cmbAutoApplyBeta.List.bNotify = false;
             if(OldAutoApplyWeaponGamma != None)
@@ -912,33 +944,50 @@ event Closed(GUIComponent Sender, bool bCancelled)
     local RPGCharSettings Settings;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
 
-    if(bDirty)
+    if(bDirtyCharmA || bDirtyCharmB || bDirtyCharmC || bDirtyAutoApply)
     {
         Settings = RPRI.Interaction.CharSettings;
 
-        UnpackCharmList(lbCharmA.List, Augments);
-        Settings.ArtificerCharmAlphaConfig = Augments;
-        RPRI.ArtificerAugmentsAlpha = Augments;
-        RPRI.ResendArtificerAugments(0);
+        if(bDirtyCharmA)
+        {
+            UnpackCharmList(lbCharmA.List, Augments);
+            Settings.ArtificerCharmAlphaConfig = Augments;
+            RPRI.ArtificerAugmentsAlpha = Augments;
+            RPRI.ResendArtificerAugments(0);
+        }
 
-        Augments.Length = 0;
-        UnpackCharmList(lbCharmB.List, Augments);
-        Settings.ArtificerCharmBetaConfig = Augments;
-        RPRI.ArtificerAugmentsBeta = Augments;
-        RPRI.ResendArtificerAugments(1);
+        if(bDirtyCharmB)
+        {
+            Augments.Length = 0;
+            UnpackCharmList(lbCharmB.List, Augments);
+            Settings.ArtificerCharmBetaConfig = Augments;
+            RPRI.ArtificerAugmentsBeta = Augments;
+            RPRI.ResendArtificerAugments(1);
+        }
 
-        Augments.Length = 0;
-        UnpackCharmList(lbCharmC.List, Augments);
-        Settings.ArtificerCharmGammaConfig = Augments;
-        RPRI.ArtificerAugmentsGamma = Augments;
-        RPRI.ResendArtificerAugments(2);
+        if(bDirtyCharmC)
+        {
+            Augments.Length = 0;
+            UnpackCharmList(lbCharmC.List, Augments);
+            Settings.ArtificerCharmGammaConfig = Augments;
+            RPRI.ArtificerAugmentsGamma = Augments;
+            RPRI.ResendArtificerAugments(2);
+        }
 
-        Settings.ArtificerAutoApplyWeaponAlpha = class<Weapon>(cmbAutoApplyAlpha.GetObject());
-        Settings.ArtificerAutoApplyWeaponBeta = class<Weapon>(cmbAutoApplyBeta.GetObject());
-        Settings.ArtificerAutoApplyWeaponGamma = class<Weapon>(cmbAutoApplyGamma.GetObject());
-        RPRI.ResendArtificerAutoApplyWeapons();
+        if(bDirtyAutoApply)
+        {
+            Settings.ArtificerAutoApplyWeaponAlpha = class<Weapon>(cmbAutoApplyAlpha.GetObject());
+            Settings.ArtificerAutoApplyWeaponBeta = class<Weapon>(cmbAutoApplyBeta.GetObject());
+            Settings.ArtificerAutoApplyWeaponGamma = class<Weapon>(cmbAutoApplyGamma.GetObject());
+            RPRI.ArtificerAutoApplyWeaponAlpha = Settings.ArtificerAutoApplyWeaponAlpha;
+            RPRI.ArtificerAutoApplyWeaponBeta = Settings.ArtificerAutoApplyWeaponBeta;
+            RPRI.ArtificerAutoApplyWeaponGamma = Settings.ArtificerAutoApplyWeaponGamma;
+        }
 
-        bDirty = false;
+        bDirtyCharmA = false;
+        bDirtyCharmB = false;
+        bDirtyCharmC = false;
+        bDirtyAutoApply = false;
     }
 
     Super.Closed(Sender, bCancelled);

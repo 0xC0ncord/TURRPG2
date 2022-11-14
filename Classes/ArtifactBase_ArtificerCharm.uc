@@ -11,6 +11,8 @@ class ArtifactBase_ArtificerCharm extends ArtifactBase_WeaponMaker
     HideDropDown;
 
 var AbilityBase_ArtificerCharm Ability;
+var class<Weapon> DesiredWeaponClass;
+var bool bWantsAutoApply;
 
 replication
 {
@@ -45,45 +47,80 @@ state Activated
 
 simulated function PostNetBeginPlay()
 {
-    local class<Weapon> AutoApplyWeaponClass;
-
     Super.PostNetBeginPlay();
 
-    if(Role == ROLE_Authority)
-        return;
+    if(InstigatorRPRI != None && InstigatorRPRI.bClientSetup)
+    {
+        PRINTD(InstigatorRPRI);
+        SetupDesiredWeapon();
+        if(DesiredWeaponClass == None || TryAutoApplyWeapon())
+        {
+            Disable('Tick');
+            return;
+        }
+    }
+    bWantsAutoApply = true;
+}
 
+simulated function SetupDesiredWeapon()
+{
     switch(Class)
     {
         case class'Artifact_ArtificerCharmAlpha':
-            if(InstigatorRPRI.ArtificerAutoApplyWeaponAlpha != None)
-                AutoApplyWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponAlpha;
+            DesiredWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponAlpha;
             break;
         case class'Artifact_ArtificerCharmBeta':
-            if(InstigatorRPRI.ArtificerAutoApplyWeaponBeta != None)
-                AutoApplyWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponBeta;
+            DesiredWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponBeta;
             break;
         case class'Artifact_ArtificerCharmGamma':
-            if(InstigatorRPRI.ArtificerAutoApplyWeaponGamma != None)
-                AutoApplyWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponGamma;
+            DesiredWeaponClass = InstigatorRPRI.ArtificerAutoApplyWeaponGamma;
             break;
     }
-
-    if(AutoApplyWeaponClass != None)
-        ServerAutoApplyWeapon(AutoApplyWeaponClass);
 }
 
-function ServerAutoApplyWeapon(class<Weapon> WeaponClass)
+simulated function bool TryAutoApplyWeapon()
 {
     local Inventory Inv;
 
+    PRINTD("Trying to auto-apply on" @ DesiredWeaponClass);
+
     for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)
-        if(Inv.Class == WeaponClass)
-            break;
+    {
+        if(Inv.Class == DesiredWeaponClass)
+        {
+            PRINTD("Applying on" @ Inv);
+            ServerAutoApplyWeapon(Weapon(Inv));
+            return true;
+        }
+    }
+    return false;
+}
 
-    ForcedWeapon = Weapon(Inv);
+simulated function Tick(float dt)
+{
+    if(Level.NetMode == NM_DedicatedServer)
+        return;
 
-    if(CanActivate())
-        DoEffect();
+    if(bWantsAutoApply)
+    {
+        if(DesiredWeaponClass == None)
+            SetupDesiredWeapon();
+        TryAutoApplyWeapon();
+    }
+    bWantsAutoApply = false; //only try again for 1 tick
+}
+
+function ServerAutoApplyWeapon(Weapon Weapon)
+{
+    PRINTD("Attempting to auto-apply on" @ Weapon);
+
+    if(Weapon != None)
+        ForcedWeapon = Weapon;
+    else
+        return;
+
+    PRINTD("Activating!");
+    Activate();
 
     ForcedWeapon = None;
 }

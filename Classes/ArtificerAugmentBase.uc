@@ -26,6 +26,9 @@ var ObjectPool ObjectPool;
 
 var ArtificerAugmentBase NextAugment, PrevAugment;
 
+var array<class<ArtificerAugmentBase> > AugmentOrder; //internal order of augments for sorting
+var int OrderIndex; //cached index from internal AugmentOrder
+
 static function bool CanApply(WeaponModifier_Artificer WM)
 {
     local ArtificerAugmentBase Augment;
@@ -56,9 +59,9 @@ function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
     Weapon = WM.Weapon;
     Instigator = Weapon.Instigator;
     ObjectPool = WM.Level.ObjectPool;
+    OrderIndex = class'Util'.static.InArray(Class, default.AugmentOrder);
 
     SetLevel(NewModifierLevel);
-    Apply();
 }
 
 function SetLevel(int NewModifierLevel)
@@ -70,27 +73,22 @@ function Apply();
 
 final function Remove()
 {
+    EPRINTD(PlayerController(WeaponModifier.Instigator.Controller), "Removing" @ Self);
+
     if(WeaponModifier.Role == ROLE_Authority)
         StopEffect();
     else
         ClientStopEffect();
 
-    if(WeaponModifier.AugmentListTail == Self)
-    {
-        WeaponModifier.AugmentListTail = PrevAugment;
-    }
-    else
-    {
-        if(PrevAugment != None)
-            PrevAugment.NextAugment = NextAugment;
-        if(NextAugment != None)
-            NextAugment.PrevAugment = PrevAugment;
-    }
-
     if(WeaponModifier.AugmentList == Self)
-    {
-        WeaponModifier.AugmentList = None;
-    }
+        WeaponModifier.AugmentList = NextAugment;
+    if(WeaponModifier.AugmentListTail == Self)
+        WeaponModifier.AugmentListTail = PrevAugment;
+
+    if(NextAugment != None)
+        NextAugment.PrevAugment = PrevAugment;
+    if(PrevAugment != None)
+        PrevAugment.NextAugment = NextAugment;
 
     Free();
 }
@@ -150,4 +148,10 @@ defaultproperties
     Description="$1 damage"
     LongDescription="Increases weapon damage by $1 per level."
     ModifierColor=(R=255,G=255,B=255)
+    AugmentOrder(0)=Class'ArtificerAugment_Infinity'
+    AugmentOrder(1)=Class'ArtificerAugment_Damage'
+    AugmentOrder(2)=Class'ArtificerAugment_Energy'
+    AugmentOrder(3)=Class'ArtificerAugment_Knockback'
+    AugmentOrder(4)=Class'ArtificerAugment_Flight'
+    AugmentOrder(5)=Class'ArtificerAugment_Spread'
 }

@@ -248,7 +248,7 @@ replication
         ServerDestroyBuildings, ServerDestroySentinels, ServerDestroyTurrets,
         ServerDestroyVehicles, ServerDestroyUtilities, ServerKillMonsters,
         ServerClearArtificerAugments, ServerAddArtificerAugmentEntry,
-        ServerCommitArtificerAugments, ServerReceiveArtificerAutoApplyWeapon;
+        ServerCommitArtificerAugments;
 }
 
 static function RPGPlayerReplicationInfo CreateFor(Controller C)
@@ -628,7 +628,6 @@ simulated function ClientSetup()
                 ArtificerAutoApplyWeaponAlpha = Interaction.CharSettings.ArtificerAutoApplyWeaponAlpha;
                 ArtificerAutoApplyWeaponBeta = Interaction.CharSettings.ArtificerAutoApplyWeaponBeta;
                 ArtificerAutoApplyWeaponGamma = Interaction.CharSettings.ArtificerAutoApplyWeaponGamma;
-                ResendArtificerAutoApplyWeapons();
             }
 
             //add all artifacts that were not in the settings to the end
@@ -1707,40 +1706,6 @@ function ServerCommitArtificerAugments(byte Which)
             Ability = Ability_ArtificerCharmGamma(GetOwnedAbility(class'Ability_ArtificerCharmGamma'));
             if(Ability != None && Ability.WeaponModifier != None)
                 Ability.WeaponModifier.InitAugments(ArtificerAugmentsGamma);
-            break;
-    }
-}
-
-simulated function ResendArtificerAutoApplyWeapons()
-{
-    ServerReceiveArtificerAutoApplyWeapon(0, ArtificerAutoApplyWeaponAlpha);
-    ServerReceiveArtificerAutoApplyWeapon(1, ArtificerAutoApplyWeaponBeta);
-    ServerReceiveArtificerAutoApplyWeapon(2, ArtificerAutoApplyWeaponGamma);
-}
-
-function ServerReceiveArtificerAutoApplyWeapon(byte Which, class<Weapon> WeaponClass)
-{
-    local AbilityBase_ArtificerCharm Ability;
-
-    switch(Which)
-    {
-        case 0: //ALPHA
-            ArtificerAutoApplyWeaponAlpha = WeaponClass;
-            Ability = AbilityBase_ArtificerCharm(GetOwnedAbility(class'Ability_ArtificerCharmAlpha'));
-            if(Ability != None)
-                Ability.AutoApplyWeaponClass = WeaponClass;
-            break;
-        case 1: //BETA
-            ArtificerAutoApplyWeaponBeta = WeaponClass;
-            Ability = AbilityBase_ArtificerCharm(GetOwnedAbility(class'Ability_ArtificerCharmBeta'));
-            if(Ability != None)
-                Ability.AutoApplyWeaponClass = WeaponClass;
-            break;
-        case 2: //GAMMA
-            ArtificerAutoApplyWeaponGamma = WeaponClass;
-            Ability = AbilityBase_ArtificerCharm(GetOwnedAbility(class'Ability_ArtificerCharmGamma'));
-            if(Ability != None)
-                Ability.AutoApplyWeaponClass = WeaponClass;
             break;
     }
 }
