@@ -178,13 +178,12 @@ static final function int InArray(Object x, array<Object> a)
 {
     local int i;
 
-    for(i = 0; i < a.Length; i++)
-    {
-        if(a[i] == x)
-            return i;
-    }
+    i = a.Length;
 
-    return -1;
+    do {}
+    until(--i < 0 || a[i] == x);
+
+    return i;
 }
 
 static final function PawnScaleSpeed(Pawn P, float Multiplier)
