@@ -16,6 +16,7 @@ function RPGTick(float dt)
 
 defaultproperties
 {
+    MaxLevel=2
     ModifierName="Infinity"
     Description="infinite ammo"
     LongDescription="Grants infinite ammo."

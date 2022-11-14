@@ -8,19 +8,6 @@
 
 class ArtificerAugment_Knockback extends ArtificerAugmentBase;
 
-static function bool CanApply(WeaponModifier_Artificer WM)
-{
-    // if(class'ArtificerAugment_PullForward'.static.GetFor(WM) != None
-    //     || class'ArtificerAugment_Freeze'.static.GetFor(WM) != None
-    //     || class'ArtificerAugment_NullEntropy'.static.GetFor(WM) != None
-    //     || class'ArtificerAugment_Stone'.static.GetFor(WM) != None
-    //     || class'ArtificerAugment_Propulsion'.static.GetFor(WM) != None
-    // )
-    //     return false;
-
-    return Super.CanApply(WM);
-}
-
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     local Effect_Knockback Effect;
@@ -60,6 +47,11 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
 defaultproperties
 {
+    // ConflictsWith(0)=class'ArtificerAugment_PullForward'
+    // ConflictsWith(1)=class'ArtificerAugment_Freeze'
+    // ConflictsWith(2)=class'ArtificerAugment_NullEntropy'
+    // ConflictsWith(3)=class'ArtificerAugment_Stone'
+    // ConflictsWith(4)=class'ArtificerAugment_Propulsion'
     MaxLevel=4
     ModifierName="Knockback"
     Description="knockback"

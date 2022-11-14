@@ -81,6 +81,7 @@ function Free()
 defaultproperties
 {
     BonusPerLevel=0.02
+    MaxLevel=1
     ModifierName="Fly"
     Description="flight"
     LongDescription="Grants you flight while a weapon sealed with this augment is held."
