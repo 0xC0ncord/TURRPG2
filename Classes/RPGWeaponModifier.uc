@@ -545,15 +545,7 @@ simulated static final function string StaticGetBonusPercentageString(float Bonu
         text = "+";
     }
 
-    Bonus *= 100.0f;
-
-    //~= to avoid evil floating point magic
-    if(float(int(Bonus)) ~= Bonus)
-        text $= int(Bonus);
-    else
-        text $= Bonus;
-
-    text $= "%";
+    text $= class'Util'.static.FormatPercent(Bonus);
 
     return text;
 }
