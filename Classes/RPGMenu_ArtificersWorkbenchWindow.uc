@@ -60,7 +60,7 @@ struct CharmTreeNodeStruct
 struct ParentNodeStruct
 {
     var string ChildCaption;
-    var bool bExpanded;
+    var byte Expanded;
 };
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
@@ -840,7 +840,7 @@ function CompactCharmList(GUITreeList List)
             x = Parents.Length;
             Parents.Length = x + 1;
             Parents[x].ChildCaption = List.Elements[i + 1].Caption;
-            Parents[x].bExpanded = List.IsExpanded(i);
+            Parents[x].Expanded = byte(List.IsExpanded(i)); //bools not allowed in arrays
             continue;
         }
 
@@ -887,14 +887,17 @@ function CompactCharmList(GUITreeList List)
     List.Sort();
 
     //re-expand expanded parents
-    x = 0;
-    for(i = 0; i < List.ItemCount; i++)
+    if(Parents.Length > 0)
     {
-        if(List.Elements[i].Value == "")
+        x = 0;
+        for(i = 0; i < List.ItemCount; i++)
         {
-            if(Parents[x].bExpanded && Parents[x].ChildCaption == List.Elements[i + 1].Caption)
-                List.Expand(i);
-            x++;
+            if(List.Elements[i].Value == "")
+            {
+                if(Parents[x].Expanded == 1 && Parents[x].ChildCaption == List.Elements[i + 1].Caption)
+                    List.Expand(i);
+                x++;
+            }
         }
     }
 }
