@@ -636,9 +636,9 @@ function bool InternalOnDragDrop(GUIComponent Target)
             Length = PendingNodes.Length;
 
             //strip out duplicates and add unselected children
-            for(i = 0; i < Length; i++)
+            while(i < Length)
             {
-                if(PendingNodes[i].Value == "" && GUITreeList(Source).HasChildren(i))
+                if(PendingNodes[i].Value == "" && GUITreeList(Source).HasChildren(GUITreeList(Source).FindIndex(PendingNodes[i].Caption)))
                 {
                     ChildIndices = GUITreeList(Source).GetChildIndexList(GUITreeList(Source).FindIndex(PendingNodes[i].Caption));
 
@@ -661,6 +661,8 @@ function bool InternalOnDragDrop(GUIComponent Target)
 
                     PendingNodes.Remove(i, 1); //remove the parent itself
                 }
+                else
+                    i++;
             }
             break;
     }
