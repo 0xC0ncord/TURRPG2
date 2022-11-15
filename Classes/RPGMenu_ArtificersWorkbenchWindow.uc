@@ -16,7 +16,8 @@ var bool bIgnoreNextChange;
 var automated GUISectionBackground sbModifierPool, sbListCharmA, sbListCharmB,
                                    sbListCharmC, sbSettings, sbDescription,
                                    sbMessages;
-var automated GUIListBox lbAugmentPool, lbCharmA, lbCharmB, lbCharmC;
+var automated GUIListBox lbAugmentPool;
+var automated GUITreeListBox lbCharmA, lbCharmB, lbCharmC;
 var automated GUIGFXButton btAddCharmA, btRemoveCharmA;
 var automated GUIGFXButton btAddCharmB, btRemoveCharmB;
 var automated GUIGFXButton btAddCharmC, btRemoveCharmC;
@@ -29,7 +30,7 @@ var automated GUIButton btHelp;
 var class<Weapon> OldAutoApplyWeaponAlpha, OldAutoApplyWeaponBeta, OldAutoApplyWeaponGamma;
 var array<GUIListElem> AutoApplyAlphaList, AutoApplyBetaList, AutoApplyGammaList;
 
-var GUIList LastInteractedList; //list which we were last interacting with
+var GUITreeList LastInteractedList; //list which we were last interacting with
                                 //which isn't the modifier pool
 
 var localized string WindowTitle;
@@ -47,6 +48,21 @@ var localized string Text_CannotAdd;
 var RPGSpinnyWeap SpinnyCharmA, SpinnyCharmB, SpinnyCharmC;
 var vector SpinnyCharmOffset;
 
+//For tree list compacting
+struct CharmTreeNodeStruct
+{
+    var string Caption;
+    var string Value;
+    var string ParentCaption;
+    var int Count;
+};
+
+struct ParentNodeStruct
+{
+    var string ChildCaption;
+    var bool bExpanded;
+};
+
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
@@ -56,24 +72,31 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     lbAugmentPool.List.bDropTarget = true;
     lbAugmentPool.List.bMultiSelect = true;
     lbAugmentPool.List.bSorted = true;
+    lbAugmentPool.MyScrollbar.WinWidth = 0.015;
 
     lbCharmA.List.bInitializeList = false;
     lbCharmA.List.bDropSource = true;
     lbCharmA.List.bDropTarget = true;
     lbCharmA.List.bMultiSelect = true;
     lbCharmA.List.bSorted = true;
+    lbCharmA.List.bAllowParentSelection = true;
+    lbCharmA.MyScrollbar.WinWidth = 0.015;
 
     lbCharmB.List.bInitializeList = false;
     lbCharmB.List.bDropSource = true;
     lbCharmB.List.bDropTarget = true;
     lbCharmB.List.bMultiSelect = true;
     lbCharmB.List.bSorted = true;
+    lbCharmB.List.bAllowParentSelection = true;
+    lbCharmB.MyScrollbar.WinWidth = 0.015;
 
     lbCharmC.List.bInitializeList = false;
     lbCharmC.List.bDropSource = true;
     lbCharmC.List.bDropTarget = true;
     lbCharmC.List.bMultiSelect = true;
     lbCharmC.List.bSorted = true;
+    lbCharmC.List.bAllowParentSelection = true;
+    lbCharmC.MyScrollbar.WinWidth = 0.015;
 
     lbAugmentPool.List.CheckLinkedObjects = InternalCheckObjects;
     lbAugmentPool.List.AddLinkObject(btAddCharmA, true);
@@ -131,6 +154,9 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     cmbAutoApplyGamma.Edit.bReadOnly = true;
     cmbAutoApplyGamma.List.bInitializeList = false;
     cmbAutoApplyGamma.List.bSorted = true;
+
+    lbDesc.MyScrollbar.WinWidth = 0.015;
+    lbMessages.MyScrollbar.WinWidth = 0.015;
 
     t_WindowTitle.SetCaption(WindowTitle);
     btHelp.ToolTip.SetTip(Text_HintHelp);
@@ -278,16 +304,29 @@ function InitFor(RPGPlayerReplicationInfo Whom)
         cmbAutoApplyGamma.SetIndex(0);
 }
 
-function SelectModifier(optional GUIList List)
+function SelectModifier(optional GUIVertList List)
 {
     local class<ArtificerAugmentBase> MClass;
 
     RPRI.ServerNoteActivity(); //Disable idle kicking when actually doing something
 
-    if(List == None)
-        List = lbAugmentPool.List;
+    switch(List)
+    {
+        case None:
+            List = lbAugmentPool.List;
+        case lbAugmentPool.List:
+            MClass = class<ArtificerAugmentBase>(GUIList(List).GetObject());
+            break;
+        case lbCharmA.List:
+        case lbCharmB.List:
+        case lbCharmC.List:
+            if(GUITreeList(List).HasChildren(List.Index))
+                MClass = class<ArtificerAugmentBase>(DynamicLoadObject(GUITreeList(List).GetValueAtIndex(List.Index + 1), class'Class'));
+            else
+                MClass = class<ArtificerAugmentBase>(DynamicLoadObject(GUITreeList(List).GetValue(), class'Class'));
+            break;
+    }
 
-    MClass = class<ArtificerAugmentBase>(List.GetObject());
     if(MClass != None)
     {
         sbDescription.Caption = MClass.default.ModifierName;
@@ -367,7 +406,7 @@ function ListChange(GUIComponent Sender)
 function bool AddModifier(GUIComponent Sender)
 {
     local array<GUIListElem> PendingElements;
-    local GUIList Target;
+    local GUITreeList Target;
     local int i;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
     local string Reason;
@@ -406,7 +445,7 @@ function bool AddModifier(GUIComponent Sender)
         if(class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
         {
             lbAugmentPool.List.RemoveElement(PendingElements[i],, true);
-            Target.AddElement(PendingElements[i]);
+            Target.AddItem(PendingElements[i].Item, string(PendingElements[i].ExtraData));
         }
         else
         {
@@ -422,6 +461,7 @@ function bool AddModifier(GUIComponent Sender)
 
     lbAugmentPool.List.Sort();
 
+    CompactCharmList(Target);
     Target.Sort();
 
     lbMessages.SetContent(Messages);
@@ -444,9 +484,11 @@ function bool AddModifier(GUIComponent Sender)
 
 function bool RemoveModifier(GUIComponent Sender)
 {
-    local array<GUIListElem> PendingElements;
-    local int i;
-    local GUIList List;
+    local array<GUITreeNode> PendingNodes;
+    local int Length;
+    local array<int> ChildIndices;
+    local int i, x, y;
+    local GUITreeList List;
 
     switch(Sender)
     {
@@ -467,16 +509,48 @@ function bool RemoveModifier(GUIComponent Sender)
     if(!List.IsValid())
         return true;
 
-    PendingElements = List.GetPendingElements(true);
-    List.bNotify = false;
-    for(i = PendingElements.Length - 1; i >= 0; i--)
+    PendingNodes = List.GetPendingElements(true);
+    Length = PendingNodes.Length;
+
+    //strip out duplicates and add unselected children
+    for(i = 0; i < Length; i++)
     {
-        List.RemoveElement(PendingElements[i],, true);
-        lbAugmentPool.List.AddElement(PendingElements[i]);
+        if(PendingNodes[i].Value == "" && List.HasChildren(i))
+        {
+            ChildIndices = List.GetChildIndexList(List.FindIndex(PendingNodes[i].Caption));
+
+            //remove duplicates
+            for(x = 0; x < List.SelectedItems.Length; x++)
+            {
+                for(y = 0; y < ChildIndices.Length; y++)
+                {
+                    if(List.SelectedItems[x] == ChildIndices[y])
+                    {
+                        ChildIndices.Remove(y, 1);
+                        break;
+                    }
+                }
+            }
+
+            //add children
+            for(x = 0; x < ChildIndices.Length; x++)
+                PendingNodes[PendingNodes.Length] = List.Elements[ChildIndices[x]];
+
+            PendingNodes.Remove(i, 1); //remove the parent itself
+        }
+    }
+
+    List.bNotify = false;
+    for(i = PendingNodes.Length - 1; i >= 0; i--)
+    {
+        List.RemoveElement(PendingNodes[i],, true);
+        lbAugmentPool.List.Add(PendingNodes[i].Caption, class<ArtificerAugmentBase>(DynamicLoadObject(PendingNodes[i].Value, class'Class')));
     }
 
     List.bNotify = true;
     List.ClearPendingElements();
+
+    CompactCharmList(List);
 
     lbMessages.SetContent("");
 
@@ -503,8 +577,8 @@ function bool InternalOnClick(GUIComponent Sender)
         case lbCharmA:
         case lbCharmB:
         case lbCharmC:
-            SelectModifier(GUIListBox(Sender).List);
-            LastInteractedList = GUIListBox(Sender).List;
+            SelectModifier(GUITreeListBox(Sender).List);
+            LastInteractedList = GUITreeListBox(Sender).List;
             return true;
         case lbAugmentPool:
             SelectModifier(GUIListBox(Sender).List);
@@ -524,18 +598,23 @@ function bool InternalOnClick(GUIComponent Sender)
 
 function bool InternalOnDragDrop(GUIComponent Target)
 {
-    local GUIList Source;
+    local GUIVertList Source;
     local array<GUIListElem> PendingElements;
-    local int i;
+    local array<GUITreeNode> PendingNodes;
+    local array<int> ChildIndices;
+    local int Length;
+    local int i, x, y;
     local bool bTargetIsCharmList;
+    local bool bSourceIsCharmList;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
     local string Reason;
     local string Messages;
+    local class<ArtificerAugmentBase> AugmentClass;
 
     if(Controller == None)
         return false;
 
-    Source = GUIList(Controller.DropSource);
+    Source = GUIVertList(Controller.DropSource);
     if(Source == None || Source == Target)
         return false;
 
@@ -544,44 +623,129 @@ function bool InternalOnDragDrop(GUIComponent Target)
 
     bTargetIsCharmList = (Target == lbCharmA.List || Target == lbCharmB.List || Target == lbCharmC.List);
 
-    PendingElements = Source.GetPendingElements(true);
+    switch(Source)
+    {
+        case lbAugmentPool.List:
+            PendingElements = GUIList(Source).GetPendingElements(true);
+            break;
+        case lbCharmA.List:
+        case lbCharmB.List:
+        case lbCharmC.List:
+            bSourceIsCharmList = true;
+            PendingNodes = GUITreeList(Source).GetPendingElements(true);
+            Length = PendingNodes.Length;
 
-    UnpackCharmList(GUIList(Target), Augments);
+            //strip out duplicates and add unselected children
+            for(i = 0; i < Length; i++)
+            {
+                if(PendingNodes[i].Value == "" && GUITreeList(Source).HasChildren(i))
+                {
+                    ChildIndices = GUITreeList(Source).GetChildIndexList(GUITreeList(Source).FindIndex(PendingNodes[i].Caption));
+
+                    //remove duplicates
+                    for(x = 0; x < Source.SelectedItems.Length; x++)
+                    {
+                        for(y = 0; y < ChildIndices.Length; y++)
+                        {
+                            if(Source.SelectedItems[x] == ChildIndices[y])
+                            {
+                                ChildIndices.Remove(y, 1);
+                                break;
+                            }
+                        }
+                    }
+
+                    //add children
+                    for(x = 0; x < ChildIndices.Length; x++)
+                        PendingNodes[PendingNodes.Length] = GUITreeList(Source).Elements[ChildIndices[x]];
+
+                    PendingNodes.Remove(i, 1); //remove the parent itself
+                }
+            }
+            break;
+    }
 
     Source.bNotify = false;
-    for(i = PendingElements.Length - 1; i >= 0; i--)
+
+    if(bTargetIsCharmList)
     {
-        if(bTargetIsCharmList && !class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
+        UnpackCharmList(GUITreeList(Target), Augments);
+
+        if(bSourceIsCharmList)
         {
-            if(Messages != "")
-                Messages $= "||";
-            Messages $= Repl(Text_CannotAdd, "$1", class<ArtificerAugmentBase>(PendingElements[i].ExtraData).default.ModifierName) $ "|" $ Reason;
-            continue;
+            //charm list -> charm list
+            for(i = PendingNodes.Length - 1; i >= 0; i--)
+            {
+                AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(PendingNodes[i].Value, class'Class'));
+                if(AugmentClass.static.InsertInto(Augments, Reason))
+                {
+                    GUITreeList(Source).RemoveElement(PendingNodes[i],, true);
+                    GUITreeList(Target).AddElement(PendingNodes[i]);
+                }
+                else
+                {
+                    if(Messages != "")
+                        Messages $= "||";
+                    Messages $= Repl(Text_CannotAdd, "$1", AugmentClass.default.ModifierName) $ "|" $ Reason;
+                }
+            }
         }
-        Source.RemoveElement(PendingElements[i],, true);
-        GUIList(Target).AddElement(PendingElements[i]);
+        else
+        {
+            //augment pool -> charm list
+            for(i = PendingElements.Length - 1; i >= 0; i--)
+            {
+                AugmentClass = class<ArtificerAugmentBase>(PendingElements[i].ExtraData);
+                if(AugmentClass.static.InsertInto(Augments, Reason))
+                {
+                    GUIList(Source).RemoveElement(PendingElements[i],, true);
+                    GUITreeList(Target).AddItem(PendingElements[i].Item, string(PendingElements[i].ExtraData));
+                }
+                else
+                {
+                    if(Messages != "")
+                        Messages $= "||";
+                    Messages $= Repl(Text_CannotAdd, "$1", AugmentClass.default.ModifierName) $ "|" $ Reason;
+                }
+            }
+        }
     }
+    else
+    {
+        //charm list -> augment pool
+        for(i = PendingNodes.Length - 1; i >= 0; i--)
+        {
+            GUITreeList(Source).RemoveElement(PendingNodes[i],, true);
+            GUIList(Target).Add(PendingNodes[i].Caption, class<ArtificerAugmentBase>(DynamicLoadObject(PendingNodes[i].Value, class'Class')));
+        }
+    }
+
     Source.bNotify = true;
     Source.ClearPendingElements();
     Source.SetIndex(Source.Index); //to check if button states should change
 
+    if(bSourceIsCharmList)
+        CompactCharmList(GUITreeList(Source));
+    if(bTargetIsCharmList)
+        CompactCharmList(GUITreeList(Target));
+
     Source.Sort();
-    GUIList(Target).Sort();
+    GUIVertList(Target).Sort();
 
     lbMessages.SetContent(Messages);
 
-    switch(Target)
-    {
-        case lbCharmA.List:
-            bDirtyCharmA = true;
-            break;
-        case lbCharmB.List:
-            bDirtyCharmB = true;
-            break;
-        case lbCharmC.List:
-            bDirtyCharmC = true;
-            break;
-    }
+    if(Source == lbCharmA.List)
+        bDirtyCharmA = true;
+    if(Source == lbCharmB.List)
+        bDirtyCharmB = true;
+    if(Source == lbCharmC.List)
+        bDirtyCharmC = true;
+    if(Target == lbCharmA.List)
+        bDirtyCharmA = true;
+    if(Target == lbCharmB.List)
+        bDirtyCharmB = true;
+    if(Target == lbCharmC.List)
+        bDirtyCharmC = true;
 
     return false;
 }
@@ -661,6 +825,80 @@ function bool Clicked(GUIComponent Sender)
     return true;
 }
 
+function CompactCharmList(GUITreeList List)
+{
+    local int i, x;
+    local class<ArtificerAugmentBase> AugmentClass;
+    local array<CharmTreeNodeStruct> CharmTreeState;
+    local array<ParentNodeStruct> Parents;
+
+    //identify which and how many augments are in the list
+    for(i = 0; i < List.ItemCount; i++)
+    {
+        if(List.Elements[i].Value == "")
+        {
+            x = Parents.Length;
+            Parents.Length = x + 1;
+            Parents[x].ChildCaption = List.Elements[i + 1].Caption;
+            Parents[x].bExpanded = List.IsExpanded(i);
+            continue;
+        }
+
+        for(x = 0; x < CharmTreeState.Length; x++)
+        {
+            if(List.Elements[i].Value == CharmTreeState[x].Value)
+            {
+                CharmTreeState[x].Count++;
+                x = -1;
+                break;
+            }
+        }
+
+        if(x != -1)
+        {
+            x = CharmTreeState.Length;
+            CharmTreeState.Length = x + 1;
+            CharmTreeState[x].Caption = List.Elements[i].Caption;
+            CharmTreeState[x].Value = List.Elements[i].Value;
+            CharmTreeState[x].Count = 1;
+        }
+    }
+
+    //update the parent captions
+    for(i = 0; i < CharmTreeState.Length; i++)
+    {
+        AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(CharmTreeState[i].Value, class'Class'));
+        if(CharmTreeState[i].Count < AugmentClass.default.MaxLevel)
+            CharmTreeState[i].ParentCaption = AugmentClass.default.ModifierName @ "(Lv." @ CharmTreeState[i].Count $ ")";
+        else
+            CharmTreeState[i].ParentCaption = AugmentClass.default.ModifierName @ "(Lv." @ CharmTreeState[i].Count $ ") (MAX)";
+    }
+
+    //clear the list
+    List.Clear();
+
+    //re-populate the list
+    for(i = 0; i < CharmTreeState.Length; i++)
+        for(x = 0; x < CharmTreeState[i].Count; x++)
+            List.AddItem(CharmTreeState[i].Caption, CharmTreeState[i].Value, CharmTreeState[i].ParentCaption);
+
+    //for expansion checking, tag each parent wth extra data to identify it
+
+    List.Sort();
+
+    //re-expand expanded parents
+    x = 0;
+    for(i = 0; i < List.ItemCount; i++)
+    {
+        if(List.Elements[i].Value == "")
+        {
+            if(Parents[x].bExpanded && Parents[x].ChildCaption == List.Elements[i + 1].Caption)
+                List.Expand(i);
+            x++;
+        }
+    }
+}
+
 function InternalDrawPoolItem(Canvas C, int Item, float X, float Y, float W, float H, bool bSelected, bool bPending)
 {
     DrawListItem(lbAugmentPool.List, C, Item, X, Y, W, H, bSelected, bPending);
@@ -681,12 +919,14 @@ function InternalDrawCharmCItem(Canvas C, int Item, float X, float Y, float W, f
     DrawListItem(lbCharmC.List, C, Item, X, Y, W, H, bSelected, bPending);
 }
 
-function DrawListItem(GUIList List, Canvas C, int Item, float X, float Y, float W, float H, bool bSelected, bool bPending)
+function DrawListItem(GUIVertList List, Canvas C, int Item, float X, float Y, float W, float H, bool bSelected, bool bPending)
 {
     local GUIStyles DStyle;
     local float XL, YL;
-    local class<ArtificerAugmentBase> Augment;
+    local class<ArtificerAugmentBase> AugmentClass;
     local bool bIsDrop;
+    local float PrefixOffset, CaptionOffset;
+    local string Prefix;
 
     //transcribed from UGUIVertList::Draw because setting the delegate stops
     //selection boxes from drawing...
@@ -744,25 +984,118 @@ function DrawListItem(GUIList List, Canvas C, int Item, float X, float Y, float 
         }
     }
 
-    //manual call to DrawItem itself
-    if(bSelected)
-        DStyle = List.SelectedStyle;
-    else
-        DStyle = List.Style;
-
-    DStyle.Draw(C, List.MenuState, X, Y, W, H);
-
-    DStyle.DrawText(C, List.MenuState, X, Y, W, H, TXTA_Center, List.GetItemAtIndex(Item), List.FontScale);
-
-    //now our custom code... draw an icon next to the item
-    Augment = class<ArtificerAugmentBase>(List.GetObjectAtIndex(Item));
-    if(Augment.default.IconMaterial != None)
+    switch(List)
     {
-        DStyle.TextSize(C, List.MenuState, List.GetItemAtIndex(Item), XL, YL, List.FontScale);
-        C.SetPos(X + (W * 0.5) - (XL * 0.5) - H * 1.5, Y);
-        C.Style = 5; //STY_Alpha
-        C.DrawColor = C.MakeColor(255, 255, 255);
-        C.DrawTile(Augment.default.IconMaterial, H, H, 0, 0, Augment.default.IconMaterial.MaterialUSize(), Augment.default.IconMaterial.MaterialVSize());
+        case lbAugmentPool.List:
+            //manual call to DrawItem itself
+            if(bSelected)
+                DStyle = List.SelectedStyle;
+            else
+                DStyle = List.Style;
+
+            DStyle.Draw(C, List.MenuState, X, Y, W, H);
+
+            DStyle.DrawText(C, List.MenuState, X, Y, W, H, TXTA_Center, List.GetItemAtIndex(Item), List.FontScale);
+
+            //now our custom code... draw an icon next to the item
+            AugmentClass = class<ArtificerAugmentBase>(GUIList(List).GetObjectAtIndex(Item));
+            if(AugmentClass.default.IconMaterial != None)
+            {
+                DStyle.TextSize(C, List.MenuState, List.GetItemAtIndex(Item), XL, YL, List.FontScale);
+                C.SetPos(X + (W * 0.5) - (XL * 0.5) - H * 1.5, Y);
+                C.Style = 5; //STY_Alpha
+                C.DrawColor = C.MakeColor(255, 255, 255);
+                C.DrawTile(
+                    AugmentClass.default.IconMaterial,
+                    H,
+                    H,
+                    0,
+                    0,
+                    AugmentClass.default.IconMaterial.MaterialUSize(),
+                    AugmentClass.default.IconMaterial.MaterialVSize());
+            }
+            break;
+        case lbCharmA.List:
+        case lbCharmB.List:
+        case lbCharmC.List:
+            //manual call to DrawItem itself
+            if(bSelected)
+            {
+                DStyle = List.SelectedStyle;
+                PrefixOffset = GUITreeList(List).SelectedPrefixWidth * GUITreeList(List).GetLevelAtIndex(Item);
+                // CaptionOffset = GUITreeList(List).SelectedPrefixWidth * (GUITreeList(List).GetLevelAtIndex(Item) + 1);
+                CaptionOffset = (H * 2) + GUITreeList(List).SelectedPrefixWidth * (GUITreeList(List).GetLevelAtIndex(Item) + 1);
+            }
+            else
+            {
+                DStyle = List.Style;
+                PrefixOffset = GUITreeList(List).PrefixWidth * GUITreeList(List).GetLevelAtIndex(Item);
+                // CaptionOffset = GUITreeList(List).PrefixWidth * (GUITreeList(List).GetLevelAtIndex(Item) + 1);
+                CaptionOffset = (H * 2) + GUITreeList(List).PrefixWidth * (GUITreeList(List).GetLevelAtIndex(Item) + 1);
+            }
+
+            if(GUITreeList(List).HasChildren(Item))
+            {
+                if(GUITreeList(List).IsExpanded(Item))
+                    Prefix = "-";
+                else
+                    Prefix = "+";
+            }
+
+            DStyle.Draw(C, List.MenuState, X, Y, W, H);
+
+            DStyle.DrawText(
+                C,
+                List.MenuState,
+                X + PrefixOffset,
+                Y,
+                W - PrefixOffset,
+                H,
+                TXTA_Left,
+                Prefix,
+                List.FontScale);
+            DStyle.DrawText(C,
+                List.MenuState,
+                X + CaptionOffset,
+                Y,
+                W - CaptionOffset,
+                H,
+                TXTA_Left,
+                GUITreeList(List).GetCaptionAtIndex(Item),
+                List.FontScale);
+
+            //now our custom code... draw an icon next to the item
+            if(GUITreeList(List).GetValueAtIndex(Item) == "")
+            {
+                AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(GUITreeList(List).GetValueAtIndex(Item + 1), class'Class'));
+                if(bSelected)
+                    C.SetPos(X + (H * 0.5) + PrefixOffset + GUITreeList(List).SelectedPrefixWidth, Y);
+                else
+                    C.SetPos(X + (H * 0.5) + PrefixOffset + GUITreeList(List).PrefixWidth, Y);
+            }
+            else
+            {
+                AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(GUITreeList(List).GetValueAtIndex(Item), class'Class'));
+                if(bSelected)
+                    C.SetPos(X - (H * 1.5) + CaptionOffset, Y);
+                else
+                    C.SetPos(X - (H * 1.5) + CaptionOffset, Y);
+            }
+            if(AugmentClass.default.IconMaterial != None)
+            {
+                DStyle.TextSize(C, List.MenuState, GUITreeList(List).GetCaptionAtIndex(Item), XL, YL, List.FontScale);
+                C.Style = 5; //STY_Alpha
+                C.DrawColor = C.MakeColor(255, 255, 255);
+                C.DrawTile(
+                    AugmentClass.default.IconMaterial,
+                    H,
+                    H,
+                    0,
+                    0,
+                    AugmentClass.default.IconMaterial.MaterialUSize(),
+                    AugmentClass.default.IconMaterial.MaterialVSize());
+            }
+            break;
     }
 }
 
@@ -833,7 +1166,7 @@ function bool ShowHelp(GUIComponent Sender)
     return true;
 }
 
-final function PackCharmList(GUIList List, array<RPGCharSettings.ArtificerAugmentStruct> Augments)
+final function PackCharmList(GUITreeList List, array<RPGCharSettings.ArtificerAugmentStruct> Augments)
 {
     local int i, x, y;
     local class<ArtificerAugmentBase> MClass;
@@ -841,26 +1174,35 @@ final function PackCharmList(GUIList List, array<RPGCharSettings.ArtificerAugmen
     for(i = 0; i < Augments.Length; i++)
     {
         MClass = Augments[i].AugmentClass;
+        if(MClass == None)
+            continue;
+
         for(x = 0; x < Augments[i].ModifierLevel; x++)
         {
-            List.Add(MClass.default.ModifierName, MClass);
+            List.AddItem(MClass.default.ModifierName, string(MClass));
 
             y = lbAugmentPool.List.FindItemObject(MClass);
             if(y != -1)
                 lbAugmentPool.List.Remove(y,, true);
         }
     }
+
+    CompactCharmList(List);
+    List.Sort();
 }
 
-final function UnpackCharmList(GUIList List, out array<RPGCharSettings.ArtificerAugmentStruct> Augments)
+final function UnpackCharmList(GUITreeList List, out array<RPGCharSettings.ArtificerAugmentStruct> Augments)
 {
     local int i, x;
 
     for(i = 0; i < List.ItemCount; i++)
     {
+        if(List.Elements[i].Value == "")
+            continue; //ignore parents
+
         for(x = 0; x < Augments.Length; x++)
         {
-            if(Augments[x].AugmentClass == List.Elements[i].ExtraData)
+            if(string(Augments[x].AugmentClass) == List.Elements[i].Value)
             {
                 Augments[x].ModifierLevel++;
                 x = -1;
@@ -872,7 +1214,7 @@ final function UnpackCharmList(GUIList List, out array<RPGCharSettings.Artificer
 
         x = Augments.Length;
         Augments.Length = x + 1;
-        Augments[x].AugmentClass = class<ArtificerAugmentBase>(List.Elements[i].ExtraData);
+        Augments[x].AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(List.Elements[i].Value, class'Class'));
         Augments[x].ModifierLevel = 1;
     }
 }
@@ -1203,10 +1545,10 @@ defaultproperties
     End Object
     lbAugmentPool=lbAugmentPool_
 
-    Begin Object Class=GUIListBox Name=lbCharmA_
-        WinWidth=0.264595
+    Begin Object Class=GUITreeListBox Name=lbCharmA_
+        WinWidth=0.252442
         WinHeight=0.225865
-        WinLeft=0.317313
+        WinLeft=0.324836
         WinTop=0.075056
         bVisibleWhenEmpty=true
         Hint="These are the augments active on Charm Alpha."
@@ -1214,10 +1556,10 @@ defaultproperties
     End Object
     lbCharmA=lbCharmA_
 
-    Begin Object Class=GUIListBox Name=lbCharmB_
-        WinWidth=0.264595
+    Begin Object Class=GUITreeListBox Name=lbCharmB_
+        WinWidth=0.252442
         WinHeight=0.225865
-        WinLeft=0.317313
+        WinLeft=0.324836
         WinTop=0.388416
         bVisibleWhenEmpty=true
         Hint="These are the augments active on Charm Beta."
@@ -1225,10 +1567,10 @@ defaultproperties
     End Object
     lbCharmB=lbCharmB_
 
-    Begin Object Class=GUIListBox Name=lbCharmC_
-        WinWidth=0.264595
+    Begin Object Class=GUITreeListBox Name=lbCharmC_
+        WinWidth=0.252442
         WinHeight=0.225865
-        WinLeft=0.317313
+        WinLeft=0.324836
         WinTop=0.703662
         bVisibleWhenEmpty=true
         Hint="These are the augments active on Charm Gamma."
