@@ -10,6 +10,7 @@ class RPGMenu_ArtificersWorkbenchWindow extends FloatingWindow
     DependsOn(RPGCharSettings);
 
 var RPGPlayerReplicationInfo RPRI;
+var int AbilityLevelCharmA, AbilityLevelCharmB, AbilityLevelCharmC;
 var bool bDirtyCharmA, bDirtyCharmB, bDirtyCharmC, bDirtyAutoApply;
 var bool bIgnoreNextChange;
 
@@ -44,6 +45,7 @@ var localized string Text_AutoApplyBeta;
 var localized string Text_AutoApplyGamma;
 
 var localized string Text_CannotAdd;
+var localized string Text_CharmMaxLevel;
 
 var RPGSpinnyWeap SpinnyCharmA, SpinnyCharmB, SpinnyCharmC;
 var vector SpinnyCharmOffset;
@@ -200,6 +202,10 @@ function InitFor(RPGPlayerReplicationInfo Whom)
     lbCharmA.List.Clear();
     lbCharmB.List.Clear();
     lbCharmC.List.Clear();
+
+    AbilityLevelCharmA = RPRI.HasAbility(class'Ability_ArtificerCharmAlpha');
+    AbilityLevelCharmB = RPRI.HasAbility(class'Ability_ArtificerCharmBeta');
+    AbilityLevelCharmC = RPRI.HasAbility(class'Ability_ArtificerCharmGamma');
 
     Ability = Ability_LoadedAugments(RPRI.GetOwnedAbility(class'Ability_LoadedAugments'));
     if(Ability == None)
@@ -409,6 +415,7 @@ function bool AddModifier(GUIComponent Sender)
     local GUITreeList Target;
     local int i;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
+    local int MaxLevel;
     local string Reason;
     local string Messages;
 
@@ -423,12 +430,15 @@ function bool AddModifier(GUIComponent Sender)
     {
         case btAddCharmA:
             Target = lbCharmA.List;
+            MaxLevel = AbilityLevelCharmA;
             break;
         case btAddCharmB:
             Target = lbCharmB.List;
+            MaxLevel = AbilityLevelCharmB;
             break;
         case btAddCharmC:
             Target = lbCharmC.List;
+            MaxLevel = AbilityLevelCharmC;
             break;
         case lbAugmentPool.List:
             Target = LastInteractedList;
@@ -442,7 +452,13 @@ function bool AddModifier(GUIComponent Sender)
     lbAugmentPool.List.bNotify = false;
     for(i = PendingElements.Length - 1; i >= 0; i--)
     {
-        if(class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
+        if(Augments.Length >= MaxLevel)
+        {
+            if(Messages != "")
+                Messages = "||" $ Messages;
+            Messages = Text_CannotAdd $ "|" $ Text_CharmMaxLevel $ Messages;
+        }
+        else if(class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
         {
             lbAugmentPool.List.RemoveElement(PendingElements[i],, true);
             Target.AddItem(PendingElements[i].Item, string(PendingElements[i].ExtraData));
@@ -607,6 +623,7 @@ function bool InternalOnDragDrop(GUIComponent Target)
     local bool bTargetIsCharmList;
     local bool bSourceIsCharmList;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
+    local int MaxLevel;
     local string Reason;
     local string Messages;
     local class<ArtificerAugmentBase> AugmentClass;
@@ -622,6 +639,20 @@ function bool InternalOnDragDrop(GUIComponent Target)
         return false;
 
     bTargetIsCharmList = (Target == lbCharmA.List || Target == lbCharmB.List || Target == lbCharmC.List);
+    switch(Target)
+    {
+        case lbCharmA.List:
+            MaxLevel = AbilityLevelCharmA;
+            break;
+        case lbCharmB.List:
+            MaxLevel = AbilityLevelCharmB;
+            break;
+        case lbCharmC.List:
+            MaxLevel = AbilityLevelCharmC;
+            break;
+        default:
+            break;
+    }
 
     switch(Source)
     {
@@ -679,7 +710,13 @@ function bool InternalOnDragDrop(GUIComponent Target)
             for(i = PendingNodes.Length - 1; i >= 0; i--)
             {
                 AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(PendingNodes[i].Value, class'Class'));
-                if(AugmentClass.static.InsertInto(Augments, Reason))
+                if(Augments.Length >= MaxLevel)
+                {
+                    if(Messages != "")
+                        Messages = "||" $ Messages;
+                    Messages = Text_CannotAdd $ "|" $ Text_CharmMaxLevel $ Messages;
+                }
+                else if(AugmentClass.static.InsertInto(Augments, Reason))
                 {
                     GUITreeList(Source).RemoveElement(PendingNodes[i],, true);
                     GUITreeList(Target).AddElement(PendingNodes[i]);
@@ -1830,6 +1867,7 @@ defaultproperties
     Text_AutoApplyGamma="Auto-apply Charm Gamma on:"
 
     Text_CannotAdd="The $1 augment could not be added:"
+    Text_CharmMaxLevel="The charm cannot accept anymore augments."
 
     OnRendered=InternalDraw
     SpinnyCharmOffset=(X=60)

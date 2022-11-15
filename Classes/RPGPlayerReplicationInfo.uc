@@ -1673,12 +1673,18 @@ function ServerAddArtificerAugmentEntry(byte Which, int Index, RPGCharSettings.A
     switch(Which)
     {
         case 0: //ALPHA
+            if(Index > HasAbility(class'Ability_ArtificerCharmAlpha'))
+                return;
             ArtificerAugmentsAlpha[Index] = Modifier;
             break;
         case 1: //BETA
+            if(Index > HasAbility(class'Ability_ArtificerCharmBeta'))
+                return;
             ArtificerAugmentsBeta[Index] = Modifier;
             break;
         case 2: //GAMMA
+            if(Index > HasAbility(class'Ability_ArtificerCharmGamma'))
+                return;
             ArtificerAugmentsGamma[Index] = Modifier;
             break;
     }
