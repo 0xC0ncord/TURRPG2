@@ -18,7 +18,7 @@ else
     VERSION_STRING="${VERSION}"
 fi
 
-SERVER_CMDLINE="DM-Rankin?Game=TURInvPro.InvasionPro?AdminName=Admin?AdminPassword=W1ldFl0w3r5?Mutator=TURRPG2.MutTURRPG,TURMMutations.MutMMutations"
+SERVER_CMDLINE="DM-Rankin?Game=SkaarjPack.Invasion?AdminName=Admin?AdminPassword=W1ldFl0w3r5?Mutator=TURRPG2.MutTURRPG,TURMMutations.MutMMutations,NewAssaultRifle.MutARAThree"
 SERVER_PORT="7777"
 SERVER_NAME="(Testing) ${BASENAME}-${VERSION_STRING}"
 
