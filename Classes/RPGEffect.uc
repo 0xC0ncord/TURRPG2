@@ -337,7 +337,7 @@ state Activated
             if(EffectMessageClass != None)
                 Instigator.ReceiveLocalizedMessage(EffectMessageClass, 0, Instigator.PlayerReplicationInfo, CauserPRI);
 
-            if(EffectClass != None && (SpawnedEffect == None || !bSpawnEffectEveryInterval))
+            if(EffectClass != None && (SpawnedEffect == None || bSpawnEffectEveryInterval))
                 SpawnedEffect = Instigator.Spawn(EffectClass, Instigator);
         }
 
