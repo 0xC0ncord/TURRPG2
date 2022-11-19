@@ -12,7 +12,7 @@ class EffectMessage_Ammo extends RPGEffectMessage;
 defaultproperties
 {
     EffectMessageString="Extra ammo!"
-    EffectMessageCauserString="$1 given you extra ammo!"
+    EffectMessageCauserString="$1 gives you extra ammo!"
     EffectMessageSelfString="You've given yourself extra ammo!"
-    DrawColor=(B=0)
+    DrawColor=(R=32,G=128,B=32)
 }

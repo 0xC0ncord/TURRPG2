@@ -12,7 +12,7 @@ class EffectMessage_Adrenaline extends RPGEffectMessage;
 defaultproperties
 {
     EffectMessageString="Adrenaline!"
-    EffectMessageCauserString="$1 has given you extra adrenaline!"
-    EffectMessageSelfString="You've given yourself extra adrenaline!"
+    EffectMessageCauserString="$1 has given you adrenaline!"
+    EffectMessageSelfString="You've given yourself adrenaline!"
     DrawColor=(G=192,B=0)
 }
