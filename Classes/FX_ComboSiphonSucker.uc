@@ -22,7 +22,7 @@ simulated function Tick(float dt)
 
     if(AimTarget == None || Pawn(Owner) == None || Pawn(Owner).Health <= 0)
     {
-        Kill();
+        Die();
         Disable('Tick');
         return;
     }
@@ -34,12 +34,6 @@ simulated function Tick(float dt)
     Emitters[0].StartVelocityRange.X.Max = dist;
     Emitters[1].StartVelocityRange.X.Min = dist;
     Emitters[1].StartVelocityRange.X.Max = dist;
-}
-
-simulated function ClientKill()
-{
-    Kill();
-    bTearOff = true;
 }
 
 defaultproperties

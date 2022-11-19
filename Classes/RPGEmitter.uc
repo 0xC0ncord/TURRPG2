@@ -8,15 +8,25 @@
 
 class RPGEmitter extends Emitter;
 
+var bool bClientKill;
+
 replication
 {
     reliable if(Role == ROLE_Authority)
-        ClientKill;
+        bClientKill;
 }
 
-simulated function ClientKill()
+simulated function PostNetReceive()
+{
+    if(bClientKill)
+        Kill();
+}
+
+function Die()
 {
     Kill();
+    bClientKill = true;
+    bTearOff = true;
 }
 
 defaultproperties

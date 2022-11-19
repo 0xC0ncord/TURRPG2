@@ -55,18 +55,11 @@ function DestroyEffects(Pawn P)
     local int i;
 
     if(FX != None)
-    {
-        FX.Kill();
-        FX.ClientKill();
-    }
+        FX.Die();
+
     for(i = 0; i < Targets.Length; i++)
-    {
         if(Targets[i].FX != None)
-        {
-            Targets[i].FX.Kill();
-            Targets[i].FX.ClientKill();
-        }
-    }
+            Targets[i].FX.Die();
 }
 
 function Tick(float dt)
@@ -122,7 +115,7 @@ function Tick(float dt)
         while(i >= 0)
         {
             if(Targets[i].FX != None)
-                Targets[i].FX.ClientKill();
+                Targets[i].FX.Die();
             Targets.Remove(i--, 1);
         }
         return;
@@ -147,7 +140,7 @@ function Tick(float dt)
         if(x != -1)
         {
             if(Targets[i].FX != None)
-                Targets[i].FX.ClientKill();
+                Targets[i].FX.Die();
             Targets.Remove(i, 1);
         }
         else

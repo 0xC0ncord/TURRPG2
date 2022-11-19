@@ -25,15 +25,9 @@ function CreateEffects(Pawn P)
 function DestroyEffects(Pawn P)
 {
     if(FX != None)
-    {
-        FX.Kill();
-        FX.ClientKill();
-    }
+        FX.Die();
     if(FX_FP != None)
-    {
-        FX_FP.Kill();
-        FX_FP.ClientKill();
-    }
+        FX_FP.Die();
     class'Sync_OverlayMaterial'.static.Sync(P, None, 0, true);
 }
 
