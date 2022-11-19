@@ -58,7 +58,7 @@ var Sound EffectSound;
 var Material EffectOverlay;
 var class<Actor> EffectClass;
 var Actor SpawnedEffect;
-var bool bNotifyClientKillEffect;
+var bool bEffectNeedsKill;
 var bool bKillEffectOnRestart;
 var bool bSpawnEffectEveryInterval;
 
@@ -406,19 +406,24 @@ state Activated
             InstigatorRPRI.ClientRemoveStatusIcon(StatusIconClass);
         }
 
-        if(Emitter(SpawnedEffect) != None && bNotifyClientKillEffect && (!bRestarting || bKillEffectOnRestart))
+        if(Emitter(SpawnedEffect) != None && bEffectNeedsKill && (!bRestarting || bKillEffectOnRestart))
         {
-            if(Level.NetMode == NM_Standalone)
-                Emitter(SpawnedEffect).Kill();
+            if(RPGEmitter(SpawnedEffect) != None)
+                RPGEmitter(SpawnedEffect).Die();
             else
             {
-                for(C = Level.ControllerList; C != None; C = C.NextController)
+                Emitter(SpawnedEffect).Kill();
+
+                if(Level.NetMode != NM_Standalone)
                 {
-                    if(PlayerController(C) != None)
+                    for(C = Level.ControllerList; C != None; C = C.NextController)
                     {
-                        RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
-                        if(RPRI != None)
-                            RPRI.ClientKillEmitter(Emitter(SpawnedEffect));
+                        if(PlayerController(C) != None)
+                        {
+                            RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
+                            if(RPRI != None)
+                                RPRI.ClientKillEmitter(Emitter(SpawnedEffect));
+                        }
                     }
                 }
             }
