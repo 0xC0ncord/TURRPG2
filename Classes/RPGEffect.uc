@@ -59,6 +59,7 @@ var Material EffectOverlay;
 var class<Actor> EffectClass;
 var Actor SpawnedEffect;
 var bool bNotifyClientKillEffect;
+var bool bKillEffectOnRestart;
 var bool bSpawnEffectEveryInterval;
 
 var class<RPGEffectMessage> EffectMessageClass;
@@ -346,8 +347,6 @@ state Activated
 
     function BeginState()
     {
-        local RPGPlayerReplicationInfo RPRI;
-
         if(ShouldDisplayEffect())
         {
             Instigator.PlaySound(EffectSound, SLOT_Misc, 1.0,, 768);
@@ -359,10 +358,7 @@ state Activated
         }
 
         if(StatusIconClass != None) {
-            RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
-            if(RPRI != None) {
-                RPRI.ClientCreateStatusIcon(StatusIconClass);
-            }
+            InstigatorRPRI.ClientCreateStatusIcon(StatusIconClass);
         }
 
         LastStartTime = Level.TimeSeconds;
@@ -407,13 +403,10 @@ state Activated
         local Controller C;
 
         if(StatusIconClass != None) {
-            RPRI = class'RPGPlayerReplicationInfo'.static.GetForPRI(Instigator.PlayerReplicationInfo);
-            if(RPRI != None) {
-                RPRI.ClientRemoveStatusIcon(StatusIconClass);
-            }
+            InstigatorRPRI.ClientRemoveStatusIcon(StatusIconClass);
         }
 
-        if(Emitter(SpawnedEffect) != None && bNotifyClientKillEffect)
+        if(Emitter(SpawnedEffect) != None && bNotifyClientKillEffect && (!bRestarting || bKillEffectOnRestart))
         {
             if(Level.NetMode == NM_Standalone)
                 Emitter(SpawnedEffect).Kill();
