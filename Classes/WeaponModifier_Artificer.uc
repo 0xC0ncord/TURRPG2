@@ -803,6 +803,32 @@ static function string ConstructItemName(class<Weapon> WeaponClass, int Modifier
     return NewItemName;
 }
 
+#ifdef __DEBUG__
+simulated function PostRender(Canvas Canvas)
+{
+    local float PosX, PosY;
+    local float X, Y;
+    local ArtificerAugmentBase Augment;
+
+    Canvas.FontScaleX = (Canvas.ClipX / 1024.0f) * 0.35;
+    Canvas.FontScaleY = (Canvas.ClipY / 768.0f) * 0.35;
+    Canvas.TextSize("A", X, Y);
+
+    PosX = 384;
+    PosY = 256;
+
+    Canvas.Style = 1;
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+    {
+        Canvas.SetPos(PosX, PosY);
+        Canvas.DrawColor = Augment.ModifierColor;
+        Canvas.DrawText(Augment.ModifierName $ ", Level" @ Augment.Modifier $ "," @ Eval(Augment.bDisabled, "DISABLED", "ENABLED"));
+
+        PosY += Y;
+    }
+}
+#endif
+
 defaultproperties
 {
     bCanHaveZeroModifier=False
