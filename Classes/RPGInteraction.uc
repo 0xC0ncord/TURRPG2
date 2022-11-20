@@ -1,6 +1,6 @@
 //=============================================================================
 // RPGInteraction.uc
-// Copyright (C) 2020 0xC0ncord <concord@fuwafuwatime.moe>
+// Copyright (C) 2022 0xC0ncord <concord@fuwafuwatime.moe>
 //
 // This program is free software; you can redistribute and/or modify
 // it under the terms of the Open Unreal Mod License version 1.1.
@@ -8,6 +8,8 @@
 
 class RPGInteraction extends Interaction
     dependson(RPGArtifact);
+
+const WEAPON_BAR_SIZE = 9;
 
 struct Vec2
 {
@@ -741,6 +743,11 @@ function PostRender(Canvas Canvas)
     local array<OptionCostArrayStruct> OptionCosts;
     local array<float> OptionCostWidths;
 
+    local Inventory Inv;
+    local Weapon W;
+    local Weapon Weapons[WEAPON_BAR_SIZE];
+    local Weapon ExtraWeapons[WEAPON_BAR_SIZE];
+
     local HudCDeathmatch HUD;
 
     if(ResX != Canvas.ClipX)
@@ -1204,6 +1211,61 @@ function PostRender(Canvas Canvas)
             LastSelExtra = "";
         }
 
+        //Artificer weapon bars
+        if(HUD.bShowWeaponBar)
+        {
+            for(Inv = P.Inventory; Inv != None; Inv = Inv.Inventory)
+            {
+                W = Weapon(Inv);
+                if(W == None || W.IconMaterial == None)
+                    continue;
+
+                if(W.InventoryGroup == 0)
+                    i = 8;
+                else if(W.InventoryGroup < 10)
+                    i = W.InventoryGroup - 1;
+                else
+                    continue;
+
+                if(Weapons[i] != None)
+                    ExtraWeapons[i] = W;
+                else
+                    Weapons[i] = W;
+            }
+
+            if(P.PendingWeapon != None)
+                W = P.PendingWeapon;
+            else
+                W = P.Weapon;
+
+            if(W != None)
+            {
+                if(W.InventoryGroup == 0)
+                    Weapons[8] = W;
+                else if(W.InventoryGroup < 10)
+                    Weapons[W.InventoryGroup - 1] = W;
+            }
+
+            for(i = 0; i < WEAPON_BAR_SIZE; i++)
+            {
+                WM = class'WeaponModifier_Artificer'.static.GetFor(ExtraWeapons[i]);
+                if(
+                    WM != None
+                    && W != None
+                    && W.InventoryGroup != Weapons[i].InventoryGroup
+                )
+                {
+                    DrawWeaponPowerBar(Canvas, HUD, WeaponModifier_Artificer(WM), i, 1, W);
+                }
+
+                WM = class'WeaponModifier_Artificer'.static.GetFor(Weapons[i]);
+                if(WM != None)
+                {
+                    DrawWeaponPowerBar(Canvas, HUD, WeaponModifier_Artificer(WM), i, 0, W);
+                }
+            }
+        }
+
         //Weapon Modifier
         WM = class'RPGWeaponModifier'.static.GetFor(P.Weapon);
         if(WM != None)
@@ -1476,6 +1538,114 @@ function DrawAdrenaline(Canvas C, HudCDeathMatch HUD)
     HUD.DrawHUDAnimWidget(HUD.AdrenalineIcon, HUD.default.AdrenalineIcon.TextureScale, HUD.LastAdrenalineTime, 0.6, 0.6);
     HUD.AdrenalineBackground.Tints[HUD.TeamIndex] = HUD.HudColorBlack;
     HUD.AdrenalineBackground.Tints[HUD.TeamIndex].A = 150;
+}
+
+final function DrawWeaponPowerBar(Canvas Canvas, HUDCDeathMatch HUD, WeaponModifier_Artificer WM, int Position, int VerticalPosition, Weapon Weapon)
+{
+    local float PosX, PosY;
+    local float AspectScale;
+    local float ScaleX, ScaleY;
+    local Color HighlightColor;
+    local bool bIsCurrentWeapon;
+    local int MaxSlots;
+    local ArtificerAugmentBase Augment;
+    local int CurrentSlot;
+    local Color ModifierColor;
+    local int i;
+
+    if(WM.Modifier <= 0)
+        return;
+
+    AspectScale = (Canvas.ClipX / Canvas.ClipY) * 0.8;
+    ScaleX = Canvas.ClipX / 1280.0f * AspectScale * HUD.HudScale;
+    ScaleY = Canvas.ClipY / 1024.0f * HUD.HudScale;
+    PosY = Canvas.ClipY - (64 * ScaleY);
+
+    if(
+        WM.Weapon == Weapon
+        || (
+            Weapon == None
+            && WM.Weapon == ViewportOwner.Actor.Pawn.Weapon
+        )
+    )
+    {
+        PosY -= (11 * ScaleY);
+        HighlightColor = HUD.HudColorHighlight;
+        bIsCurrentWeapon = true;
+    }
+    else
+        HighlightColor = GetHUDTeamColor(HUD);
+
+    MaxSlots = WM.Modifier;
+
+    PosY -= VerticalPosition * 8 * ScaleY;
+    PosX =
+        Canvas.ClipX * (
+            class'HudCDeathmatchHelper'.static.GetBarBorder(Position).PosX +
+            (
+                class'HudCDeathmatchHelper'.static.GetBarBorderScaledPosition(Position) -
+                class'HudCDeathmatchHelper'.static.GetBarBorder(Position).PosX
+            ) * (1 - (HUD.HudScale - 0.5) * 2)
+        );
+
+    Canvas.SetPos(PosX, PosY);
+    Canvas.DrawColor = HighlightColor;
+    Canvas.Style = 1;
+    Canvas.DrawTile(Texture'WeaponsOfPowerHud', 5 * ScaleX, 14 * ScaleY, 0, 0, 5, 14);
+    PosX += 5 * ScaleX;
+
+    Augment = WM.AugmentList;
+    while(Augment != None && CurrentSlot < MaxSlots)
+    {
+        if(Augment.bDisabled)
+            ModifierColor = Augment.DisabledColor;
+        else
+            ModifierColor = Augment.ModifierColor;
+
+        //dim the modifier display when this isn't the current weapon
+        if(!bIsCurrentWeapon)
+            ModifierColor.A = 128;
+
+        for(i = 0; i < Augment.Modifier && CurrentSlot < MaxSlots; i++)
+        {
+            Canvas.SetPos(PosX, PosY);
+            Canvas.DrawTile(Texture'WeaponsOfPowerHud', 6 * ScaleX, 14 * ScaleY, 5, 0, 6, 14);
+            Canvas.DrawColor = ModifierColor;
+            Canvas.SetPos(PosX, PosY + (4 * ScaleY));
+            Canvas.DrawTile(Texture'WeaponsOfPowerHud', 6 * ScaleX, 6 * ScaleY, 19, 4, 6, 6);
+            Canvas.DrawColor = HighlightColor;
+            PosX += 6 * ScaleX;
+
+            if(CurrentSlot < MaxSlots - 1)
+            {
+                Canvas.SetPos(PosX, PosY);
+                Canvas.DrawTile(Texture'WeaponsOfPowerHud', 3 * ScaleX, 13 * ScaleY, 11, 0, 1, 14);
+                PosX += 2 * ScaleX;
+            }
+            CurrentSlot++;
+        }
+
+        Augment = Augment.NextAugment;
+    }
+
+    while(CurrentSlot < MaxSlots)
+    {
+        Canvas.SetPos(PosX, PosY);
+        Canvas.DrawTile(Texture'WeaponsOfPowerHud', 6 * ScaleX, 14 * ScaleY, 5, 0, 6, 14);
+        PosX += 6 * ScaleX;
+
+        if(CurrentSlot < MaxSlots - 1)
+        {
+            Canvas.SetPos(PosX, PosY);
+            Canvas.DrawTile(Texture'WeaponsOfPowerHud', 3 * ScaleX, 14 * ScaleY, 11, 0, 1, 14);
+            PosX += 2 * ScaleX;
+        }
+
+        CurrentSlot++;
+    }
+
+    Canvas.SetPos(PosX, PosY);
+    Canvas.DrawTile(Texture'WeaponsOfPowerHud', 5 * ScaleX, 14 * ScaleY, 13, 0, 5, 14);
 }
 
 function NotifyExpGain(float Amount)
