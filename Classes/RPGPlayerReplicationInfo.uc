@@ -1694,8 +1694,6 @@ function ServerCommitArtificerAugments(byte Which)
 {
     local AbilityBase_ArtificerCharm Ability;
 
-    //TODO check augments validity here
-
     switch(Which)
     {
         case 0: //ALPHA

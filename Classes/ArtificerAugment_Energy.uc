@@ -16,9 +16,9 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         return;
 
     if(OriginalDamage > Injured.Health)
-        AdrenalineBonus = Injured.Health * BonusPerLevel * ModifierLevel;
+        AdrenalineBonus = Injured.Health * BonusPerLevel * Modifier;
     else
-        AdrenalineBonus = OriginalDamage * BonusPerLevel * ModifierLevel;
+        AdrenalineBonus = OriginalDamage * BonusPerLevel * Modifier;
 
     if(
         UnrealPlayer(Instigator.Controller) != None

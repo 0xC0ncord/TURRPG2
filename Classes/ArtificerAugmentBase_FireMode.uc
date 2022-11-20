@@ -42,11 +42,11 @@ static function bool AllowedOn(Weapon W)
     return Super.AllowedOn(W);
 }
 
-function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
+function Init(WeaponModifier_Artificer WM, int NewModifier)
 {
     local FireModeStruct Entry;
 
-    Super.Init(WM, NewModifierLevel);
+    Super.Init(WM, NewModifier);
 
     Entry = GetFireModeFor(Weapon.Class);
     if(Entry.WeaponClass == None)
@@ -56,7 +56,7 @@ function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
     if(FireMode != None)
     {
         WeaponModifier.AddFireMode(FireMode);
-        FireMode.SetLevel(ModifierLevel);
+        FireMode.SetLevel(Modifier);
         EPRINTD(PlayerController(WM.RPRI.Controller), FireMode);
     }
 }

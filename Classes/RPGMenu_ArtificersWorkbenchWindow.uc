@@ -442,6 +442,18 @@ function bool AddModifier(GUIComponent Sender)
             break;
         case lbAugmentPool.List:
             Target = LastInteractedList;
+            switch(LastInteractedList)
+            {
+                case lbCharmA.List:
+                    MaxLevel = AbilityLevelCharmA;
+                    break;
+                case lbCharmB.List:
+                    MaxLevel = AbilityLevelCharmB;
+                    break;
+                case lbCharmC.List:
+                    MaxLevel = AbilityLevelCharmC;
+                    break;
+            }
             break;
     }
 
@@ -1219,7 +1231,7 @@ final function PackCharmList(GUITreeList List, array<RPGCharSettings.ArtificerAu
         if(MClass == None)
             continue;
 
-        for(x = 0; x < Augments[i].ModifierLevel; x++)
+        for(x = 0; x < Augments[i].Modifier; x++)
         {
             List.AddItem(MClass.default.ModifierName, string(MClass));
 
@@ -1246,7 +1258,7 @@ final function UnpackCharmList(GUITreeList List, out array<RPGCharSettings.Artif
         {
             if(string(Augments[x].AugmentClass) == List.Elements[i].Value)
             {
-                Augments[x].ModifierLevel++;
+                Augments[x].Modifier++;
                 x = -1;
                 break;
             }
@@ -1257,7 +1269,7 @@ final function UnpackCharmList(GUITreeList List, out array<RPGCharSettings.Artif
         x = Augments.Length;
         Augments.Length = x + 1;
         Augments[x].AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(List.Elements[i].Value, class'Class'));
-        Augments[x].ModifierLevel = 1;
+        Augments[x].Modifier = 1;
     }
 }
 

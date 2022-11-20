@@ -31,12 +31,12 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
         )
         {
             Momentum = (Normal(InstigatedBy.Location - HitLocation) * -200f)
-                        * FMax(2f, FMax(float(ModifierLevel) * BonusPerLevel, float(Damage) * 0.1f));
+                        * FMax(2f, FMax(float(Modifier) * BonusPerLevel, float(Damage) * 0.1f));
         }
         else
         {
             Momentum = (Normal(InstigatedBy.Location - Injured.Location) * -200f)
-                        * FMax(2f, FMax(float(ModifierLevel) * BonusPerLevel, float(Damage) * 0.1f));
+                        * FMax(2f, FMax(float(Modifier) * BonusPerLevel, float(Damage) * 0.1f));
         }
 
         // momentum will be applied by the weapon
@@ -47,11 +47,9 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 
 defaultproperties
 {
-    // ConflictsWith(0)=class'ArtificerAugment_PullForward'
-    // ConflictsWith(1)=class'ArtificerAugment_Freeze'
-    // ConflictsWith(2)=class'ArtificerAugment_NullEntropy'
-    // ConflictsWith(3)=class'ArtificerAugment_Stone'
-    // ConflictsWith(4)=class'ArtificerAugment_Propulsion'
+    ConflictsWith(0)=class'ArtificerAugment_PullForward'
+    ConflictsWith(1)=class'ArtificerAugment_Freeze'
+    ConflictsWith(2)=class'ArtificerAugment_NullEntropy'
     MaxLevel=4
     ModifierName="Knockback"
     Description="knockback"

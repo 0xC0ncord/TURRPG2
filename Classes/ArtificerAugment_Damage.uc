@@ -10,7 +10,7 @@ class ArtificerAugment_Damage extends ArtificerAugmentBase;
 
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
-    Damage += float(OriginalDamage) * ModifierLevel * BonusPerLevel;
+    Damage += float(OriginalDamage) * Modifier * BonusPerLevel;
 }
 
 defaultproperties

@@ -19,7 +19,7 @@ var() Color ModifierColor;
 var() Material ModifierOverlay;
 var() array<class<ArtificerAugmentBase> > ConflictsWith;
 
-var int ModifierLevel;
+var int Modifier;
 
 var Weapon Weapon;
 var WeaponModifier_Artificer WeaponModifier;
@@ -39,32 +39,32 @@ static function bool InsertInto(out array<RPGCharSettings.ArtificerAugmentStruct
 {
     local int i, x;
 
-    if(default.MaxLevel > 0 || default.ConflictsWith.Length != 0)
+    for(i = 0; i < default.ConflictsWith.Length; i++)
     {
-        for(i = 0; i < default.ConflictsWith.Length; i++)
+        for(x = 0; x < Augments.Length; x++)
         {
-            for(x = 0; x < Augments.Length; x++)
+            if(default.ConflictsWith[i] == Augments[x].AugmentClass)
             {
-                if(default.ConflictsWith[i] == Augments[x].AugmentClass)
-                {
-                    Reason = Repl(default.Text_ConflictsWith, "$1", default.ConflictsWith[i].default.ModifierName);
-                    return false;
-                }
+                Reason = Repl(default.Text_ConflictsWith, "$1", default.ConflictsWith[i].default.ModifierName);
+                return false;
             }
         }
+    }
 
+    if(default.MaxLevel > 0)
+    {
         for(i = 0; i < Augments.Length; i++)
         {
             if(Augments[i].AugmentClass == default.Class)
             {
-                if(Augments[i].ModifierLevel >= default.MaxLevel)
+                if(Augments[i].Modifier >= default.MaxLevel)
                 {
                     Reason = default.Text_AlreadyAtMax;
                     return false;
                 }
                 else
                 {
-                    Augments[i].ModifierLevel++;
+                    Augments[i].Modifier++;
                     return true;
                 }
             }
@@ -73,7 +73,7 @@ static function bool InsertInto(out array<RPGCharSettings.ArtificerAugmentStruct
 
     Augments.Length = i + 1;
     Augments[i].AugmentClass = default.Class;
-    Augments[i].ModifierLevel = 1;
+    Augments[i].Modifier = 1;
     return true;
 }
 
@@ -93,30 +93,26 @@ static final function ArtificerAugmentBase GetFor(WeaponModifier_Artificer WM)
     return None;
 }
 
-function Init(WeaponModifier_Artificer WM, int NewModifierLevel)
+function Init(WeaponModifier_Artificer WM, int NewModifier)
 {
-    EPRINTD(PlayerController(WM.Instigator.Controller), "New, Level" @ NewModifierLevel);
-
     WeaponModifier = WM;
     Weapon = WM.Weapon;
     Instigator = Weapon.Instigator;
     ObjectPool = WM.Level.ObjectPool;
     OrderIndex = class'Util'.static.InArray(Class, default.AugmentOrder);
 
-    SetLevel(NewModifierLevel);
+    SetLevel(NewModifier);
 }
 
-function SetLevel(int NewModifierLevel)
+function SetLevel(int NewModifier)
 {
-    ModifierLevel = NewModifierLevel;
+    Modifier = NewModifier;
 }
 
 function Apply();
 
 final function Remove()
 {
-    EPRINTD(PlayerController(WeaponModifier.Instigator.Controller), "Removing" @ Self);
-
     if(WeaponModifier.Role == ROLE_Authority)
         StopEffect();
     else
@@ -171,17 +167,17 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
 
 function string GetDescription()
 {
-    return Repl(default.Description, "$1", class'Util'.static.FormatPercent(BonusPerLevel * Max(1, ModifierLevel)));
+    return Repl(default.Description, "$1", class'Util'.static.FormatPercent(BonusPerLevel * Max(1, Modifier)));
 }
 
-static function string StaticGetDescription(optional int ModifierLevel)
+static function string StaticGetDescription(optional int Modifier)
 {
-    return Repl(default.Description, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, ModifierLevel)));
+    return Repl(default.Description, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, Modifier)));
 }
 
-static function string StaticGetLongDescription(optional int ModifierLevel)
+static function string StaticGetLongDescription(optional int Modifier)
 {
-    return Repl(default.LongDescription, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, ModifierLevel)));
+    return Repl(default.LongDescription, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, Modifier)));
 }
 
 defaultproperties

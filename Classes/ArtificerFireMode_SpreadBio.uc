@@ -13,10 +13,10 @@ function Activate()
     WeaponFire_SpreadBio(FireMode).StartSpread();
 }
 
-function SetLevel(int NewModifierLevel)
+function SetLevel(int NewModifier)
 {
-    Super.SetLevel(NewModifierLevel);
-    WeaponFire_SpreadBio(FireMode).SetLevel(NewModifierLevel);
+    Super.SetLevel(NewModifier);
+    WeaponFire_SpreadBio(FireMode).SetLevel(NewModifier);
 }
 
 defaultproperties

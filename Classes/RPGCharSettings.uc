@@ -36,7 +36,7 @@ var config array<FavoriteWeaponStruct> FavoriteWeaponsConfig;
 struct ArtificerAugmentStruct
 {
     var class<ArtificerAugmentBase> AugmentClass;
-    var int ModifierLevel;
+    var int Modifier;
 };
 var config array<ArtificerAugmentStruct> ArtificerCharmAlphaConfig;
 var config array<ArtificerAugmentStruct> ArtificerCharmBetaConfig;

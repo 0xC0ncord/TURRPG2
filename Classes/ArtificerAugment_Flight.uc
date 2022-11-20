@@ -69,7 +69,7 @@ function StopEffect()
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     if(Instigator.Physics == PHYS_Flying)
-        Momentum = (Momentum * 4f / FMin(2f, 1f + (0.25 * ModifierLevel)));
+        Momentum = (Momentum * 4f / FMin(2f, 1f + (0.25 * Modifier)));
 }
 
 function Free()
