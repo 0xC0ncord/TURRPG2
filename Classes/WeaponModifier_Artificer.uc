@@ -221,6 +221,8 @@ simulated final function SortAugments()
 
                 if(NextAugment.NextAugment != None)
                     NextAugment.NextAugment.PrevAugment = Augment;
+                else
+                    AugmentListTail = Augment;
 
                 NextAugment.NextAugment = Augment;
                 NextAugment.PrevAugment = PrevAugment;
