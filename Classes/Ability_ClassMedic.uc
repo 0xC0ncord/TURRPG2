@@ -19,11 +19,12 @@ defaultproperties
     ClassTreeInfos(6)=(AbilityClass=Class'Ability_MedicAura',Row=5,Column=5,RequiredByAbilities=((Index=9,Levels=((Level=1)))))
     ClassTreeInfos(7)=(AbilityClass=Class'Ability_ComboTeamBooster',Row=5,Column=4)
     ClassTreeInfos(8)=(AbilityClass=Class'Ability_MedicIncantation',Row=5,Column=3,RequiredByAbilities=((Index=12,Levels=((Level=1)))))
-    ClassTreeInfos(9)=(AbilityClass=Class'Ability_MedicPledge',Row=7,Column=5)
+    ClassTreeInfos(9)=(AbilityClass=Class'Ability_MedicPledge',Row=7,Column=5,RequiredByAbilities=((Index=14,Levels=((Level=1)))))
     ClassTreeInfos(10)=(AbilityClass=Class'Ability_MedicHealthBonus',Row=5,Column=7)
     ClassTreeInfos(11)=(AbilityClass=Class'Ability_HealingAdrenaline',Row=7,Column=2)
     ClassTreeInfos(12)=(AbilityClass=Class'Ability_HealingFlames',Row=7,Column=3,RequiredByAbilities=((Index=13,Levels=((Level=1)))))
     ClassTreeInfos(13)=(AbilityClass=Class'Ability_HealingDefender',Row=9,Column=3)
+    ClassTreeInfos(14)=(AbilityClass=Class'Ability_MedicMotes',Row=9,Column=5)
     AbilityName="Class: Medic"
     Description="Master of pure defense, regeneration, and buffing themselves and their teammates to keep the team alive."
     IconMaterial=Texture'ClMedicIcon'
