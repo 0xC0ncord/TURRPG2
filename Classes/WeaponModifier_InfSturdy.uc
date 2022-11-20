@@ -32,9 +32,9 @@ simulated static function string StaticGetDescription(int Modifier)
 
 defaultproperties
 {
-    DamageBonus=0.075
-    MinModifier=4
-    MaxModifier=10
+    DamageBonus=0.035
+    MinModifier=2
+    MaxModifier=6
     ModifierOverlay=Combiner'InfSturdyShader'
     PatternPos="$W of Infinite Sturdiness"
     bCanHaveZeroModifier=True
