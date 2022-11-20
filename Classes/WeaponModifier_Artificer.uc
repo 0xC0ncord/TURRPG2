@@ -811,7 +811,7 @@ simulated function PostRender(Canvas Canvas)
     local ArtificerAugmentBase Augment;
 
     Canvas.FontScaleX = (Canvas.ClipX / 1024.0f) * 0.35;
-    Canvas.FontScaleY = (Canvas.ClipY / 768.0f) * 0.35;
+    Canvas.FontScaleY = Canvas.FontScaleX;
     Canvas.TextSize("A", X, Y);
 
     PosX = 384;
