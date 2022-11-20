@@ -74,7 +74,7 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
         {
             if(ValidatedAugments[i].AugmentClass == CurrentAugments[x].AugmentClass)
             {
-                if(ValidatedAugments[i].Modifier == CurrentAugments[x].Modifier)
+                if(ValidatedAugments[i].Modifier != CurrentAugments[x].Modifier)
                 {
                     SetAugmentLevel(ValidatedAugments[i].AugmentClass, ValidatedAugments[i].Modifier);
                     ClientSetAugmentLevel(ValidatedAugments[i].AugmentClass, ValidatedAugments[i].Modifier);
