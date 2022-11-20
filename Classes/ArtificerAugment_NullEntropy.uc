@@ -57,7 +57,7 @@ defaultproperties
     ModifierName="Null Entropy"
     Description="null entropy for $1s"
     LongDescription="Causes your weapon to inflict null entropy for $1s."
-    ModifierColor=(R=128,G=196,B=255)
+    ModifierColor=(R=255,G=128,B=255)
     ModifierOverlay=Shader'MutantSkins.Shaders.MutantGlowShader'
     IconMaterial=Texture'TURRPG2.WOPIcons.NullEntropyIcon'
 }
