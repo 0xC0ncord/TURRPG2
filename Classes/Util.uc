@@ -164,14 +164,24 @@ static final function string FormatTime(float Time, optional bool bNoShortSecond
 {
     local int Hours, Minutes, Seconds;
 
-    if(Time < 1f && !bNoShortSeconds)
-        return "0." $ int(Ceil(Time * 10)) $ "s";
+    if(!bNoShortSeconds)
+    {
+        //avoid showing 0.10s
+        if(Time < 0.9f)
+            return "0." $ int(Ceil(Time * 10)) $ "s";
+        else if(TIme < 1.0f)
+            return "1s";
+    }
 
     Hours = int(Time / 3600);
     Minutes = int(Time / 60) % 60;
     Seconds = Time % 60;
 
-    return Eval(Hours < 10, "0" $ Hours, Hours) $ ":" $ Eval(Minutes < 10, "0" $ Minutes, Minutes) $ Eval(Seconds < 10, "0" $ Seconds, Seconds);
+    if(Hours > 0)
+        return Hours $ "h";
+    if(Minutes == 0)
+        return Seconds $ "s";
+    return Eval(Minutes < 10, "0" $ Minutes, Minutes) $ ":" $ Eval(Seconds < 10, "0" $ Seconds, Seconds);
 }
 
 static final function int InArray(Object x, array<Object> a)
