@@ -8,6 +8,26 @@
 
 class ArtificerAugment_Infinity extends ArtificerAugmentBase;
 
+static function bool AllowedOn(Weapon W)
+{
+    local MutTURRPG RPGMut;
+
+    RPGMut = class'MutTURRPG'.static.Instance(W.Level);
+    if(RPGMut == None)
+        return false;
+
+    if(
+        RPGMut.IsSuperWeapon(W.Class) ||
+        RPGMut.IsSuperWeaponAmmo(W.AmmoClass[0]) ||
+        RPGMut.IsSuperWeaponAmmo(W.AmmoClass[1])
+    )
+    {
+        return false;
+    }
+
+    return Super.AllowedOn(W);
+}
+
 function RPGTick(float dt)
 {
     //TODO: Find a way for ballistic weapons
