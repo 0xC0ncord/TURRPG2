@@ -357,7 +357,7 @@ state Activated
             DisplayEffect();
         }
 
-        if(StatusIconClass != None) {
+        if(StatusIconClass != None && InstigatorRPRI != None) {
             InstigatorRPRI.ClientCreateStatusIcon(StatusIconClass);
         }
 
@@ -402,7 +402,7 @@ state Activated
         local RPGPlayerReplicationInfo RPRI;
         local Controller C;
 
-        if(StatusIconClass != None) {
+        if(StatusIconClass != None && InstigatorRPRI != None) {
             InstigatorRPRI.ClientRemoveStatusIcon(StatusIconClass);
         }
 
