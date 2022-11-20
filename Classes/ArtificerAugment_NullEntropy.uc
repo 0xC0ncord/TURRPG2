@@ -32,6 +32,21 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     }
 }
 
+function string GetDescription()
+{
+    return Repl(Description, "$1", class'Util'.static.FormatFloat(BonusPerLevel * Max(1, Modifier)));
+}
+
+static function string StaticGetDescription(optional int Modifier)
+{
+    return Repl(default.Description, "$1", class'Util'.static.FormatFloat(default.BonusPerLevel * Max(1, Modifier)));
+}
+
+static function string StaticGetLongDescription(optional int Modifier)
+{
+    return Repl(default.Description, "$1", class'Util'.static.FormatFloat(default.BonusPerLevel * Max(1, Modifier)));
+}
+
 defaultproperties
 {
     ConflictsWith(0)=class'ArtificerAugment_PullForward'

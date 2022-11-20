@@ -36,8 +36,8 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
 function string GetDescription()
 {
     return Repl(
-        Repl(default.Description, "$1", class'Util'.static.FormatPercent(BonusPerLevel * Max(1, Modifier))),
-        "$2", FreezeDuration * Max(1, Modifier)
+        Repl(Description, "$1", class'Util'.static.FormatPercent(BonusPerLevel * Max(1, Modifier))),
+        "$2", class'Util'.static.FormatFloat(FreezeDuration * Max(1, Modifier))
     );
 }
 
@@ -45,7 +45,7 @@ static function string StaticGetDescription(optional int Modifier)
 {
     return Repl(
         Repl(default.Description, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, Modifier))),
-        "$2", default.FreezeDuration * Max(1, Modifier)
+        "$2", class'Util'.static.FormatFloat(default.FreezeDuration * Max(1, Modifier))
     );
 }
 
@@ -53,7 +53,7 @@ static function string StaticGetLongDescription(optional int Modifier)
 {
     return Repl(
         Repl(default.LongDescription, "$1", class'Util'.static.FormatPercent(default.BonusPerLevel * Max(1, Modifier))),
-        "$2", default.FreezeDuration * Max(1, Modifier)
+        "$2", class'Util'.static.FormatFloat(default.FreezeDuration * Max(1, Modifier))
     );
 }
 
