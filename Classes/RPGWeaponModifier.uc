@@ -49,6 +49,7 @@ var bool bTeamFriendly; //whether or not this modifier counts as one which boost
 
 //Restrictions
 var config array<class<Weapon> > ForbiddenWeaponTypes;
+var config array<string> ForbiddenWeaponNames; //same as above but as strings to avoid external deps
 var config bool bAllowForSpecials; //inventory groups 0 (super weapons) and 10 (xloc)
 var bool bCanThrow;
 
@@ -70,6 +71,7 @@ replication{
 
 static function bool AllowedFor(class<Weapon> WeaponType, optional Pawn Other) {
     local int i;
+    local int Pos;
 
     for(i = 0; i < class'MutTURRPG'.default.DisallowModifiersFor.Length; i++) {
         if(ClassIsChildOf(WeaponType, class'MutTURRPG'.default.DisallowModifiersFor[i])) {
@@ -88,7 +90,14 @@ static function bool AllowedFor(class<Weapon> WeaponType, optional Pawn Other) {
     }
 
     for(i = 0; i < default.ForbiddenWeaponTypes.Length; i++) {
-        if(ClassIsChildOf(WeaponType, default.ForbiddenWeaponTypes[i])) {
+        if(WeaponType == default.ForbiddenWeaponTypes[i]) {
+            return false;
+        }
+    }
+
+    for(i = 0; i < default.ForbiddenWeaponNames.Length; i++) {
+        Pos = InStr(string(WeaponType), ".");
+        if(Right(string(WeaponType), Len(string(WeaponType)) - Pos - 1) ~= default.ForbiddenWeaponNames[i]) {
             return false;
         }
     }
