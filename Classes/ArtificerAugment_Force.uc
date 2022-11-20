@@ -10,11 +10,11 @@ class ArtificerAugment_Force extends ArtificerAugmentBase;
 
 const FORCE_RADIUS = 32768;
 
-static function bool AllowedOn(Weapon W)
+static function bool AllowedOn(WeaponModifier_Artificer WM, Weapon W)
 {
     local int x;
 
-    if(!Super.AllowedOn(W))
+    if(!Super.AllowedOn(WM, W))
         return false;
 
     for(x = 0; x < ArrayCount(W.FireModeClass); x++)
@@ -55,4 +55,3 @@ defaultproperties
     ModifierOverlay=Shader'RPGWeapons.ForceShader'
     ModifierColor=(R=255)
 }
-

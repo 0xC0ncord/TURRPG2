@@ -31,7 +31,7 @@ static final function FireModeStruct GetFireModeFor(class<Weapon> WeaponClass)
     return default.NullEntry;
 }
 
-static function bool AllowedOn(Weapon W)
+static function bool AllowedOn(WeaponModifier_Artificer WM, Weapon W)
 {
     local FireModeStruct Entry;
 
@@ -39,7 +39,7 @@ static function bool AllowedOn(Weapon W)
     if(Entry.WeaponClass == None)
         return false;
 
-    return Super.AllowedOn(W);
+    return Super.AllowedOn(WM, W);
 }
 
 function Init(WeaponModifier_Artificer WM, int NewModifier)

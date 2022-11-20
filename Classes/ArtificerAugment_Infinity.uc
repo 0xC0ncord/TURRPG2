@@ -8,7 +8,7 @@
 
 class ArtificerAugment_Infinity extends ArtificerAugmentBase;
 
-static function bool AllowedOn(Weapon W)
+static function bool AllowedOn(WeaponModifier_Artificer WM, Weapon W)
 {
     local MutTURRPG RPGMut;
 
@@ -25,7 +25,7 @@ static function bool AllowedOn(Weapon W)
         return false;
     }
 
-    return Super.AllowedOn(W);
+    return Super.AllowedOn(WM, W);
 }
 
 function RPGTick(float dt)

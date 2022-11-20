@@ -16,10 +16,12 @@ var() localized string Description; //for the weapon modifier description
 var() localized string LongDescription; //for the menu
 var() Material IconMaterial;
 var() Color ModifierColor;
+var() Color DisabledColor;
 var() Material ModifierOverlay;
 var() array<class<ArtificerAugmentBase> > ConflictsWith;
 
 var int Modifier;
+var bool bDisabled;
 
 var Weapon Weapon;
 var WeaponModifier_Artificer WeaponModifier;
@@ -77,7 +79,7 @@ static function bool InsertInto(out array<RPGCharSettings.ArtificerAugmentStruct
     return true;
 }
 
-static function bool AllowedOn(Weapon W)
+static function bool AllowedOn(WeaponModifier_Artificer WM, Weapon W)
 {
     return true;
 }
@@ -102,6 +104,9 @@ function Init(WeaponModifier_Artificer WM, int NewModifier)
     OrderIndex = class'Util'.static.InArray(Class, default.AugmentOrder);
 
     SetLevel(NewModifier);
+
+    if(!AllowedOn(WeaponModifier, Weapon))
+        bDisabled = true;
 }
 
 function SetLevel(int NewModifier)
@@ -140,6 +145,15 @@ function Free()
     PrevAugment = None;
     ObjectPool.FreeObject(Self);
     ObjectPool = None;
+    bDisabled = false;
+}
+
+function CheckDisabled()
+{
+    if(AllowedOn(WeaponModifier, Weapon))
+        bDisabled = false;
+    else
+        bDisabled = true;
 }
 
 function StartEffect(); //weapon gets drawn
@@ -185,7 +199,8 @@ defaultproperties
     ModifierName="Modifier"
     Description="$1 damage"
     LongDescription="Increases weapon damage by $1 per level."
-    ModifierColor=(R=255,G=255,B=255)
+    ModifierColor=(R=0,G=0,B=0,A=255)
+    DisabledColor=(R=48,G=48,B=48,A=255)
     AugmentOrder(0)=Class'ArtificerAugment_Infinity'
     AugmentOrder(1)=Class'ArtificerAugment_Damage'
     AugmentOrder(2)=Class'ArtificerAugment_Energy'

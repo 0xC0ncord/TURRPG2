@@ -36,13 +36,25 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
 {
     local int i, x;
     local array<RPGCharSettings.ArtificerAugmentStruct> ValidatedAugments;
+    local int Slots;
+    local ArtificerAugmentBase Augment;
 
     SetActive(false);
 
     //validate the augments first
     for(i = 0; i < NewAugments.Length; i++)
+    {
         for(x = 0; x < NewAugments[i].Modifier; x++)
+        {
+            if(Slots >= Modifier)
+            {
+                i = NewAugments.Length;
+                break;
+            }
             NewAugments[i].AugmentClass.static.InsertInto(ValidatedAugments);
+            Slots++;
+        }
+    }
 
     //FIXME if an augment ever has any functionality which involves a cooldown,
     //this will need to be rewritten later so that we don't also reset its cooldown
@@ -93,6 +105,11 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
     SortAugments();
     ClientSortAugments();
 
+    //with the augment list potentially changed, tell them to check if they should disable themselves
+    //can happen with penetrating and a new instant-hit fire mode that did not exist previously
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+        Augment.CheckDisabled();
+
     SetOverlay();
     ClientUpdateDescription();
 
@@ -137,6 +154,7 @@ simulated final function AddAugment(class<ArtificerAugmentBase> AugmentClass, in
         Augment.PrevAugment = AugmentListTail;
         AugmentListTail.NextAugment = Augment;
     }
+
     AugmentListTail = Augment;
 
     Augment.Init(Self, NewLevel);
@@ -574,7 +592,8 @@ function StartEffect()
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.StartEffect();
+        if(!Augment.bDisabled)
+            Augment.StartEffect();
 }
 
 function StopEffect()
@@ -582,7 +601,8 @@ function StopEffect()
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.StopEffect();
+        if(!Augment.bDisabled)
+            Augment.StopEffect();
 }
 
 simulated function ClientStartEffect()
@@ -590,7 +610,8 @@ simulated function ClientStartEffect()
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.ClientStartEffect();
+        if(!Augment.bDisabled)
+            Augment.ClientStartEffect();
 }
 
 simulated function ClientStopEffect()
@@ -598,7 +619,8 @@ simulated function ClientStopEffect()
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.ClientStopEffect();
+        if(!Augment.bDisabled)
+            Augment.ClientStopEffect();
 }
 
 function RPGTick(float dt)
@@ -606,7 +628,8 @@ function RPGTick(float dt)
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.RPGTick(dt);
+        if(!Augment.bDisabled)
+            Augment.RPGTick(dt);
 
     if(CurrentPrimaryFireMode != None)
         CurrentPrimaryFireMode.ModeTick(dt);
@@ -619,7 +642,8 @@ simulated function ClientRPGTick(float dt)
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.ClientRPGTick(dt);
+        if(!Augment.bDisabled)
+            Augment.ClientRPGTick(dt);
 
     if(CurrentPrimaryFireMode != None)
         CurrentPrimaryFireMode.ModeTick(dt);
@@ -632,7 +656,8 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
+        if(!Augment.bDisabled)
+            Augment.AdjustTargetDamage(Damage, OriginalDamage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 }
 
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
@@ -640,7 +665,8 @@ function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedB
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        Augment.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
+        if(!Augment.bDisabled)
+            Augment.AdjustPlayerDamage(Damage, OriginalDamage, InstigatedBy, HitLocation, Momentum, DamageType);
 }
 
 function bool PreventDeath(Controller Killer, class<DamageType> DamageType, vector HitLocation, bool bAlreadyPrevented)
@@ -648,7 +674,7 @@ function bool PreventDeath(Controller Killer, class<DamageType> DamageType, vect
     local ArtificerAugmentBase Augment;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        if(Augment.PreventDeath(Killer, DamageType, HitLocation, bAlreadyPrevented))
+        if(!Augment.bDisabled && Augment.PreventDeath(Killer, DamageType, HitLocation, bAlreadyPrevented))
             bAlreadyPrevented = true;
 
     if(bAlreadyPrevented && DamageType != class'Suicided' && Killer != Instigator.Controller)
@@ -661,7 +687,7 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
     local bool bAlreadyDenied;
 
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
-        if(!Augment.AllowEffect(EffectClass, Causer, Duration, Modifier))
+        if(!Augment.bDisabled && !Augment.AllowEffect(EffectClass, Causer, Duration, Modifier))
             bAlreadyDenied = true;
 
     return !bAlreadyDenied;
@@ -681,7 +707,7 @@ function SetOverlay(optional Material Mat)
     // determine which overlay to show, then show it
     for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
     {
-        if(MaxLevel < Augment.Modifier && Augment.ModifierOverlay != None)
+        if(!Augment.bDisabled && MaxLevel < Augment.Modifier && Augment.ModifierOverlay != None)
         {
             MaxLevel = Augment.Modifier;
             Mat = Augment.ModifierOverlay;
@@ -708,7 +734,8 @@ simulated function BuildDescription()
     Description = AugmentList.GetDescription();
 
     for(Augment = AugmentList.NextAugment; Augment != None; Augment = Augment.NextAugment)
-        Description $= "," @ Augment.GetDescription();
+        if(!Augment.bDisabled)
+            Description $= "," @ Augment.GetDescription();
 }
 
 simulated static function string StaticGetDescription(int Modifier)
