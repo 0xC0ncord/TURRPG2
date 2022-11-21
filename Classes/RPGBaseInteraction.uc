@@ -47,7 +47,12 @@ function bool IsPawnVisible(Canvas C, Pawn P, out vector Pos, out float Dist) {
         return false;
     }
 
-    if(xPawn(P) != None && xPawn(P).bInvis) {
+    //invisible
+    if(
+        xPawn(P) != None
+        && xPawn(P).bInvis
+        && !CanSeeInvisPawn(C, P)
+    ) {
         return false;
     }
 
@@ -70,6 +75,11 @@ function bool IsPawnVisible(Canvas C, Pawn P, out vector Pos, out float Dist) {
     Dist = ViewportOwner.Actor.FOVBias * VSize(D);
 
     return true;
+}
+
+//Stub to override whether we can see a pawn which is invisible
+function bool CanSeeInvisPawn(Canvas C, Pawn P) {
+    return false;
 }
 
 //Draws an Onslaught health bar styled bar
