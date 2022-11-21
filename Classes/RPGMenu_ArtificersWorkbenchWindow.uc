@@ -890,7 +890,8 @@ function CompactCharmList(GUITreeList List)
         {
             x = Parents.Length;
             Parents.Length = x + 1;
-            Parents[x].ChildCaption = List.Elements[i + 1].Caption;
+            if(i + 1 < List.ItemCount) //not sure why but sometimes there will be a parent with no children added
+                Parents[x].ChildCaption = List.Elements[i + 1].Caption;
             Parents[x].Expanded = byte(List.IsExpanded(i)); //bools not allowed in arrays
             continue;
         }
@@ -947,7 +948,9 @@ function CompactCharmList(GUITreeList List)
             {
                 if(Parents[x].Expanded == 1 && Parents[x].ChildCaption == List.Elements[i + 1].Caption)
                     List.Expand(i);
-                x++;
+
+                if(++x <= List.ItemCount)
+                    break;
             }
         }
     }
