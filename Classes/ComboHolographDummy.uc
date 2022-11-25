@@ -17,6 +17,7 @@ var int TauntTime;
 var ComboHolographDummyPawn Pawn;
 var float CaramelldansenChance;
 var bool bCaramelldansen;
+var byte GirlId;
 var float NextLightChangeTime;
 var byte CaramelldansenLightHues[8];
 
@@ -27,18 +28,11 @@ var FX_ComboHolographDummy FX;
 replication
 {
     reliable if(Role == ROLE_Authority && bNetInitial)
-        bCaramelldansen;
+        bCaramelldansen, GirlId;
 }
 
 simulated function PostBeginPlay()
 {
-    if(Level.NetMode != NM_DedicatedServer)
-    {
-        FX = Spawn(class'FX_ComboHolographDummy', self,, Location);
-        if(bCaramelldansen)
-            DoCaramelldansen();
-    }
-
     if(Role == ROLE_Authority)
     {
         Pawn = Spawn(class'ComboHolographDummyPawn', self,, self.Location + vect(0, 0, 150), self.Rotation);
@@ -59,21 +53,58 @@ simulated function PostBeginPlay()
     SetTimer(1.0, true);
 }
 
+simulated function PostNetBeginPlay()
+{
+    if(Level.NetMode != NM_DedicatedServer)
+    {
+        FX = Spawn(class'FX_ComboHolographDummy', self,, Location);
+        if(bCaramelldansen)
+            DoCaramelldansen();
+    }
+}
+
 simulated function DoCaramelldansen()
 {
     PC = Level.GetLocalPlayerController();
     SetDrawType(DT_StaticMesh);
     SetDrawScale(0.35);
     PrePivot = vect(1, 0, -16);
-    if(FRand() <= 0.5)
-        Skins[0] = Texture'Mai00';
+    if(Role == ROLE_Authority)
+    {
+        if(FRand() <= 0.5)
+        {
+            Skins[0] = Texture'Mai00';
+            GirlId = 0;
+        }
+        else
+        {
+            Skins[0] = Texture'Mii00';
+            GirlId = 1;
+        }
+    }
     else
-        Skins[0] = Texture'Mii00';
+    {
+        switch(GirlId)
+        {
+            case 0:
+                Skins[0] = Texture'Mai00';
+                break;
+            default:
+                Skins[1] = Texture'Mii00';
+                break;
+        }
+    }
     AmbientSound = Sound'Caramelldansen';
     LightType = LT_Steady;
     LightRadius = 12.0;
     LightHue = CaramelldansenLightHues[Rand(ArrayCount(CaramelldansenLightHues))];
     NextLightChangeTime = Level.TimeSeconds + 0.75;
+}
+
+simulated function PostNetReceive()
+{
+    if(RepSkin != None)
+        SKins[0] = RepSkin;
 }
 
 simulated function Tick(float dt)
@@ -258,8 +289,9 @@ defaultproperties
     bBlockZeroExtentTraces=False
     bBlockNonZeroExtentTraces=False
     RemoteRole=ROLE_SimulatedProxy
+    bFullVolume=True
     SoundVolume=255
-    SoundRadius=128.000000
+    SoundRadius=384.000000
     LightBrightness=192.000000
     LightSaturation=36
 }
