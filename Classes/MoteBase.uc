@@ -32,10 +32,11 @@ replication
         Target;
 }
 
-function PostBeginPlay()
+simulated function PostBeginPlay()
 {
     ToDestVelocity = 850.0 + (float(100) * FRand());
-    DissipateTime = Level.TimeSeconds + SecondsUntilGone;
+    if(Role == ROLE_Authority)
+        DissipateTime = Level.TimeSeconds + SecondsUntilGone;
 }
 
 simulated function PostNetBeginPlay()
@@ -70,60 +71,61 @@ function ServerReachedDest()
     }
 }
 
-function Tick(float dt)
+simulated function Tick(float dt)
 {
     local Controller C;
     local vector ToDest, V;
 
-    if(PlayerSpawner == None || PlayerSpawner.GetTeamNum() != TeamNum)
+    if(Role == ROLE_Authority)
     {
-        Destroy();
-        return;
-    }
-
-    //if the one picking us up died or is too far away
-    if(
-        Target != None
-        && (
-            Target.Health <= 0
-            || VSize(Target.Location - Location) > PickupRadius
-        )
-    )
-    {
-        PRINTD("Losing target");
-        PRINTD(Target);
-        PRINTD(Target.Health);
-        PRINTD(VSize(Target.Location - Location));
-        Target = None;
-    }
-
-    //find someone new
-    if(Target == None)
-    {
-        for(C = Level.ControllerList; C != None; C = C.NextController)
+        if(PlayerSpawner == None || PlayerSpawner.GetTeamNum() != TeamNum)
         {
-            if(
-                C.Pawn != None
-                && C.Pawn.Health > 0
-                && class'Util'.static.SameTeamC(C, PlayerSpawner)
-                && VSize(C.Pawn.Location - Location) <= PickupRadius
-                && FastTrace(C.Pawn.Location, Location)
+            Destroy();
+            return;
+        }
+
+        //if the one picking us up died or is too far away
+        if(
+            Target != None
+            && (
+                Target.Health <= 0
+                || VSize(Target.Location - Location) > PickupRadius
             )
+        )
+        {
+            Target = None;
+        }
+
+        //find someone new
+        if(Target == None)
+        {
+            for(C = Level.ControllerList; C != None; C = C.NextController)
             {
-                DissipateTime = 0;
-                Target = C.Pawn;
-                PRINTD("New target" @ Target);
-                break;
+                if(
+                    C.Pawn != None
+                    && C.Pawn.Health > 0
+                    && class'Util'.static.SameTeamC(C, PlayerSpawner)
+                    && VSize(C.Pawn.Location - Location) <= PickupRadius
+                    && FastTrace(C.Pawn.Location, Location)
+                )
+                {
+                    DissipateTime = 0;
+                    Target = C.Pawn;
+                    break;
+                }
             }
         }
     }
 
     if(Target == None)
     {
-        if(DissipateTime == 0)
-            DissipateTime = Level.TimeSeconds + SecondsUntilGone;
-        else if(DissipateTime <= Level.TimeSeconds)
-            Destroy();
+        if(Role == ROLE_Authority)
+        {
+            if(DissipateTime == 0)
+                DissipateTime = Level.TimeSeconds + SecondsUntilGone;
+            else if(DissipateTime <= Level.TimeSeconds)
+                Destroy();
+        }
         return;
     }
 
@@ -132,11 +134,15 @@ function Tick(float dt)
         Alpha = 1.0;
 
     ToDest = Target.Location - Location;
-    if(VSize(ToDest) < float(20))
+
+    if(Role == ROLE_Authority)
     {
-        ServerReachedDest();
-        Destroy();
-        return;
+        if(VSize(ToDest) < float(20))
+        {
+            ServerReachedDest();
+            Destroy();
+            return;
+        }
     }
 
     V = ((Velocity * (1.0 - Alpha)) + ((ToDestVelocity * Normal(ToDest)) * Alpha)) + (VRand() * float(40));
@@ -155,6 +161,7 @@ defaultproperties
     SecondsUntilGone=12.0
     bHidden=True
     bAcceptsProjectors=False
+    bReplicateMovement=False
     Physics=PHYS_Projectile
     RemoteRole=ROLE_SimulatedProxy
     bCollideWorld=True
