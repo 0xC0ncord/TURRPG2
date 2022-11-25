@@ -85,9 +85,15 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn Ins
     Super.AdjustTargetDamage(Damage, OriginalDamage, P, InstigatedBy, HitLocation, Momentum, DamageType);
 
     // first, lets make sure we do not get countershove off a vehicle we are healing
-    if ( ClassIsChildOf(DamageType,class'DamTypeLinkShaft') && P != None && Vehicle(P)!=None
-        && P.GetTeam() == Instigator.GetTeam() && Instigator.GetTeam() != None)
-        Momentum = vect(0,0,0);
+    if(
+        Vehicle(P) != None
+        && ClassIsChildOf(DamageType, class'DamTypeLinkShaft')
+        && P.GetTeam() == Instigator.GetTeam()
+        && Instigator.GetTeam() != None
+    )
+    {
+        Momentum = vect(0, 0, 0);
+    }
 
     if(Ability == None)
     {
@@ -97,7 +103,7 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn Ins
     }
 
     // We should only regen shields with the linkfire mode
-    if ( !ClassIsChildOf(DamageType,class'DamTypeLinkShaft') || P == None || Vehicle(P)!=None)
+    if(!ClassIsChildOf(DamageType, class'DamTypeLinkShaft') || P == None || Vehicle(P) != None)
         return;
 
     // ok, we have the linkshaft hitting someone
@@ -105,14 +111,14 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn P, Pawn Ins
     if (BestDamage <= 0)
         BestDamage = 10;    // if linking the damage gets set to zero
 
-    if (P != None && BestDamage > 0)
+    if(P != None && BestDamage > 0)
     {
-        if ( P.GetTeam() == Instigator.GetTeam() && Instigator.GetTeam() != None )
+        if(P.GetTeam() == Instigator.GetTeam() && Instigator.GetTeam() != None)
         {
             // same team
-            BoostShield(P,BestDamage);
+            BoostShield(P, BestDamage);
 
-            Momentum = vect(0,0,0);
+            Momentum = vect(0, 0, 0);
             Damage = 0;
         }
     }
@@ -130,7 +136,7 @@ static function float DamageIncreasedByLinkers(int NumLinkers)
         return 1.0;
 
     if (NumLinkers >= default.DamageBonusFromLinks.Length)
-        return default.DamageBonusFromLinks[default.DamageBonusFromLinks.Length -1];
+        return default.DamageBonusFromLinks[default.DamageBonusFromLinks.Length - 1];
     else
         return default.DamageBonusFromLinks[NumLinkers];
 }
