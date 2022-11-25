@@ -129,6 +129,7 @@ defaultproperties
     bHidden=True
     bAcceptsProjectors=False
     bAlwaysRelevant=True
+    bReplicateMovement=False
     Physics=PHYS_Projectile
     RemoteRole=ROLE_SimulatedProxy
     LifeSpan=10.000000
