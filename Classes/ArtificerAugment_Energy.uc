@@ -15,10 +15,10 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
     if(Instigator != InstigatedBy || Instigator == Injured || class'Util'.static.SameTeamP(Injured, InstigatedBy))
         return;
 
-    if(OriginalDamage > Injured.Health)
+    if(Damage > Injured.Health)
         AdrenalineBonus = Injured.Health * BonusPerLevel * Modifier;
     else
-        AdrenalineBonus = OriginalDamage * BonusPerLevel * Modifier;
+        AdrenalineBonus = Damage * BonusPerLevel * Modifier;
 
     if(
         UnrealPlayer(Instigator.Controller) != None
