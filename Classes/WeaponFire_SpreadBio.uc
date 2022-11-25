@@ -6,7 +6,7 @@
 // it under the terms of the Open Unreal Mod License version 1.1.
 //=============================================================================
 
-class WeaponFire_SpreadBio extends LinkAltFire;
+class WeaponFire_SpreadBio extends BioFire;
 
 var int SpreadLevel;
 
