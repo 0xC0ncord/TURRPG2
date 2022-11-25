@@ -2551,6 +2551,9 @@ final function DrainAdrenaline(float Amount, optional Object Source)
 
 simulated final function ClientCreateJukeboxInteraction()
 {
+    if(Level.NetMode == NM_DedicatedServer)
+        return;
+
     if(PlayerController(Controller) != None && JukeboxInteraction == None)
         JukeboxInteraction = Interaction_Jukebox(PlayerController(Controller).Player.InteractionMaster.AddInteraction(string(class'Interaction_Jukebox'), PlayerController(Controller).Player));
 }
