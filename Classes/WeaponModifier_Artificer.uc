@@ -27,7 +27,8 @@ replication
 {
     reliable if(Role == ROLE_Authority)
         ClientAddAugment, ClientRemoveAugment, ClientSetAugmentLevel,
-        ClientSortAugments, ClientUpdateDescription;
+        ClientSortAugments, ClientUpdateDescription, ClientDisableAugment,
+        ClientEnableAugment;
     reliable if(Role < ROLE_Authority)
         ServerNextPrimaryFireMode, ServerNextAlternateFireMode;
 }
@@ -116,6 +117,24 @@ final function InitAugments(array<RPGCharSettings.ArtificerAugmentStruct> NewAug
     SetActive(true);
 
     CurrentAugments = ValidatedAugments;
+}
+
+simulated function ClientDisableAugment(class<ArtificerAugmentBase> AugmentClass)
+{
+    local ArtificerAugmentBase Augment;
+
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+        if(Augment.Class == AugmentClass)
+            Augment.DisableMe();
+}
+
+simulated function ClientEnableAugment(class<ArtificerAugmentBase> AugmentClass)
+{
+    local ArtificerAugmentBase Augment;
+
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+        if(Augment.Class == AugmentClass)
+            Augment.EnableMe();
 }
 
 simulated function Destroyed()

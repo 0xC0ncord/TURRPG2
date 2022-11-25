@@ -106,7 +106,7 @@ function Init(WeaponModifier_Artificer WM, int NewModifier)
     SetLevel(NewModifier);
 
     if(!AllowedOn(WeaponModifier, Weapon))
-        bDisabled = true;
+        DisableMe();
 }
 
 function SetLevel(int NewModifier)
@@ -138,6 +138,8 @@ final function Remove()
 
 function Free()
 {
+    EnableMe();
+
     WeaponModifier = None;
     Weapon = None;
     Instigator = None;
@@ -145,15 +147,32 @@ function Free()
     PrevAugment = None;
     ObjectPool.FreeObject(Self);
     ObjectPool = None;
-    bDisabled = false;
 }
 
 function CheckDisabled()
 {
     if(AllowedOn(WeaponModifier, Weapon))
-        bDisabled = false;
+    {
+        EnableMe();
+        if(WeaponModifier.Role == ROLE_Authority)
+            WeaponModifier.ClientEnableAugment(Class);
+    }
     else
-        bDisabled = true;
+    {
+        DisableMe();
+        if(WeaponModifier.Role == ROLE_Authority)
+            WeaponModifier.ClientDisableAugment(Class);
+    }
+}
+
+function DisableMe()
+{
+    bDisabled = true;
+}
+
+function EnableMe()
+{
+    bDisabled = false;
 }
 
 function StartEffect(); //weapon gets drawn
