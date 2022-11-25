@@ -12,7 +12,6 @@ function ModifyPawn(Pawn Other)
 {
     local int x, i;
     local Ability_Denial Denial;
-    local bool bGotIt;
     local Inventory Inv;
     local Inventory SGInv, ARInv;
 
@@ -57,14 +56,14 @@ function ModifyPawn(Pawn Other)
                     {
                         if(Denial.StoredWeapons[i].WeaponClass == GrantItem[x].InventoryClass)
                         {
-                            bGotIt = true;
+                            i = -1;
                             break;
                         }
                     }
                 }
-                if(!bGotIt)
+                if(i != -1)
                 {
-                    if(bJustBought)
+                    if(!bJustBought)
                     {
                         // Check if they already have this weapon
                         for(Inv = Other.Inventory; Inv != None; Inv = Inv.Inventory)
@@ -77,8 +76,6 @@ function ModifyPawn(Pawn Other)
                     }
                     RPRI.QueueWeapon(class<Weapon>(GrantItem[x].InventoryClass), None, 0, 0, 0,,, Self);
                 }
-                else
-                    bGotIt = false;
             }
             else
                 class'Util'.static.GiveInventory(Other, GrantItem[x].InventoryClass);
