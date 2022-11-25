@@ -744,6 +744,7 @@ function PostRender(Canvas Canvas)
     local array<float> OptionCostWidths;
 
     local Inventory Inv;
+    local int Count;
     local Weapon W;
     local Weapon Weapons[WEAPON_BAR_SIZE];
     local Weapon ExtraWeapons[WEAPON_BAR_SIZE];
@@ -1214,7 +1215,7 @@ function PostRender(Canvas Canvas)
         //Artificer weapon bars
         if(HUD.bShowWeaponBar)
         {
-            for(Inv = P.Inventory; Inv != None; Inv = Inv.Inventory)
+            for(Inv = P.Inventory; Inv != None && Count++ < 1000; Inv = Inv.Inventory)
             {
                 W = Weapon(Inv);
                 if(W == None || W.IconMaterial == None)
