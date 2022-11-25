@@ -812,4 +812,6 @@ defaultproperties
     bOnlyDirtyReplication=True
     NetUpdateFrequency=4.000000
     RemoteRole=ROLE_SimulatedProxy
+    bReplicateMovement=False
+    bSkipActorPropertyReplication=True
 }
