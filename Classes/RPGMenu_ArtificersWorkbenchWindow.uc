@@ -217,12 +217,7 @@ function InitFor(RPGPlayerReplicationInfo Whom)
         return;
     }
     else
-    {
         lbAugmentPool.EnableMe();
-        lbCharmA.EnableMe();
-        lbCharmB.EnableMe();
-        lbCharmC.EnableMe();
-    }
 
     //populate the entire pool
     for(i = 0; i < Ability.GrantedAugments.Length; i++)
@@ -308,6 +303,46 @@ function InitFor(RPGPlayerReplicationInfo Whom)
         cmbAutoApplyGamma.SetIndex(cmbAutoApplyGamma.FindIndex(Settings.ArtificerAutoApplyWeaponGamma.default.ItemName));
     else
         cmbAutoApplyGamma.SetIndex(0);
+
+    //disable lists for which we don't have the ability levels for
+    if(AbilityLevelCharmA == 0)
+    {
+        lbCharmA.DisableMe();
+        btAddCharmA.DisableMe();
+        btRemoveCharmA.DisableMe();
+    }
+    else
+    {
+        lbCharmA.EnableMe();
+        btAddCharmA.EnableMe();
+        btRemoveCharmA.EnableMe();
+    }
+
+    if(AbilityLevelCharmB == 0)
+    {
+        lbCharmB.DisableMe();
+        btAddCharmB.DisableMe();
+        btRemoveCharmB.DisableMe();
+    }
+    else
+    {
+        lbCharmB.EnableMe();
+        btAddCharmB.EnableMe();
+        btRemoveCharmB.EnableMe();
+    }
+
+    if(AbilityLevelCharmC == 0)
+    {
+        lbCharmC.DisableMe();
+        btAddCharmC.DisableMe();
+        btRemoveCharmC.DisableMe();
+    }
+    else
+    {
+        lbCharmC.EnableMe();
+        btAddCharmC.EnableMe();
+        btRemoveCharmC.EnableMe();
+    }
 }
 
 function SelectModifier(optional GUIVertList List)
@@ -357,9 +392,12 @@ function InternalCheckObjects(GUIListBase List)
 
     if(lbAugmentPool.List.ItemCount > 0)
     {
-        EnableComponent(btAddCharmA);
-        EnableComponent(btAddCharmB);
-        EnableComponent(btAddCharmC);
+        if(AbilityLevelCharmA > 0)
+            EnableComponent(btAddCharmA);
+        if(AbilityLevelCharmB > 0)
+            EnableComponent(btAddCharmB);
+        if(AbilityLevelCharmC > 0)
+            EnableComponent(btAddCharmC);
     }
     else
     {
@@ -415,6 +453,7 @@ function bool AddModifier(GUIComponent Sender)
     local GUITreeList Target;
     local int i;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
+    local int AugmentCount;
     local int MaxLevel;
     local string Reason;
     local string Messages;
@@ -460,15 +499,20 @@ function bool AddModifier(GUIComponent Sender)
     PendingElements = lbAugmentPool.List.GetPendingElements(true);
 
     UnpackCharmList(Target, Augments);
+    AugmentCount = GetAugmentCount(Target);
 
     lbAugmentPool.List.bNotify = false;
     for(i = PendingElements.Length - 1; i >= 0; i--)
     {
-        if(Augments.Length >= MaxLevel)
+        if(AugmentCount + 1 > MaxLevel)
         {
             if(Messages != "")
                 Messages = "||" $ Messages;
-            Messages = Text_CannotAdd $ "|" $ Text_CharmMaxLevel $ Messages;
+            Messages = Repl(
+                Text_CannotAdd,
+                "$1",
+                class<ArtificerAugmentBase>(PendingElements[i].ExtraData).default.ModifierName
+            ) $ "|" $ Text_CharmMaxLevel $ Messages;
         }
         else if(class<ArtificerAugmentBase>(PendingElements[i].ExtraData).static.InsertInto(Augments, Reason))
         {
@@ -635,6 +679,7 @@ function bool InternalOnDragDrop(GUIComponent Target)
     local bool bTargetIsCharmList;
     local bool bSourceIsCharmList;
     local array<RPGCharSettings.ArtificerAugmentStruct> Augments;
+    local int AugmentCount;
     local int MaxLevel;
     local string Reason;
     local string Messages;
@@ -715,6 +760,7 @@ function bool InternalOnDragDrop(GUIComponent Target)
     if(bTargetIsCharmList)
     {
         UnpackCharmList(GUITreeList(Target), Augments);
+        AugmentCount = GetAugmentCount(GUITreeList(Target));
 
         if(bSourceIsCharmList)
         {
@@ -722,11 +768,11 @@ function bool InternalOnDragDrop(GUIComponent Target)
             for(i = PendingNodes.Length - 1; i >= 0; i--)
             {
                 AugmentClass = class<ArtificerAugmentBase>(DynamicLoadObject(PendingNodes[i].Value, class'Class'));
-                if(Augments.Length >= MaxLevel)
+                if(AugmentCount + 1 > MaxLevel)
                 {
                     if(Messages != "")
                         Messages = "||" $ Messages;
-                    Messages = Text_CannotAdd $ "|" $ Text_CharmMaxLevel $ Messages;
+                    Messages = Repl(Text_CannotAdd, "$1", AugmentClass.default.ModifierName) $ "|" $ Text_CharmMaxLevel $ Messages;
                 }
                 else if(AugmentClass.static.InsertInto(Augments, Reason))
                 {
@@ -747,7 +793,13 @@ function bool InternalOnDragDrop(GUIComponent Target)
             for(i = PendingElements.Length - 1; i >= 0; i--)
             {
                 AugmentClass = class<ArtificerAugmentBase>(PendingElements[i].ExtraData);
-                if(AugmentClass.static.InsertInto(Augments, Reason))
+                if(AugmentCount + 1 > MaxLevel)
+                {
+                    if(Messages != "")
+                        Messages = "||" $ Messages;
+                    Messages = Repl(Text_CannotAdd, "$1", AugmentClass.default.ModifierName) $ "|" $ Text_CharmMaxLevel $ Messages;
+                }
+                else if(AugmentClass.static.InsertInto(Augments, Reason))
                 {
                     GUIList(Source).RemoveElement(PendingElements[i],, true);
                     GUITreeList(Target).AddItem(PendingElements[i].Item, string(PendingElements[i].ExtraData));
@@ -799,6 +851,18 @@ function bool InternalOnDragDrop(GUIComponent Target)
         bDirtyCharmC = true;
 
     return false;
+}
+
+function int GetAugmentCount(GUITreeList List)
+{
+    local int i;
+    local int Count;
+
+    for(i = 0; i < List.Elements.Length; i++)
+        if(List.Elements[i].Value != "")
+            Count++;
+
+    return Count;
 }
 
 function bool ListKeyEvent(out byte Key, out byte State, float delta)
