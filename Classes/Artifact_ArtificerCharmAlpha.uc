@@ -10,7 +10,9 @@ class Artifact_ArtificerCharmAlpha extends ArtifactBase_ArtificerCharm;
 
 defaultproperties
 {
+    UnloadArtifactClass=class'Artifact_ArtificerUnloadAlpha'
     ModifierClass=Class'WeaponModifier_ArtificerAlpha'
     ArtifactID="ArtificerCharmAlpha"
+    IconMaterial=Texture'ArtificerCharmAlphaIcon'
     ItemName="Artificer's Charm: Alpha"
 }

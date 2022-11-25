@@ -10,12 +10,18 @@ class ArtifactBase_ArtificerCharm extends ArtifactBase_WeaponMaker
     abstract
     HideDropDown;
 
+var class<ArtifactBase_ArtificerUnload> UnloadArtifactClass;
+
 var AbilityBase_ArtificerCharm Ability;
 var class<Weapon> DesiredWeaponClass;
+var bool bClientTryAutoApply;
 var bool bWantsAutoApply;
+var float GiveUpTime;
 
 replication
 {
+    reliable if(Role == ROLE_Authority && bNetInitial)
+        bClientTryAutoApply;
     reliable if(Role < ROLE_Authority)
         ServerAutoApplyWeapon;
 }
@@ -23,6 +29,10 @@ replication
 function bool CanActivate()
 {
     if(!Super.CanActivate() || Ability == None)
+        return false;
+
+    //don't allow removing an existing artificer modifier
+    if(class'WeaponModifier_Artificer'.static.GetFor(ModifiedWeapon) != None)
         return false;
 
     return true;
@@ -49,17 +59,25 @@ simulated function PostNetBeginPlay()
 {
     Super.PostNetBeginPlay();
 
+    if(!Instigator.IsLocallyControlled())
+        return;
+
+    CheckAutoApply();
+}
+
+simulated function CheckAutoApply()
+{
+    if(!bClientTryAutoApply)
+        return;
+
     if(InstigatorRPRI != None && InstigatorRPRI.bClientSetup)
     {
-        PRINTD(InstigatorRPRI);
         SetupDesiredWeapon();
         if(DesiredWeaponClass == None || TryAutoApplyWeapon())
-        {
-            Disable('Tick');
             return;
-        }
     }
     bWantsAutoApply = true;
+    GiveUpTime = Level.TimeSeconds + 5.0;
 }
 
 simulated function SetupDesiredWeapon()
@@ -81,14 +99,12 @@ simulated function SetupDesiredWeapon()
 simulated function bool TryAutoApplyWeapon()
 {
     local Inventory Inv;
+    local int Count;
 
-    PRINTD("Trying to auto-apply on" @ DesiredWeaponClass);
-
-    for(Inv = Instigator.Inventory; Inv != None; Inv = Inv.Inventory)
+    for(Inv = Instigator.Inventory; Inv != None && Count++ < 1000; Inv = Inv.Inventory)
     {
         if(Inv.Class == DesiredWeaponClass)
         {
-            PRINTD("Applying on" @ Inv);
             ServerAutoApplyWeapon(Weapon(Inv));
             return true;
         }
@@ -98,28 +114,28 @@ simulated function bool TryAutoApplyWeapon()
 
 simulated function Tick(float dt)
 {
-    if(Level.NetMode == NM_DedicatedServer)
+    if(!Instigator.IsLocallyControlled())
         return;
 
     if(bWantsAutoApply)
     {
         if(DesiredWeaponClass == None)
             SetupDesiredWeapon();
-        TryAutoApplyWeapon();
+        if(TryAutoApplyWeapon())
+            bWantsAutoApply = false;
     }
-    bWantsAutoApply = false; //only try again for 1 tick
+
+    if(Level.TimeSeconds <= GiveUpTime)
+        bWantsAutoApply = false; //done trying
 }
 
 function ServerAutoApplyWeapon(Weapon Weapon)
 {
-    PRINTD("Attempting to auto-apply on" @ Weapon);
-
     if(Weapon != None)
         ForcedWeapon = Weapon;
     else
         return;
 
-    PRINTD("Activating!");
     Activate();
 
     ForcedWeapon = None;
@@ -128,11 +144,7 @@ function ServerAutoApplyWeapon(Weapon Weapon)
 function DoModifyWeapon(Weapon W)
 {
     local WeaponModifier_Artificer WM;
-
-    if(ModifiedWeapon.bNoAmmoInstances)
-        Ability.OldAmmoCount = ModifiedWeapon.AmmoCharge[0];
-    else
-        Ability.OldAmmoCount = class'DummyWeaponHack'.static.GetAmmo(ModifiedWeapon, 0).AmmoAmount;
+    local ArtifactBase_ArtificerUnload Artifact;
 
     WM = WeaponModifier_Artificer(ModifierClass.static.Modify(ModifiedWeapon, Ability.AbilityLevel, true));
     switch(Class)
@@ -149,6 +161,10 @@ function DoModifyWeapon(Weapon W)
     }
 
     Ability.WeaponModifier = WM;
+
+    Artifact = ArtifactBase_ArtificerUnload(class'Util'.static.GiveInventory(Instigator, UnloadArtifactClass));
+    if(Artifact != None)
+        Artifact.Ability = Ability;
 }
 
 defaultproperties

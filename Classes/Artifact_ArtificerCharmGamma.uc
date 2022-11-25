@@ -10,7 +10,9 @@ class Artifact_ArtificerCharmGamma extends ArtifactBase_ArtificerCharm;
 
 defaultproperties
 {
+    UnloadArtifactClass=class'Artifact_ArtificerUnloadGamma'
     ModifierClass=Class'WeaponModifier_ArtificerGamma'
     ArtifactID="ArtificerCharmGamma"
+    IconMaterial=Texture'ArtificerCharmGammaIcon'
     ItemName="Artificer's Charm: Gamma"
 }

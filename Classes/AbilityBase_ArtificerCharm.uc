@@ -14,9 +14,6 @@ var class<ArtifactBase_ArtificerCharm> ArtificerCharmClass;
 var WeaponModifier_Artificer WeaponModifier; //to prevent granting multiple charms by upgrading this ability
 var ArtifactBase_ArtificerCharm Artifact;
 
-var int OldAmmoCount; //TODO old amount of ammo a weapon had before it was sealed
-                      //to prevent gaining infinite ammo from sealing/unsealing
-
 replication
 {
     reliable if(Role == ROLE_Authority)
@@ -90,7 +87,12 @@ function GrantArtificerCharm(Pawn Other)
     {
         Artifact = ArtifactBase_ArtificerCharm(class'Util'.static.GiveInventory(Other, ArtificerCharmClass));
         if(Artifact != None)
+        {
             Artifact.Ability = Self;
+            Artifact.bClientTryAutoApply = true;
+            if(Artifact.Instigator.IsLocallyControlled())
+                Artifact.CheckAutoApply();
+        }
     }
 }
 
