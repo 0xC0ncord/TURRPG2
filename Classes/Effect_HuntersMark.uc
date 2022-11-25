@@ -48,7 +48,7 @@ state Activated
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     //Randomly multiply damage
-    Damage += OriginalDamage * (BaseDamageMult + Rand(7) * 0.01);
+    Damage *= 1.0 + (BaseDamageMult + Rand(7) * 0.01);
 }
 
 defaultproperties
