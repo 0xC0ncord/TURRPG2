@@ -1051,8 +1051,25 @@ function string NewRecommendCombo(string ComboName, AIController C) {
 
 function ServerTraveling(string URL, bool bItems)
 {
+    local WeaponModifier_Artificer WM;
+    local array<ArtificerFireModeBase> FireModes;
+    local ArtificerFireModeBase FireMode;
+    local int i;
+
     //Save data again, as people might have bought something after the game ended
     SaveData();
+
+    //Remove any fire modes from artificer weapons!!
+    foreach DynamicActors(class'WeaponModifier_Artificer', WM)
+    {
+        FireModes.Length = 0;
+        for(FireMode = WM.PrimaryFireModes; FireMode != None; FireMode = FireMode.NextFireMode)
+            FireModes[FireModes.Length] = FireMode;
+        for(FireMode = WM.AlternateFireModes; FireMode != None; FireMode = FireMode.NextFireMode)
+            FireModes[FireModes.Length] = FireMode;
+        for(i = 0; i < FireModes.Length; i++)
+            WM.RemoveFireMode(FireModes[i]);
+    }
 
     Super.ServerTraveling(URL, bItems);
 }
