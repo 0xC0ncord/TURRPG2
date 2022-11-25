@@ -8,6 +8,8 @@
 
 class Ability_Awareness extends RPGAbility;
 
+var int CanSeeInvisLevel;
+
 //Client
 var Interaction_Awareness Interaction;
 var array<Pawn> Enemies;
@@ -91,12 +93,14 @@ simulated event Destroyed() {
 }
 
 defaultproperties {
+    CanSeeInvisLevel=3
     AbilityName="Awareness"
     Description="Informs you of your enemies' health and shield."
     LevelDescription(0)="At level 1, a health bar will be displayed above the heads of enemies."
     LevelDescription(1)="At level 2, an additional shield bar will be displayed above the heads of enemies."
+    LevelDescription(2)="At level 3, you will be able to view health and shield bars above invisible enemies, provided you are aiming at them."
     StartingCost=20
     CostAddPerLevel=5
-    MaxLevel=2
+    MaxLevel=3
     Category=class'AbilityCategory_Misc'
 }

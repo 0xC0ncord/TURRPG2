@@ -24,6 +24,20 @@ event Initialized() {
     }
 }
 
+function bool CanSeeInvisPawn(Canvas C, Pawn P) {
+    local vector CamLoc;
+    local rotator CamRot;
+
+    if(Ability.AbilityLevel < Ability.CanSeeInvisLevel)
+        return false;
+
+    //get camera data
+    C.GetCameraLocation(CamLoc, CamRot);
+
+    return Acos(Normal(P.Location - CamLoc) dot vector(CamRot))
+        < Atan(FMax(P.CollisionHeight, P.CollisionRadius) * 1.15, VSize(P.Location - CamLoc));
+}
+
 function PostRender(Canvas C) {
     local int i;
     local float FarAwayInv, Dist, ScaledDist, Height, Pct;

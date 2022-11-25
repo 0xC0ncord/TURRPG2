@@ -24,6 +24,10 @@ event Initialized() {
     }
 }
 
+function bool CanSeeInvisPawn(Canvas C, Pawn P) {
+    return class'Util'.static.SameTeamP(P, ViewportOwner.Actor.Pawn);
+}
+
 function PostRender(Canvas C) {
     local int i, k;
     local float FarAwayInv, Dist, ScaledDist, Scale, Height, Pct;
