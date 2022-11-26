@@ -12,6 +12,7 @@ const MAX_ARTIFACTS = 63;
 const MAX_WEAPONMODIFIERS = 63;
 
 var int NumAbilities;
+var int NumWeaponModifiers;
 var class<RPGArtifact> Artifacts[MAX_ARTIFACTS];
 var class<RPGWeaponModifier> WeaponModifiers[MAX_WEAPONMODIFIERS];
 
@@ -42,10 +43,19 @@ simulated function ClientSetup(PlayerController PC)
 
 simulated event PostNetBeginPlay()
 {
+    local int i;
+
     Super.PostNetBeginPlay();
 
-    if(Role < ROLE_Authority && Interaction == None)
-        ClientSetup(Level.GetLocalPlayerController());
+    if(Role < ROLE_Authority)
+    {
+        if(Interaction == None)
+            ClientSetup(Level.GetLocalPlayerController());
+
+        for(i = 0; i < MAX_WEAPONMODIFIERS; i++)
+            if(WeaponModifiers[i] != None)
+                NumWeaponModifiers++;
+    }
 }
 
 simulated event Tick(float dt)
@@ -78,4 +88,5 @@ simulated event Destroyed()
 
 defaultproperties
 {
+     bReplicateMovement=False
 }

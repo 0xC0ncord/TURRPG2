@@ -288,6 +288,7 @@ event PostBeginPlay()
 
     for(x = 0; x < RRI.MAX_WEAPONMODIFIERS && x < WeaponModifiers.Length; x++)
         RRI.WeaponModifiers[x] = WeaponModifiers[x].ModifierClass;
+    RRI.NumWeaponModifiers = x;
 
     //Super
     Super.PostBeginPlay();
