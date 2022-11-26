@@ -146,7 +146,7 @@ static function RPGWeaponModifier GetFor(Weapon W, optional bool bAny) {
 
     if(W != None && W.Instigator != None) {
         foreach W.Instigator.ChildActors(class'RPGWeaponModifier', WM) {
-            if(WM.Weapon == W && (bAny || ClassIsChildOf(WM.class, default.class))) {
+            if(WM.Weapon == W && (bAny || WM.Class == default.Class)) {
                 return WM;
             }
         }
