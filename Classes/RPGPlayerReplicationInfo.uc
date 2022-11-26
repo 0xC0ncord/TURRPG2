@@ -2629,6 +2629,7 @@ defaultproperties
     bAlwaysRelevant=False
     bOnlyRelevantToOwner=True
     NetUpdateFrequency=4.000000
+    bReplicateMovement=False
     RemoteRole=ROLE_SimulatedProxy
     GameRestartingText="Sorry, you cannot perform the desired action once the endgame voting has begun."
     ImposterText="Sorry, your name is already used on this server.|This is a roleplaying game server and every character has a unique name.||Please choose a different name and come back."
