@@ -94,11 +94,12 @@ function RPGTick(float dt)
 defaultproperties
 {
     MyDamageType=class'DamTypeAugmentExplosive'
+    DefaultDamageRadius=220.0
     MaxLevel=10
     BonusPerLevel=0.02
     ModifierName="Explosive"
     Description="$1 splash damage"
-    LongDescription="Adds $1 splash damage per level."
+    LongDescription="Adds $1 splash damage per level. This will also apply for instant hit weapons."
     IconMaterial=Texture'TURRPG2.WOPIcons.NukeBombIcon'
     ModifierOverlay=Shader'WOPWeapons.DamageShader'
     ModifierColor=(R=255,G=192)
