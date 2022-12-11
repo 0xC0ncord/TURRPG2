@@ -28,7 +28,8 @@ static function bool AllowedFor(class<Weapon> WeaponType, Pawn Other)
     return false;
 }
 
-function RPGTick(float dt) {
+function RPGTick(float dt)
+{
     local Projectile Proj;
     local float Multiplier;
 
@@ -36,19 +37,23 @@ function RPGTick(float dt) {
 
     Multiplier = 1.0f + BonusPerLevel * float(Modifier);
 
-    foreach Instigator.CollidingActors(class'Projectile', Proj, FORCE_RADIUS) {
-        if(Proj.Tag == 'Force' || Proj.Tag == 'Matrix') {
+    foreach Instigator.CollidingActors(class'Projectile', Proj, FORCE_RADIUS)
+    {
+        if(
+            bool(int(string(Proj.Tag)) & F_PROJMOD_FORCE)
+            || bool(int(string(Proj.Tag)) & F_PROJMOD_MATRIX)
+        )
+        {
             continue;
         }
 
-        if(Proj.Instigator != Instigator) {
+        if(Proj.Instigator != Instigator)
             continue;
-        }
 
         Identify();
 
-        Proj.Tag = 'Force';
-        class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, 'Force');
+        Proj.SetPropertyText("Tag", string(int(string(Proj.Tag)) | F_PROJMOD_FORCE));
+        class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, F_PROJMOD_FORCE);
     }
 }
 

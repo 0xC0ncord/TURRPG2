@@ -131,7 +131,7 @@ struct ProjectileMod {
     var Pawn Instigator;
 
     var float Vel;
-    var name Flag;
+    var int Flag;
     var class<Emitter> FXClass;
 };
 var array<ProjectileMod> ModifyProjectiles;
@@ -2438,47 +2438,58 @@ simulated function NotifyFavorite(RPGWeaponModifier WeaponModifier)
     PlayerController(Controller).ReceiveLocalizedMessage(class'LocalMessage_FavoriteWeapon',,,, WeaponModifier);
 }
 
-simulated function ProcessProjectileMods() {
+simulated function ProcessProjectileMods()
+{
     local Projectile Proj, Closest;
     local float Dist, ClosestDist, Multiplier;
     local ProjectileMod Mod;
     local int i;
 
     i = 0;
-    while(i < ModifyProjectiles.Length) {
+    while(i < ModifyProjectiles.Length)
+    {
         Mod = ModifyProjectiles[i];
 
-        foreach CollidingActors(class'Projectile', Proj, PROJ_SEARCH_RADIUS, Mod.Location) {
-            if(Proj.Tag != Mod.Flag && Proj.class == Mod.Type && Proj.Instigator == Mod.Instigator) {
+        foreach CollidingActors(class'Projectile', Proj, PROJ_SEARCH_RADIUS, Mod.Location)
+        {
+            if(!bool(int(string(Proj.Tag)) & Mod.Flag) && Proj.class == Mod.Type && Proj.Instigator == Mod.Instigator)
+            {
                 Dist = VSize(Proj.Location - Mod.Location);
-                if(Closest == None || Dist < ClosestDist) {
+                if(Closest == None || Dist < ClosestDist)
+                {
                     Closest = Proj;
                     ClosestDist = Dist;
                 }
             }
         }
 
-        if(Closest != None) {
+        if(Closest != None)
+        {
             ModifyProjectiles.Remove(i, 1);
 
             Multiplier = Mod.Vel / VSize(Closest.Velocity);
             //Log("Match (" $ (Mod.NumTicks + 1) $ ", " $ ClosestDist $ "):" @ Closest @ "*" @ Multiplier);
 
-            Closest.Tag = Mod.Flag;
+            Closest.SetPropertyText("Tag", string(int(string(Closest.Tag)) | Mod.Flag));
             Closest.SetLocation(Mod.Location); //TODO: interpolate?
             if(Closest != None) // it's possible moving the projectile could destroy it
                 class'Util'.static.ModifyProjectileSpeed(Closest, Multiplier, Mod.Flag, Mod.FXClass);
-        } else if(Mod.NumTicks >= 3) {
+        }
+        else if(Mod.NumTicks >= 3)
+        {
             ModifyProjectiles.Remove(i, 1);
             //Log("No match for:" @ Mod.Location @ Mod.Type @ Mod.Instigator);
-        } else {
+        }
+        else
+        {
             ModifyProjectiles[i].NumTicks++;
             i++;
         }
     }
 }
 
-simulated function ClientSyncProjectile(vector Location, class<Projectile> Type, Pawn Instigator, float Vel, name Flag, class<Emitter> FXClass) {
+simulated function ClientSyncProjectile(vector Location, class<Projectile> Type, Pawn Instigator, float Vel, int Flag, class<Emitter> FXClass)
+{
     local ProjectileMod Mod;
 
     //Log("ClientSyncProjectile" @ Location @ Type @ Instigator);

@@ -808,7 +808,8 @@ static final function bool ProjectileSameTeamC(Projectile P, Controller C)
 }
 
 //
-static final function ModifyProjectileSpeed(Projectile Proj, float Multiplier, name Flag, optional class<Emitter> FXClass) {
+static final function ModifyProjectileSpeed(Projectile Proj, float Multiplier, int Flag, optional class<Emitter> FXClass)
+{
     local Controller C;
     local RPGPlayerReplicationInfo RPRI;
     local vector ClientLocation;
@@ -818,37 +819,37 @@ static final function ModifyProjectileSpeed(Projectile Proj, float Multiplier, n
     Proj.Velocity *= Multiplier;
     Proj.Acceleration *= Multiplier;
 
-    if(Multiplier < 1) {
+    if(Multiplier < 1)
         Proj.LifeSpan /= Multiplier;
-    }
 
-    if(RocketProj(Proj) != None) {
+    if(RocketProj(Proj) != None)
         RocketProj(Proj).FlockMaxForce *= Multiplier;
-    }
     /*
-    else if(ONSMineProjectile(Proj) != None) {
+    else if(ONSMineProjectile(Proj) != None)
         ONSMineProjectile(Proj).ScurrySpeed *= Multiplier;
-    }
     */
 
-    if(Proj.Role == ROLE_Authority) {
+    if(Proj.Role == ROLE_Authority)
+    {
         ClientLocation = Proj.Location + Proj.Velocity * 0.05f;
-        if(Proj.Physics == PHYS_Falling) {
+        if(Proj.Physics == PHYS_Falling)
             ClientLocation += vect(0, 0, -0.00125f) * Proj.Level.DefaultGravity;
-        }
 
-        for(C = Proj.Level.ControllerList; C != None; C = C.NextController) {
-            if(PlayerController(C) != None) {
+        for(C = Proj.Level.ControllerList; C != None; C = C.NextController)
+        {
+            if(PlayerController(C) != None)
+            {
                 RPRI = class'RPGPlayerReplicationInfo'.static.GetFor(C);
-                if(RPRI != None) {
+                if(RPRI != None)
+                {
                     RPRI.ClientSyncProjectile(ClientLocation, Proj.class, Proj.Instigator,
                         VSize(Proj.Velocity), Flag, FXClass);
                 }
             }
         }
-    } else if(Proj.Role < ROLE_Authority && FXClass != None) {
-        Proj.Spawn(FXClass, Proj,, Proj.Location, Proj.Rotation).SetBase(Proj);
     }
+    else if(Proj.Role < ROLE_Authority && FXClass != None)
+        Proj.Spawn(FXClass, Proj,, Proj.Location, Proj.Rotation).SetBase(Proj);
 }
 
 static final function string Trim(string S)

@@ -8,22 +8,27 @@
 
 class RPGForceField extends RPGMatrixField;
 
-event Tick(float dt) {
+event Tick(float dt)
+{
     local Projectile Proj;
 
     Super(Info).Tick(dt);
 
-    foreach CollidingActors(class'Projectile', Proj, Radius) {
-        if(Proj.Tag == 'Force' || Proj.Tag == 'Matrix') {
+    foreach CollidingActors(class'Projectile', Proj, Radius)
+    {
+        if(
+            bool(int(string(Proj.Tag)) & F_PROJMOD_FORCE)
+            || bool(int(string(Proj.Tag)) & F_PROJMOD_MATRIX)
+        )
+        {
             continue;
         }
 
-        if(!class'Util'.static.ProjectileSameTeamC(Proj, Instigator.Controller)) {
+        if(!class'Util'.static.ProjectileSameTeamC(Proj, Instigator.Controller))
             continue;
-        }
 
-        Proj.Tag = 'Force';
-        class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, 'Force');
+        Proj.SetPropertyText("Tag", string(int(string(Proj.Tag)) | F_PROJMOD_FORCE));
+        class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, F_PROJMOD_FORCE);
     }
 }
 

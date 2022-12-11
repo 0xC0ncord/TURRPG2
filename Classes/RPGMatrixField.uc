@@ -15,48 +15,55 @@ var array<name> Ignore;
 
 delegate OnMatrix(RPGMatrixField Field, Projectile Proj, float Multiplier);
 
-event PostBeginPlay() {
+event PostBeginPlay()
+{
     Super.PostBeginPlay();
 
     Creator = Controller(Owner);
 }
 
-function bool IgnoreProjectile(Projectile Proj) {
+function bool IgnoreProjectile(Projectile Proj)
+{
     local int i;
 
-    for(i = 0; i < Ignore.Length; i++) {
-        if(Proj.IsA(Ignore[i])) {
+    for(i = 0; i < Ignore.Length; i++)
+        if(Proj.IsA(Ignore[i]))
             return true;
-        }
-    }
 
     return false;
 }
 
-event Tick(float dt) {
+event Tick(float dt)
+{
     local Projectile Proj;
 
     Super.Tick(dt);
 
-    foreach CollidingActors(class'Projectile', Proj, Radius) {
-        if(Proj.Tag == 'Matrix' || Proj.Tag == 'Force') {
+    foreach CollidingActors(class'Projectile', Proj, Radius)
+    {
+        if(
+            bool(int(string(Proj.Tag)) & F_PROJMOD_MATRIX)
+            || bool(int(string(Proj.Tag)) & F_PROJMOD_FORCE)
+        )
+        {
             continue;
         }
 
-        if(IgnoreProjectile(Proj)) {
+        if(IgnoreProjectile(Proj))
             continue;
-        }
 
-        if(Proj.Instigator != None) {
-            if(!class'DevoidEffect_Matrix'.static.CanBeApplied(Proj.Instigator, Creator)) {
-                continue;
-            }
+        if(
+            Proj.Instigator != None
+            || !class'DevoidEffect_Matrix'.static.CanBeApplied(Proj.Instigator, Creator)
+        )
+        {
+            continue;
         }
 
         OnMatrix(Self, Proj, Multiplier);
 
-        Proj.Tag = 'Matrix';
-        class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, 'Matrix', class'FX_MatrixTrail');
+        Proj.SetPropertyText("Tag", string(int(string(Proj.Tag)) | F_PROJMOD_MATRIX));
+        class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, F_PROJMOD_MATRIX, class'FX_MatrixTrail');
     }
 }
 
