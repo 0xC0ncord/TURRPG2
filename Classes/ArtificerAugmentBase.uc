@@ -200,7 +200,7 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
 
 function string GetDescription()
 {
-    return Repl(default.Description, "$1", class'Util'.static.FormatPercent(BonusPerLevel * Max(1, Modifier)));
+    return Repl(Description, "$1", class'Util'.static.FormatPercent(BonusPerLevel * Max(1, Modifier)));
 }
 
 static function string StaticGetDescription(optional int Modifier)
