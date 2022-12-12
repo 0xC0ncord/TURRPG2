@@ -50,6 +50,6 @@ defaultproperties
     Description="$1 health regen/s"
     LongDescription="Causes you to regenerate $1 health every second per level."
     IconMaterial=Texture'TURRPG2.WOPIcons.HealthRegenIcon'
-    ModifierOverlay=Shader'WOPWeapons.ResupplyShader'
+    ModifierOverlay=Combiner'WOPWeapons.HealthRegenShader'
     ModifierColor=(G=255,B=212)
 }
