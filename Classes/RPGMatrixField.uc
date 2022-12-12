@@ -17,8 +17,6 @@ delegate OnMatrix(RPGMatrixField Field, Projectile Proj, float Multiplier);
 
 event PostBeginPlay()
 {
-    Super.PostBeginPlay();
-
     Creator = Controller(Owner);
 }
 
@@ -36,8 +34,6 @@ function bool IgnoreProjectile(Projectile Proj)
 event Tick(float dt)
 {
     local Projectile Proj;
-
-    Super.Tick(dt);
 
     foreach CollidingActors(class'Projectile', Proj, Radius)
     {

@@ -8,14 +8,8 @@
 
 class FX_MatrixTrail extends Emitter;
 
-simulated event PostBeginPlay()
-{
-    Super.PostBeginPlay();
-}
-
 simulated event PostNetBeginPlay()
 {
-    Super.PostNetBeginPlay();
     SetTimer(0.5, true);
 }
 

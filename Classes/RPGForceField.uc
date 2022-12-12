@@ -12,8 +12,6 @@ event Tick(float dt)
 {
     local Projectile Proj;
 
-    Super(Info).Tick(dt);
-
     foreach CollidingActors(class'Projectile', Proj, Radius)
     {
         if(
