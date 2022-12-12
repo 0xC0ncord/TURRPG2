@@ -4,3 +4,4 @@
 #define F_PROJMOD_EXPLOSIVE     4
 #define F_PROJMOD_SHIMMERING    8
 #define F_PROJMOD_VACUUMING     16
+#define F_PROJMOD_BOMBING       32
