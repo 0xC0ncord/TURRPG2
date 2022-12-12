@@ -39,6 +39,9 @@ function RPGTick(float dt)
 
     foreach Instigator.CollidingActors(class'Projectile', Proj, FORCE_RADIUS)
     {
+        if(Proj.Instigator != Instigator)
+            continue;
+
         if(
             bool(int(string(Proj.Tag)) & F_PROJMOD_FORCE)
             || bool(int(string(Proj.Tag)) & F_PROJMOD_MATRIX)
@@ -46,9 +49,6 @@ function RPGTick(float dt)
         {
             continue;
         }
-
-        if(Proj.Instigator != Instigator)
-            continue;
 
         Identify();
 
