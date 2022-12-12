@@ -672,6 +672,15 @@ simulated function ClientRPGTick(float dt)
         CurrentAlternateFireMode.ModeTick(dt);
 }
 
+function WeaponFire(byte Mode)
+{
+    local ArtificerAugmentBase Augment;
+
+    for(Augment = AugmentList; Augment != None; Augment = Augment.NextAugment)
+        if(!Augment.bDisabled)
+            Augment.WeaponFire(Mode);
+}
+
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     local ArtificerAugmentBase Augment;
