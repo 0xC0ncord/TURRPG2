@@ -33,6 +33,9 @@ function RPGTick(float dt)
 
     foreach Instigator.CollidingActors(class'Projectile', Proj, FORCE_RADIUS)
     {
+        if(Proj.Instigator != Instigator)
+            continue;
+
         if(
             bool(int(string(Proj.Tag)) & F_PROJMOD_FORCE)
             || bool(int(string(Proj.Tag)) & F_PROJMOD_MATRIX)
@@ -41,9 +44,6 @@ function RPGTick(float dt)
             continue;
         }
 
-        if(Proj.Instigator != Instigator)
-            continue;
-
         Proj.SetPropertyText("Tag", string(int(string(Proj.Tag)) | F_PROJMOD_FORCE));
         class'Util'.static.ModifyProjectileSpeed(Proj, Multiplier, F_PROJMOD_FORCE);
     }
@@ -51,6 +51,7 @@ function RPGTick(float dt)
 
 defaultproperties
 {
+    ConflictsWith(0)=class'ArtificerAugment_SlowMotion'
     MaxLevel=10
     BonusPerLevel=0.2
     ModifierName="Force"
