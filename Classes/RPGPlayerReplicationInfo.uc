@@ -130,7 +130,7 @@ struct ProjectileMod {
     var class<Projectile> Type;
     var Pawn Instigator;
 
-    var float Vel;
+    var float Val;
     var int Flag;
     var class<Emitter> FXClass;
 };
@@ -2467,13 +2467,27 @@ simulated function ProcessProjectileMods()
         {
             ModifyProjectiles.Remove(i, 1);
 
-            Multiplier = Mod.Vel / VSize(Closest.Velocity);
             //Log("Match (" $ (Mod.NumTicks + 1) $ ", " $ ClosestDist $ "):" @ Closest @ "*" @ Multiplier);
-
             Closest.SetPropertyText("Tag", string(int(string(Closest.Tag)) | Mod.Flag));
-            Closest.SetLocation(Mod.Location); //TODO: interpolate?
-            if(Closest != None) // it's possible moving the projectile could destroy it
-                class'Util'.static.ModifyProjectileSpeed(Closest, Multiplier, Mod.Flag, Mod.FXClass);
+
+            switch(Mod.Flag)
+            {
+                case F_PROJMOD_FORCE:
+                case F_PROJMOD_MATRIX:
+                    Multiplier = Mod.Val / VSize(Closest.Velocity);
+                    Closest.SetLocation(Mod.Location); //TODO: interpolate?
+                    if(Closest != None) // it's possible moving the projectile could destroy it
+                        class'Util'.static.ModifyProjectileSpeed(Closest, Multiplier, Mod.Flag, Mod.FXClass);
+                    break;
+                case F_PROJMOD_EXPLOSIVE:
+                    Proj.DamageRadius *= Mod.Val;
+                    break;
+                case F_PROJMOD_SHIMMERING:
+                    Proj.Spawn(Mod.FXClass, Proj,, Proj.Location, Proj.Rotation).SetBase(Proj);
+                    break;
+                default:
+                    break;
+            }
         }
         else if(Mod.NumTicks >= 3)
         {
@@ -2488,7 +2502,7 @@ simulated function ProcessProjectileMods()
     }
 }
 
-simulated function ClientSyncProjectile(vector Location, class<Projectile> Type, Pawn Instigator, float Vel, int Flag, class<Emitter> FXClass)
+simulated function ClientSyncProjectile(vector Location, class<Projectile> Type, Pawn Instigator, float Val, int Flag, optional class<Emitter> FXClass)
 {
     local ProjectileMod Mod;
 
@@ -2500,7 +2514,7 @@ simulated function ClientSyncProjectile(vector Location, class<Projectile> Type,
         Mod.Type = Type;
         Mod.Instigator = Instigator;
 
-        Mod.Vel = Vel;
+        Mod.Val = Val;
         Mod.Flag = Flag;
         Mod.FXClass = FXClass;
 

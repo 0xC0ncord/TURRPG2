@@ -184,6 +184,8 @@ function ClientStopEffect();
 function RPGTick(float dt); //called only if weapon is active
 function ClientRPGTick(float dt);
 
+function WeaponFire(byte Mode);
+
 function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType);
 
 function AdjustPlayerDamage(out int Damage, int OriginalDamage, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType);
@@ -197,6 +199,8 @@ function bool AllowEffect(class<RPGEffect> EffectClass, Controller Causer, float
 {
     return true;
 }
+
+function ModifyProjectile(Projectile P);
 
 function string GetDescription()
 {
