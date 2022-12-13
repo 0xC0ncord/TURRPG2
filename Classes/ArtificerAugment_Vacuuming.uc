@@ -8,6 +8,11 @@
 
 class ArtificerAugment_Vacuuming extends ArtificerAugmentBase_ProjectileMod;
 
+static function bool AllowedOn(WeaponModifier_Artificer WM, Weapon W)
+{
+    return Super(ArtificerAugmentBase).AllowedOn(WM, W);
+}
+
 function ModifyProjectile(Projectile Proj)
 {
     Proj.MomentumTransfer = 0f;
