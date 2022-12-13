@@ -306,7 +306,14 @@ simulated event Tick(float dt) {
                 WF = Weapon.GetFireMode(i);
                 // WeaponFire calls DoFireEffect() on the tick immediately
                 // after the tick where fire was pressed
-                if(WF.NextFireTime > OldFireTime[i] && WF.NextFireTime != Level.TimeSeconds) {
+                if(
+                    WF.NextFireTime > OldFireTime[i]
+                    && WF.NextFireTime != Level.TimeSeconds
+                    && (
+                        MinigunFire(WF) == None
+                        || WF.IsInState('FireLoop')
+                    )
+                ) {
                     WeaponFire(i);
                 }
                 OldFireTime[i] = WF.NextFireTime;
