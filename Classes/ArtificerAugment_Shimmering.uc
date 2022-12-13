@@ -18,7 +18,7 @@ function ModifyProjectile(Projectile Proj)
 
     Multiplier = 1.0f + BonusPerLevel * float(Modifier);
 
-    A = class'ProjAugment_Shimmering'.static.Create(Proj, Modifier);
+    A = class'ProjAugment_Shimmering'.static.Create(Proj, Modifier, ModFlag);
     A.StartEffect();
 
     ClientLocation = Proj.Location + Proj.Velocity * 0.05f;

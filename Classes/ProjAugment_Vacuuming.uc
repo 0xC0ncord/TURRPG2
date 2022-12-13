@@ -14,6 +14,8 @@ function Explode()
     local vector dir;
     local Actor Victims;
 
+    Super.Explode();
+
     foreach CollidingActors(class'Actor', Victims, Proj.DamageRadius * Modifier, Proj.Location)
     {
         if(

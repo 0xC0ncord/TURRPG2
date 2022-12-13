@@ -11,7 +11,7 @@ class ArtificerAugment_Vacuuming extends ArtificerAugmentBase_ProjectileMod;
 function ModifyProjectile(Projectile Proj)
 {
     Proj.MomentumTransfer = 0f;
-    class'ProjAugment_Vacuuming'.static.Create(Proj, 1.0f + BonusPerLevel * float(Modifier));
+    class'ProjAugment_Vacuuming'.static.Create(Proj, 1.0f + BonusPerLevel * float(Modifier), ModFlag);
 }
 
 defaultproperties

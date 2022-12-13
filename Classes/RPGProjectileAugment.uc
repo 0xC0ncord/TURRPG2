@@ -12,6 +12,8 @@ class RPGProjectileAugment extends Actor;
 var Projectile Proj;
 var Controller InstigatorController;
 
+var int ModFlag;
+
 var float Modifier;
 
 static function RPGProjectileAugment GetFor(Projectile P)
@@ -25,7 +27,7 @@ static function RPGProjectileAugment GetFor(Projectile P)
     return None;
 }
 
-static function RPGProjectileAugment Create(Projectile P, float Modifier)
+static function RPGProjectileAugment Create(Projectile P, float Modifier, int ModFlag)
 {
     local RPGProjectileAugment A;
 
@@ -40,6 +42,7 @@ static function RPGProjectileAugment Create(Projectile P, float Modifier)
     A = P.Spawn(default.Class, P,, P.Location, P.Rotation);
     A.Proj = P;
     A.Modifier = Modifier;
+    A.ModFlag = ModFlag;
     A.SetBase(P);
     return A;
 }
@@ -84,7 +87,24 @@ event Tick(float dt)
 function StartEffect();
 function StopEffect();
 
-function Explode();
+function Explode()
+{
+    local FlakChunk F;
+
+    if(Proj.Class == class'FlakShell')
+    {
+        foreach Proj.RadiusActors(class'FlakChunk', F, 12)
+        {
+            if(
+                F.Instigator == Proj.Instigator
+                && F.bTicked != Proj.bTicked //just spawned
+            )
+            {
+                F.Tag = string(int(string(F.Tag)) | ModFlag);
+            }
+        }
+    }
+}
 
 defaultproperties
 {
