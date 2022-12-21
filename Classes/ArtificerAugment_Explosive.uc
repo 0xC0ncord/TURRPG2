@@ -29,6 +29,8 @@ function InstantFireHit(InstantFire FireMode, vector HitLocation, vector HitNorm
     local vector dir;
     local Actor Victims;
 
+    Weapon.Spawn(class'FX_AugmentExplosiveImpact',,, HitLocation);
+
     foreach Weapon.CollidingActors(class'Actor', Victims, DamageRadius, HitLocation)
     {
         if(
