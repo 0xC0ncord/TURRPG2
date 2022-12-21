@@ -43,7 +43,7 @@ function InstantFireHit(vector HitLocation, InstantFire FireMode)
             damageScale = 1 - FMax(0, (dist - Victims.CollisionRadius) / DamageRadius);
             Victims.TakeDamage
             (
-                damageScale * (FireMode.DamageMin + FireMode.DamageMax) * 0.5,
+                damageScale * RandRange(FireMode.DamageMin, FireMode.DamageMax),
                 Instigator,
                 Victims.Location - 0.5 * (Victims.CollisionHeight + Victims.CollisionRadius) * dir,
                 (damageScale * FireMode.Momentum * dir),
@@ -52,7 +52,7 @@ function InstantFireHit(vector HitLocation, InstantFire FireMode)
             if (Instigator != None && Vehicle(Victims) != None && Vehicle(Victims).Health > 0)
             {
                 Vehicle(Victims).DriverRadiusDamage(
-                    FireMode.DamageMin * FireMode.DamageMax * 0.5,
+                    RandRange(FireMode.DamageMin, FireMode.DamageMax),
                     DamageRadius,
                     Instigator.Controller,
                     MyDamageType,
