@@ -12,7 +12,14 @@ class ArtificerAugmentBase_ProjectileMod extends ArtificerAugmentBase
 const PROJ_SEARCH_RADIUS = 768;
 var const int ModFlag;
 
-var array<vector> HitLocations;
+struct HitStruct
+{
+    var vector HitLocation;
+    var vector HitNormal;
+    var vector Start;
+    var Actor Other;
+};
+var array<HitStruct> Hits;
 
 static function bool AllowedOn(WeaponModifier_Artificer WM, Weapon W)
 {
@@ -72,7 +79,12 @@ function AdjustTargetDamage(out int Damage, int OriginalDamage, Pawn Injured, Pa
             continue;
         }
 
-        HitLocations[HitLocations.Length] = HitLocation;
+        i = Hits.Length;
+        Hits.Length = i + 1;
+        Hits[i].HitLocation = HitLocation;
+        Hits[i].HitNormal = Normal(HitLocation - Injured.Location);
+        Hits[i].Start = WF.Weapon.GetEffectStart();
+        Hits[i].Other = Injured;
         return;
     }
 }
@@ -82,7 +94,7 @@ function WeaponFire(byte Mode)
     local InstantFire WF;
     local array<class<Actor> > DesiredClasses;
     local Actor A;
-    local int i;
+    local int i, x;
 
     WF = InstantFire(Weapon.GetFireMode(Mode));
     if(WF == None)
@@ -120,6 +132,7 @@ function WeaponFire(byte Mode)
                 && A.bTicked != Weapon.bTicked //just spawned
             )
             {
+                x = Hits.Length;
                 switch(Caps(string(DesiredClasses[i])))
                 {
                     case "XEFFECTS.XHEAVYWALLHITEFFECT":
@@ -127,11 +140,17 @@ function WeaponFire(byte Mode)
                     case "XEFFECTS.PCLIMPACTSMOKE":
                     case "XEFFECTS.PCLREDSMOKE":
                     case "XEFFECTS.EXPLOWALLHIT":
-                        HitLocations[HitLocations.Length] = A.Location;
+                        Hits.Length = x + 1;
+                        Hits[x].HitLocation = A.Location;
+                        Hits[x].HitNormal = vector(A.Rotation);
+                        Hits[x].Start = WF.Weapon.GetEffectStart();
                         break;
                     case "XWEAPONS.SHOCKBEAMEFFECT":
                     case "XWEAPONS.NEWLIGHTNINGBOLT":
-                        HitLocations[HitLocations.Length] = xEmitter(A).mSpawnVecA;
+                        Hits.Length = x + 1;
+                        Hits[x].HitLocation = xEmitter(A).mSpawnVecA;
+                        Hits[x].HitNormal = Normal(Hits[x].HitLocation - A.Location);
+                        Hits[x].Start = A.Location;
                         break;
                     default:
                         break;
@@ -140,13 +159,13 @@ function WeaponFire(byte Mode)
         }
     }
 
-    for(i = 0; i < HitLocations.Length; i++)
-        InstantFireHit(HitLocations[i], WF);
+    for(i = 0; i < Hits.Length; i++)
+        InstantFireHit(WF, Hits[i].HitLocation, Hits[i].HitNormal, Hits[i].Start, Hits[i].Other);
 
-    HitLocations.Length = 0;
+    Hits.Length = 0;
 }
 
-function InstantFireHit(vector HitLocation, InstantFire FireMode);
+function InstantFireHit(InstantFire FireMode, vector HitLocation, vector HitNormal, vector Start, Actor Other);
 function ModifyProjectile(Projectile P);
 
 defaultproperties

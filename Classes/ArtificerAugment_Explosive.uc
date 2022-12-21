@@ -23,7 +23,7 @@ function SetLevel(int NewLevel)
     DamageRadius = DefaultDamageRadius * (1.0f + BonusPerLevel * float(Modifier));
 }
 
-function InstantFireHit(vector HitLocation, InstantFire FireMode)
+function InstantFireHit(InstantFire FireMode, vector HitLocation, vector HitNormal, vector Start, Actor Other)
 {
     local float damageScale, dist;
     local vector dir;
