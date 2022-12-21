@@ -16,6 +16,8 @@ function Explode()
 
     Super.Explode();
 
+    Spawn(class'FX_VacuumingAbsorb', self,, Location);
+
     foreach CollidingActors(class'Actor', Victims, Proj.DamageRadius * Modifier, Proj.Location)
     {
         if(
