@@ -778,6 +778,7 @@ function bool InternalOnDragDrop(GUIComponent Target)
                 {
                     GUITreeList(Source).RemoveElement(PendingNodes[i],, true);
                     GUITreeList(Target).AddElement(PendingNodes[i]);
+                    AugmentCount++;
                 }
                 else
                 {
@@ -803,6 +804,7 @@ function bool InternalOnDragDrop(GUIComponent Target)
                 {
                     GUIList(Source).RemoveElement(PendingElements[i],, true);
                     GUITreeList(Target).AddItem(PendingElements[i].Item, string(PendingElements[i].ExtraData));
+                    AugmentCount++;
                 }
                 else
                 {
