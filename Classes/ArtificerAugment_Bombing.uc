@@ -14,7 +14,7 @@ function ModifyProjectile(Projectile P)
 {
     local ProjAugment_Bombing A;
 
-    A = ProjAugment_Bombing(class'ProjAugment_Bombing'.static.Create(P, BombFrequency * (1 - (BonusPerLevel * (Modifier - 1)))));
+    A = ProjAugment_Bombing(class'ProjAugment_Bombing'.static.Create(P, BombFrequency * (1 - (BonusPerLevel * (Modifier - 1))), ModFlag));
     A.WeaponModifier = WeaponModifier;
     A.StartEffect();
 }
