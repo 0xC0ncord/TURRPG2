@@ -100,7 +100,7 @@ function Explode()
                 && F.bTicked != Proj.bTicked //just spawned
             )
             {
-                F.Tag = string(int(string(F.Tag)) | ModFlag);
+                F.SetPropertyText("Tag", string(int(string(F.Tag)) | ModFlag));
             }
         }
     }
