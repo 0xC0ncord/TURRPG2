@@ -1,12 +1,17 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$(pwd)"
-BASENAME="$(basename ${CURRENT_DIR})"
+BASENAME="$(basename "${CURRENT_DIR}")"
 SYSTEM_DIR="${CURRENT_DIR}/../System"
-UCC="${SYSTEM_DIR}/ucc.exe"
+UCC="${SYSTEM_DIR}/UCC.exe"
+if [[ "$(uname -r)" == *"WSL"* ]]; then
+    COMPILE="${UCC}"
+else
+    COMPILE="wine ${UCC}"
+fi
 
 if [[ -f "${BASENAME}.inc" ]]; then
-    VERSION="$(sed 's/^#define __VERSION__ \(.*\)$/\1/p;d' ${BASENAME}.inc)"
+    VERSION="$(sed 's/^#define __VERSION__ \(.*\)$/\1/p;d' "${BASENAME}".inc)"
 else
     VERSION="UNKNOWN_VERSION"
 fi
@@ -59,7 +64,7 @@ for ARG in "$@"; do
     esac
 done
 
-if [[ -n "$(lsof +D ${CURRENT_DIR}/Classes)" ]]; then echo 'Classes directory tree open in some program(s). Please close before continuing.' && exit 1; fi
+if [[ -n "$(lsof +D "${CURRENT_DIR}"/Classes)" ]]; then echo 'Classes directory tree open in some program(s). Please close before continuing.' && exit 1; fi
 if [[ ${RELEASE_BUILD} -eq 0 ]]; then
     echo -e "\e[92mBuild: DEBUG\e[0m"
 else
@@ -119,7 +124,7 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
 
         for FILE in "${CURRENT_DIR}"/.Classes/*.uc; do
 
-            DEST="${CURRENT_DIR}/Classes/$(basename ${FILE})"
+            DEST="${CURRENT_DIR}/Classes/$(basename "${FILE}")"
 
             gpp \
                 -n -U "" "" "(" "," ")" "(" ")" "#" "" \
@@ -131,7 +136,7 @@ if [[ ${NO_PREPROCESS} -eq 0 ]]; then
                 -D__BUILDINFO__="${BUILD_INFO}" \
                 -D__VERSIONSTRING__="${VERSION_STRING}" \
                 -D__BUILDDATE__="${BUILD_DATE}" \
-                -D__FILE__="$(basename ${FILE})" \
+                -D__FILE__="$(basename "${FILE}")" \
                 -o "${DEST}" \
                 "${FILE}"
 
@@ -147,7 +152,7 @@ fi
 echo Compiling...
 [[ -f "${SYSTEM_DIR}/${BASENAME}.u" ]] && mv -vf "${SYSTEM_DIR}/${BASENAME}.u" "${SYSTEM_DIR}/.${BASENAME}.u.bak"
 {
-    wine ${UCC} make ini=..\\${BASENAME}\\make.ini 2>/dev/null && echo ${SHA1SUM} > ${CURRENT_DIR}/Classes.sha1sum
+    ${COMPILE} make ini=..\\"${BASENAME}"\\make.ini 2>/dev/null && echo ${SHA1SUM} > "${CURRENT_DIR}"/Classes.sha1sum
 } || {
     mv -vf "${SYSTEM_DIR}/.${BASENAME}.u.bak" "${SYSTEM_DIR}/${BASENAME}.u"
     EXIT_STATUS=1
